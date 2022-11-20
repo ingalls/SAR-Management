@@ -1,16 +1,38 @@
 function up(knex) {
     return knex.schema.raw(`
-        CREATE TABLE total (
-            dt      DATE PRIMARY KEY DEFAULT NOW(),
-            count   BIGINT NOT NULL
+        CREATE TABLE users (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            username    TEXT NOT NULL,
+            email       TEXT NOT NULL,
+            password    TEXT NOT NULL
         );
 
-        CREATE TABLE fields (
-            dt      DATE DEFAULT NOW(),
-            dim     TEXT NOT NULL,
-            stats   JSONB NOT NULL,
+        CREATE TABLE issues (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            title       TEXT NOT NULL,
+            body        TEXT NOT NULL
+            author      BIGINT NOT NULL REFERENCES users(id)
+        );
 
-            PRIMARY KEY (dt, dim)
+        CREATE TABLE issues_comments (
+            id          BIGSERIAL PRIMARY KEY,
+            issue       BIGINT REFERENCES issues(id),
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            body        TEXT NOT NULL,
+            author      BIGINT NOT NULL REFERENCES users(id)
+        );
+
+        CREATE TABLE documents (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            title       TEXT NOT NULL,
+            url         TEXT NOT NULL
         );
     `);
 }
