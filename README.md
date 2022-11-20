@@ -1,2 +1,4 @@
-# SAR-Management
-Search &amp; Rescue Team &amp; Equipment Management
+<h1 align=center>TAK Stats</h1>
+
+<p align=center>Aggregate stats from a TAK LDAP Instance</p>
+
