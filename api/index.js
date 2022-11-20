@@ -32,7 +32,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
  */
 
 export default async function server(config) {
-    config.pool = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/tak_ps_stats', {
+    config.pool = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/sar', {
         schemas: {
             dir: new URL('./schema', import.meta.url)
         }

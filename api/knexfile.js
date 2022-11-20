@@ -1,6 +1,6 @@
 export default {
     client: 'postgresql',
-    connection: process.env.POSTGRES || 'postgres://postgres@localhost:5432/tak_ps_stats',
+    connection: process.env.POSTGRES || 'postgres://postgres@localhost:5432/sar',
     pool: {
         min: 2,
         max: 10
