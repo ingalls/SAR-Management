@@ -35,4 +35,19 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.get('/user/:userid', {
+        name: 'Create User',
+        group: 'User',
+        auth: 'admin',
+        ':userid': 'integer',
+        description: 'Return a user',
+        res: 'res.User.json'
+    }, async (req, res) => {
+        try {
+            res.json(await User.from(config.pool, req.params.userid));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }

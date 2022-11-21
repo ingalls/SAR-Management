@@ -26,19 +26,23 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class='card-header'>Leadership Team</div>
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class='ms-auto'>
-                                    <div class="btn-list">
-                                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                        <div class="dropdown-menu dropdown-menu-end" style="">
-                                            <a @click='getExport' class="dropdown-item" href="#">Edit</a>
+                        <div class='card-header'>
+                            <div class="col">
+                                <div class="d-flex">
+                                    <h3 class='card-title'>Leadership Team</h3>
+
+                                    <div class='ms-auto'>
+                                        <div class="btn-list">
+                                            <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                            <div class="dropdown-menu dropdown-menu-end" style="">
+                                                <a @click='$router.push("/team/leadership")' class="dropdown-item" href="#">Edit</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
+                        </div>
+                        <div class="card-body">
                             <div class="datagrid">
                                 <div class="datagrid-item">
                                     <div class="datagrid-title">President</div>
@@ -159,7 +163,9 @@
                                 </thead>
                                 <tbody>
                                     <tr :key='user.id' v-for='user in users.users'>
-                                        <td v-text='user.fname + " " + user.lname'></td>
+                                        <td @click='$router.push(`/team/user/${user.id}`)'>
+                                            <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
+                                        </td>
                                         <td v-text='user.email'></td>
                                         <td v-text='user.phone'></td>
                                     </tr>

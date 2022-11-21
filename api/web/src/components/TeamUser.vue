@@ -8,7 +8,7 @@
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
                             <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/team")' class="cursor-pointer">Team</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">New User</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#">User</a></li>
                         </ol>
                     </div>
                 </div>
@@ -21,47 +21,20 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
+                        <div class='card-header'><h3 class='card-title' v-text='`${user.fname} ${user.lname}`'></h3></div>
                         <div class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-5">
-                                    <label class="form-label">Username</label>
-                                    <input v-model='username' type="text" :class='{
-                                        "is-invalid": errors.username
-                                    }' class="form-control" placeholder="Username">
-                                    <div v-if='errors.username' v-text='errors.title' class="invalid-feedback"></div>
+                            <div class="datagrid">
+                                <div class="datagrid-item">
+                                    <div class="datagrid-title">Username</div>
+                                    <div class="datagrid-content" v-text='user.username'></div>
                                 </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Email</label>
-                                    <input v-model='email' type="text" :class='{
-                                        "is-invalid": errors.email
-                                    }' class="form-control" placeholder="Email">
-                                    <div v-if='errors.email' v-text='errors.email' class="invalid-feedback"></div>
+                                <div class="datagrid-item">
+                                    <div class="datagrid-title">Email</div>
+                                    <div class="datagrid-content" v-text='user.email'></div>
                                 </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Assigned</label>
-                                    <label class="form-label">Labels</label>
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">First Name</label>
-                                    <input v-model='fname' type="text" :class='{
-                                        "is-invalid": errors.fname
-                                    }' class="form-control" placeholder="First Name">
-                                    <div v-if='errors.username' v-text='errors.username' class="invalid-feedback"></div>
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Last Name</label>
-                                    <input v-model='lname' type="text" :class='{
-                                        "is-invalid": errors.lname
-                                    }' class="form-control" placeholder="Last Name">
-                                    <div v-if='errors.lname' v-text='errors.lname' class="invalid-feedback"></div>
-                                </div>
-
-                                <div class="col-md-10">
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a @click='create' class="cursor-pointer btn btn-primary">Create User</a>
-                                        </div>
-                                    </div>
+                                <div class="datagrid-item">
+                                    <div class="datagrid-title">Phone</div>
+                                    <div class="datagrid-content" v-text='user.phone'></div>
                                 </div>
                             </div>
                         </div>
@@ -81,45 +54,20 @@ import PageFooter from './PageFooter.vue';
 import Err from './Err.vue';
 
 export default {
-    name: 'IssuesNew',
+    name: 'TeamUser',
     data: function() {
         return {
             err: false,
-            errors: {
-                username: false,
-                email: false,
-                fname: false,
-                lname: false,
-            },
-            username: '',
-            email: '',
-            fname: '',
-            lname: ''
+            user: {}
         }
     },
+    mounted: function() {
+        this.fetch();
+    },
     methods: {
-        create: async function() {
-            for (const field of ['username', 'email', 'fname', 'lname']) {
-                if (!this[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
+        fetch: async function() {
             try {
-                const create = await window.std('/api/user', {
-                    method: 'POST',
-                    body: {
-                        username: this.username,
-                        email: this.email,
-                        fname: this.fname,
-                        lname: this.lname,
-                    }
-                });
-
-                this.$router.push(`/team/user/${create.id}`);
+                this.user = await window.std(`/api/user/${this.$route.params.userid}`);
             } catch (err) {
                 this.err = err;
             }

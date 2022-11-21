@@ -7,7 +7,7 @@
                 <h2 class="page-title">Team Management</h2>
             </div>
 
-            <div class='ms-auto'>
+            <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
                     <a class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <PlusIcon/>
@@ -34,7 +34,7 @@
             </div>
         </div>
     </header>
-    <div class="navbar-expand-md">
+    <div v-if='user' class="navbar-expand-md">
         <div class="collapse navbar-collapse" id="navbar-menu">
             <div class="navbar navbar-light">
                 <div class="container-xl">
@@ -86,12 +86,15 @@
     </div>
 
     <router-view/>
+
+    <Err v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
+import Err from './components/Err.vue';
 import {
     UserIcon,
     BellIcon,
@@ -107,10 +110,24 @@ export default {
     name: 'Tak-PS-Stats',
     data: function() {
         return {
+            user: null,
             err: false,
         }
     },
+    mounted: function() {
+        this.getSelf();
+    },
+    methods: {
+        getSelf: async function() {
+            try {
+                this.user = await window.std('/api/login');
+            } catch (err) {
+                this.err = err;
+            }
+        }
+    },
     components: {
+        Err,
         BugIcon,
         PlusIcon,
         UsersIcon,

@@ -87,3 +87,21 @@
 * @apiSchema (Body) {jsonschema=../schema/req.body.CreateUser.json} apiParam
 * @apiSchema {jsonschema=../schema/res.User.json} apiSuccess
 */
+
+
+/**
+* @api {get} /user/:userid Create User
+* @apiVersion 1.0.0
+* @apiName GET-/user/:userid
+* @apiGroup User
+* @apiPermission admin
+*
+* @apidescription
+*   Return a user
+*
+* @apiParam {integer} userid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.User.json} apiSuccess
+*/
