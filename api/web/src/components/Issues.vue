@@ -12,7 +12,6 @@
 
                         <div class='ms-auto'>
                             <a @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
-                                <PlusIcon/>
                                 New Issue
                             </a>
                         </div>
@@ -88,9 +87,6 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import TablerSelect from './util/Select.vue';
-import {
-    PlusIcon
-} from 'vue-tabler-icons';
 
 export default {
     name: 'Issues',
@@ -100,7 +96,6 @@ export default {
         }
     },
     components: {
-        PlusIcon,
         PageFooter,
         TablerSelect
     }

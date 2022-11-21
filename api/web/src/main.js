@@ -27,6 +27,7 @@ const router = new VueRouter.createRouter({
         { path: '/mission', name: 'missions', component: () => import('./components/Missions.vue') },
 
         { path: '/team', name: 'team', component: () => import('./components/Team.vue') },
+        { path: '/team/user/new', name: 'team-user-new', component: () => import('./components/TeamUserNew.vue') },
     ]
 });
 

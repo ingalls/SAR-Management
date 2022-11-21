@@ -13,9 +13,9 @@
                         <PlusIcon/>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a @click='$router.push("/issue/new")' class="dropdown-item">Create Issue</a>
-                        <a @click='$router.push("/equipment/new")' class="dropdown-item">Create Equipment</a>
-                        <a @click='$router.push("/mission/new")' class="dropdown-item">Create Mission</a>
+                        <a @click='$router.push("/issue/new")' class="dropdown-item">New Issue</a>
+                        <a @click='$router.push("/equipment/new")' class="dropdown-item">New Equipment</a>
+                        <a @click='$router.push("/mission/new")' class="dropdown-item">New Mission</a>
                     </div>
 
 

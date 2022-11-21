@@ -9,6 +9,12 @@
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Team</a></li>
                         </ol>
+
+                        <div class='ms-auto'>
+                            <a @click='$router.push("/team/user/new")' class="cursor-pointer btn btn-primary">
+                                New User
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -20,6 +26,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
+                        <div class='card-header'>Leadership Team</div>
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class='ms-auto'>
@@ -88,6 +95,7 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="card">
+                        <div class='card-header'>Sub-Teams</div>
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class='ms-auto'>
@@ -149,8 +157,6 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import TablerSelect from './util/Select.vue';
-import {
-} from 'vue-tabler-icons';
 
 export default {
     name: 'Issues',
