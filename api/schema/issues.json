@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./issues/id.json"
+        },
+        "created": {
+            "$ref": "./issues/created.json"
+        },
+        "updated": {
+            "$ref": "./issues/updated.json"
+        },
+        "status": {
+            "$ref": "./issues/status.json"
+        },
+        "title": {
+            "$ref": "./issues/title.json"
+        },
+        "body": {
+            "$ref": "./issues/body.json"
+        },
+        "author": {
+            "$ref": "./issues/author.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "status",
+        "title",
+        "body",
+        "author"
+    ]
+}

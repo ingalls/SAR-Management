@@ -1,0 +1,32 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./users/id.json"
+        },
+        "created": {
+            "$ref": "./users/created.json"
+        },
+        "updated": {
+            "$ref": "./users/updated.json"
+        },
+        "username": {
+            "$ref": "./users/username.json"
+        },
+        "email": {
+            "$ref": "./users/email.json"
+        },
+        "password": {
+            "$ref": "./users/password.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "username",
+        "email",
+        "password"
+    ]
+}

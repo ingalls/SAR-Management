@@ -15,7 +15,7 @@ function up(knex) {
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             status      TEXT NOT NULL DEFAULT 'open',
             title       TEXT NOT NULL,
-            body        TEXT NOT NULL
+            body        TEXT NOT NULL,
             author      BIGINT NOT NULL REFERENCES users(id)
         );
 

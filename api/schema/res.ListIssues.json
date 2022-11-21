@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "issues"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "type": "integer"
+        },
+        "issues": {
+            "type": "array",
+            "items":  {
+                "type": "object"
+            }
+        }
+    }
+}

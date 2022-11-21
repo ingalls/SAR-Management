@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./documents/id.json"
+        },
+        "created": {
+            "$ref": "./documents/created.json"
+        },
+        "updated": {
+            "$ref": "./documents/updated.json"
+        },
+        "title": {
+            "$ref": "./documents/title.json"
+        },
+        "url": {
+            "$ref": "./documents/url.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "title",
+        "url"
+    ]
+}
