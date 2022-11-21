@@ -1,5 +1,5 @@
 import Err from '@openaddresses/batch-error';
-import User from '../lib/types/User.js';
+import User from '../lib/types/user.js';
 
 export default async function router(schema, config) {
     await schema.get('/user', {
