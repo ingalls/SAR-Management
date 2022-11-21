@@ -25,7 +25,10 @@
                             <div class='row row-cards'>
                                 <div class="col-md-10">
                                     <label class="form-label">Issue Title</label>
-                                    <input type="text" class="form-control" placeholder="Issue Title">
+                                    <input v-model='title' type="text" :class='{
+                                        "is-invalid": errors.title
+                                    }' class="form-control" placeholder="Issue Title">
+                                    <div v-if='errors.title' v-text='errors.title' class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">Assigned</label>
@@ -33,13 +36,16 @@
                                 </div>
                                 <div class="col-md-10">
                                     <label class="form-label">Issue Title</label>
-                                    <textarea class="form-control" rows="6" placeholder="Issue Content.."></textarea>
+                                    <textarea v-model='body' :class='{
+                                        "is-invalid": errors.body
+                                    }' class="form-control" rows="6" placeholder="Issue Content.."></textarea>
+                                    <div v-if='errors.body' v-text='errors.body' class="invalid-feedback"></div>
                                 </div>
 
                                 <div class="col-md-10">
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
-                                            <a @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
+                                            <a @click='create' class="cursor-pointer btn btn-primary">
                                                 <PlusIcon/>
                                                 Create Issue
                                             </a>
@@ -65,7 +71,34 @@ export default {
     name: 'IssuesNew',
     data: function() {
         return {
-            err: false,
+            errors: {
+                title: false,
+                body: false
+            },
+            title: '',
+            body: ''
+        }
+    },
+    methods: {
+        create: async function() {
+            for (const field of ['title', 'body']) {
+                if (!this[field]) this.errors[field] = 'Cannot be empty';
+                else this.errors[field] = false;
+            }
+
+            for (const e in this.errors) {
+                if (this.errors[e]) return;
+            }
+
+            const create = await window.std('/api/issue', {
+                method: 'POST',
+                body: {
+                    title: this.title,
+                    body: this.body
+                }
+            });
+
+            this.$router.push(`/issue/${create.id}`);
         }
     },
     components: {
