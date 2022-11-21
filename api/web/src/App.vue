@@ -72,7 +72,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link cursor-pointer" @click='$router.push("/mission")'>
+                            <a class="nav-link cursor-pointer" @click='$router.push("/team")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <UsersIcon/>
                                 </span>
