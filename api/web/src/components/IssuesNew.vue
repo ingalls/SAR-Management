@@ -61,16 +61,19 @@
     </div>
 
     <PageFooter/>
+    <Err v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
+import Err from './Err.vue';
 
 export default {
     name: 'IssuesNew',
     data: function() {
         return {
+            err: false,
             errors: {
                 title: false,
                 body: false
@@ -90,18 +93,23 @@ export default {
                 if (this.errors[e]) return;
             }
 
-            const create = await window.std('/api/issue', {
-                method: 'POST',
-                body: {
-                    title: this.title,
-                    body: this.body
-                }
-            });
+            try {
+                const create = await window.std('/api/issue', {
+                    method: 'POST',
+                    body: {
+                        title: this.title,
+                        body: this.body
+                    }
+                });
 
-            this.$router.push(`/issue/${create.id}`);
+                this.$router.push(`/issue/${create.id}`);
+            } catch (err) {
+                this.err = err;
+            }
         }
     },
     components: {
+        Err,
         PageFooter,
     }
 }
