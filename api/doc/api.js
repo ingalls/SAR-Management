@@ -54,36 +54,36 @@
 
 
 /**
-* @api {get} /issue Get Issues
+* @api {get} /user Get Users
 * @apiVersion 1.0.0
-* @apiName GET-/issue
-* @apiGroup Issue
+* @apiName GET-/user
+* @apiGroup User
 * @apiPermission user
 *
 * @apidescription
-*   Get all issues for the Org
+*   Get all users on the server
 *
 
 *
 *
 *
-* @apiSchema {jsonschema=../schema/res.ListIssues.json} apiSuccess
+* @apiSchema {jsonschema=../schema/res.ListUsers.json} apiSuccess
 */
 
 
 /**
-* @api {post} /issue Create Issue
+* @api {post} /issue Create User
 * @apiVersion 1.0.0
 * @apiName POST-/issue
-* @apiGroup Issue
-* @apiPermission user
+* @apiGroup User
+* @apiPermission admin
 *
 * @apidescription
-*   Create a new issue
+*   Create a new user
 *
 
 *
 *
-* @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssue.json} apiParam
-* @apiSchema {jsonschema=../schema/res.Issue.json} apiSuccess
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateUser.json} apiParam
+* @apiSchema {jsonschema=../schema/res.User.json} apiSuccess
 */
