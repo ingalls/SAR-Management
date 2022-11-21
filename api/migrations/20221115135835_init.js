@@ -8,7 +8,10 @@ function up(knex) {
             email       TEXT NOT NULL,
             password    TEXT NOT NULL,
             fname       TEXT NOT NULL,
-            lname       TEXT NOT NULL
+            lname       TEXT NOT NULL,
+
+            CONSTRAINT users_username UNIQUE (username),
+            CONSTRAINT users_email UNIQUE (email)
         );
 
         CREATE TABLE issues (

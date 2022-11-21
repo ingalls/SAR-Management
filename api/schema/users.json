@@ -19,6 +19,12 @@
         },
         "password": {
             "$ref": "./users/password.json"
+        },
+        "fname": {
+            "$ref": "./users/fname.json"
+        },
+        "lname": {
+            "$ref": "./users/lname.json"
         }
     },
     "required": [
@@ -27,6 +33,8 @@
         "updated",
         "username",
         "email",
-        "password"
+        "password",
+        "fname",
+        "lname"
     ]
 }

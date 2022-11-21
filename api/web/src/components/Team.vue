@@ -95,54 +95,92 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class='card-header'>Sub-Teams</div>
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class='ms-auto'>
-                                    <div class="btn-list">
-                                        <TablerSelect
-                                            default='Author'
-                                            :values='["All"]'
-                                        />
+                        <div class='card-header'>
+                            <div class="col">
+                                <div class="d-flex">
+                                    <h3 class='card-title'>Teams</h3>
 
-                                        <TablerSelect
-                                            default='Label'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Assignee'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Sort'
-                                            :values='["All"]'
-                                        />
-
-                                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                        <div class="dropdown-menu dropdown-menu-end" style="">
-                                            <a @click='getExport' class="dropdown-item" href="#">Export CSV</a>
+                                    <div class='ms-auto'>
+                                        <div class="btn-list">
+                                            <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                            <div class="dropdown-menu dropdown-menu-end" style="">
+                                                <a @click='getExport' class="dropdown-item" href="#">Edit</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <table class="table card-table table-vcenter">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr :key='issue.id' v-for='issue in issues'>
-                                            <td v-text='a.name'></td>
-                                            <td v-text='a.status'></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table card-table table-vcenter text-nowrap datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr :key='issue.id' v-for='issue in issues'>
+                                        <td v-text='a.name'></td>
+                                        <td v-text='a.status'></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class='card-header'>
+                            <div class="col">
+                                <div class="d-flex">
+                                    <h3 class='card-title'>Users</h3>
+
+                                    <div class='ms-auto'>
+                                        <div class="btn-list">
+                                            <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                            <div class="dropdown-menu dropdown-menu-end" style="">
+                                                <a @click='getExport' class="dropdown-item" href="#">Edit</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                        <div class='table-responsive'>
+                            <table class="table card-table table-vcenter datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Teams</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr :key='user.id' v-for='user in users.users'>
+                                        <td v-text='user.fname + " " + user.lname'></td>
+                                        <td v-text='user.email'></td>
+                                        <td v-text='user.phone'></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer d-flex align-items-center">
+                            <p class="m-0 text-muted">Showing <span>1</span> to <span>8</span> of <span>16</span> entries</p>
+                            <ul class="pagination m-0 ms-auto">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">prev</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">next</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -151,23 +189,38 @@
     </div>
 
     <PageFooter/>
+
+    <Err v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
-import TablerSelect from './util/Select.vue';
 
 export default {
     name: 'Issues',
     data: function() {
         return {
             err: false,
+            users: {
+
+            }
+        }
+    },
+    mounted: function() {
+        this.listUsers();
+    },
+    methods: {
+        listUsers: async function() {
+            try {
+                this.users = await window.std('/api/user');
+            } catch (err) {
+                this.err = err;
+            }
         }
     },
     components: {
         PageFooter,
-        TablerSelect
     }
 }
 </script>
