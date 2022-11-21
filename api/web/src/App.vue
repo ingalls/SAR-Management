@@ -71,6 +71,14 @@
                                 <span class="nav-link-title">Missions</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link cursor-pointer" @click='$router.push("/mission")'>
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <UsersIcon/>
+                                </span>
+                                <span class="nav-link-title">Team</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -88,6 +96,7 @@ import {
     UserIcon,
     BellIcon,
     PlusIcon,
+    UsersIcon,
     ShovelIcon,
     BugIcon,
     NotebookIcon,
@@ -104,6 +113,7 @@ export default {
     components: {
         BugIcon,
         PlusIcon,
+        UsersIcon,
         UserIcon,
         BellIcon,
         ShovelIcon,
