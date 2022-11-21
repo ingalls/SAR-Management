@@ -23,12 +23,12 @@
                         <BellIcon/>
                     </a>
 
-                    <a @click='$router.push("/profile")' class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <UserIcon/>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a @click='$router.push("/issue/new")' class="dropdown-item">Profile</a>
-                        <a @click='$router.push("/issue/new")' class="dropdown-item">Logout</a>
+                        <a @click='$router.push("/profile")' class="dropdown-item">Profile</a>
+                        <a @click='$router.push("/logout")' class="dropdown-item">Logout</a>
                     </div>
                 </div>
             </div>

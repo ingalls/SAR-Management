@@ -7,13 +7,13 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Equipment</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Missions</a></li>
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/equipment/new")' class="cursor-pointer btn btn-primary">
+                            <a @click='$router.push("/mission/new")' class="cursor-pointer btn btn-primary">
                                 <PlusIcon/>
-                                New Gear
+                                New Mission
                             </a>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ import {
 } from 'vue-tabler-icons';
 
 export default {
-    name: 'Equipments',
+    name: 'Issues',
     data: function() {
         return {
             err: false,
