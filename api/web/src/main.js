@@ -14,6 +14,8 @@ const router = new VueRouter.createRouter({
     routes: [
         { path: '/', name: 'home', component: () => import('./components/Home.vue') },
 
+        { path: '/login', name: 'login', component: () => import('./components/Login.vue') },
+
         { path: '/profile', name: 'profile', component: () => import('./components/Profile.vue') },
 
         { path: '/issue', name: 'issues', component: () => import('./components/Issues.vue') },
