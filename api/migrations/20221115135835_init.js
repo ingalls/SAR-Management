@@ -6,7 +6,9 @@ function up(knex) {
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             username    TEXT NOT NULL,
             email       TEXT NOT NULL,
-            password    TEXT NOT NULL
+            password    TEXT NOT NULL,
+            fname       TEXT NOT NULL,
+            lname       TEXT NOT NULL
         );
 
         CREATE TABLE issues (

@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import User from '../lib/types/user.js';
+import bcrypt from 'bcrypt';
 
 export default async function router(schema, config) {
     await schema.get('/user', {
@@ -17,7 +18,7 @@ export default async function router(schema, config) {
         }
     });
 
-    await schema.post('/issue', {
+    await schema.post('/user', {
         name: 'Create User',
         group: 'User',
         auth: 'admin',
@@ -26,7 +27,10 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            res.json(await User.generate(config.pool, req.body));
+            res.json(await User.generate(config.pool, {
+                ...req.body,
+                password: await bcrypt.hash(req.body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }

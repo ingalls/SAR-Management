@@ -3,6 +3,8 @@
     "additionalProperties": false,
     "required": [
         "username",
+        "created",
+        "updated",
         "email",
         "lname",
         "fname"
@@ -10,6 +12,12 @@
     "properties": {
         "username": {
             "type": "string"
+        },
+        "created": {
+            "type": "integer"
+        },
+        "updated": {
+            "type": "integer"
         },
         "email": {
             "type": "string"

@@ -72,9 +72,9 @@
 
 
 /**
-* @api {post} /issue Create User
+* @api {post} /user Create User
 * @apiVersion 1.0.0
-* @apiName POST-/issue
+* @apiName POST-/user
 * @apiGroup User
 * @apiPermission admin
 *
