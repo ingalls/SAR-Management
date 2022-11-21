@@ -90,12 +90,6 @@ export default async function server(config) {
                     status: 401,
                     message: 'No bearer token present'
                 });
-            }
-
-            if (authorization[1] === config.SigningSecret) {
-                req.auth = {
-                    access: 'machine'
-                };
             } else {
                 req.auth = false;
             }
