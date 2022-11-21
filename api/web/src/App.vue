@@ -115,14 +115,15 @@ export default {
         }
     },
     mounted: function() {
-        this.getSelf();
+        if (localStorage.token) this.getSelf();
+        this.$router.push("/login");
     },
     methods: {
         getSelf: async function() {
             try {
                 this.user = await window.std('/api/login');
             } catch (err) {
-                this.err = err;
+                delete localStorage.token;
             }
         }
     },

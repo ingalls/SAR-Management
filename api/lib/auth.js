@@ -10,7 +10,7 @@ export default class Auth {
      * @param {Object} req Express Request
      * @param {boolean} token Should URL query tokens be allowed (usually only for downloads)
      */
-    static async is_user(req, token = false) {
+    static async is_auth(req, token = false) {
         if (token && req.token) req.auth = req.token;
 
         if (!req.auth || !req.auth.access || !['session', 'token'].includes(req.auth.type)) {
