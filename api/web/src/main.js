@@ -13,6 +13,11 @@ const router = new VueRouter.createRouter({
     history: VueRouter.createWebHistory(),
     routes: [
         { path: '/', name: 'home', component: () => import('./components/Home.vue') },
+
+        { path: '/profile', name: 'profile', component: () => import('./components/Profile.vue') },
+
+        { path: '/issue', name: 'issues', component: () => import('./components/Issues.vue') },
+        { path: '/issue/new', name: 'issues-new', component: () => import('./components/IssuesNew.vue') },
     ]
 });
 

@@ -5,9 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        </ol>
+                        <h2 class="page-title">Home</h2>
                     </div>
                 </div>
             </div>
