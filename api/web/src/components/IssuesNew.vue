@@ -35,6 +35,17 @@
                                     <label class="form-label">Issue Title</label>
                                     <textarea class="form-control" rows="6" placeholder="Issue Content.."></textarea>
                                 </div>
+
+                                <div class="col-md-10">
+                                    <div class='d-flex'>
+                                        <div class='ms-auto'>
+                                            <a @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
+                                                <PlusIcon/>
+                                                Create Issue
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
