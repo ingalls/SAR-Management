@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import User from '../lib/types/user.js';
+import Auth from '../lib/auth.js';
 import bcrypt from 'bcrypt';
 
 export default async function router(schema, config) {
@@ -12,6 +13,8 @@ export default async function router(schema, config) {
         res: 'res.ListUsers.json'
     }, async (req, res) => {
         try {
+            Auth.is_auth(req);
+
             res.json(await User.list(config.pool, req.query));
         } catch (err) {
             return Err.respond(err, res);
@@ -27,6 +30,8 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
+            Auth.is_admin(req);
+
             res.json(await User.generate(config.pool, {
                 ...req.body,
                 password: await bcrypt.hash(req.body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
@@ -45,6 +50,8 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
+            Auth.is_auth(req);
+
             res.json(await User.from(config.pool, req.params.userid));
         } catch (err) {
             return Err.respond(err, res);

@@ -49,7 +49,7 @@
 *
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssue.json} apiParam
-* @apiSchema {jsonschema=../schema/res.Issue.json} apiSuccess
+* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
 */
 
 

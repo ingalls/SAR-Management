@@ -28,6 +28,12 @@
         },
         "validated": {
             "$ref": "./users/validated.json"
+        },
+        "access": {
+            "$ref": "./users/access.json"
+        },
+        "disabled": {
+            "$ref": "./users/disabled.json"
         }
     },
     "required": [
@@ -39,6 +45,8 @@
         "password",
         "fname",
         "lname",
-        "validated"
+        "validated",
+        "access",
+        "disabled"
     ]
 }
