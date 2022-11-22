@@ -54,13 +54,17 @@ export default {
     methods: {
         createLogin: async function() {
             try {
-                window.std('/api/login', {
+                const login = await window.std('/api/login', {
                     method: 'POST',
                     body: {
                         username: this.username,
                         password: this.password
                     }
                 });
+
+                localStorage.token = login.token;
+
+                this.$router.push("/");
             } catch (err) {
                 this.err = err;
             }

@@ -7,6 +7,8 @@ import history from 'connect-history-api-fallback';
 import Schema from '@openaddresses/batch-schema';
 import { Pool } from '@openaddresses/batch-generic';
 import minimist from 'minimist';
+import User from './lib/types/user.js';
+import jwt from 'jsonwebtoken';
 
 import Config from './lib/config.js';
 
@@ -91,7 +93,14 @@ export default async function server(config) {
                     message: 'No bearer token present'
                 });
             } else {
-                req.auth = false;
+                try {
+                    const decoded = jwt.verify(authorization[1], config.SigningSecret);
+                    req.auth = await User.from(config.pool, decoded.u);
+                    req.auth.type = 'session';
+                } catch (err) {
+                    console.error(err);
+                    return Err.respond(new Err(401, err, 'Invalid Token'), res);
+                }
             }
         } else {
             req.auth = false;

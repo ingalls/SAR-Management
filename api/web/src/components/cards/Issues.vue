@@ -73,24 +73,6 @@ export default {
             if (this.current === current) return;
             if (current) this.current = current;
 
-            const agg = await window.std(`/api/aggregate/${this.convert[this.current]}`);
-
-            let aggs = [];
-            let total = 0;
-            for (const name in agg) {
-                total += agg[name];
-                aggs.push({
-                    name,
-                    count: agg[name]
-                });
-            }
-
-            this.agg = aggs.map((agg) => {
-                agg.percent = agg.count / total;
-                return agg;
-            }).sort((a, b) => {
-                return b.percent - a.percent;
-            }).splice(0, 6);
         },
         getExport: async function() {
             const url = new URL('/api/total/export', window.location.origin);

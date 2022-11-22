@@ -25,6 +25,9 @@
         },
         "lname": {
             "$ref": "./users/lname.json"
+        },
+        "validated": {
+            "$ref": "./users/validated.json"
         }
     },
     "required": [
@@ -35,6 +38,7 @@
         "email",
         "password",
         "fname",
-        "lname"
+        "lname",
+        "validated"
     ]
 }

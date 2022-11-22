@@ -114,9 +114,15 @@ export default {
             err: false,
         }
     },
+    watch: {
+        $route() {
+            if (localStorage.token) return this.getSelf();
+            if (this.$route.name !== 'login') this.$router.push("/login");
+        }
+    },
     mounted: function() {
-        if (localStorage.token) this.getSelf();
-        this.$router.push("/login");
+        if (localStorage.token) return this.getSelf();
+        if (this.$route.name !== 'login') this.$router.push("/login");
     },
     methods: {
         getSelf: async function() {
@@ -124,6 +130,7 @@ export default {
                 this.user = await window.std('/api/login');
             } catch (err) {
                 delete localStorage.token;
+                this.$router.push("/login");
             }
         }
     },

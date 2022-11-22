@@ -17,7 +17,7 @@ export default class Auth {
             throw new Err(403, null, 'Authentication Required');
         }
 
-        if (req.auth.access === 'disabled') {
+        if (req.auth.disabled) {
             throw new Err(403, null, 'Account Disabled - Please Contact Us');
         }
 
