@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "leadership"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "type": "integer"
+        },
+        "users": {
+            "type": "array",
+            "items":  {
+                "$ref": "./leadership.json"
+            }
+        }
+    }
+}

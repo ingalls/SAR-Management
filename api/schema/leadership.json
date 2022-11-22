@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./leadership/id.json"
+        },
+        "name": {
+            "$ref": "./leadership/name.json"
+        },
+        "uid": {
+            "$ref": "./leadership/uid.json"
+        }
+    },
+    "required": [
+        "id",
+        "name",
+        "uid"
+    ]
+}
