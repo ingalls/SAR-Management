@@ -2,13 +2,13 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex">
-            <h3 class="card-title">Top User Groups</h3>
+            <h3 class="card-title">Recent Issues</h3>
 
             <div class='ms-auto'>
                 <div class="btn-list">
                     <TablerSelect
-                        :default='current'
-                        :values='["Category", "Agency", "SubAgency", "Title", "ZipCode"]'
+                        default='Recent'
+                        :values='["Recent", "Priority"]'
                         @select='fetch($event)'
                     />
 
@@ -19,31 +19,21 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <table class="table card-table table-vcenter">
-                <thead>
-                    <tr>
-                        <th>User Group</th>
-                        <th colspan="2">Users</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr :key='a.name' v-for='a in agg'>
-                        <td v-text='a.name'></td>
-                        <td v-text='a.count'></td>
-                        <td class="w-50">
-                            <div class="progress progress-xs">
-                                <div
-                                    class="progress-bar bg-primary"
-                                    :style='`width: ${a.percent * 100}%;`'
-                                ></div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
+    <table class="table card-table table-vcenter">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th colspan="2">Labels</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr :key='issue.id' v-for='issue in issues'>
+                <td><a @click='$router.push(`/issue/${issue.id}`)' v-text='issue.title' class='cursor-pointer'></a></td>
+                <td v-text='issue.priority'></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 </template>
 
@@ -51,18 +41,10 @@
 import TablerSelect from '../util/Select.vue';
 
 export default {
-    name: 'TopStats',
+    name: 'IssueCard',
     data: function() {
         return {
-            agg: {},
-            current: 'Agency',
-            convert: {
-                Category: 'businesscategory',
-                Agency: 'o',
-                SubAgency: 'ou',
-                Title: 'title',
-                ZipCode: 'postalcode'
-            }
+            issues: [],
         }
     },
     mounted: function() {
@@ -70,15 +52,11 @@ export default {
     },
     methods: {
         fetch: async function(current) {
-            if (this.current === current) return;
-            if (current) this.current = current;
-
-        },
-        getExport: async function() {
-            const url = new URL('/api/total/export', window.location.origin);
-            // Allow serving through Vue for hotloading
-            if (url.hostname === 'localhost') url.port = '4999'
-            window.open(url, "_blank")
+            try {
+                this.issues = (await window.std('/api/issue')).issues;
+            } catch (err) {
+                this.$emit('err', err);
+            }
         }
     },
     components: {
