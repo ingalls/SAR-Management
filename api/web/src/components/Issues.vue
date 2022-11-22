@@ -66,9 +66,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr :key='issue.id' v-for='issue in issues'>
-                                            <td v-text='a.name'></td>
-                                            <td v-text='a.status'></td>
+                                        <tr :key='issue.id' v-for='issue in issues.issues'>
+                                            <td v-text='issue.title'></td>
+                                            <td v-text='issue.status'></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -81,10 +81,13 @@
     </div>
 
     <PageFooter/>
+
+    <Err v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
+import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
 import TablerSelect from './util/Select.vue';
 
@@ -93,9 +96,25 @@ export default {
     data: function() {
         return {
             err: false,
+            issues: {
+
+            }
         }
     },
+    mounted: function() {
+        this.listIssues();
+    },  
+    methods: {
+        listIssues: async function() {
+            try {
+                this.issues = await window.std('/api/issue');
+            } catch (err) {
+                this.err = err;
+            }
+        }
+    }, 
     components: {
+        Err,
         PageFooter,
         TablerSelect
     }
