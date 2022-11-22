@@ -54,6 +54,24 @@
 
 
 /**
+* @api {get} /leadership List Leadership
+* @apiVersion 1.0.0
+* @apiName GET-/leadership
+* @apiGroup Leadership
+* @apiPermission user
+*
+* @apidescription
+*   Get all team leaders
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListLeadership.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /login Session Info
 * @apiVersion 1.0.0
 * @apiName GET-/login

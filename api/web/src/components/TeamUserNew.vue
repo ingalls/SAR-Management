@@ -37,6 +37,13 @@
                                     }' class="form-control" placeholder="Email">
                                     <div v-if='errors.email' v-text='errors.email' class="invalid-feedback"></div>
                                 </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">Phone</label>
+                                    <input v-model='phone' type="text" :class='{
+                                        "is-invalid": errors.phone
+                                    }' class="form-control">
+                                    <div v-if='errors.phone' v-text='errors.phone' class="invalid-feedback"></div>
+                                </div>
                                 <div class="col-md-2">
                                     <label class="form-label">Assigned</label>
                                     <label class="form-label">Labels</label>
@@ -90,11 +97,13 @@ export default {
                 email: false,
                 fname: false,
                 lname: false,
+                phone: false
             },
             username: '',
             email: '',
             fname: '',
-            lname: ''
+            lname: '',
+            phone: ''
         }
     },
     methods: {
@@ -116,6 +125,7 @@ export default {
                         email: this.email,
                         fname: this.fname,
                         lname: this.lname,
+                        phone: this.phone,
                     }
                 });
 

@@ -11,6 +11,7 @@ function up(knex) {
             password    TEXT NOT NULL,
             fname       TEXT NOT NULL,
             lname       TEXT NOT NULL,
+            phone       TEXT NOT NULL,
             validated   BOOLEAN NOT NULL DEFAULT False,
 
             CONSTRAINT users_username UNIQUE (username),
@@ -42,6 +43,12 @@ function up(knex) {
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             title       TEXT NOT NULL,
             url         TEXT NOT NULL
+        );
+
+        CREATE TABLE leadership (
+            id          BIGSERIAL PRIMARY KEY,
+            name        TEXT NOT NULL,
+            uid         BIGINT REFERENCES users(id)
         );
     `);
 }

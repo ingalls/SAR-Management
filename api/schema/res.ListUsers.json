@@ -12,7 +12,7 @@
         "users": {
             "type": "array",
             "items":  {
-                "type": "object"
+                "$ref": "./res.User.json"
             }
         }
     }

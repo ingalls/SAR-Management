@@ -5,6 +5,7 @@
         "username",
         "created",
         "updated",
+        "phone",
         "email",
         "lname",
         "fname"
@@ -26,6 +27,9 @@
             "type": "string"
         },
         "fname": {
+            "type": "string"
+        },
+        "phone": {
             "type": "string"
         }
     }

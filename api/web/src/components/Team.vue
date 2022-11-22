@@ -35,7 +35,7 @@
                                         <div class="btn-list">
                                             <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a @click='$router.push("/team/leadership")' class="dropdown-item" href="#">Edit</a>
+                                                <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
                                             </div>
                                         </div>
                                     </div>
@@ -204,7 +204,7 @@
 import PageFooter from './PageFooter.vue';
 
 export default {
-    name: 'Issues',
+    name: 'Team',
     data: function() {
         return {
             err: false,
