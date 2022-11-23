@@ -2,13 +2,13 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex">
-            <h3 class="card-title">Recent Issues</h3>
+            <h3 class="card-title">Recent Missions</h3>
 
             <div class='ms-auto'>
                 <div class="btn-list">
                     <TablerSelect
                         default='Recent'
-                        :values='["Recent", "Priority"]'
+                        :values='["Recent"]'
                         @select='fetch($event)'
                     />
 
@@ -28,9 +28,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr :key='issue.id' v-for='issue in issues'>
-                <td><a @click='$router.push(`/issue/${issue.id}`)' v-text='issue.title' class='cursor-pointer'></a></td>
-                <td v-text='issue.priority'></td>
+            <tr :key='mission.id' v-for='mission in missions'>
+                <td><a @click='$router.push(`/mission/${mission.id}`)' v-text='mission.title' class='cursor-pointer'></a></td>
+                <td v-text='mission.priority'></td>
             </tr>
         </tbody>
     </table>
@@ -41,19 +41,19 @@
 import TablerSelect from '../util/Select.vue';
 
 export default {
-    name: 'IssueCard',
+    name: 'MissionCard',
     data: function() {
         return {
-            issues: [],
+            missions: [],
         }
     },
     mounted: function() {
         this.fetch();
     },
     methods: {
-        fetch: async function() {
+        fetch: async function(current) {
             try {
-                this.issues = (await window.std('/api/issue')).issues;
+                this.missions = (await window.std('/api/mission')).missions;
             } catch (err) {
                 this.$emit('err', err);
             }

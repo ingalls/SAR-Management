@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./equipment/id.json"
+        },
+        "created": {
+            "$ref": "./equipment/created.json"
+        },
+        "updated": {
+            "$ref": "./equipment/updated.json"
+        },
+        "status": {
+            "$ref": "./equipment/status.json"
+        },
+        "name": {
+            "$ref": "./equipment/name.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "status",
+        "name"
+    ]
+}

@@ -162,6 +162,42 @@
 
 
 /**
+* @api {get} /mission Get Issues
+* @apiVersion 1.0.0
+* @apiName GET-/mission
+* @apiGroup Issue
+* @apiPermission user
+*
+* @apidescription
+*   Get all issues for the Org
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListIssues.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /issue Create Issue
+* @apiVersion 1.0.0
+* @apiName POST-/issue
+* @apiGroup Issue
+* @apiPermission user
+*
+* @apidescription
+*   Create a new issue
+*
+
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssue.json} apiParam
+* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /user Get Users
 * @apiVersion 1.0.0
 * @apiName GET-/user

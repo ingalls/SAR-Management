@@ -1,0 +1,32 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./missions/id.json"
+        },
+        "created": {
+            "$ref": "./missions/created.json"
+        },
+        "updated": {
+            "$ref": "./missions/updated.json"
+        },
+        "status": {
+            "$ref": "./missions/status.json"
+        },
+        "title": {
+            "$ref": "./missions/title.json"
+        },
+        "author": {
+            "$ref": "./missions/author.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "status",
+        "title",
+        "author"
+    ]
+}

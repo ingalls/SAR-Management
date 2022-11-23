@@ -50,6 +50,23 @@ function up(knex) {
             name        TEXT NOT NULL,
             uid         BIGINT REFERENCES users(id)
         );
+
+        CREATE TABLE missions (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            status      TEXT NOT NULL DEFAULT 'open',
+            title       TEXT NOT NULL,
+            author      BIGINT NOT NULL REFERENCES users(id)
+        );
+
+        CREATE TABLE equipment (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            status      TEXT NOT NULL DEFAULT 'open',
+            name        TEXT NOT NULL
+        );
     `);
 }
 
