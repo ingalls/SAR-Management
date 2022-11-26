@@ -11,7 +11,7 @@ export default async function router(schema, config) {
         res: 'res.ListLeadership.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Leadership.list(config.pool, req.query));
         } catch (err) {

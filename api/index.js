@@ -19,6 +19,11 @@ const args = minimist(process.argv, {
     string: ['postgres']
 });
 
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+    // application specific logging, throwing an error, or other logic here
+    });
+
 if (import.meta.url === `file://${process.argv[1]}`) {
     const config = Config.env(args);
     await server(config);

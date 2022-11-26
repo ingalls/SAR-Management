@@ -12,7 +12,7 @@ export default async function router(schema, config) {
         res: 'res.ListIssues.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Issue.list(config.pool, req.query));
         } catch (err) {
@@ -29,12 +29,38 @@ export default async function router(schema, config) {
         res: 'issues.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Issue.generate(config.pool, {
                 author: req.auth.id,
                 ...req.body
             }));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+    await schema.patch('/issue/:issueid', {
+        name: 'Upodate Issue',
+        group: 'Issue',
+        auth: 'user',
+        description: 'Update an issue',
+        ':issueid': 'integer',
+        body: 'req.body.PatchIssue.json',
+        res: 'issues.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req);
+
+            const issue = await Issue.from(config.pool, req.param.issueid);
+
+            if (req.auth.id !== issue.author && req.auth.access !== 'admin') {
+                throw new Err(401, null, 'Cannot edit another\'s issue');
+            }
+
+            await issue.commit(req.body);
+
+            return res.json(issue);
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -49,7 +75,7 @@ export default async function router(schema, config) {
         res: 'issues.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Issue.from(config.pool, req.params.issueid));
         } catch (err) {

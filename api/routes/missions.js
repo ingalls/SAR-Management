@@ -12,7 +12,7 @@ export default async function router(schema, config) {
         res: 'res.ListMissions.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Mission.list(config.pool, req.query));
         } catch (err) {
@@ -29,7 +29,7 @@ export default async function router(schema, config) {
         res: 'missions.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Mission.generate(config.pool, {
                 author: req.auth.id,

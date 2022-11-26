@@ -12,7 +12,7 @@ export default async function router(schema, config) {
         res: 'res.ListTeams.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Team.list(config.pool, req.query));
         } catch (err) {
@@ -29,7 +29,7 @@ export default async function router(schema, config) {
         res: 'res.Team.json'
     }, async (req, res) => {
         try {
-            Auth.is_admin(req);
+            await Auth.is_admin(req);
 
             res.json(await Team.generate(config.pool, req.body));
         } catch (err) {
@@ -46,7 +46,7 @@ export default async function router(schema, config) {
         res: 'res.Team.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await Team.from(config.pool, req.params.teamid));
         } catch (err) {

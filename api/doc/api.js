@@ -54,6 +54,24 @@
 
 
 /**
+* @api {patch} /issue/:issueid Upodate Issue
+* @apiVersion 1.0.0
+* @apiName PATCH-/issue/:issueid
+* @apiGroup Issue
+* @apiPermission user
+*
+* @apidescription
+*   Update an issue
+*
+* @apiParam {integer} issueid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchIssue.json} apiParam
+* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /issue/:issueid Get Issue
 * @apiVersion 1.0.0
 * @apiName GET-/issue/:issueid

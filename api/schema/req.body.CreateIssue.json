@@ -1,6 +1,10 @@
 {
     "type": "object",
     "additionalProperties": false,
+    "required": [
+        "title",
+        "body"
+    ],
     "properties": {
         "title": {
             "type": "string"

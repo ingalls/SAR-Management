@@ -13,7 +13,7 @@ export default async function router(schema, config) {
         res: 'res.ListUsers.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await User.list(config.pool, req.query));
         } catch (err) {
@@ -30,7 +30,7 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            Auth.is_admin(req);
+            await Auth.is_admin(req);
 
             res.json(await User.generate(config.pool, {
                 ...req.body,
@@ -50,7 +50,7 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            Auth.is_auth(req);
+            await Auth.is_auth(req);
 
             res.json(await User.from(config.pool, req.params.userid));
         } catch (err) {
