@@ -57,23 +57,21 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <table class="table card-table table-vcenter">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr :key='issue.id' v-for='issue in issues'>
-                                            <td v-text='a.name'></td>
-                                            <td v-text='a.status'></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
+                        <table class="table card-table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr :key='issue.id' v-for='issue in issues'>
+                                    <td v-text='a.name'></td>
+                                    <td v-text='a.status'></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
