@@ -31,7 +31,10 @@
                                     <div v-if='errors.title' v-text='errors.title' class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Assigned</label>
+                                    <UserSelect
+                                        label='Assigned'
+                                    />
+
                                     <label class="form-label">Labels</label>
                                 </div>
                                 <div class="col-md-10">
@@ -46,7 +49,6 @@
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
                                             <a @click='create' class="cursor-pointer btn btn-primary">
-                                                <PlusIcon/>
                                                 Create Issue
                                             </a>
                                         </div>
@@ -67,6 +69,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import UserSelect from './util/UserSelect.vue';
 import Err from './Err.vue';
 
 export default {
@@ -111,6 +114,7 @@ export default {
     components: {
         Err,
         PageFooter,
+        UserSelect
     }
 }
 </script>

@@ -1,12 +1,23 @@
 <template>
-    <div class="card card-md">
+<div class='col-lg-12'>
+    <div class="card">
         <div class="card-body">
-            <h2 class="h2 text-center mb-4">Login to your account</h2>
             <div class="mb-3">
-                <label class="form-label">Username or Email</label>
-                <input v-model='username' type="text" class="form-control" placeholder="your@email.com" autocomplete="off">
+                <label class="form-label">Comment</label>
+                <textarea v-model='body' type="text" class="form-control"/>
+            </div>
+
+            <div class="col-md-12">
+                <div class='d-flex'>
+                    <div class='ms-auto'>
+                        <a @click='create' class="cursor-pointer btn btn-primary">
+                            Comment
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 
     <Err v-if='err' :err='err' @close='err = null'/>
 </div>
@@ -19,23 +30,19 @@ export default {
     name: 'CreateComment',
     data: function() {
         return {
+            err: false,
             body: '',
         }
     },
     methods: {
-        createComment: async function() {
+        create: async function() {
             try {
-                const login = await window.std('/api/login', {
+                await window.std(`/api/issue/${this.$route.params.issueid}/comment`, {
                     method: 'POST',
                     body: {
-                        username: this.username,
-                        password: this.password
+                        body: this.body
                     }
                 });
-
-                localStorage.token = login.token;
-
-                this.$router.push("/");
             } catch (err) {
                 this.err = err;
             }

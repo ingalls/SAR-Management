@@ -18,74 +18,38 @@
 
 
 /**
-* @api {get} /issue Get Issues
+* @api {get} /issue/:issueid/comment Get Comments
 * @apiVersion 1.0.0
-* @apiName GET-/issue
-* @apiGroup Issue
+* @apiName GET-/issue/:issueid/comment
+* @apiGroup Comments
 * @apiPermission user
 *
 * @apidescription
-*   Get all issues for the Org
-*
-
-*
-*
-*
-* @apiSchema {jsonschema=../schema/res.ListIssues.json} apiSuccess
-*/
-
-
-/**
-* @api {post} /issue Create Issue
-* @apiVersion 1.0.0
-* @apiName POST-/issue
-* @apiGroup Issue
-* @apiPermission user
-*
-* @apidescription
-*   Create a new issue
-*
-
-*
-*
-* @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssue.json} apiParam
-* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
-*/
-
-
-/**
-* @api {patch} /issue/:issueid Upodate Issue
-* @apiVersion 1.0.0
-* @apiName PATCH-/issue/:issueid
-* @apiGroup Issue
-* @apiPermission user
-*
-* @apidescription
-*   Update an issue
-*
-* @apiParam {integer} issueid param
-*
-*
-* @apiSchema (Body) {jsonschema=../schema/req.body.PatchIssue.json} apiParam
-* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
-*/
-
-
-/**
-* @api {get} /issue/:issueid Get Issue
-* @apiVersion 1.0.0
-* @apiName GET-/issue/:issueid
-* @apiGroup Issue
-* @apiPermission user
-*
-* @apidescription
-*   Get an issue
+*   Get all comments for a given issue
 *
 * @apiParam {integer} issueid param
 *
 *
 *
-* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+* @apiSchema {jsonschema=../schema/res.ListIssueComments.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /issue/:issueid/comment Create Comment
+* @apiVersion 1.0.0
+* @apiName POST-/issue/:issueid/comment
+* @apiGroup Comments
+* @apiPermission user
+*
+* @apidescription
+*   Create a new issue comment
+*
+* @apiParam {integer} issueid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssueComment.json} apiParam
+* @apiSchema {jsonschema=../schema/issues_comments.json} apiSuccess
 */
 
 
