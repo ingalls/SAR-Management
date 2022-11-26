@@ -166,8 +166,8 @@
                                         <td @click='$router.push(`/team/user/${user.id}`)'>
                                             <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
                                         </td>
-                                        <td v-text='user.email'></td>
-                                        <td v-text='user.phone'></td>
+                                        <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
+                                        <td><a :href='`tel:${user.email}`' v-text='user.phone'></a></td>
                                     </tr>
                                 </tbody>
                             </table>
