@@ -1,19 +1,5 @@
 <template>
 <div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>

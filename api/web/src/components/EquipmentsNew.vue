@@ -23,25 +23,22 @@
                     <div class="card">
                         <div class="card-body">
                             <div class='row row-cards'>
-                                <div class="col-md-10">
-                                    <label class="form-label">Issue Title</label>
-                                    <input type="text" class="form-control" placeholder="Issue Title">
+                                <div class="col-md-4">
+                                    <label class="form-label">Photo</label>
                                 </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Assigned</label>
-                                    <label class="form-label">Labels</label>
-                                </div>
-                                <div class="col-md-10">
-                                    <label class="form-label">Issue Title</label>
-                                    <textarea class="form-control" rows="6" placeholder="Issue Content.."></textarea>
+                                <div class="col-md-8">
+                                    <label class="form-label">Equipment Name</label>
+                                    <input v-model='name' type="text" class="form-control" placeholder="Equipment Name">
+
+                                    <label class="form-label">Equipment Description</label>
+                                    <textarea v-text='description' class="form-control" rows="6" placeholder="Equipment Description"></textarea>
                                 </div>
 
-                                <div class="col-md-10">
+                                <div class="col-md-12">
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
-                                            <a @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
-                                                <PlusIcon/>
-                                                Create Issue
+                                            <a @click='create' class="cursor-pointer btn btn-primary">
+                                                Create Equipment
                                             </a>
                                         </div>
                                     </div>
@@ -66,6 +63,25 @@ export default {
     data: function() {
         return {
             err: false,
+            name: '',
+            description: ''
+        }
+    },
+    methods: {
+        create: async function() {
+            try {
+                const equip = await window.std('/api/equipment', {
+                    method: 'POST',
+                    body: {
+                        name: this.name,
+                        description: this.description
+                    }
+                })
+
+                this.$router.push(`/equipment/${equip.id}`);
+            } catch (err) {
+                this.err = err;
+            }
         }
     },
     components: {
