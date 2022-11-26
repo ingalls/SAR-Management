@@ -124,9 +124,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr :key='issue.id' v-for='issue in issues'>
-                                        <td v-text='a.name'></td>
-                                        <td v-text='a.status'></td>
+                                    <tr :key='team.id' v-for='team in teams.teams'>
+                                        <td v-text='team.name'></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -209,18 +208,25 @@ export default {
     data: function() {
         return {
             err: false,
-            users: {
-
-            }
+            users: { },
+            teams: { }
         }
     },
     mounted: function() {
         this.listUsers();
+        this.listTeams();
     },
     methods: {
         listUsers: async function() {
             try {
                 this.users = await window.std('/api/user');
+            } catch (err) {
+                this.err = err;
+            }
+        },
+        listTeams: async function() {
+            try {
+                this.teams = await window.std('/api/team');
             } catch (err) {
                 this.err = err;
             }
