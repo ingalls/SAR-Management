@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "missions"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "type": "integer"
+        },
+        "missions": {
+            "type": "array",
+            "items":  {
+                "type": "object"
+            }
+        }
+    }
+}

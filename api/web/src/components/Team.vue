@@ -108,7 +108,7 @@
                                         <div class="btn-list">
                                             <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a @click='getExport' class="dropdown-item" href="#">Edit</a>
+                                                <a @click='$router.push("/team/new")' class="dropdown-item cursor-pointer">New Team</a>
                                             </div>
                                         </div>
                                     </div>
@@ -144,7 +144,7 @@
                                         <div class="btn-list">
                                             <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a @click='getExport' class="dropdown-item" href="#">Edit</a>
+                                                <a @click='$router.push("/team/user/new")' class="dropdown-item">New User</a>
                                             </div>
                                         </div>
                                     </div>

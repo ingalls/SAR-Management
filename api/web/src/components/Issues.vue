@@ -57,23 +57,21 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <table class="table card-table table-vcenter">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr :key='issue.id' v-for='issue in issues.issues'>
-                                            <td v-text='issue.title'></td>
-                                            <td v-text='issue.status'></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
+                        <table class="table card-table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr :key='issue.id' v-for='issue in issues.issues'>
+                                    <td><a @click='$router.push(`/issue/${issue.id}`)' class='cursor-pointer' v-text='issue.title'></a></td>
+                                    <td v-text='issue.status'></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

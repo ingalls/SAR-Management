@@ -11,10 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/doc/new")' class="cursor-pointer btn btn-primary">
-                                <PlusIcon/>
-                                New Doc
-                            </a>
+                            <a @click='$router.push("/doc/new")' class="cursor-pointer btn btn-primary">New Doc</a>
                         </div>
                     </div>
                 </div>
@@ -88,9 +85,6 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import TablerSelect from './util/Select.vue';
-import {
-    PlusIcon
-} from 'vue-tabler-icons';
 
 export default {
     name: 'Docs',
@@ -100,7 +94,6 @@ export default {
         }
     },
     components: {
-        PlusIcon,
         PageFooter,
         TablerSelect
     }

@@ -162,38 +162,38 @@
 
 
 /**
-* @api {get} /mission Get Issues
+* @api {get} /mission List Missions
 * @apiVersion 1.0.0
 * @apiName GET-/mission
-* @apiGroup Issue
+* @apiGroup Mission
 * @apiPermission user
 *
 * @apidescription
-*   Get all issues for the Org
+*   Get all missions for the Org
 *
 
 *
 *
 *
-* @apiSchema {jsonschema=../schema/res.ListIssues.json} apiSuccess
+* @apiSchema {jsonschema=../schema/res.ListMissions.json} apiSuccess
 */
 
 
 /**
-* @api {post} /issue Create Issue
+* @api {post} /mission Create Mission
 * @apiVersion 1.0.0
-* @apiName POST-/issue
-* @apiGroup Issue
+* @apiName POST-/mission
+* @apiGroup Mission
 * @apiPermission user
 *
 * @apidescription
-*   Create a new issue
+*   Create a new mission
 *
 
 *
 *
-* @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssue.json} apiParam
-* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateMission.json} apiParam
+* @apiSchema {jsonschema=../schema/missions.json} apiSuccess
 */
 
 
