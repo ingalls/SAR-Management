@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "name",
+        "body"
+    ],
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "body": {
+            "type": "string"
+        }
+    }
+}

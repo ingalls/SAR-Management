@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./teams/id.json"
+        },
+        "created": {
+            "$ref": "./teams/created.json"
+        },
+        "updated": {
+            "$ref": "./teams/updated.json"
+        },
+        "name": {
+            "$ref": "./teams/name.json"
+        },
+        "body": {
+            "$ref": "./teams/body.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "name",
+        "body"
+    ]
+}

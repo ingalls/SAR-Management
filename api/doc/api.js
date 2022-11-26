@@ -216,6 +216,60 @@
 
 
 /**
+* @api {get} /team Get Teams
+* @apiVersion 1.0.0
+* @apiName GET-/team
+* @apiGroup Teams
+* @apiPermission user
+*
+* @apidescription
+*   Get all teams on the server
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListTeams.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /team Create Team
+* @apiVersion 1.0.0
+* @apiName POST-/team
+* @apiGroup Teams
+* @apiPermission admin
+*
+* @apidescription
+*   Create a new team
+*
+
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateTeam.json} apiParam
+* @apiSchema {jsonschema=../schema/res.Team.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /team/:teamid Get User
+* @apiVersion 1.0.0
+* @apiName GET-/team/:teamid
+* @apiGroup Teams
+* @apiPermission user
+*
+* @apidescription
+*   Return a team
+*
+* @apiParam {integer} teamid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Team.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /user Get Users
 * @apiVersion 1.0.0
 * @apiName GET-/user
@@ -256,7 +310,7 @@
 * @apiVersion 1.0.0
 * @apiName GET-/user/:userid
 * @apiGroup User
-* @apiPermission admin
+* @apiPermission user
 *
 * @apidescription
 *   Return a user

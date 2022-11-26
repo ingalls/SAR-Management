@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "teams"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "type": "integer"
+        },
+        "teams": {
+            "type": "array",
+            "items":  {
+                "$ref": "./res.Team.json"
+            }
+        }
+    }
+}

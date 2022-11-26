@@ -67,6 +67,14 @@ function up(knex) {
             status      TEXT NOT NULL DEFAULT 'open',
             name        TEXT NOT NULL
         );
+
+        CREATE TABLE teams (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            name        TEXT NOT NULL,
+            body        TEXT NOT NULL
+        );
     `);
 }
 

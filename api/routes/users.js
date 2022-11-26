@@ -44,7 +44,7 @@ export default async function router(schema, config) {
     await schema.get('/user/:userid', {
         name: 'Create User',
         group: 'User',
-        auth: 'admin',
+        auth: 'user',
         ':userid': 'integer',
         description: 'Return a user',
         res: 'res.User.json'
