@@ -53,6 +53,15 @@
                         </div>
                     </div>
                 </div>
+
+                <div :key='comment.id' v-for='comment in comments' class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                        </div>
+                    </div>
+                </div>
+
+                <CreateComment/>
             </div>
         </div>
     </div>
@@ -66,6 +75,7 @@
 <script>
 import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
+import CreateComment from './Issue/CreateComment.vue';
 
 export default {
     name: 'Issue',
@@ -76,7 +86,8 @@ export default {
                 id: '',
                 title: '',
                 body: ''
-            }
+            },
+            comments: []
         }
     },
     mounted: function() {
@@ -89,11 +100,19 @@ export default {
             } catch (err) {
                 this.err = err;
             }
+        },
+        fetchComments: async function() {
+            try {
+                this.comments = await window.std(`/api/issue/${this.$route.params.issueid}/comment`);
+            } catch (err) {
+                this.err = err;
+            }
         }
     },
     components: {
         Err,
         PageFooter,
+        CreateComment
     }
 }
 </script>

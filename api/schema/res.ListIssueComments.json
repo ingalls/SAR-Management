@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "issues_comments"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "type": "integer"
+        },
+        "issues_comments": {
+            "type": "array",
+            "items":  {
+                "type": "object"
+            }
+        }
+    }
+}
