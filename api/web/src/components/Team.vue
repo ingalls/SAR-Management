@@ -201,6 +201,7 @@
 </template>
 
 <script>
+import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
 
 export default {
@@ -226,6 +227,7 @@ export default {
         }
     },
     components: {
+        Err,
         PageFooter,
     }
 }

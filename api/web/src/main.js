@@ -20,6 +20,7 @@ const router = new VueRouter.createRouter({
 
         { path: '/issue', name: 'issues', component: () => import('./components/Issues.vue') },
         { path: '/issue/new', name: 'issues-new', component: () => import('./components/IssuesNew.vue') },
+        { path: '/issue/:issueid', name: 'issue', component: () => import('./components/Issue.vue') },
 
         { path: '/equipment', name: 'equipment', component: () => import('./components/Equipments.vue') },
         { path: '/equipment/new', name: 'equipment-new', component: () => import('./components/EquipmentsNew.vue') },

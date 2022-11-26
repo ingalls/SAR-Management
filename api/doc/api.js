@@ -54,6 +54,24 @@
 
 
 /**
+* @api {get} /issue/:issueid Get Issue
+* @apiVersion 1.0.0
+* @apiName GET-/issue/:issueid
+* @apiGroup Issue
+* @apiPermission user
+*
+* @apidescription
+*   Get an issue
+*
+* @apiParam {integer} issueid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /leadership List Leadership
 * @apiVersion 1.0.0
 * @apiName GET-/leadership

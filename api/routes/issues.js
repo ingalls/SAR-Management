@@ -39,4 +39,21 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.get('/issue/:issueid', {
+        name: 'Get Issue',
+        group: 'Issue',
+        auth: 'user',
+        ':issueid': 'integer',
+        description: 'Get an issue',
+        res: 'issues.json'
+    }, async (req, res) => {
+        try {
+            Auth.is_auth(req);
+
+            res.json(await Issue.from(config.pool, req.params.issueid));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }
