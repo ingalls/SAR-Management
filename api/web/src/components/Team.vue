@@ -141,6 +141,17 @@
 
                                     <div class='ms-auto'>
                                         <div class="btn-list">
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" name="btn-radio-toolbar" id="btn-radio-toolbar-1" autocomplete="off" checked="">
+                                                    <label for="btn-radio-toolbar-1" class="btn btn-icon">
+                                                        <ListIcon/>
+                                                    </label>
+                                                    <input type="radio" class="btn-check" name="btn-radio-toolbar" id="btn-radio-toolbar-7" autocomplete="off">
+                                                    <label for="btn-radio-toolbar-7" class="btn btn-icon">
+                                                        <PolaroidIcon/>
+                                                    </label>
+                                            </div>
+
                                             <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
                                                 <a @click='$router.push("/team/user/new")' class="dropdown-item">New User</a>
@@ -202,6 +213,10 @@
 <script>
 import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
+import {
+    ListIcon,
+    PolaroidIcon
+} from 'vue-tabler-icons'
 
 export default {
     name: 'Team',
@@ -235,6 +250,8 @@ export default {
     components: {
         Err,
         PageFooter,
+        ListIcon,
+        PolaroidIcon
     }
 }
 </script>
