@@ -215,7 +215,7 @@ import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
 import {
     ListIcon,
-    PolaroidIcon
+    PolaroidIcon,
 } from 'vue-tabler-icons'
 
 export default {
@@ -224,7 +224,10 @@ export default {
         return {
             err: false,
             users: { },
-            teams: { }
+            teams: {
+                total: 0,
+                teams: []
+            }
         }
     },
     mounted: function() {
@@ -251,7 +254,7 @@ export default {
         Err,
         PageFooter,
         ListIcon,
-        PolaroidIcon
+        PolaroidIcon,
     }
 }
 </script>

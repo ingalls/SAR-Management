@@ -21,14 +21,14 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class='card-header'>
-                            <h3 class='card-title' v-text='`${user.fname} ${user.lname}`'></h3>
+                            <h3 class='card-title' v-text='`${usr.fname} ${usr.lname}`'></h3>
 
                             <div class='ms-auto'>
                                 <div class='btn-list'>
                                     <div class='ms-auto'>
-                                        <span v-if='user.access === "admin"' class="badge bg-red">Admin</span>
-                                        <span v-if='user.access === "user"' class="badge bg-blue">User</span>
-                                        <span v-if='user.access === "read"' class="badge bg-gray">Read</span>
+                                        <span v-if='usr.access === "admin"' class="badge bg-red">Admin</span>
+                                        <span v-if='usr.access === "user"' class="badge bg-blue">User</span>
+                                        <span v-if='usr.access === "read"' class="badge bg-gray">Read</span>
                                     </div>
 
                                     <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
@@ -43,15 +43,15 @@
                             <div class="datagrid">
                                 <div class="datagrid-item">
                                     <div class="datagrid-title">Username</div>
-                                    <div class="datagrid-content" v-text='user.username'></div>
+                                    <div class="datagrid-content" v-text='usr.username'></div>
                                 </div>
                                 <div class="datagrid-item">
                                     <div class="datagrid-title">Email</div>
-                                    <div class="datagrid-content" v-text='user.email'></div>
+                                    <div class="datagrid-content" v-text='usr.email'></div>
                                 </div>
                                 <div class="datagrid-item">
                                     <div class="datagrid-title">Phone</div>
-                                    <div class="datagrid-content" v-text='user.phone'></div>
+                                    <div class="datagrid-content" v-text='usr.phone'></div>
                                 </div>
                                 <div class="datagrid-item">
                                     <div class="datagrid-title">Teams</div>
@@ -103,10 +103,13 @@ import Err from './Err.vue';
 
 export default {
     name: 'TeamUser',
+    props: {
+        user: Object
+    },
     data: function() {
         return {
             err: false,
-            user: {}
+            usr: {}
         }
     },
     mounted: function() {
@@ -115,7 +118,7 @@ export default {
     methods: {
         fetch: async function() {
             try {
-                this.user = await window.std(`/api/user/${this.$route.params.userid}`);
+                this.usr = await window.std(`/api/user/${this.$route.name === 'profile' ? this.user.id : this.$route.params.userid}`);
             } catch (err) {
                 this.err = err;
             }

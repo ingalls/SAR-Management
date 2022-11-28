@@ -101,7 +101,11 @@
         </div>
     </div>
 
-    <router-view/>
+    <template v-if='user'>
+        <router-view
+            :user='user'
+        />
+    </template>
 
     <Err v-if='err' :err='err' @close='err = null'/>
 </div>
