@@ -101,7 +101,7 @@
         </div>
     </div>
 
-    <template v-if='user'>
+    <template v-if='$route.name.includes("login") || user'>
         <router-view
             :auth='user'
         />
