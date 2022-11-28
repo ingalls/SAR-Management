@@ -21,48 +21,59 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-6">
-                                    <label class="form-label">First Name</label>
-                                    <input v-model='user.fname' type="text" :class='{
-                                        "is-invalid": errors.fname
-                                    }' class="form-control" placeholder="First Name">
-                                    <div v-if='errors.username' v-text='errors.username' class="invalid-feedback"></div>
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Last Name</label>
-                                    <input v-model='user.lname' type="text" :class='{
-                                        "is-invalid": errors.lname
-                                    }' class="form-control" placeholder="Last Name">
-                                    <div v-if='errors.lname' v-text='errors.lname' class="invalid-feedback"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Username</label>
-                                    <input v-model='user.username' type="text" :class='{
-                                        "is-invalid": errors.username
-                                    }' class="form-control" placeholder="Username">
-                                    <div v-if='errors.username' v-text='errors.title' class="invalid-feedback"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Email</label>
-                                    <input v-model='user.email' type="text" :class='{
-                                        "is-invalid": errors.email
-                                    }' class="form-control" placeholder="Email">
-                                    <div v-if='errors.email' v-text='errors.email' class="invalid-feedback"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Phone</label>
-                                    <input v-model='user.phone' type="text" placeholder='###-###-####' :class='{
-                                        "is-invalid": errors.phone
-                                    }' class="form-control">
-                                    <div v-if='errors.phone' v-text='errors.phone' class="invalid-feedback"></div>
-                                </div>
+                        <div class='row'>
+                            <div class='col-3'>
+                                <img v-if='user.profile_id' src='/user.webp'/>
+                                <img v-else src='/user.webp'/>
 
-                                <div class="col-md-12">
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a @click='create' class="cursor-pointer btn btn-primary">Update User</a>
+                                <div class='card-body d-flex justify-content-center'>
+                                    <a @click='create' class="cursor-pointer btn btn-secondary">Update Profile</a>
+                                </div>
+                            </div>
+                            <div class='col'>
+                                <div class="card-body">
+                                    <div class='row row-cards'>
+                                        <div class="col-md-6">
+                                            <label class="form-label">First Name</label>
+                                            <input v-model='user.fname' type="text" :class='{
+                                                "is-invalid": errors.fname
+                                            }' class="form-control" placeholder="First Name">
+                                            <div v-if='errors.username' v-text='errors.username' class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Last Name</label>
+                                            <input v-model='user.lname' type="text" :class='{
+                                                "is-invalid": errors.lname
+                                            }' class="form-control" placeholder="Last Name">
+                                            <div v-if='errors.lname' v-text='errors.lname' class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Username</label>
+                                            <input v-model='user.username' type="text" :class='{
+                                                "is-invalid": errors.username
+                                            }' class="form-control" placeholder="Username">
+                                            <div v-if='errors.username' v-text='errors.title' class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Email</label>
+                                            <input v-model='user.email' type="text" :class='{
+                                                "is-invalid": errors.email
+                                            }' class="form-control" placeholder="Email">
+                                            <div v-if='errors.email' v-text='errors.email' class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Phone</label>
+                                            <input v-model='user.phone' type="text" placeholder='###-###-####' :class='{
+                                                "is-invalid": errors.phone
+                                            }' class="form-control">
+                                            <div v-if='errors.phone' v-text='errors.phone' class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class='d-flex'>
+                                            <div class='ms-auto'>
+                                                <a @click='create' class="cursor-pointer btn btn-primary">Update User</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
