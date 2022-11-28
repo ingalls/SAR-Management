@@ -119,7 +119,7 @@ export default {
                     }
                 });
 
-                this.$router.push(`/team/team/${update.id}`);
+                this.$router.push(`/team/${update.id}`);
             } catch (err) {
                 this.err = err;
             }

@@ -306,7 +306,7 @@
 
 
 /**
-* @api {get} /team/:teamid Get User
+* @api {get} /team/:teamid Get Team
 * @apiVersion 1.0.0
 * @apiName GET-/team/:teamid
 * @apiGroup Teams
@@ -320,6 +320,42 @@
 *
 *
 * @apiSchema {jsonschema=../schema/res.Team.json} apiSuccess
+*/
+
+
+/**
+* @api {patch} /team/:teamid Update Team
+* @apiVersion 1.0.0
+* @apiName PATCH-/team/:teamid
+* @apiGroup Teams
+* @apiPermission admin
+*
+* @apidescription
+*   Update a team
+*
+* @apiParam {integer} teamid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchTeam.json} apiParam
+* @apiSchema {jsonschema=../schema/res.Team.json} apiSuccess
+*/
+
+
+/**
+* @api {delete} /team/:teamid Delete Team
+* @apiVersion 1.0.0
+* @apiName DELETE-/team/:teamid
+* @apiGroup Teams
+* @apiPermission admin
+*
+* @apidescription
+*   Delete a team
+*
+* @apiParam {integer} teamid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
 */
 
 
