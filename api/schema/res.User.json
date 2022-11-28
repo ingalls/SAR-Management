@@ -2,6 +2,8 @@
     "type": "object",
     "additionalProperties": false,
     "required": [
+        "id",
+        "access",
         "username",
         "created",
         "updated",
@@ -11,6 +13,12 @@
         "fname"
     ],
     "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "access": {
+            "type": "string"
+        },
         "username": {
             "type": "string"
         },

@@ -40,6 +40,14 @@
                 <div class="container-xl">
                     <ul class="navbar-nav">
                         <li class="nav-item">
+                            <a class="nav-link cursor-pointer" @click='$router.push("/")'>
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <HomeIcon/>
+                                </span>
+                                <span class="nav-link-title">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/issue")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <BugIcon/>
@@ -79,6 +87,14 @@
                                 <span class="nav-link-title">Team</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link cursor-pointer" @click='$router.push("/team")'>
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <CalendarIcon/>
+                                </span>
+                                <span class="nav-link-title">Calendar</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -98,12 +114,14 @@ import Err from './components/Err.vue';
 import {
     UserIcon,
     BellIcon,
+    HomeIcon,
     PlusIcon,
     UsersIcon,
     ShovelIcon,
     BugIcon,
     NotebookIcon,
     AmbulanceIcon,
+    CalendarIcon,
 } from 'vue-tabler-icons';
 
 export default {
@@ -137,12 +155,14 @@ export default {
     components: {
         Err,
         BugIcon,
+        HomeIcon,
         PlusIcon,
         UsersIcon,
         UserIcon,
         BellIcon,
         ShovelIcon,
         NotebookIcon,
+        CalendarIcon,
         AmbulanceIcon
     }
 }

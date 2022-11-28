@@ -125,7 +125,7 @@
                                 </thead>
                                 <tbody>
                                     <tr :key='team.id' v-for='team in teams.teams'>
-                                        <td v-text='team.name'></td>
+                                        <td><a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer' v-text='team.name'></a></td>
                                     </tr>
                                 </tbody>
                             </table>

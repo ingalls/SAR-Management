@@ -36,11 +36,14 @@
                                     <textarea class="form-control" rows="6" placeholder="Mission Content.."></textarea>
                                 </div>
 
-                                <div class="col-md-10">
+                                <div class='col-md-12'>
+                                    <Location/>
+                                </div>
+
+                                <div class="col-md-12">
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
-                                            <a @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
-                                                <PlusIcon/>
+                                            <a @click='create' class="cursor-pointer btn btn-primary">
                                                 Create Mission
                                             </a>
                                         </div>
@@ -60,6 +63,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import Location from './Mission/Location.vue';
 
 export default {
     name: 'MissionsNew',
@@ -68,7 +72,12 @@ export default {
             err: false,
         }
     },
+    methods: {
+        create: async function() {
+        }
+    },
     components: {
+        Location,
         PageFooter,
     }
 }

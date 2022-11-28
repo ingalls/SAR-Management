@@ -2,12 +2,16 @@
     "type": "object",
     "additionalProperties": false,
     "required": [
+        "id",
         "created",
         "updated",
         "name",
         "body"
     ],
     "properties": {
+        "id": {
+            "type": "integer"
+        },
         "created": {
             "type": "integer"
         },
