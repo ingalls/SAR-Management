@@ -40,12 +40,13 @@
                             </div>
 
                         </div>
-                        <div class="card-body">
-                            <div class='row row-0'>
-                                <div class='col-3'>
-
-                                </div>
-                                <div class='col'>
+                        <div class='row row-0'>
+                            <div class='col-3'>
+                                <img v-if='user.profile_id' src='/user.webp'/>
+                                <img v-else src='/user.webp'/>
+                            </div>
+                            <div class='col'>
+                                <div class="card-body">
                                     <div class="datagrid">
                                         <div class="datagrid-item">
                                             <div class="datagrid-title">Username</div>
