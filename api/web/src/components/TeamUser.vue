@@ -41,22 +41,29 @@
 
                         </div>
                         <div class="card-body">
-                            <div class="datagrid">
-                                <div class="datagrid-item">
-                                    <div class="datagrid-title">Username</div>
-                                    <div class="datagrid-content" v-text='user.username'></div>
+                            <div class='row row-0'>
+                                <div class='col-3'>
+
                                 </div>
-                                <div class="datagrid-item">
-                                    <div class="datagrid-title">Email</div>
-                                    <div class="datagrid-content" v-text='user.email'></div>
-                                </div>
-                                <div class="datagrid-item">
-                                    <div class="datagrid-title">Phone</div>
-                                    <div class="datagrid-content" v-text='user.phone'></div>
-                                </div>
-                                <div class="datagrid-item">
-                                    <div class="datagrid-title">Teams</div>
-                                    <div class="datagrid-content">So Many Teams!</div>
+                                <div class='col'>
+                                    <div class="datagrid">
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Username</div>
+                                            <div class="datagrid-content" v-text='user.username'></div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Email</div>
+                                            <div class="datagrid-content" v-text='user.email'></div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Phone</div>
+                                            <div class="datagrid-content" v-text='user.phone'></div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Teams</div>
+                                            <div class="datagrid-content">So Many Teams!</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
