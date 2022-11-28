@@ -94,7 +94,7 @@ export default {
                     }
                 });
 
-                this.$router.push(`/team/team/${create.id}`);
+                this.$router.push(`/team/${create.id}`);
             } catch (err) {
                 this.err = err;
             }

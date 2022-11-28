@@ -75,6 +75,14 @@ function up(knex) {
             name        TEXT NOT NULL,
             body        TEXT NOT NULL
         );
+
+        CREATE TABLE assets (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            name        TEXT NOT NULL,
+            storage     BOOLEAN NOT NULL DEFAULT False
+        );
     `);
 }
 

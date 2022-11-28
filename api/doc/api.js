@@ -18,6 +18,96 @@
 
 
 /**
+* @api {get} /asset List Assets
+* @apiVersion 1.0.0
+* @apiName GET-/asset
+* @apiGroup Assets
+* @apiPermission public
+*
+* @apidescription
+*   List Assets
+*
+
+*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListAssets.json} apiParam
+*
+* @apiSchema {jsonschema=../schema/res.ListAssets.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /asset/:assetid Get Asset
+* @apiVersion 1.0.0
+* @apiName GET-/asset/:assetid
+* @apiGroup Assets
+* @apiPermission public
+*
+* @apidescription
+*   Get single asset
+*
+* @apiParam {integer} assetid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/assets.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /asset Create Asset
+* @apiVersion 1.0.0
+* @apiName POST-/asset
+* @apiGroup Assets
+* @apiPermission user
+*
+* @apidescription
+*   Create a new asset
+*
+* @apiParam {integer} assetid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/assets.json} apiSuccess
+*/
+
+
+/**
+* @api {patch} /asset/:assetid Update Asset
+* @apiVersion 1.0.0
+* @apiName PATCH-/asset/:assetid
+* @apiGroup Assets
+* @apiPermission user
+*
+* @apidescription
+*   Update Asset
+*
+* @apiParam {integer} assetid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/assets.json} apiSuccess
+*/
+
+
+/**
+* @api {delete} /asset/:assetid Delete Asset
+* @apiVersion 1.0.0
+* @apiName DELETE-/asset/:assetid
+* @apiGroup Assets
+* @apiPermission user
+*
+* @apidescription
+*   Delete Asset
+*
+* @apiParam {integer} assetid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /issue/:issueid/comment Get Comments
 * @apiVersion 1.0.0
 * @apiName GET-/issue/:issueid/comment
