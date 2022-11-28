@@ -41,6 +41,24 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.patch('/user/:userid', {
+        name: 'Patch User',
+        group: 'User',
+        auth: 'admin',
+        description: 'Update an existing user',
+        ':userid': 'integer',
+        body: 'req.body.PatchUser.json',
+        res: 'res.User.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(req);
+
+            res.json(await User.commit(config.pool, req.params.userid, req.body));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.get('/user/:userid', {
         name: 'Create User',
         group: 'User',

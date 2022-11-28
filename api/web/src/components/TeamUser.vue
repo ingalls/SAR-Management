@@ -25,10 +25,20 @@
                             <h3 class='card-title' v-text='`${user.fname} ${user.lname}`'></h3>
 
                             <div class='ms-auto'>
-                                <span v-if='user.access === "admin"' class="badge bg-red">Admin</span>
-                                <span v-if='user.access === "user"' class="badge bg-blue">User</span>
-                                <span v-if='user.access === "read"' class="badge bg-gray">Read</span>
+                                <div class='btn-list'>
+                                    <div class='ms-auto'>
+                                        <span v-if='user.access === "admin"' class="badge bg-red">Admin</span>
+                                        <span v-if='user.access === "user"' class="badge bg-blue">User</span>
+                                        <span v-if='user.access === "read"' class="badge bg-gray">Read</span>
+                                    </div>
+
+                                    <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                    <div class="dropdown-menu dropdown-menu-end" style="">
+                                        <a @click='$router.push(`/team/user/${$route.params.userid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                         <div class="card-body">
                             <div class="datagrid">
@@ -45,6 +55,33 @@
                                     <div class="datagrid-content" v-text='user.phone'></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class='card-header'>
+                            <h3 class='card-title'>Issued Equipment</h3>
+                        </div>
+                        <div class="card-body">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class='card-header'>
+                            <h3 class='card-title'>Assigned Issues</h3>
+                        </div>
+                        <div class="card-body">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class='card-header'>
+                            <h3 class='card-title'>Mission Log</h3>
+                        </div>
+                        <div class="card-body">
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "username": {
+            "type": "string"
+        },
+        "email": {
+            "type": "string"
+        },
+        "phone": {
+            "type": "string"
+        },
+        "lname": {
+            "type": "string"
+        },
+        "fname": {
+            "type": "string"
+        }
+    }
+}
