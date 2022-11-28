@@ -10,12 +10,6 @@
                             <li class="breadcrumb-item" aria-current="page"><a @click='$router.push("/")' class='cursor-pointer'>Team</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Leadership</a></li>
                         </ol>
-
-                        <div class='ms-auto'>
-                            <a @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
-                                New Position
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>

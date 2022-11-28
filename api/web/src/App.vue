@@ -103,7 +103,7 @@
 
     <template v-if='user'>
         <router-view
-            :user='user'
+            :auth='user'
         />
     </template>
 

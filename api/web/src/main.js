@@ -16,7 +16,7 @@ const router = new VueRouter.createRouter({
 
         { path: '/login', name: 'login', component: () => import('./components/Login.vue') },
 
-        { path: '/profile', name: 'profile', component: () => import('./components/Profile.vue') },
+        { path: '/profile', name: 'profile', component: () => import('./components/TeamUser.vue') },
 
         { path: '/issue', name: 'issues', component: () => import('./components/Issues.vue') },
         { path: '/issue/new', name: 'issues-new', component: () => import('./components/IssuesNew.vue') },

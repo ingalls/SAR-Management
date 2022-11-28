@@ -34,7 +34,7 @@
 
                                     <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                     <div class="dropdown-menu dropdown-menu-end" style="">
-                                        <a @click='$router.push(`/team/user/${$route.params.userid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
+                                        <a @click='$router.push(`/team/user/${userid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
                                     </div>
                                 </div>
                             </div>
@@ -112,8 +112,12 @@ import Err from './Err.vue';
 
 export default {
     name: 'TeamUser',
+    props: {
+        auth: Object
+    },
     data: function() {
         return {
+            userid: this.$route.name === 'profile' ? this.auth.id : this.$route.params.userid,
             err: false,
             user: {}
         }
@@ -124,7 +128,7 @@ export default {
     methods: {
         fetch: async function() {
             try {
-                this.user = await window.std(`/api/user/${this.$route.params.userid}`);
+                this.user = await window.std(`/api/user/${this.userid}`);
             } catch (err) {
                 this.err = err;
             }
