@@ -54,6 +54,10 @@
                                     <div class="datagrid-title">Phone</div>
                                     <div class="datagrid-content" v-text='user.phone'></div>
                                 </div>
+                                <div class="datagrid-item">
+                                    <div class="datagrid-title">Teams</div>
+                                    <div class="datagrid-content">So Many Teams!</div>
+                                </div>
                             </div>
                         </div>
                     </div>
