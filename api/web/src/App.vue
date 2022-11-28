@@ -88,7 +88,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link cursor-pointer" @click='$router.push("/team")'>
+                            <a class="nav-link cursor-pointer" @click='$router.push("/calendar")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <CalendarIcon/>
                                 </span>
