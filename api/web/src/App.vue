@@ -99,7 +99,7 @@
                     <div class='ms-auto'>
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link cursor-pointer" @click='$router.push("/calendar")'>
+                                <a class="nav-link cursor-pointer" @click='$router.push("/admin")'>
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <AdjustmentsIcon/>
                                     </span>
