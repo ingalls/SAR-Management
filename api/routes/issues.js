@@ -52,7 +52,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            const issue = await Issue.from(config.pool, req.param.issueid);
+            const issue = await Issue.from(config.pool, req.params.issueid);
 
             if (req.auth.id !== issue.author && req.auth.access !== 'admin') {
                 throw new Err(401, null, 'Cannot edit another\'s issue');
