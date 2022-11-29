@@ -1,11 +1,5 @@
 function std() {
-    /**
-     * Standardize interactions with the backend API
-     *
-     * @param {URL|String} url      - Full URL or API fragment to request
-     * @param {Object} [opts={}]    - Options
-     */
-    window.std = async function(url, opts = {}) {
+    window.stdurl = function(url) {
         try {
             url = new URL(url);
         } catch (err) {
@@ -14,6 +8,18 @@ function std() {
 
         // Allow serving through Vue for hotloading
         if (url.hostname === 'localhost') url.port = '4999'
+
+        return url;
+    }
+
+    /**
+     * Standardize interactions with the backend API
+     *
+     * @param {URL|String} url      - Full URL or API fragment to request
+     * @param {Object} [opts={}]    - Options
+     */
+    window.std = async function(url, opts = {}) {
+        url = window.stdurl(url);
 
         try {
             if (!opts.headers) opts.headers = {};

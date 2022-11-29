@@ -28,6 +28,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex">
+                                <div class="input-icon w-50">
+                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
+                                    <span class="input-icon-addon">
+                                        <SearchIcon width='24'/>
+                                    </span>
+                                </div>
+
                                 <div class='ms-auto'>
                                     <div class="btn-list">
                                         <TablerSelect
@@ -88,6 +95,9 @@
 import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
 import { Select } from '@tak-ps/vue-tabler';
+import {
+    SearchIcon
+} from 'vue-tabler-icons';
 
 export default {
     name: 'Issues',
@@ -96,7 +106,15 @@ export default {
             err: false,
             issues: {
 
+            },
+            query: {
+                filter: ''
             }
+        }
+    },
+    watch: {
+        'query.filter': function() {
+            this.listIssues();
         }
     },
     mounted: function() {
@@ -105,7 +123,9 @@ export default {
     methods: {
         listIssues: async function() {
             try {
-                this.issues = await window.std('/api/issue');
+                const url = window.stdurl('/api/issue');
+                if (this.query.filter) url.searchParams.append('filter', this.query.filter);
+                this.issues = await window.std(url)
             } catch (err) {
                 this.err = err;
             }
@@ -114,7 +134,8 @@ export default {
     components: {
         Err,
         PageFooter,
-        TablerSelect: Select
+        TablerSelect: Select,
+        SearchIcon
     }
 }
 </script>
