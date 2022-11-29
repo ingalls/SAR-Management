@@ -27,7 +27,7 @@
                                 <img v-else src='/user.webp'/>
 
                                 <div class='card-body d-flex justify-content-center'>
-                                    <a @click='create' class="cursor-pointer btn btn-secondary">Update Profile</a>
+                                    <a @click='upload = true' class="cursor-pointer btn btn-secondary">Update Profile</a>
                                 </div>
                             </div>
                             <div class='col'>
@@ -87,11 +87,13 @@
 
     <PageFooter/>
     <Err v-if='err' :err='err' @close='err = null'/>
+    <Upload v-if='upload' @close='upload = null' @upload='asset($event)'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
+import Upload from './util/Upload.vue';
 import Err from './Err.vue';
 
 export default {
@@ -99,6 +101,7 @@ export default {
     data: function() {
         return {
             err: false,
+            upload: false,
             errors: {
                 username: false,
                 email: false,
@@ -122,6 +125,18 @@ export default {
         fetch: async function() {
             try {
                 this.user = await window.std(`/api/user/${this.$route.params.userid}`);
+            } catch (err) {
+                this.err = err;
+            }
+        },
+        asset: async function(asset) {
+            try {
+                this.user = await window.std(`/api/user/${this.$route.params.userid}`, {
+                    method: 'PATCH',
+                    body: {
+                        profile_id: asset.id
+                    }
+                });
             } catch (err) {
                 this.err = err;
             }
@@ -156,6 +171,7 @@ export default {
     },
     components: {
         Err,
+        Upload,
         PageFooter,
     }
 }

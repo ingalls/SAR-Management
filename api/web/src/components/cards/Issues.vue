@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import TablerSelect from '../util/Select.vue';
+import { Select } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'IssueCard',
@@ -60,7 +60,7 @@ export default {
         }
     },
     components: {
-        TablerSelect
+        TablerSelect: Select
     }
 }
 </script>

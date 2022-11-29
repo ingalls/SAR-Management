@@ -87,7 +87,7 @@
 <script>
 import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
-import TablerSelect from './util/Select.vue';
+import { Select } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Issues',
@@ -114,7 +114,7 @@ export default {
     components: {
         Err,
         PageFooter,
-        TablerSelect
+        TablerSelect: Select
     }
 }
 </script>

@@ -1,4 +1,4 @@
-<h1 align=center>TAK Stats</h1>
+<h1 align=center>SAR Management</h1>
 
-<p align=center>Aggregate stats from a TAK LDAP Instance</p>
+<p align=center>Search & Rescue Team Management Platform</p>
 

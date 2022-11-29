@@ -84,7 +84,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
-import TablerSelect from './util/Select.vue';
+import { Select } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Equipments',
@@ -95,7 +95,7 @@ export default {
     },
     components: {
         PageFooter,
-        TablerSelect
+        TablerSelect: Select
     }
 }
 </script>
