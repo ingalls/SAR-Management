@@ -83,6 +83,14 @@ function up(knex) {
             name        TEXT NOT NULL,
             storage     BOOLEAN NOT NULL DEFAULT False
         );
+
+        CREATE TABLE notifications (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            uid         BIGINT REFERENCES users(id),
+            text        TEXT NOT NULL
+        );
     `);
 }
 
