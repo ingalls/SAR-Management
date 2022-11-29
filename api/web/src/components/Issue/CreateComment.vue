@@ -10,9 +10,14 @@
             <div class="col-md-12">
                 <div class='d-flex'>
                     <div class='ms-auto'>
-                        <a @click='create' class="cursor-pointer btn btn-primary">
-                            Comment
-                        </a>
+                        <div class='btn-list'>
+                            <a @click='create' class="cursor-pointer btn btn-outline-secondary">
+                                Comment &amp; Close
+                            </a>
+                            <a @click='create' class="cursor-pointer btn btn-primary">
+                                Comment
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
