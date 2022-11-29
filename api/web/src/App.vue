@@ -96,6 +96,18 @@
                             </a>
                         </li>
                     </ul>
+                    <div class='ms-auto'>
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link cursor-pointer" @click='$router.push("/calendar")'>
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <AdjustmentsIcon/>
+                                    </span>
+                                    <span class="nav-link-title">Admin</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,6 +139,7 @@ import {
     NotebookIcon,
     AmbulanceIcon,
     CalendarIcon,
+    AdjustmentsIcon
 } from 'vue-tabler-icons';
 
 export default {
@@ -168,7 +181,8 @@ export default {
         ShovelIcon,
         NotebookIcon,
         CalendarIcon,
-        AmbulanceIcon
+        AmbulanceIcon,
+        AdjustmentsIcon
     }
 }
 </script>
