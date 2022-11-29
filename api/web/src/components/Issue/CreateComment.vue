@@ -43,6 +43,9 @@ export default {
                         body: this.body
                     }
                 });
+
+                this.body = '';
+                this.$emit('comment');
             } catch (err) {
                 this.err = err;
             }

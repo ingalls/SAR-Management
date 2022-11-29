@@ -48,14 +48,15 @@
                     </div>
                 </div>
 
-                <div :key='comment.id' v-for='comment in comments' class="col-lg-12">
+                <div :key='comment.id' v-for='comment in comments.issues_comments' class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
-                        </div>
+                        <div class="card-body" v-text='comment.body'></div>
                     </div>
                 </div>
 
-                <CreateComment/>
+                <CreateComment
+                    @comment='fetchComments'
+                />
             </div>
         </div>
     </div>
@@ -81,11 +82,14 @@ export default {
                 title: '',
                 body: ''
             },
-            comments: []
+            comments: {
+                issues_comments: []
+            }
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
+        await this.fetchComments();
     },
     methods: {
         fetch: async function() {
