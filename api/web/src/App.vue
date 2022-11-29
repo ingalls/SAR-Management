@@ -114,6 +114,7 @@
 <script>
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
+
 import Err from './components/Err.vue';
 import {
     UserIcon,
