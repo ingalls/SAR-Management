@@ -32,6 +32,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <UserSelect
+                                        @err='err = $event'
                                         label='Assigned'
                                     />
 

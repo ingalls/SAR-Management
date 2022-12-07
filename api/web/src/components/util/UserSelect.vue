@@ -3,18 +3,32 @@
     <div class='row'>
         <div class="d-flex align-items-center">
             <div class="subheader" v-text='label'></div>
-            <div class="ms-auto lh-1">
-                <SettingsIcon
-                    class='cursor-pointer'
-                    height=16
-                    width=16
-                />
+
+            <div class='ms-auto'>
+                <div class="dropdown">
+                    <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <SettingsIcon
+                            class='cursor-pointer dropdown-toggle'
+                            height=16
+                            width=16
+                        />
+                    </div>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <div class='m-1'>
+                            <TablerInput placeholder='Filter Users' v-model='filter'/>
+
+                            <div @click='assigned.push(user)' :key='user.id' v-for='user in list.users'>
+                                <span v-text='`${user.fname} ${user.lname}`'/>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class='row'>
             <div :key='a.id' v-for='a in assigned' class="d-flex align-items-center">
                 <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                <span v-text='a.username'/>
+                <span v-text='`${a.fname} ${a.lname}`'/>
             </div>
         </div>
     </div>
@@ -26,28 +40,54 @@ import {
     SettingsIcon
 } from 'vue-tabler-icons';
 
+import {
+    Input
+} from '@tak-ps/vue-tabler'
+
 export default {
     name: 'UserSelect',
     props: {
+        label: {
+            type: String,
+            default: 'Users'
+        },
         limit: {
             type: Number,
             default: 10
         },
-        label: {
-            type: String,
-            default: 'Users'
-        }
     },
     data: function() {
         return {
-            assigned: [{
-                id: 1,
-                username: 'ingalls'
-            }]
+            filter: '',
+            list: {
+                users: []
+            },
+            assigned: []
+        }
+    },
+    watch: {
+        filter: function() {
+            this.listUsers();
+        }
+    },
+    mounted: function() {
+        this.listUsers();
+    },
+    methods: {
+        listUsers: async function() {
+            try {
+                const url = window.stdurl('/api/user');
+                url.searchParams.append('filter', this.filter);
+                url.searchParams.append('limit', this.limit);
+                this.list = await window.std(url);
+            } catch (err) {
+                this.$emit('err', err);
+            }
         }
     },
     components: {
-        SettingsIcon
+        SettingsIcon,
+        TablerInput: Input
     }
 }
 </script>
