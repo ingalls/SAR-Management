@@ -234,6 +234,24 @@
 
 
 /**
+* @api {post} /leadership Create Leadership
+* @apiVersion 1.0.0
+* @apiName POST-/leadership
+* @apiGroup Leadership
+* @apiPermission admin
+*
+* @apidescription
+*   Create a new leader
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/leadership.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /login Session Info
 * @apiVersion 1.0.0
 * @apiName GET-/login

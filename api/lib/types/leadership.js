@@ -1,5 +1,5 @@
 import Generic from '@openaddresses/batch-generic';
 
-export default class Doc extends Generic {
+export default class Leadership extends Generic {
     static _table = 'leadership';
 }

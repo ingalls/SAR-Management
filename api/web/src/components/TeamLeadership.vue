@@ -7,7 +7,7 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a @click='$router.push("/")' class='cursor-pointer'>Team</a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a @click='$router.push("/team")' class='cursor-pointer'>Team</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Leadership</a></li>
                         </ol>
                     </div>
@@ -30,12 +30,12 @@
                         </div>
                         <div class="card-body">
                             <div class="datagrid">
-                                <div :key='leader.id' v-for='leader in leaders' class="datagrid-item">
-                                    <div class="datagrid-title">President</div>
+                                <div :key='position' v-for='position in Object.keys(leaders)' class="datagrid-item">
+                                    <div class="datagrid-title" v-text='position'></div>
                                     <div class="datagrid-content">
                                         <div class="d-flex align-items-center">
                                             <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                                            Paweł Kuna
+                                            <span v-text='"Nick Ingalls"'/>
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +62,7 @@ export default {
     data: function() {
         return {
             err: false,
-            leaders: []
+            leaders: {}
         }
     },
     mounted: function() {
@@ -71,7 +71,12 @@ export default {
     methods: {
         listLeaders: async function() {
             try {
-                this.leaders = (await window.std('/api/leadership')).leadership;
+                const leaders = (await window.std('/api/leadership')).leadership;
+
+                for (const lead of leaders) {
+                    if (!this.leaders[lead.name]) this.leaders[lead.name] = [];
+                    this.leaders[lead.name].push(lead.uid);
+                }
             } catch (err) {
                 this.err = err;
             }
