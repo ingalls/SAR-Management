@@ -23,8 +23,7 @@
                     <div class="card">
                         <div class='row'>
                             <div class='col-3'>
-                                <img v-if='user.profile_id' src='/user.webp'/>
-                                <img v-else src='/user.webp'/>
+                                <UserProfile :user='user'/>
 
                                 <div class='card-body d-flex justify-content-center'>
                                     <a @click='upload = true' class="cursor-pointer btn btn-secondary">Update Profile</a>
@@ -87,7 +86,12 @@
 
     <PageFooter/>
     <Err v-if='err' :err='err' @close='err = null'/>
-    <Upload v-if='upload' @close='upload = null' @upload='asset($event)'/>
+    <Upload
+        v-if='upload'
+        @err='upload = null; err = $event'
+        @close='upload = null'
+        @upload='upload = null; asset($event)'
+    />
 </div>
 </template>
 
@@ -95,12 +99,15 @@
 import PageFooter from './PageFooter.vue';
 import Upload from './util/Upload.vue';
 import Err from './Err.vue';
+import UserProfile from './User/Profile.vue';
 
 export default {
     name: 'TeamUserEdit',
     data: function() {
         return {
             err: false,
+            token: localStorage.token,
+            base: window.stdurl('/').origin,
             upload: false,
             errors: {
                 username: false,
@@ -173,6 +180,7 @@ export default {
         Err,
         Upload,
         PageFooter,
+        UserProfile
     }
 }
 </script>

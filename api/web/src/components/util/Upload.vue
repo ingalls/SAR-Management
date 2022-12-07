@@ -9,13 +9,6 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <div class="w-100">
-                    <div class="row">
-                        <div class="col"><a @click='close' class="cursor-pointer btn w-100">OK</a></div>
-                    </div>
-                </div>
-          </div>
     </Modal>
 </template>
 
@@ -30,11 +23,27 @@ export default {
     data: function() {
         return {
             dropzone: null
-        }    
+        }
     },
     mounted: function() {
         this.$nextTick(() => {
-            this.dropzone = new Dropzone("#dropzone-default", { url: "/file/post"});
+            this.dropzone = new Dropzone("#dropzone-default", {
+                autoProcessQueue: false
+            });
+
+            this.dropzone.on('addedfile', async (file) => {
+                const body = new FormData();
+                body.append('file', file);
+
+                try {
+                    this.$emit('upload', await window.std('/api/asset', {
+                        method: 'POST',
+                        body
+                    }));
+                } catch (err) {
+                    this.$emit('err', err);
+                }
+            });
         });
     },
     methods: {

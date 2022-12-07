@@ -23,6 +23,9 @@
         },
         "fname": {
             "type": "string"
+        },
+        "profile_id": {
+            "type": "integer"
         }
     }
 }

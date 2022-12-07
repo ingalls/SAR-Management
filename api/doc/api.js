@@ -22,7 +22,7 @@
 * @apiVersion 1.0.0
 * @apiName GET-/asset
 * @apiGroup Assets
-* @apiPermission public
+* @apiPermission user
 *
 * @apidescription
 *   List Assets
@@ -40,7 +40,7 @@
 * @apiVersion 1.0.0
 * @apiName GET-/asset/:assetid
 * @apiGroup Assets
-* @apiPermission public
+* @apiPermission user
 *
 * @apidescription
 *   Get single asset
@@ -50,6 +50,24 @@
 *
 *
 * @apiSchema {jsonschema=../schema/assets.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /asset/:assetid/raw Raw Asset
+* @apiVersion 1.0.0
+* @apiName GET-/asset/:assetid/raw
+* @apiGroup Assets
+* @apiPermission user
+*
+* @apidescription
+*   Get single raw asset
+*
+* @apiParam {integer} assetid param
+*
+*
+*
+*
 */
 
 

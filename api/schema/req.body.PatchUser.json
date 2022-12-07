@@ -2,6 +2,9 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+        "profile_id": {
+            "type": "integer"
+        },
         "username": {
             "type": "string"
         },

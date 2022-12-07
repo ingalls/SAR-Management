@@ -1,5 +1,13 @@
 function up(knex) {
     return knex.schema.raw(`
+        CREATE TABLE assets (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            name        TEXT NOT NULL,
+            storage     BOOLEAN NOT NULL DEFAULT False
+        );
+
         CREATE TABLE users (
             id          BIGSERIAL PRIMARY KEY,
             created     TIMESTAMP NOT NULL DEFAULT Now(),
@@ -13,6 +21,7 @@ function up(knex) {
             lname       TEXT NOT NULL,
             phone       TEXT NOT NULL,
             validated   BOOLEAN NOT NULL DEFAULT False,
+            profile_id  BIGINT REFERENCES assets(id),
 
             CONSTRAINT users_username UNIQUE (username),
             CONSTRAINT users_email UNIQUE (email)
@@ -74,14 +83,6 @@ function up(knex) {
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             name        TEXT NOT NULL,
             body        TEXT NOT NULL
-        );
-
-        CREATE TABLE assets (
-            id          BIGSERIAL PRIMARY KEY,
-            created     TIMESTAMP NOT NULL DEFAULT Now(),
-            updated     TIMESTAMP NOT NULL DEFAULT Now(),
-            name        TEXT NOT NULL,
-            storage     BOOLEAN NOT NULL DEFAULT False
         );
 
         CREATE TABLE notifications (

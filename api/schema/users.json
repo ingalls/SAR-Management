@@ -37,6 +37,9 @@
         },
         "phone": {
             "$ref": "./users/phone.json"
+        },
+        "profile_id": {
+            "$ref": "./users/profile_id.json"
         }
     },
     "required": [
@@ -51,6 +54,7 @@
         "validated",
         "access",
         "disabled",
-        "phone"
+        "phone",
+        "profile_id"
     ]
 }

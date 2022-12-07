@@ -42,8 +42,7 @@
                         </div>
                         <div class='row row-0'>
                             <div class='col-3'>
-                                <img v-if='user.profile_id' src='/user.webp'/>
-                                <img v-else src='/user.webp'/>
+                                <UserProfile :user='user'/>
                             </div>
                             <div class='col'>
                                 <div class="card-body">
@@ -108,6 +107,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import UserProfile from './User/Profile.vue';
 import Err from './Err.vue';
 
 export default {
@@ -119,7 +119,9 @@ export default {
         return {
             userid: this.$route.name === 'profile' ? this.auth.id : this.$route.params.userid,
             err: false,
-            user: {}
+            user: {
+                profile_id: null
+            }
         }
     },
     mounted: function() {
@@ -137,6 +139,7 @@ export default {
     components: {
         Err,
         PageFooter,
+        UserProfile
     }
 }
 </script>

@@ -9,6 +9,7 @@ import { Pool } from '@openaddresses/batch-generic';
 import minimist from 'minimist';
 import User from './lib/types/user.js';
 import jwt from 'jsonwebtoken';
+import Err from '@openaddresses/batch-error';
 
 import Config from './lib/config.js';
 
@@ -106,6 +107,15 @@ export default async function server(config) {
                     console.error(err);
                     return Err.respond(new Err(401, err, 'Invalid Token'), res);
                 }
+            }
+        } else if (req.query.token) {
+            try {
+                const decoded = jwt.verify(req.query.token, config.SigningSecret);
+                req.token = await User.from(config.pool, decoded.u);
+                req.token.type = 'token';
+            } catch (err) {
+                console.error(err);
+                return Err.respond(new Err(401, err, 'Invalid Token'), res);
             }
         } else {
             req.auth = false;

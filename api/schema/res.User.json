@@ -3,6 +3,7 @@
     "additionalProperties": false,
     "required": [
         "id",
+        "profile_id",
         "access",
         "username",
         "created",
@@ -15,6 +16,9 @@
     "properties": {
         "id": {
             "type": "integer"
+        },
+        "profile_id": {
+            "type": ["null", "integer"]
         },
         "access": {
             "type": "string"
