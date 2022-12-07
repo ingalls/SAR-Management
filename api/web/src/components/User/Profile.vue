@@ -1,6 +1,6 @@
 <template>
-    <img v-if='user.profile_id' :src='`${base}/api/asset/${user.profile_id}/raw?token=${token}`' style='width: 100%;'/>
-    <img v-else src='/user.webp' class='width: 100%;'/>
+    <div v-if='user.profile_id' :style='`background-image: url(${base}/api/asset/${user.profile_id}/raw?token=${token});`' style='width: 100%; height: 400px; background-size: cover;'></div>
+    <div v-else style='background-image: url(/user.webp); width: 100%; height: 400px; background-size: cover;'></div>
 </template>
 
 <script>

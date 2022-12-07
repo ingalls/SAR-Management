@@ -8,14 +8,10 @@
                 <div class='ms-auto'>
                     <div class="btn-list">
                         <div class="btn-group" role="group">
-                            <input type="radio" class="btn-check" name="btn-radio-toolbar" id="btn-radio-toolbar-1" autocomplete="off" checked="">
-                                <label for="btn-radio-toolbar-1" class="btn btn-icon">
-                                    <ListIcon/>
-                                </label>
-                                <input type="radio" class="btn-check" name="btn-radio-toolbar" id="btn-radio-toolbar-7" autocomplete="off">
-                                <label for="btn-radio-toolbar-7" class="btn btn-icon">
-                                    <PolaroidIcon/>
-                                </label>
+                            <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='list'>
+                            <label @click='mode="list"' class="btn btn-icon"><ListIcon/></label>
+                            <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='gallery'>
+                            <label @click='mode="gallery"' class="btn btn-icon"><PolaroidIcon/></label>
                         </div>
 
                         <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
@@ -27,27 +23,49 @@
             </div>
         </div>
     </div>
-    <div class='table-responsive'>
-        <table class="table card-table table-vcenter datatable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Teams</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr :key='user.id' v-for='user in users.users'>
-                    <td @click='$router.push(`/team/user/${user.id}`)'>
-                        <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
-                    </td>
-                    <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
-                    <td><a :href='`tel:${user.email}`' v-text='user.phone'></a></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <template v-if='mode === "list"'>
+        <div class='table-responsive'>
+            <table class="table card-table table-vcenter datatable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Teams</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr :key='user.id' v-for='user in users.users'>
+                        <td @click='$router.push(`/team/user/${user.id}`)'>
+                            <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
+                        </td>
+                        <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
+                        <td><a :href='`tel:${user.email}`' v-text='user.phone'></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+    <template v-else>
+        <div class='row row-cards'>
+            <div :key='user.id' v-for='user in users.users' class='col-sm-6 col-lg-4'>
+                <div class="card card-sm">
+                    <a @click='$router.push(`/team/user/${user.id}`)' class="d-block cursor-pointer">
+                        <UserProfile :user='user'/>
+                    </a>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <div @click='$router.push(`/team/user/${user.id}`)' class='cursor-pointer' v-text='`${user.fname} ${user.lname}`'></div>
+                                <a class='text-muted cursor-pointer' :href='`tel:${user.email}`' v-text='user.phone'></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <div class="card-footer d-flex align-items-center">
         <p class="m-0 text-muted">Showing <span>1</span> to <span>8</span> of <span>16</span> entries</p>
         <ul class="pagination m-0 ms-auto">
@@ -64,6 +82,7 @@
             </li>
         </ul>
     </div>
+
     <Err v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
@@ -71,11 +90,13 @@
 <script>
 import Err from '../Err.vue';
 import { ListIcon, PolaroidIcon } from 'vue-tabler-icons'
+import UserProfile from '../User/Profile.vue';
 
 export default {
     name: 'CardUsers',
     data: function() {
         return {
+            mode: 'list',
             err: false,
             users: { },
         }
@@ -96,6 +117,7 @@ export default {
         Err,
         ListIcon,
         PolaroidIcon,
+        UserProfile
     }
 }
 </script>
