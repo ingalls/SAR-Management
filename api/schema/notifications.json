@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./notifications/id.json"
+        },
+        "created": {
+            "$ref": "./notifications/created.json"
+        },
+        "updated": {
+            "$ref": "./notifications/updated.json"
+        },
+        "uid": {
+            "$ref": "./notifications/uid.json"
+        },
+        "text": {
+            "$ref": "./notifications/text.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "uid",
+        "text"
+    ]
+}
