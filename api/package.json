@@ -22,6 +22,9 @@
     },
     "homepage": "https://github.com/ingalls/SAR-Management#readme",
     "dependencies": {
+        "@fullcalendar/daygrid": "^5.11.3",
+        "@fullcalendar/interaction": "^5.11.3",
+        "@fullcalendar/vue": "^5.11.3",
         "@openaddresses/batch-error": "^1.1.0",
         "@openaddresses/batch-generic": "^13.0.1",
         "@openaddresses/batch-schema": "^7.3.0",

@@ -94,17 +94,9 @@ export default {
         }
     },
     mounted: function() {
-        this.listUsers();
         this.listTeams();
     },
     methods: {
-        listUsers: async function() {
-            try {
-                this.users = await window.std('/api/user');
-            } catch (err) {
-                this.err = err;
-            }
-        },
         listTeams: async function() {
             try {
                 this.teams = await window.std('/api/team');

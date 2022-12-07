@@ -9,6 +9,10 @@
         "lint": "vue-cli-service lint"
     },
     "dependencies": {
+        "@fullcalendar/core": "^5.11.3",
+        "@fullcalendar/daygrid": "^5.11.3",
+        "@fullcalendar/interaction": "^5.11.3",
+        "@fullcalendar/list": "^5.11.3",
         "@tabler/core": "^1.0.0-beta16",
         "@tak-ps/vue-tabler": "^1.0.1",
         "core-js": "^3.6.4",

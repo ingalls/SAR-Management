@@ -89,7 +89,7 @@ export default {
         this.listLeaders();
     },
     methods: {
-        listUsers: async function() {
+        listLeaders: async function() {
             try {
                 this.leaders = await window.std('/api/user');
             } catch (err) {
