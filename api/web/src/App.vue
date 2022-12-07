@@ -113,7 +113,7 @@
         </div>
     </div>
 
-    <template v-if='$route.name.includes("login") || user'>
+    <template v-if='enableNav'>
         <router-view
             :auth='user'
         />
@@ -143,11 +143,17 @@ import {
 } from 'vue-tabler-icons';
 
 export default {
-    name: 'Tak-PS-Stats',
+    name: 'SearchAndRescue',
     data: function() {
         return {
             user: null,
             err: false,
+        }
+    },
+    computed: {
+        enableNav() {
+            if (!this.$route || !this.$route.name) return false;
+            return this.$route.name.includes("login") || this.user;
         }
     },
     watch: {
