@@ -37,6 +37,12 @@
                         <div class="card-body" v-text='team.body'></div>
                     </div>
                 </div>
+
+                <CardUsers
+                    v-if='team.id'
+                    :team='team.id'
+                    :dropdown='false'
+                />
             </div>
         </div>
     </div>
@@ -48,6 +54,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import CardUsers from './cards/Users.vue';
 import Err from './Err.vue';
 
 export default {
@@ -56,6 +63,7 @@ export default {
         return {
             err: false,
             team: {
+                id: null,
                 name: '',
                 body: ''
             }
@@ -76,6 +84,7 @@ export default {
     components: {
         Err,
         PageFooter,
+        CardUsers
     }
 }
 </script>

@@ -8,6 +8,14 @@ function up(knex) {
             storage     BOOLEAN NOT NULL DEFAULT False
         );
 
+        CREATE TABLE teams (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            name        TEXT NOT NULL,
+            body        TEXT NOT NULL
+        );
+
         CREATE TABLE users (
             id          BIGSERIAL PRIMARY KEY,
             created     TIMESTAMP NOT NULL DEFAULT Now(),
@@ -25,6 +33,11 @@ function up(knex) {
 
             CONSTRAINT users_username UNIQUE (username),
             CONSTRAINT users_email UNIQUE (email)
+        );
+
+        CREATE TABLE users_to_teams (
+            uid         BIGINT NOT NULL REFERENCES users(id),
+            tid         BIGINT NOT NULL REFERENCES teams(id)
         );
 
         CREATE TABLE issues (
@@ -75,14 +88,6 @@ function up(knex) {
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             status      TEXT NOT NULL DEFAULT 'open',
             name        TEXT NOT NULL
-        );
-
-        CREATE TABLE teams (
-            id          BIGSERIAL PRIMARY KEY,
-            created     TIMESTAMP NOT NULL DEFAULT Now(),
-            updated     TIMESTAMP NOT NULL DEFAULT Now(),
-            name        TEXT NOT NULL,
-            body        TEXT NOT NULL
         );
 
         CREATE TABLE notifications (

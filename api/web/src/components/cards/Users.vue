@@ -14,7 +14,7 @@
                             <label @click='mode="gallery"' class="btn btn-icon"><PolaroidIcon/></label>
                         </div>
 
-                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                        <button v-if='dropdown' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                         <div class="dropdown-menu dropdown-menu-end" style="">
                             <a @click='$router.push("/team/user/new")' class="dropdown-item">New User</a>
                         </div>
@@ -94,6 +94,13 @@ import UserProfile from '../User/Profile.vue';
 
 export default {
     name: 'CardUsers',
+    props: {
+        dropdown: {
+            type: Boolean,
+            default: true
+        },
+        team: Number
+    },
     data: function() {
         return {
             mode: 'list',
@@ -107,7 +114,10 @@ export default {
     methods: {
         listUsers: async function() {
             try {
-                this.users = await window.std('/api/user');
+                const url = window.stdurl('/api/user');
+                if (this.team) url.searchParams.append('team', this.team);
+
+                this.users = await window.std(url);
             } catch (err) {
                 this.err = err;
             }
