@@ -1,0 +1,40 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./training/id.json"
+        },
+        "created": {
+            "$ref": "./training/created.json"
+        },
+        "updated": {
+            "$ref": "./training/updated.json"
+        },
+        "author": {
+            "$ref": "./training/author.json"
+        },
+        "start_ts": {
+            "$ref": "./training/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./training/end_ts.json"
+        },
+        "title": {
+            "$ref": "./training/title.json"
+        },
+        "body": {
+            "$ref": "./training/body.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "author",
+        "start_ts",
+        "end_ts",
+        "title",
+        "body"
+    ]
+}

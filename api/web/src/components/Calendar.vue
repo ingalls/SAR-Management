@@ -9,10 +9,6 @@
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Calendar</a></li>
                         </ol>
-
-                        <div class='ms-auto'>
-                            <a @click='$router.push("/calendar/new")' class="cursor-pointer btn btn-primary">New Event</a>
-                        </div>
                     </div>
                 </div>
             </div>

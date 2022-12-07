@@ -77,6 +77,8 @@ function up(knex) {
             id          BIGSERIAL PRIMARY KEY,
             created     TIMESTAMP NOT NULL DEFAULT Now(),
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            start_ts    TIMESTAMP NOT NULL,
+            end_ts      TIMESTAMP NOT NULL,
             status      TEXT NOT NULL DEFAULT 'open',
             title       TEXT NOT NULL,
             author      BIGINT NOT NULL REFERENCES users(id)
@@ -96,6 +98,17 @@ function up(knex) {
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             uid         BIGINT REFERENCES users(id),
             text        TEXT NOT NULL
+        );
+
+        CREATE TABLE training (
+            id          BIGSERIAL PRIMARY KEY,
+            created     TIMESTAMP NOT NULL DEFAULT Now(),
+            updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            author      BIGINT NOT NULL REFERENCES users(id),
+            start_ts    TIMESTAMP NOT NULL,
+            end_ts      TIMESTAMP NOT NULL,
+            title       TEXT NOT NULL,
+            body        TEXT NOT NULL
         );
     `);
 }
