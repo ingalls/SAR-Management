@@ -24,14 +24,11 @@
                         <div class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-10">
-                                    <label class="form-label">Issue Title</label>
-                                    <input v-model='title' type="text" :class='{
-                                        "is-invalid": errors.title
-                                    }' class="form-control" placeholder="Issue Title">
-                                    <div v-if='errors.title' v-text='errors.title' class="invalid-feedback"></div>
+                                    <TablerInput v-model='issue.title' label='Issue Title' :errors='errors.title'/>
                                 </div>
                                 <div class="col-md-2">
                                     <UserSelect
+                                        v-model='issue.assigned'
                                         @err='err = $event'
                                         label='Assigned'
                                     />
@@ -39,11 +36,7 @@
                                     <label class="form-label">Labels</label>
                                 </div>
                                 <div class="col-md-10">
-                                    <label class="form-label">Issue Title</label>
-                                    <textarea v-model='body' :class='{
-                                        "is-invalid": errors.body
-                                    }' class="form-control" rows="6" placeholder="Issue Content.."></textarea>
-                                    <div v-if='errors.body' v-text='errors.body' class="invalid-feedback"></div>
+                                    <TablerInput v-model='issue.body' :rows='6' label='Issue Body' :errors='errors.body'/>
                                 </div>
 
                                 <div class="col-md-10">
@@ -72,6 +65,7 @@
 import PageFooter from './PageFooter.vue';
 import UserSelect from './util/UserSelect.vue';
 import {
+    TablerInput,
     TablerError
 } from '@tak-ps/vue-tabler';
 
@@ -84,14 +78,17 @@ export default {
                 title: false,
                 body: false
             },
-            title: '',
-            body: ''
+            issue: {
+                title: '',
+                body: '',
+                assigned: []
+            }
         }
     },
     methods: {
         create: async function() {
             for (const field of ['title', 'body']) {
-                if (!this[field]) this.errors[field] = 'Cannot be empty';
+                if (!this.issue[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = false;
             }
 
@@ -103,8 +100,11 @@ export default {
                 const create = await window.std('/api/issue', {
                     method: 'POST',
                     body: {
-                        title: this.title,
-                        body: this.body
+                        title: this.issue.title,
+                        body: this.issue.body,
+                        assigned: this.assigned.map((a) => {
+                            return a.id;
+                        })
                     }
                 });
 
@@ -115,6 +115,7 @@ export default {
         }
     },
     components: {
+        TablerInput,
         TablerError,
         PageFooter,
         UserSelect

@@ -47,6 +47,10 @@ import {
 export default {
     name: 'UserSelect',
     props: {
+        modelValue: {
+            type: Array,
+            required: true
+        },
         label: {
             type: String,
             default: 'Users'
@@ -66,11 +70,18 @@ export default {
         }
     },
     watch: {
+        modelValue: function() {
+            this.assigned = this.modelValue;
+        },
         filter: function() {
             this.listUsers();
+        },
+        assigned: function() {
+            this.$emit('update:modelValue', this.assigned);
         }
     },
     mounted: function() {
+        this.assigned = this.modelValue;
         this.listUsers();
     },
     methods: {
