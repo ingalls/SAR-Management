@@ -24,39 +24,22 @@
                         <div class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-6">
-                                    <label class="form-label">First Name</label>
-                                    <input v-model='fname' type="text" :class='{
-                                        "is-invalid": errors.fname
-                                    }' class="form-control" placeholder="First Name">
-                                    <div v-if='errors.username' v-text='errors.username' class="invalid-feedback"></div>
+                                    <TablerInput label='First Name' v-model='user.fname' :errors='errors.fname'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Last Name</label>
-                                    <input v-model='lname' type="text" :class='{
-                                        "is-invalid": errors.lname
-                                    }' class="form-control" placeholder="Last Name">
-                                    <div v-if='errors.lname' v-text='errors.lname' class="invalid-feedback"></div>
+                                    <TablerInput label='Last Name' v-model='user.lname' :errors='errors.lname'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Username</label>
-                                    <input v-model='username' type="text" :class='{
-                                        "is-invalid": errors.username
-                                    }' class="form-control" placeholder="Username">
-                                    <div v-if='errors.username' v-text='errors.title' class="invalid-feedback"></div>
+                                    <TablerInput label='Username' v-model='user.username' :errors='errors.username'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Email</label>
-                                    <input v-model='email' type="text" :class='{
-                                        "is-invalid": errors.email
-                                    }' class="form-control" placeholder="Email">
-                                    <div v-if='errors.email' v-text='errors.email' class="invalid-feedback"></div>
+                                    <TablerInput label='Email' v-model='user.email' :errors='errors.email'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Phone</label>
-                                    <input v-model='phone' type="text" placeholder='###-###-####' :class='{
-                                        "is-invalid": errors.phone
-                                    }' class="form-control">
-                                    <div v-if='errors.phone' v-text='errors.phone' class="invalid-feedback"></div>
+                                    <TablerInput label='Phone' v-model='user.phone' :errors='errors.phone'/>
+                                </div>
+                                <div class="col-md-6">
+                                    <TablerInput type='date' label='Birthday' v-model='user.bday' :errors='errors.bday'/>
                                 </div>
 
                                 <div class="col-md-12">
@@ -82,7 +65,8 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import {
-    TablerError
+    TablerError,
+    TablerInput
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -97,17 +81,20 @@ export default {
                 lname: false,
                 phone: false
             },
-            username: '',
-            email: '',
-            fname: '',
-            lname: '',
-            phone: ''
+            user: {
+                username: '',
+                email: '',
+                fname: '',
+                lname: '',
+                phone: '',
+                bday: null
+            }
         }
     },
     methods: {
         create: async function() {
             for (const field of ['username', 'email', 'fname', 'lname']) {
-                if (!this[field]) this.errors[field] = 'Cannot be empty';
+                if (!this.user[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = false;
             }
 
@@ -118,13 +105,7 @@ export default {
             try {
                 const create = await window.std('/api/user', {
                     method: 'POST',
-                    body: {
-                        username: this.username,
-                        email: this.email,
-                        fname: this.fname,
-                        lname: this.lname,
-                        phone: this.phone,
-                    }
+                    body: this.user
                 });
 
                 this.$router.push(`/team/user/${create.id}`);
@@ -135,6 +116,7 @@ export default {
     },
     components: {
         TablerError,
+        TablerInput,
         PageFooter,
     }
 }

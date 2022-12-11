@@ -43,6 +43,9 @@
         },
         "phone": {
             "type": "string"
+        },
+        "bday": {
+            "type": ["null", "string"]
         }
     }
 }

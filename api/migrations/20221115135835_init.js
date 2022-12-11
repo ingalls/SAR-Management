@@ -28,6 +28,7 @@ function up(knex) {
             fname       TEXT NOT NULL,
             lname       TEXT NOT NULL,
             phone       TEXT NOT NULL,
+            bday        DATE,
             validated   BOOLEAN NOT NULL DEFAULT False,
             profile_id  BIGINT REFERENCES assets(id),
 

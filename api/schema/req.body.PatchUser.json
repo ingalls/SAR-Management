@@ -19,6 +19,9 @@
         },
         "fname": {
             "type": "string"
+        },
+        "bday": {
+            "type": "string"
         }
     }
 }

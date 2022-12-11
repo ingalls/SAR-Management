@@ -24,6 +24,9 @@
         "fname": {
             "type": "string"
         },
+        "bday": {
+            "type": "string"
+        },
         "profile_id": {
             "type": "integer"
         }

@@ -40,6 +40,9 @@
         },
         "profile_id": {
             "$ref": "./users/profile_id.json"
+        },
+        "bday": {
+            "$ref": "./users/bday.json"
         }
     },
     "required": [
@@ -55,6 +58,7 @@
         "access",
         "disabled",
         "phone",
-        "profile_id"
+        "profile_id",
+        "bday"
     ]
 }
