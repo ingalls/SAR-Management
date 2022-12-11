@@ -15,7 +15,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            res.json(await IssueComment.list(config.pool, req.query));
+            res.json(await IssueComment.list(config.pool, req.params.issueid, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }

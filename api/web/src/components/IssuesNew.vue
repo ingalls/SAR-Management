@@ -102,7 +102,7 @@ export default {
                     body: {
                         title: this.issue.title,
                         body: this.issue.body,
-                        assigned: this.assigned.map((a) => {
+                        assigned: this.issue.assigned.map((a) => {
                             return a.id;
                         })
                     }

@@ -46,6 +46,8 @@ export default async function router(schema, config) {
                     });
                 }
             }
+
+            res.json(issue);
         } catch (err) {
             return Err.respond(err, res);
         }
