@@ -33,39 +33,19 @@
                                 <div class="card-body">
                                     <div class='row row-cards'>
                                         <div class="col-md-6">
-                                            <label class="form-label">First Name</label>
-                                            <input v-model='user.fname' type="text" :class='{
-                                                "is-invalid": errors.fname
-                                            }' class="form-control" placeholder="First Name">
-                                            <div v-if='errors.username' v-text='errors.username' class="invalid-feedback"></div>
+                                            <TablerInput label='First Name' v-model='user.fname' :error='errors.fname' />
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Last Name</label>
-                                            <input v-model='user.lname' type="text" :class='{
-                                                "is-invalid": errors.lname
-                                            }' class="form-control" placeholder="Last Name">
-                                            <div v-if='errors.lname' v-text='errors.lname' class="invalid-feedback"></div>
+                                            <TablerInput label='Last Name' v-model='user.lname' :error='errors.lname' />
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Username</label>
-                                            <input v-model='user.username' type="text" :class='{
-                                                "is-invalid": errors.username
-                                            }' class="form-control" placeholder="Username">
-                                            <div v-if='errors.username' v-text='errors.title' class="invalid-feedback"></div>
+                                            <TablerInput label='Username' v-model='user.username' :error='errors.username' />
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Email</label>
-                                            <input v-model='user.email' type="text" :class='{
-                                                "is-invalid": errors.email
-                                            }' class="form-control" placeholder="Email">
-                                            <div v-if='errors.email' v-text='errors.email' class="invalid-feedback"></div>
+                                            <TablerInput label='Email' v-model='user.email' :error='errors.email' />
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Phone</label>
-                                            <input v-model='user.phone' type="text" placeholder='###-###-####' :class='{
-                                                "is-invalid": errors.phone
-                                            }' class="form-control">
-                                            <div v-if='errors.phone' v-text='errors.phone' class="invalid-feedback"></div>
+                                            <TablerInput label='Phone' v-model='user.phone' :error='errors.phone' />
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -99,6 +79,9 @@
 import PageFooter from './PageFooter.vue';
 import Upload from './util/Upload.vue';
 import Err from './Err.vue';
+import {
+    Input
+} from '@tak-ps/vue-tabler'
 import UserProfile from './User/Profile.vue';
 
 export default {
@@ -180,7 +163,8 @@ export default {
         Err,
         Upload,
         PageFooter,
-        UserProfile
+        UserProfile,
+        TablerInput: Input
     }
 }
 </script>
