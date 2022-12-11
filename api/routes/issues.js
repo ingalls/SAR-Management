@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Issue from '../lib/types/issue.js';
+import IssueAssigned from '../lib/types/issue_assigned.js';
 import Auth from '../lib/auth.js';
 
 export default async function router(schema, config) {
@@ -31,10 +32,20 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            res.json(await Issue.generate(config.pool, {
+            const issue = await Issue.generate(config.pool, {
                 author: req.auth.id,
-                ...req.body
-            }));
+                title: req.body.title,
+                body: req.body.body
+            });
+
+            if (req.body.assigned) {
+                for (const uid of req.body.assigned) {
+                    IssueAssigned.generate(config.pool, {
+                        issue_id: issue.id,
+                        uid: uid
+                    });
+                }
+            }
         } catch (err) {
             return Err.respond(err, res);
         }
