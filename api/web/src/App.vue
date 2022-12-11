@@ -119,15 +119,17 @@
         />
     </template>
 
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
+import {
+    TablerError
+} from '@tak-ps/vue-tabler'
 
-import Err from './components/Err.vue';
 import {
     UserIcon,
     BellIcon,
@@ -177,7 +179,6 @@ export default {
         }
     },
     components: {
-        Err,
         BugIcon,
         HomeIcon,
         PlusIcon,
@@ -188,7 +189,8 @@ export default {
         NotebookIcon,
         CalendarIcon,
         AmbulanceIcon,
-        AdjustmentsIcon
+        AdjustmentsIcon,
+        TablerError
     }
 }
 </script>

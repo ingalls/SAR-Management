@@ -92,12 +92,14 @@
 
     <PageFooter/>
 
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import Err from './Err.vue';
+import {
+    TablerError
+} from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
 import CreateComment from './Issue/CreateComment.vue';
 
@@ -151,7 +153,7 @@ export default {
         }
     },
     components: {
-        Err,
+        TablerError,
         PageFooter,
         CreateComment
     }

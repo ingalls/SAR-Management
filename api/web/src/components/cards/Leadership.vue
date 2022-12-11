@@ -70,12 +70,14 @@
         </div>
     </div>
 
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import Err from '../Err.vue';
+import {
+    TablerError
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'CardLeadership',
@@ -98,7 +100,7 @@ export default {
         },
     },
     components: {
-        Err
+        TablerError
     }
 }
 </script>

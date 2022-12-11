@@ -87,14 +87,13 @@
 
     <PageFooter/>
 
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import Err from './Err.vue';
 import PageFooter from './PageFooter.vue';
-import { Select } from '@tak-ps/vue-tabler';
+import { TablerSelect, TablerError } from '@tak-ps/vue-tabler';
 import {
     SearchIcon
 } from 'vue-tabler-icons';
@@ -132,9 +131,9 @@ export default {
         }
     }, 
     components: {
-        Err,
+        TablerError,
         PageFooter,
-        TablerSelect: Select,
+        TablerSelect,
         SearchIcon
     }
 }

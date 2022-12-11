@@ -1,5 +1,5 @@
 <template>
-    <Modal>
+    <TablerModal>
         <button type="button" class="btn-close" @click='close' aria-label="Close"></button>
             <div class="modal-status bg-yellow"></div>
             <div class="modal-body text-center py-4">
@@ -9,11 +9,11 @@
                     </div>
                 </form>
             </div>
-    </Modal>
+    </TablerModal>
 </template>
 
 <script>
-import { Modal } from '@tak-ps/vue-tabler';
+import { TablerModal } from '@tak-ps/vue-tabler';
 import Dropzone from '@tabler/core/dist/libs/dropzone/dist/dropzone.mjs';
 import '@tabler/core/dist/libs/dropzone/dist/dropzone.css';
 import '@tabler/core/dist/css/tabler-vendors.min.css';
@@ -52,7 +52,7 @@ export default {
         }
     },
     components: {
-        Modal,
+        TablerModal,
     }
 }
 </script>

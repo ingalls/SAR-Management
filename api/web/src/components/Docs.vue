@@ -82,7 +82,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
-import { Select } from '@tak-ps/vue-tabler';
+import { TablerSelect } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Docs',
@@ -93,7 +93,7 @@ export default {
     },
     components: {
         PageFooter,
-        TablerSelect: Select
+        TablerSelect
     }
 }
 </script>

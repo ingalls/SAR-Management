@@ -71,12 +71,14 @@
 
     <PageFooter/>
 
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import Err from './Err.vue';
+import {
+    TablerError
+} from '@tak-ps/vue-tabler';
 import PageFooter from './PageFooter.vue';
 import CardLeadership from './cards/Leadership.vue';
 import CardUsers from './cards/Users.vue';
@@ -106,7 +108,7 @@ export default {
         }
     },
     components: {
-        Err,
+        TablerError,
         PageFooter,
         CardLeadership,
         CardUsers

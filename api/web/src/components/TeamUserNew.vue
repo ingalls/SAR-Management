@@ -75,13 +75,15 @@
     </div>
 
     <PageFooter/>
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
-import Err from './Err.vue';
+import {
+    TablerError
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'TeamUserNew',
@@ -132,7 +134,7 @@ export default {
         }
     },
     components: {
-        Err,
+        TablerError,
         PageFooter,
     }
 }

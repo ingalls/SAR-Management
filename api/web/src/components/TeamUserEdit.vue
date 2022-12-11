@@ -47,6 +47,9 @@
                                         <div class="col-md-6">
                                             <TablerInput label='Phone' v-model='user.phone' :error='errors.phone' />
                                         </div>
+                                        <div class="col-md-6">
+                                            <TablerInput type='date' label='Birthday' v-model='user.bday' :error='errors.bday' />
+                                        </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class='d-flex'>
@@ -65,7 +68,7 @@
     </div>
 
     <PageFooter/>
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
     <Upload
         v-if='upload'
         @err='upload = null; err = $event'
@@ -78,9 +81,9 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import Upload from './util/Upload.vue';
-import Err from './Err.vue';
 import {
-    Input
+    TablerError,
+    TablerInput,
 } from '@tak-ps/vue-tabler'
 import UserProfile from './User/Profile.vue';
 
@@ -93,18 +96,20 @@ export default {
             base: window.stdurl('/').origin,
             upload: false,
             errors: {
-                username: false,
-                email: false,
-                fname: false,
-                lname: false,
-                phone: false
+                username: '',
+                email: '',
+                fname: '',
+                lname: '',
+                phone: '',
+                bday: ''
             },
             user: {
                 username: '',
                 email: '',
                 fname: '',
                 lname: '',
-                phone: ''
+                phone: '',
+                bday: ''
             }
         }
     },
@@ -160,11 +165,11 @@ export default {
         }
     },
     components: {
-        Err,
+        TablerError,
         Upload,
         PageFooter,
         UserProfile,
-        TablerInput: Input
+        TablerInput,
     }
 }
 </script>

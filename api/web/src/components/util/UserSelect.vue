@@ -41,7 +41,7 @@ import {
 } from 'vue-tabler-icons';
 
 import {
-    Input
+    TablerInput
 } from '@tak-ps/vue-tabler'
 
 export default {
@@ -87,7 +87,7 @@ export default {
     },
     components: {
         SettingsIcon,
-        TablerInput: Input
+        TablerInput
     }
 }
 </script>

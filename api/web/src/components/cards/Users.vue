@@ -83,12 +83,14 @@
         </ul>
     </div>
 
-    <Err v-if='err' :err='err' @close='err = null'/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import Err from '../Err.vue';
+import {
+    TablerError
+} from '@tak-ps/vue-tabler';
 import { ListIcon, PolaroidIcon } from 'vue-tabler-icons'
 import UserProfile from '../User/Profile.vue';
 
@@ -124,7 +126,7 @@ export default {
         },
     },
     components: {
-        Err,
+        TablerError,
         ListIcon,
         PolaroidIcon,
         UserProfile
