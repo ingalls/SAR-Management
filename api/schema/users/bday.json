@@ -1,0 +1,9 @@
+{
+    "type": [
+        "string",
+        "null"
+    ],
+    "format": "date",
+    "description": "",
+    "$comment": "date"
+}

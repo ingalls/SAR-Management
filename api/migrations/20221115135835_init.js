@@ -51,6 +51,12 @@ function up(knex) {
             author      BIGINT NOT NULL REFERENCES users(id)
         );
 
+        CREATE TABLE issues_assigned (
+            id          BIGSERIAL PRIMARY KEY,
+            issue_id    BIGINT NOT NULL REFERENCES issues(id),
+            uid         BIGINT NOT NULL REFERENCES users(id)
+        );
+
         CREATE TABLE issues_comments (
             id          BIGSERIAL PRIMARY KEY,
             issue       BIGINT REFERENCES issues(id),
