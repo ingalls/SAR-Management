@@ -162,6 +162,61 @@
 
 
 /**
+* @api {get} /issue/:issueid/assigned Get Assigned
+* @apiVersion 1.0.0
+* @apiName GET-/issue/:issueid/assigned
+* @apiGroup IssueAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Get users assigned to an issue
+*
+* @apiParam {integer} issueid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListIssueAssigned.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /issue/:issueid/assigned Add Assigned
+* @apiVersion 1.0.0
+* @apiName POST-/issue/:issueid/assigned
+* @apiGroup IssueAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Remove an assignment
+*
+* @apiParam {integer} issueid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PostIssueAssigned.json} apiParam
+* @apiSchema {jsonschema=../schema/issues_assigned.json} apiSuccess
+*/
+
+
+/**
+* @api {delete} /issue/:issueid/assigned/:assignedid Remove Assigned
+* @apiVersion 1.0.0
+* @apiName DELETE-/issue/:issueid/assigned/:assignedid
+* @apiGroup IssueAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Remove a user from an issue
+*
+* @apiParam {integer} issueid param
+* @apiParam {integer} assignedid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /issue/:issueid/comment Get Comments
 * @apiVersion 1.0.0
 * @apiName GET-/issue/:issueid/comment
@@ -194,24 +249,6 @@
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssueComment.json} apiParam
 * @apiSchema {jsonschema=../schema/issues_comments.json} apiSuccess
-*/
-
-
-/**
-* @api {get} /issue/:issueid/assigned Get Assigned
-* @apiVersion 1.0.0
-* @apiName GET-/issue/:issueid/assigned
-* @apiGroup IssueAssigned
-* @apiPermission user
-*
-* @apidescription
-*   Get users assigned to an issue
-*
-* @apiParam {integer} issueid param
-*
-*
-*
-* @apiSchema {jsonschema=../schema/res.ListIssueAssigned.json} apiSuccess
 */
 
 
