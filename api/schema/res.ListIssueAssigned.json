@@ -1,0 +1,43 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "assigned"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "total": {
+            "type": "integer"
+        },
+        "assigned": {
+            "type": "array",
+            "items":  {
+                "type": "object",
+                "required": [
+
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "issue_id": {
+                        "type": "integer"
+                    },
+                    "uid": {
+                        "type": "integer"
+                    },
+                    "fname": {
+                        "type": "string"
+                    },
+                    "lname": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

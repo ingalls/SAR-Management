@@ -198,6 +198,24 @@
 
 
 /**
+* @api {get} /issue/:issueid/assigned Get Assigned
+* @apiVersion 1.0.0
+* @apiName GET-/issue/:issueid/assigned
+* @apiGroup IssueAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Get users assigned to an issue
+*
+* @apiParam {integer} issueid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListIssueAssigned.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /issue Get Issues
 * @apiVersion 1.0.0
 * @apiName GET-/issue

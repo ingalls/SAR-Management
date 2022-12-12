@@ -135,6 +135,17 @@ function up(knex) {
             issue_id    BIGINT NOT NULL REFERENCES issues(id),
             uid         BIGINT NOT NULL REFERENCES users(id)
         );
+
+        CREATE VIEW view_issues_assigned AS
+            SELECT
+                issues_assigned.*,
+                users.fname,
+                users.lname,
+                users.username
+            FROM
+                issues_assigned
+                    LEFT JOIN users
+                        ON issues_assigned.uid = users.id
     `);
 }
 

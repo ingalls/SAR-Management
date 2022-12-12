@@ -17,9 +17,14 @@ export default class IssueAssigned extends Generic {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    *
+                    issues_assigned.*,
+                    users.fname,
+                    users.lname,
+                    users.username
                 FROM
                     ${sql.identifier([this._table])}
+                        LEFT JOIN users
+                            ON issues_assigned.uid = users.id
                 WHERE
                     issue_id = ${issue_id}
                 ORDER BY

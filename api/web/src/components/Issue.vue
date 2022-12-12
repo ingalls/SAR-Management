@@ -82,7 +82,12 @@
                 <div class='col-md-3'>
                     <div class='card'>
                         <div class='card-body'>
-                            <UserSelect v-model='assigned'/>
+                            <template v-if='loading.assigned'>
+                                <TablerLoading/>
+                            </template>
+                            <template v-else>
+                                <UserSelect v-model='assigned' @err='err = $event'/>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -104,6 +109,7 @@
 
 <script>
 import {
+    TablerLoading,
     TablerError
 } from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
@@ -121,6 +127,9 @@ export default {
                 body: '',
                 status: 'open'
             },
+            loading: {
+                assigned: true
+            },
             assigned: [],
             comments: {
                 issues_comments: []
@@ -129,7 +138,10 @@ export default {
     },
     mounted: async function() {
         await this.fetch();
-        await this.fetchComments();
+
+        this.fetchAssigned();
+        this.fetchComments();
+
     },
     methods: {
         fetch: async function() {
@@ -141,7 +153,9 @@ export default {
         },
         fetchAssigned: async function() {
             try {
+                this.loading.assigned = true;
                 this.assigned = await window.std(`/api/issue/${this.$route.params.issueid}/assigned`);
+                this.loading.assigned = false;
             } catch (err) {
                 this.err = err;
             }
@@ -169,6 +183,7 @@ export default {
     },
     components: {
         TablerError,
+        TablerLoading,
         PageFooter,
         CreateComment,
         UserSelect
