@@ -126,6 +126,42 @@
 
 
 /**
+* @api {get} /calendar List Calendar Layers
+* @apiVersion 1.0.0
+* @apiName GET-/calendar
+* @apiGroup Calendar
+* @apiPermission user
+*
+* @apidescription
+*   Get all possible calendar layers
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListCalendarLayers.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /calendar/:calendar/events List Events
+* @apiVersion 1.0.0
+* @apiName GET-/calendar/:calendar/events
+* @apiGroup Calendar
+* @apiPermission user
+*
+* @apidescription
+*   Query Events from a given calendar
+*
+* @apiParam {string} calendar param
+*
+*
+*
+*
+*/
+
+
+/**
 * @api {get} /issue/:issueid/comment Get Comments
 * @apiVersion 1.0.0
 * @apiName GET-/issue/:issueid/comment

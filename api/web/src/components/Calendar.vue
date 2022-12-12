@@ -30,6 +30,7 @@
     </div>
 
     <PageFooter/>
+    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
@@ -39,6 +40,9 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
+import {
+    TablerError
+} from '@tak-ps/vue-tabler'
 
 export default {
     name: 'Calendar',
@@ -46,25 +50,33 @@ export default {
         return {
             err: false,
             calendar: null,
-            calendarOptions: {
-                plugins: [ dayGridPlugin, interactionPlugin, listPlugin ],
-                initialView: 'dayGridMonth'
-            }
+            sources: []
         }
     },
     components: {
+        TablerError,
         PageFooter,
     },
     mounted: function() {
         this.calendar = new Calendar(document.getElementById('calendar'), {
-            plugins: [dayGridPlugin, interactionPlugin],
+            plugins: [dayGridPlugin, interactionPlugin, listPlugin],
             defaultView: 'dayGridMonth',
             selectable: true,
             unselectAuto: true,
             eventSources: []
         });
-
         this.calendar.render();
+
+        this.fetchCalendars();
+    },
+    methods: {
+        fetchCalendars: async function() {
+            try {
+                this.sources = await window.std('/api/calendar');
+            } catch (err) {
+                this.err = err;
+            }
+        }
     }
 }
 </script>
