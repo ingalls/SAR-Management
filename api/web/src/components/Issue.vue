@@ -80,7 +80,11 @@
                 </div>
 
                 <div class='col-md-3'>
-                    <UserSelect/>
+                    <div class='card'>
+                        <div class='card-body'>
+                            <UserSelect v-model='assigned'/>
+                        </div>
+                    </div>
                 </div>
 
                 <template v-if='issue.status === "open"'>
