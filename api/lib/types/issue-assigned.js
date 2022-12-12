@@ -10,7 +10,7 @@ export default class IssueAssigned extends Generic {
 
         query.limit = Params.integer(query.limit, { default: 20 });
         query.page = Params.integer(query.page, { default: 0 });
-        query.sort = Params.string(query.sort, { default: 'created' });
+        query.sort = Params.string(query.sort, { default: 'id' });
         query.order = Params.order(query.order);
 
         try {
