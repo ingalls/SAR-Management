@@ -19,7 +19,7 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
+                <div class="col-md-9">
                     <div class="card">
                         <div class='card-header'>
                             <div class="col">
@@ -53,10 +53,8 @@
                         <div class="card-body" v-text='issue.body'>
                         </div>
                     </div>
-                </div>
 
-                <div :key='comment.id' v-for='comment in comments.issues_comments' class="col-lg-12">
-                    <div class="card">
+                    <div :key='comment.id' v-for='comment in comments.issues_comments' class="card">
                         <div class='card-header'>
                             <div class="col">
                                 <div class="d-flex">
@@ -81,6 +79,10 @@
                     </div>
                 </div>
 
+                <div class='col-md-3'>
+                    <UserSelect/>
+                </div>
+
                 <template v-if='issue.status === "open"'>
                     <CreateComment
                         @comment='fetchComments'
@@ -102,6 +104,7 @@ import {
 } from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
 import CreateComment from './Issue/CreateComment.vue';
+import UserSelect from './util/UserSelect.vue';
 
 export default {
     name: 'Issue',
@@ -114,6 +117,7 @@ export default {
                 body: '',
                 status: 'open'
             },
+            assigned: [],
             comments: {
                 issues_comments: []
             }
@@ -127,6 +131,13 @@ export default {
         fetch: async function() {
             try {
                 this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`);
+            } catch (err) {
+                this.err = err;
+            }
+        },
+        fetchAssigned: async function() {
+            try {
+                this.assigned = await window.std(`/api/issue/${this.$route.params.issueid}/assigned`);
             } catch (err) {
                 this.err = err;
             }
@@ -155,7 +166,8 @@ export default {
     components: {
         TablerError,
         PageFooter,
-        CreateComment
+        CreateComment,
+        UserSelect
     }
 }
 </script>
