@@ -73,6 +73,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-6 col-lg-3">
+                    <CardMissionMini
+                        :assigned='auth.id'
+                    />
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <CardTrainingMini
+                        :assigned='auth.id'
+                    />
+                </div>
                 <div class="col-lg-6">
                     <CardEquipment
                         label='Assigned Equipment'
@@ -106,6 +116,8 @@ import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
 import CardEquipment from './cards/Equipment.vue';
 import CardMission from './cards/Missions.vue';
+import CardMissionMini from './cards/MissionsMini.vue';
+import CardTrainingMini from './cards/TrainingMini.vue';
 import {
     TablerError
 } from '@tak-ps/vue-tabler';
@@ -142,6 +154,8 @@ export default {
         UserProfile,
         CardIssues,
         CardMission,
+        CardMissionMini,
+        CardTrainingMini,
         CardEquipment
     }
 }
