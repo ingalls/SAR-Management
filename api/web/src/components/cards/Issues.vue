@@ -42,6 +42,16 @@ import { TablerSelect } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'IssueCard',
+    props: {
+        limit: {
+            type: Number,
+            default: 10
+        },
+        assigned: {
+            type: Number,
+            default: null
+        }
+    },
     data: function() {
         return {
             issues: [],
@@ -53,7 +63,10 @@ export default {
     methods: {
         fetch: async function() {
             try {
-                this.issues = (await window.std('/api/issue')).issues;
+                const url = window.stdurl('/api/issue');
+                url.searchParams.append('limit', this.limit);
+                if (this.assigned) url.searchParams.append('assigned', this.assigned);
+                this.issues = (await window.std(url)).issues;
             } catch (err) {
                 this.$emit('err', err);
             }

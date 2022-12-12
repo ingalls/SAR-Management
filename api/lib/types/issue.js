@@ -12,17 +12,22 @@ export default class Issue extends Generic {
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
 
+        query.assigned = Params.integer(query.assigned);
+
         try {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    *
+                    issues.*
                 FROM
                     issues
+                        LEFT JOIN issues_assigned
+                            ON issues.id = issues_assigned.issue_id
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
+                    AND (${query.assigned}::BIGINT IS NULL OR issues_assigned.uid = ${query.assigned})
                 ORDER BY
-                    ${sql.identifier(['issues', query.sort])} ${query.order}
+                    ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
                     ${query.limit}
                 OFFSET
@@ -31,7 +36,7 @@ export default class Issue extends Generic {
 
             return this.deserialize_list(pgres);
         } catch (err) {
-            throw new Err(500, err, 'Failed to list assets');
+            throw new Err(500, err, 'Failed to list Issues');
         }
     }
 }

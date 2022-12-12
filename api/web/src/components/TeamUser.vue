@@ -83,13 +83,9 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="card">
-                        <div class='card-header'>
-                            <h3 class='card-title'>Assigned Issues</h3>
-                        </div>
-                        <div class="card-body">
-                        </div>
-                    </div>
+                    <CardIssues
+                        :assigned='auth.id'
+                    />
                 </div>
                 <div class="col-lg-12">
                     <div class="card">
@@ -112,6 +108,7 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import UserProfile from './User/Profile.vue';
+import CardIssues from './cards/Issues.vue';
 import {
     TablerError
 } from '@tak-ps/vue-tabler';
@@ -145,7 +142,8 @@ export default {
     components: {
         TablerError,
         PageFooter,
-        UserProfile
+        UserProfile,
+        CardIssues
     }
 }
 </script>

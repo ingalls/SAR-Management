@@ -11,6 +11,10 @@
         "order": {
             "$ref": "./util/order.json"
         },
+        "assigned": {
+            "type": "integer",
+            "description": "Filter users by a specific user assigned"
+        },
         "sort": {
             "type": "string",
             "default": "created",
