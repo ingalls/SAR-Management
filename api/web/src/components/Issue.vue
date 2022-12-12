@@ -154,7 +154,7 @@ export default {
         fetchAssigned: async function() {
             try {
                 this.loading.assigned = true;
-                this.assigned = await window.std(`/api/issue/${this.$route.params.issueid}/assigned`);
+                this.assigned = (await window.std(`/api/issue/${this.$route.params.issueid}/assigned`)).assigned;
                 this.loading.assigned = false;
             } catch (err) {
                 this.err = err;

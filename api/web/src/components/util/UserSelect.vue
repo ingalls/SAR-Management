@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class='row'>
-            <div :key='a.id' v-for='a in assigned' class="d-flex align-items-center">
+            <div :key='a.id' v-for='a in assigned' class="d-flex align-items-center my-1">
                 <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
                 <span v-text='`${a.fname} ${a.lname}`'/>
             </div>
