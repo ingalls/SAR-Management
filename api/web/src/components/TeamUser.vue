@@ -74,27 +74,22 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="card">
-                        <div class='card-header'>
-                            <h3 class='card-title'>Issued Equipment</h3>
-                        </div>
-                        <div class="card-body">
-                        </div>
-                    </div>
+                    <CardEquipment
+                        label='Assigned Equipment'
+                        :assigned='auth.id'
+                    />
                 </div>
                 <div class="col-lg-6">
                     <CardIssues
+                        label='Assigned Issues'
                         :assigned='auth.id'
                     />
                 </div>
                 <div class="col-lg-12">
-                    <div class="card">
-                        <div class='card-header'>
-                            <h3 class='card-title'>Mission Log</h3>
-                        </div>
-                        <div class="card-body">
-                        </div>
-                    </div>
+                    <CardMission
+                        label='Mission Log'
+                        :assigned='auth.id'
+                    />
                 </div>
             </div>
         </div>
@@ -109,6 +104,8 @@
 import PageFooter from './PageFooter.vue';
 import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
+import CardEquipment from './cards/Equipment.vue';
+import CardMission from './cards/Missions.vue';
 import {
     TablerError
 } from '@tak-ps/vue-tabler';
@@ -143,7 +140,9 @@ export default {
         TablerError,
         PageFooter,
         UserProfile,
-        CardIssues
+        CardIssues,
+        CardMission,
+        CardEquipment
     }
 }
 </script>

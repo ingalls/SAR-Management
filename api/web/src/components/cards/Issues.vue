@@ -2,7 +2,7 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex">
-            <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer'>Recent Issues</a></h3>
+            <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
             <div class='ms-auto'>
                 <div class="btn-list">
@@ -43,6 +43,10 @@ import { TablerSelect } from '@tak-ps/vue-tabler';
 export default {
     name: 'IssueCard',
     props: {
+        label: {
+            type: String,
+            default: 'Recent Issues'
+        },
         limit: {
             type: Number,
             default: 10

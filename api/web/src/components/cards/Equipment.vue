@@ -2,13 +2,13 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex">
-            <h3 class="card-title" v-text='label'></h3>
+            <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
 
             <div class='ms-auto'>
                 <div class="btn-list">
                     <TablerSelect
                         default='Recent'
-                        :values='["Recent"]'
+                        :values='["Recent", "Priority"]'
                         @select='fetch($event)'
                     />
 
@@ -28,9 +28,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr :key='mission.id' v-for='mission in missions'>
-                <td><a @click='$router.push(`/mission/${mission.id}`)' v-text='mission.title' class='cursor-pointer'></a></td>
-                <td v-text='mission.priority'></td>
+            <tr :key='equip.id' v-for='equip in equipment'>
+                <td><a @click='$router.push(`/equipment/${equip.id}`)' v-text='equip.title' class='cursor-pointer'></a></td>
             </tr>
         </tbody>
     </table>
@@ -41,11 +40,11 @@
 import { TablerSelect } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'MissionCard',
+    name: 'EquipmentCard',
     props: {
         label: {
             type: String,
-            default: 'Recent Missions'
+            default: 'Equipment'
         },
         limit: {
             type: Number,
@@ -58,7 +57,7 @@ export default {
     },
     data: function() {
         return {
-            missions: [],
+            equipment: [],
         }
     },
     mounted: function() {
@@ -67,11 +66,10 @@ export default {
     methods: {
         fetch: async function() {
             try {
-                const url = window.stdurl('/api/mission');
+                const url = window.stdurl('/api/equipment');
                 url.searchParams.append('limit', this.limit);
                 if (this.assigned) url.searchParams.append('assigned', this.assigned);
-
-                this.missions = (await window.std(url)).missions;
+                this.equipement = (await window.std(url)).equipment;
             } catch (err) {
                 this.$emit('err', err);
             }
