@@ -1,6 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Issue from '../lib/types/issue.js';
-import IssueAssigned from '../lib/types/issue_assigned.js';
+import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth from '../lib/auth.js';
 
 export default async function router(schema, config) {

@@ -2,7 +2,7 @@ import Generic, { Params } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { sql } from 'slonik';
 
-export default class Issue extends Generic {
+export default class IssueAssigned extends Generic {
     static _table = 'issues_assigned';
 
     static async list(pool, issue_id, query) {
@@ -10,7 +10,6 @@ export default class Issue extends Generic {
 
         query.limit = Params.integer(query.limit, { default: 20 });
         query.page = Params.integer(query.page, { default: 0 });
-        query.filter = Params.string(query.filter);
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
 
@@ -23,7 +22,6 @@ export default class Issue extends Generic {
                     ${sql.identifier([this._table])}
                 WHERE
                     issue_id = ${issue_id}
-                    (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
@@ -32,7 +30,7 @@ export default class Issue extends Generic {
                     ${query.limit * query.page}
             `);
 
-            return this.deserialize_list(pgres);
+            return this.deserialize_list(pgres, 'assigned');
         } catch (err) {
             throw new Err(500, err, 'Failed to list Issue Asignees');
         }

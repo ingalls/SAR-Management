@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./training_assigned/id.json"
+        },
+        "issue_id": {
+            "$ref": "./training_assigned/issue_id.json"
+        },
+        "uid": {
+            "$ref": "./training_assigned/uid.json"
+        }
+    },
+    "required": [
+        "id",
+        "issue_id",
+        "uid"
+    ]
+}

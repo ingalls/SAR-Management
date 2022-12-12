@@ -91,12 +91,24 @@ function up(knex) {
             author      BIGINT NOT NULL REFERENCES users(id)
         );
 
+        CREATE TABLE missions_assigned (
+            id          BIGSERIAL PRIMARY KEY,
+            mission_id  BIGINT NOT NULL REFERENCES missions(id),
+            uid         BIGINT NOT NULL REFERENCES users(id)
+        );
+
         CREATE TABLE equipment (
             id          BIGSERIAL PRIMARY KEY,
             created     TIMESTAMP NOT NULL DEFAULT Now(),
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             status      TEXT NOT NULL DEFAULT 'open',
             name        TEXT NOT NULL
+        );
+
+        CREATE TABLE equipment_assigned (
+            id          BIGSERIAL PRIMARY KEY,
+            equip_id    BIGINT NOT NULL REFERENCES equipment(id),
+            uid         BIGINT NOT NULL REFERENCES users(id)
         );
 
         CREATE TABLE notifications (
@@ -116,6 +128,12 @@ function up(knex) {
             end_ts      TIMESTAMP NOT NULL,
             title       TEXT NOT NULL,
             body        TEXT NOT NULL
+        );
+
+        CREATE TABLE training_assigned (
+            id          BIGSERIAL PRIMARY KEY,
+            issue_id    BIGINT NOT NULL REFERENCES issues(id),
+            uid         BIGINT NOT NULL REFERENCES users(id)
         );
     `);
 }

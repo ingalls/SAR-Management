@@ -34,6 +34,11 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
+            const events = [];
+            if (req.params.calendar === 'birthday') {
+
+            }
+
             res.json(true);
         } catch (err) {
             return Err.respond(err, res);
