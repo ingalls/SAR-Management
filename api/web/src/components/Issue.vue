@@ -86,7 +86,12 @@
                                 <TablerLoading/>
                             </template>
                             <template v-else>
-                                <UserSelect v-model='assigned' @push='postAssigned($event)' @err='err = $event'/>
+                                <UserSelect
+                                    v-model='assigned'
+                                    @push='postAssigned($event)'
+                                    @delete='deleteAssigned($event)'
+                                    @err='err = $event'
+                                />
                             </template>
                         </div>
                     </div>
@@ -160,14 +165,26 @@ export default {
                 this.err = err;
             }
         },
+        deleteAssigned: async function(user) {
+            try {
+                await window.std(`/api/issue/${this.$route.params.issueid}/assigned/${user.id}`, {
+                    method: 'DELETE'
+                })
+            } catch (err) {
+                this.err = err;
+            }
+        },
         postAssigned: async function(user) {
             try {
+                this.loading.assigned = true;
                 await window.std(`/api/issue/${this.$route.params.issueid}/assigned`, {
                     method: 'POST',
                     body: {
                         uid: user.id
                     }
                 })
+
+                await this.fetchAssigned();
             } catch (err) {
                 this.err = err;
             }

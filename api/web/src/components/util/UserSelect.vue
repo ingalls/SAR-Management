@@ -1,7 +1,7 @@
 <template>
 <div class='mb-3'>
     <div class='row'>
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center mb-3">
             <div class="subheader" v-text='label'></div>
 
             <div class='ms-auto'>
@@ -25,10 +25,12 @@
                 </div>
             </div>
         </div>
-        <div class='row'>
-            <div :key='a.id' v-for='a in assigned' class="d-flex align-items-center my-1">
-                <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                <span v-text='`${a.fname} ${a.lname}`'/>
+        <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
+            <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
+            <span v-text='`${a.fname} ${a.lname}`'/>
+
+            <div class='ms-auto'>
+                <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer'/>
             </div>
         </div>
     </div>
@@ -37,7 +39,8 @@
 
 <script>
 import {
-    SettingsIcon
+    SettingsIcon,
+    TrashIcon
 } from 'vue-tabler-icons';
 
 import {
@@ -89,6 +92,10 @@ export default {
             this.assigned.push(user);
             this.$emit('push', user);
         },
+        delete_assigned: function(idx, user) {
+            this.assigned.splice(idx, 1);
+            this.$emit('delete', user);
+        },
         listUsers: async function() {
             try {
                 const url = window.stdurl('/api/user');
@@ -102,6 +109,7 @@ export default {
     },
     components: {
         SettingsIcon,
+        TrashIcon,
         TablerInput
     }
 }
