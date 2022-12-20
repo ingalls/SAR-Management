@@ -17,7 +17,7 @@
                         <div class='m-1'>
                             <TablerInput placeholder='Filter Users' v-model='filter'/>
 
-                            <div @click='assigned.push(user)' :key='user.id' v-for='user in list.users'>
+                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users'>
                                 <span v-text='`${user.fname} ${user.lname}`'/>
                             </div>
                         </div>
@@ -85,6 +85,10 @@ export default {
         this.listUsers();
     },
     methods: {
+        push_assigned: function(user) {
+            this.assigned.push(user);
+            this.$emit('push', user);
+        },
         listUsers: async function() {
             try {
                 const url = window.stdurl('/api/user');

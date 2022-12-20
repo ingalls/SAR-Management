@@ -86,7 +86,7 @@
                                 <TablerLoading/>
                             </template>
                             <template v-else>
-                                <UserSelect v-model='assigned' @err='err = $event'/>
+                                <UserSelect v-model='assigned' @push='postAssigned($event)' @err='err = $event'/>
                             </template>
                         </div>
                     </div>
@@ -156,6 +156,18 @@ export default {
                 this.loading.assigned = true;
                 this.assigned = (await window.std(`/api/issue/${this.$route.params.issueid}/assigned`)).assigned;
                 this.loading.assigned = false;
+            } catch (err) {
+                this.err = err;
+            }
+        },
+        postAssigned: async function(user) {
+            try {
+                await window.std(`/api/issue/${this.$route.params.issueid}/assigned`, {
+                    method: 'POST',
+                    body: {
+                        uid: user.id
+                    }
+                })
             } catch (err) {
                 this.err = err;
             }
