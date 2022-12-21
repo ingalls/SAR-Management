@@ -9,6 +9,12 @@
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Calendar</a></li>
                         </ol>
+
+                        <div class='ms-auto'>
+                            <a @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
+                                New Training
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -74,7 +80,7 @@ export default {
 
                     return resolve(events);
                 } catch (err) {
-                    return reject(err); 
+                    return reject(err);
                 }
             }
         });

@@ -7,8 +7,8 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/mission")' class="cursor-pointer">Mission</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='mission.id'></a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/training")' class="cursor-pointer">Training</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='training.id'></a></li>
                         </ol>
                     </div>
                 </div>
@@ -22,15 +22,15 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class='card-header'>
-                            <h3 class='card-title' v-text='mission.title'/>
+                            <h3 class='card-title' v-text='training.title'/>
 
                             <div class='ms-auto'>
-                                <span class='' v-text='mission.start_ts'/> - <span class='' v-text='mission.end_ts'/>
+                                <span class='' v-text='training.start_ts'/> - <span class='' v-text='training.end_ts'/>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class='row row-cards'>
-                                <div class="col-md-12" v-text='mission.body'></div>
+                                <div class="col-md-12" v-text='training.body'></div>
 
                                 <div class='col-md-12'>
                                     <Location/>
@@ -56,7 +56,7 @@ export default {
     data: function() {
         return {
             err: false,
-            mission: {
+            training: {
                 title: '',
                 body: '',
                 start_ts: '',
@@ -69,7 +69,7 @@ export default {
     },
     methods: {
         fetch: async function() {
-            this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
+            this.training = await window.std(`/api/training/${this.$route.params.trainingid}`);
         }
     },
     components: {

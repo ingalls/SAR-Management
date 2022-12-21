@@ -139,9 +139,11 @@ function up(knex) {
         );
 
         CREATE TABLE training_assigned (
-            id          BIGSERIAL PRIMARY KEY,
-            issue_id    BIGINT NOT NULL REFERENCES issues(id),
-            uid         BIGINT NOT NULL REFERENCES users(id)
+            id              BIGSERIAL PRIMARY KEY,
+            training_id     BIGINT NOT NULL REFERENCES training(id),
+            confirmed       BOOLEAN NOT NULL DEFAULT False,
+            role            TEXT NOT NULL,
+            uid             BIGINT NOT NULL REFERENCES users(id)
         );
 
         CREATE VIEW view_issues_assigned AS

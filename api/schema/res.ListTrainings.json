@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "training"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "total": {
+            "type": "integer"
+        },
+        "training": {
+            "type": "array",
+            "items":  {
+                "type": "object"
+            }
+        }
+    }
+}

@@ -595,6 +595,60 @@
 
 
 /**
+* @api {get} /training List Trainings
+* @apiVersion 1.0.0
+* @apiName GET-/training
+* @apiGroup Training
+* @apiPermission user
+*
+* @apidescription
+*   Get all trainings for the Org
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListTrainings.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /training/:trainingid Get Training
+* @apiVersion 1.0.0
+* @apiName GET-/training/:trainingid
+* @apiGroup Training
+* @apiPermission user
+*
+* @apidescription
+*   Get a single Training
+*
+* @apiParam {integer} trainingid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/training.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /training Create Training
+* @apiVersion 1.0.0
+* @apiName POST-/training
+* @apiGroup Training
+* @apiPermission user
+*
+* @apidescription
+*   Create a new training
+*
+
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateTraining.json} apiParam
+* @apiSchema {jsonschema=../schema/training.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /user Get Users
 * @apiVersion 1.0.0
 * @apiName GET-/user

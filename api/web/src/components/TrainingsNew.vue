@@ -7,7 +7,7 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/mission")' class="cursor-pointer">Mission</a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/training")' class="cursor-pointer">Training</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">New</a></li>
                         </ol>
                     </div>
@@ -24,16 +24,16 @@
                         <div class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-12">
-                                    <TablerInput v-model='mission.title' label='Mission Title'/>
+                                    <TablerInput v-model='training.title' label='Training Title'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput type='date' v-model='mission.start_ts' label='Mission Start'/>
+                                    <TablerInput type='date' v-model='training.start_ts' label='Training Start'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput type='date' v-model='mission.end_ts' label='Mission End'/>
+                                    <TablerInput type='date' v-model='training.end_ts' label='Training End'/>
                                 </div>
                                 <div class="col-md-12">
-                                    <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
+                                    <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>
                                 </div>
 
                                 <div class='col-md-12'>
@@ -44,7 +44,7 @@
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
                                             <a @click='create' class="cursor-pointer btn btn-primary">
-                                                Create Mission
+                                                Create Training
                                             </a>
                                         </div>
                                     </div>
@@ -73,7 +73,7 @@ export default {
     data: function() {
         return {
             err: false,
-            mission: {
+            training: {
                 title: '',
                 body: '',
                 start_ts: '',
@@ -83,12 +83,12 @@ export default {
     },
     methods: {
         create: async function() {
-            const create = await window.std('/api/mission', {
+            const create = await window.std('/api/training', {
                 method: 'POST',
-                body: this.mission
+                body: this.training
             });
 
-            this.$router.push(`/mission/${create.id}`);
+            this.$router.push(`/training/${create.id}`);
         }
     },
     components: {

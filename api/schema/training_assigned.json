@@ -5,8 +5,14 @@
         "id": {
             "$ref": "./training_assigned/id.json"
         },
-        "issue_id": {
-            "$ref": "./training_assigned/issue_id.json"
+        "training_id": {
+            "$ref": "./training_assigned/training_id.json"
+        },
+        "confirmed": {
+            "$ref": "./training_assigned/confirmed.json"
+        },
+        "role": {
+            "$ref": "./training_assigned/role.json"
         },
         "uid": {
             "$ref": "./training_assigned/uid.json"
@@ -14,7 +20,9 @@
     },
     "required": [
         "id",
-        "issue_id",
+        "training_id",
+        "confirmed",
+        "role",
         "uid"
     ]
 }
