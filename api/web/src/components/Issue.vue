@@ -107,15 +107,12 @@
     </div>
 
     <PageFooter/>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import {
     TablerLoading,
-    TablerError
 } from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
 import CreateComment from './Issue/CreateComment.vue';
@@ -125,7 +122,6 @@ export default {
     name: 'Issue',
     data: function() {
         return {
-            err: false,
             issue: {
                 id: '',
                 title: '',
@@ -143,75 +139,49 @@ export default {
     },
     mounted: async function() {
         await this.fetch();
-
-        this.fetchAssigned();
-        this.fetchComments();
+        await this.fetchAssigned();
+        await this.fetchComments();
 
     },
     methods: {
         fetch: async function() {
-            try {
-                this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`);
         },
         fetchAssigned: async function() {
-            try {
-                this.loading.assigned = true;
-                this.assigned = (await window.std(`/api/issue/${this.$route.params.issueid}/assigned`)).assigned;
-                this.loading.assigned = false;
-            } catch (err) {
-                this.err = err;
-            }
+            this.loading.assigned = true;
+            this.assigned = (await window.std(`/api/issue/${this.$route.params.issueid}/assigned`)).assigned;
+            this.loading.assigned = false;
         },
         deleteAssigned: async function(user) {
-            try {
-                await window.std(`/api/issue/${this.$route.params.issueid}/assigned/${user.id}`, {
-                    method: 'DELETE'
-                })
-            } catch (err) {
-                this.err = err;
-            }
+            await window.std(`/api/issue/${this.$route.params.issueid}/assigned/${user.id}`, {
+                method: 'DELETE'
+            })
         },
         postAssigned: async function(user) {
-            try {
-                this.loading.assigned = true;
-                await window.std(`/api/issue/${this.$route.params.issueid}/assigned`, {
-                    method: 'POST',
-                    body: {
-                        uid: user.id
-                    }
-                })
+            this.loading.assigned = true;
+            await window.std(`/api/issue/${this.$route.params.issueid}/assigned`, {
+                method: 'POST',
+                body: {
+                    uid: user.id
+                }
+            })
 
-                await this.fetchAssigned();
-            } catch (err) {
-                this.err = err;
-            }
+            await this.fetchAssigned();
         },
         fetchComments: async function() {
-            try {
-                this.comments = await window.std(`/api/issue/${this.$route.params.issueid}/comment`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.comments = await window.std(`/api/issue/${this.$route.params.issueid}/comment`);
         },
         update: async function(status) {
             if (status) this.issue.status = status;
-            try {
-                this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`, {
-                    method: 'PATCH',
-                    body: {
-                        status: this.issue.status
-                    }
-                });
-            } catch (err) {
-                this.err = err;
-            }
+            this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`, {
+                method: 'PATCH',
+                body: {
+                    status: this.issue.status
+                }
+            });
         }
     },
     components: {
-        TablerError,
         TablerLoading,
         PageFooter,
         CreateComment,

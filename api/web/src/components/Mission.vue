@@ -39,6 +39,10 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-lg-12">
+                    <UserPresentSelect v-model='assigned'/>
+                </div>
             </div>
         </div>
     </div>
@@ -50,6 +54,7 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
+import UserPresentSelect from './util/UserPresentSelect.vue';
 
 export default {
     name: 'MissionsNew',
@@ -61,7 +66,8 @@ export default {
                 body: '',
                 start_ts: '',
                 end_ts: ''
-            }
+            },
+            assigned: []
         }
     },
     mounted: async function() {
@@ -70,11 +76,33 @@ export default {
     methods: {
         fetch: async function() {
             this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
-        }
+        },
+        fetchAssigned: async function() {
+            this.loading.assigned = true;
+            this.assigned = (await window.std(`/api/mission/${this.$route.params.missionid}/assigned`)).assigned;
+            this.loading.assigned = false;
+        },
+        deleteAssigned: async function(user) {
+            await window.std(`/api/mission/${this.$route.params.missionid}/assigned/${user.id}`, {
+                method: 'DELETE'
+            })
+        },
+        postAssigned: async function(user) {
+            this.loading.assigned = true;
+            await window.std(`/api/mission/${this.$route.params.missionid}/assigned`, {
+                method: 'POST',
+                body: {
+                    uid: user.id
+                }
+            })
+
+            await this.fetchAssigned();
+        },
     },
     components: {
         Location,
         PageFooter,
+        UserPresentSelect
     }
 }
 </script>
