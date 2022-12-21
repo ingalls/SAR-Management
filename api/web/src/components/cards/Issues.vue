@@ -11,11 +11,6 @@
                         :values='["Recent", "Priority"]'
                         @select='fetch($event)'
                     />
-
-                    <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                    <div class="dropdown-menu dropdown-menu-end" style="">
-                        <a @click='getExport' class="dropdown-item" href="#">Page</a>
-                    </div>
                 </div>
             </div>
         </div>
