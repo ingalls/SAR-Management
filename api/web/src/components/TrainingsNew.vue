@@ -27,10 +27,10 @@
                                     <TablerInput v-model='training.title' label='Training Title'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput type='date' v-model='training.start_ts' label='Training Start'/>
+                                    <TablerInput type='datetime-local' v-model='training.start_ts' label='Training Start'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput type='date' v-model='training.end_ts' label='Training End'/>
+                                    <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
                                 </div>
                                 <div class="col-md-12">
                                     <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>

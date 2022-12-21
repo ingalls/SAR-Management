@@ -27,10 +27,10 @@
                                     <TablerInput v-model='mission.title' label='Mission Title'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput type='date' v-model='mission.start_ts' label='Mission Start'/>
+                                    <TablerInput type='datetime-local' v-model='mission.start_ts' label='Mission Start'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput type='date' v-model='mission.end_ts' label='Mission End'/>
+                                    <TablerInput type='datetime-local' v-model='mission.end_ts' label='Mission End'/>
                                 </div>
                                 <div class="col-md-12">
                                     <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
