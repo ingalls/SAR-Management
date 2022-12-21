@@ -19,6 +19,20 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
+                <div v-if='!loading.assigned && is_roster' class="col-lg-12">
+                    <div class='card'>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <h3 class="mb-1">Roster Correction</h3>
+                            <p>You aren't marked as present for this training. If this is incorrect, request to be added to the training roster</p>
+                            <div class='d-flex'>
+                                <div class='ms-auto'>
+                                    <a href="#" class="btn btn-info">Request Inclusion</a>
+                                </div>
+                            </div>
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-12">
                     <div class="card">
                         <div class='card-header'>
@@ -39,6 +53,17 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-lg-12">
+                    <UserPresentSelect
+                        label='Training Roster'
+                        v-model='assigned'
+                        :loading='loading.assigned'
+                        @push='postAssigned($event)'
+                        @patch='patchAssigned($event)'
+                        @delete='deleteAssigned($event)'
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -50,11 +75,16 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
+import UserPresentSelect from './util/UserPresentSelect.vue';
 
 export default {
     name: 'TrainingsNew',
     data: function() {
         return {
+            loading: {
+                assigned: true
+            },
+            assigned: [],
             training: {
                 title: '',
                 body: '',
@@ -65,15 +95,47 @@ export default {
     },
     mounted: async function() {
         await this.fetch();
+        await this.fetchAssigned();
     },
     methods: {
         fetch: async function() {
             this.training = await window.std(`/api/training/${this.$route.params.trainingid}`);
-        }
+        },
+        fetchAssigned: async function() {
+            this.loading.assigned = true;
+            this.assigned = (await window.std(`/api/training/${this.$route.params.trainingid}/assigned`)).assigned;
+            this.loading.assigned = false;
+        },
+        deleteAssigned: async function(user) {
+            await window.std(`/api/training/${this.$route.params.trainingid}/assigned/${user.id}`, {
+                method: 'DELETE'
+            })
+        },
+        patchAssigned: async function(user) {
+            await window.std(`/api/training/${this.$route.params.trainingid}/assigned/${user.id}`, {
+                method: 'PATCH',
+                body: {
+                    role: user.role,
+                    confirmed: user.confirmed
+                }
+            })
+        },
+        postAssigned: async function(user) {
+            this.loading.assigned = true;
+            await window.std(`/api/training/${this.$route.params.trainingid}/assigned`, {
+                method: 'POST',
+                body: {
+                    uid: user.id
+                }
+            })
+
+            await this.fetchAssigned();
+        },
     },
     components: {
         Location,
         PageFooter,
+        UserPresentSelect
     }
 }
 </script>
