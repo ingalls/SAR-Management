@@ -162,6 +162,24 @@
 
 
 /**
+* @api {get} /doc List Docs
+* @apiVersion 1.0.0
+* @apiName GET-/doc
+* @apiGroup Docs
+* @apiPermission user
+*
+* @apidescription
+*   List Docs
+*
+
+*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListDocs.json} apiParam
+*
+* @apiSchema {jsonschema=../schema/res.ListDocs.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /issue/:issueid/assigned Get Assigned
 * @apiVersion 1.0.0
 * @apiName GET-/issue/:issueid/assigned

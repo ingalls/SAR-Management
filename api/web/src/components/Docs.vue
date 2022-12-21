@@ -26,33 +26,11 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex">
-                                <div class='ms-auto'>
-                                    <div class="btn-list">
-                                        <TablerSelect
-                                            default='Author'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Label'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Assignee'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Sort'
-                                            :values='["All"]'
-                                        />
-
-                                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                        <div class="dropdown-menu dropdown-menu-end" style="">
-                                            <a @click='getExport' class="dropdown-item" href="#">Export CSV</a>
-                                        </div>
-                                    </div>
+                                <div class="input-icon w-50">
+                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
+                                    <span class="input-icon-addon">
+                                        <SearchIcon width='24'/>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -64,9 +42,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='issue.id' v-for='issue in issues'>
-                                    <td v-text='a.name'></td>
-                                    <td v-text='a.status'></td>
+                                <tr :key='doc.id' v-for='doc in list.docs'>
+                                    <td v-text='doc.path'></td>
+                                    <td v-text='doc.name'></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -82,18 +60,30 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
-import { TablerSelect } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Docs',
     data: function() {
         return {
-            err: false,
+            query: {
+                filter: ''
+            },
+            list: {
+                total: 0,
+                docs: []
+            }
+        }
+    },
+    mounted: async function() {
+        await this.listDocs();
+    },
+    methods: {
+        listDocs: async function() {
+            this.list = await window.std('/api/doc');
         }
     },
     components: {
         PageFooter,
-        TablerSelect
     }
 }
 </script>
