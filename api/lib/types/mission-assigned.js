@@ -10,16 +10,21 @@ export default class MissionAssigned extends Generic {
 
         query.limit = Params.integer(query.limit, { default: 20 });
         query.page = Params.integer(query.page, { default: 0 });
-        query.sort = Params.string(query.sort, { default: 'created' });
+        query.sort = Params.string(query.sort, { default: 'id' });
         query.order = Params.order(query.order);
 
         try {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    *
+                    missions_assigned.*,
+                    users.fname,
+                    users.lname,
+                    users.username
                 FROM
                     ${sql.identifier([this._table])}
+                        LEFT JOIN users
+                            ON missions_assigned.uid = users.id
                 WHERE
                     mission_id = ${mission_id}
                 ORDER BY

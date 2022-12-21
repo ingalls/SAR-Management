@@ -210,7 +210,7 @@
 * @apiParam {integer} issueid param
 *
 *
-* @apiSchema (Body) {jsonschema=../schema/req.body.PostIssueAssigned.json} apiParam
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssueAssigned.json} apiParam
 * @apiSchema {jsonschema=../schema/issues_assigned.json} apiSuccess
 */
 
@@ -464,6 +464,61 @@
 *
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.ResetLogin.json} apiParam
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /mission/:missionid/assigned Get Assigned
+* @apiVersion 1.0.0
+* @apiName GET-/mission/:missionid/assigned
+* @apiGroup MissionAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Get users assigned to an mission
+*
+* @apiParam {integer} missionid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListMissionAssigned.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /mission/:missionid/assigned Add Assigned
+* @apiVersion 1.0.0
+* @apiName POST-/mission/:missionid/assigned
+* @apiGroup MissionAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Remove an assignment
+*
+* @apiParam {integer} missionid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateMissionAssigned.json} apiParam
+* @apiSchema {jsonschema=../schema/missions_assigned.json} apiSuccess
+*/
+
+
+/**
+* @api {delete} /mission/:missionid/assigned/:assignedid Remove Assigned
+* @apiVersion 1.0.0
+* @apiName DELETE-/mission/:missionid/assigned/:assignedid
+* @apiGroup MissionAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Remove a user from an mission
+*
+* @apiParam {integer} missionid param
+* @apiParam {integer} assignedid param
+*
+*
+*
 * @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
 */
 

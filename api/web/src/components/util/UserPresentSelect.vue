@@ -28,7 +28,9 @@
                 </div>
             </div>
         </div>
-        <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
+
+        <TablerLoading v-if='loading'/>
+        <div v-else :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
             <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
             <span v-text='`${a.fname} ${a.lname}`'/>
 
@@ -45,9 +47,9 @@ import {
     SettingsIcon,
     TrashIcon
 } from 'vue-tabler-icons';
-
 import {
-    TablerInput
+    TablerInput,
+    TablerLoading
 } from '@tak-ps/vue-tabler'
 
 export default {
@@ -60,6 +62,9 @@ export default {
         label: {
             type: String,
             default: 'Mission Roster'
+        },
+        loading: {
+            type: Boolean
         },
         limit: {
             type: Number,
@@ -115,7 +120,8 @@ export default {
     components: {
         SettingsIcon,
         TrashIcon,
-        TablerInput
+        TablerInput,
+        TablerLoading
     }
 }
 </script>

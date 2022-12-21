@@ -41,7 +41,12 @@
                 </div>
 
                 <div class="col-lg-12">
-                    <UserPresentSelect v-model='assigned'/>
+                    <UserPresentSelect
+                        v-model='assigned'
+                        :loading='loading.assigned'
+                        @push='postAssigned($event)'
+                        @delete='deleteAssigned($event)'
+                    />
                 </div>
             </div>
         </div>
@@ -57,10 +62,12 @@ import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 
 export default {
-    name: 'MissionsNew',
+    name: 'Mission',
     data: function() {
         return {
-            err: false,
+            loading: {
+                assigned: true
+            },
             mission: {
                 title: '',
                 body: '',
@@ -72,6 +79,7 @@ export default {
     },
     mounted: async function() {
         await this.fetch();
+        await this.fetchAssigned();
     },
     methods: {
         fetch: async function() {

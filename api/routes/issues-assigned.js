@@ -27,7 +27,7 @@ export default async function router(schema, config) {
         auth: 'user',
         ':issueid': 'integer',
         description: 'Remove an assignment',
-        body: 'req.body.PostIssueAssigned.json',
+        body: 'req.body.CreateIssueAssigned.json',
         res: 'issues_assigned.json'
     }, async (req, res) => {
         try {

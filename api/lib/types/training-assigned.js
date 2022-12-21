@@ -10,16 +10,21 @@ export default class TrainingAssigned extends Generic {
 
         query.limit = Params.integer(query.limit, { default: 20 });
         query.page = Params.integer(query.page, { default: 0 });
-        query.sort = Params.string(query.sort, { default: 'created' });
+        query.sort = Params.string(query.sort, { default: 'id' });
         query.order = Params.order(query.order);
 
         try {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    *
+                    training_assigned.*,
+                    users.fname,
+                    users.lname,
+                    users.username
                 FROM
                     ${sql.identifier([this._table])}
+                        LEFT JOIN users
+                            ON training_assigned.uid = users.id
                 WHERE
                     training_id = ${training_id}
                 ORDER BY
