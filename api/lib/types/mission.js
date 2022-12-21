@@ -12,6 +12,7 @@ export default class Mission extends Generic {
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
 
+        query.assigned = Params.integer(query.assigned);
         query.start = Params.timestamp(query.timestamp);
         query.end = Params.timestamp(query.timestamp);
 
@@ -22,8 +23,11 @@ export default class Mission extends Generic {
                     missions.*
                 FROM
                     missions
+                        LEFT JOIN missions_assigned
+                            ON missions.id = missions_assigned.mission_id
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
+                    AND (${query.assigned}::BIGINT IS NULL OR missions_assigned.uid = ${query.assigned})
                     AND (${query.start}::TIMESTAMP IS NULL OR missions.start_ts >= ${query.start}::TIMESTAMP)
                     AND (${query.end}::TIMESTAMP IS NULL OR missions.end_ts >= ${query.end}::TIMESTAMP)
                 ORDER BY
