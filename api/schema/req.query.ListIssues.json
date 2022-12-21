@@ -28,6 +28,15 @@
             ],
             "description": "Field to sort order by"
         },
+        "status": {
+            "type": "string",
+            "default": "open",
+            "enum": [
+                "open",
+                "closed"
+            ],
+            "description": "Filter by issue status"
+        },
         "filter": {
             "type": "string",
             "default": "",

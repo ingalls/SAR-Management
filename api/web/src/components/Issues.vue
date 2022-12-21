@@ -38,23 +38,8 @@
                                 <div class='ms-auto'>
                                     <div class="btn-list">
                                         <TablerSelect
-                                            default='Author'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Label'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Assignee'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Sort'
-                                            :values='["All"]'
+                                            default='Open'
+                                            :values='["Open", "Closed"]'
                                         />
 
                                         <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>

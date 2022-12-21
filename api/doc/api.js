@@ -264,7 +264,7 @@
 *
 
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListIssues.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListIssues.json} apiSuccess
 */

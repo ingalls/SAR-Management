@@ -9,7 +9,7 @@ export default async function router(schema, config) {
         group: 'Issue',
         auth: 'user',
         description: 'Get all issues for the Org',
-        req: 'req.query.ListIssues.json',
+        query: 'req.query.ListIssues.json',
         res: 'res.ListIssues.json'
     }, async (req, res) => {
         try {

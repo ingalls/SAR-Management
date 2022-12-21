@@ -13,6 +13,7 @@ export default class Issue extends Generic {
         query.order = Params.order(query.order);
 
         query.assigned = Params.integer(query.assigned);
+        query.status = Params.string(query.status);
 
         try {
             const pgres = await pool.query(sql`
@@ -26,6 +27,7 @@ export default class Issue extends Generic {
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR issues_assigned.uid = ${query.assigned})
+                    AND (${query.status}::TEXT IS NULL OR issues.status = ${query.status})
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
