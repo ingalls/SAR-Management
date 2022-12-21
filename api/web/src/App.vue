@@ -152,6 +152,9 @@ export default {
             err: false,
         }
     },
+    errorCaptured: function(err) {
+        this.err = err;
+    },
     computed: {
         enableNav() {
             if (!this.$route || !this.$route.name) return false;

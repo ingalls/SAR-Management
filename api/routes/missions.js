@@ -1,6 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import Mission from '../lib/types/mission.js';
 import Auth from '../lib/auth.js';
+import moment from 'moment';
 
 export default async function router(schema, config) {
     await schema.get('/mission', {
@@ -47,6 +48,13 @@ export default async function router(schema, config) {
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);
+
+            // TODO: Generic should handle this
+            if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix();
+            else delete req.body.start_ts
+
+            if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix();
+            else delete req.body.end_ts
 
             res.json(await Mission.generate(config.pool, {
                 author: req.auth.id,

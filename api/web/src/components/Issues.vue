@@ -73,7 +73,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='issue.id' v-for='issue in issues.issues'>
+                                <tr :key='issue.id' v-for='issue in list.issues'>
                                     <td><a @click='$router.push(`/issue/${issue.id}`)' class='cursor-pointer' v-text='issue.title'></a></td>
                                     <td v-text='issue.status'></td>
                                 </tr>
@@ -86,14 +86,12 @@
     </div>
 
     <PageFooter/>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
-import { TablerSelect, TablerError } from '@tak-ps/vue-tabler';
+import { TablerSelect } from '@tak-ps/vue-tabler';
 import {
     SearchIcon
 } from 'vue-tabler-icons';
@@ -102,9 +100,9 @@ export default {
     name: 'Issues',
     data: function() {
         return {
-            err: false,
-            issues: {
-
+            list: {
+                total: 0,
+                issues: []
             },
             query: {
                 filter: ''
@@ -112,26 +110,21 @@ export default {
         }
     },
     watch: {
-        'query.filter': function() {
-            this.listIssues();
+        'query.filter': async function() {
+            await this.listIssues();
         }
     },
-    mounted: function() {
-        this.listIssues();
+    mounted: async function() {
+        await this.listIssues();
     },  
     methods: {
         listIssues: async function() {
-            try {
-                const url = window.stdurl('/api/issue');
-                if (this.query.filter) url.searchParams.append('filter', this.query.filter);
-                this.issues = await window.std(url)
-            } catch (err) {
-                this.err = err;
-            }
+            const url = window.stdurl('/api/issue');
+            if (this.query.filter) url.searchParams.append('filter', this.query.filter);
+            this.issues = await window.std(url)
         }
     }, 
     components: {
-        TablerError,
         PageFooter,
         TablerSelect,
         SearchIcon

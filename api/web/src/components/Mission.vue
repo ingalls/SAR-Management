@@ -8,7 +8,7 @@
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
                             <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/mission")' class="cursor-pointer">Mission</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">New</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='mission.id'></a></li>
                         </ol>
                     </div>
                 </div>
@@ -21,33 +21,19 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
+                        <div class='card-header'>
+                            <h3 class='card-title' v-text='mission.title'/>
+
+                            <div class='ms-auto'>
+                                <span class='' v-text='mission.start_ts'/> - <span class='' v-text='mission.end_ts'/>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <div class='row row-cards'>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='mission.title' label='Mission Title'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput type='date' v-model='mission.start_ts' label='Mission Start'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput type='date' v-model='mission.end_ts' label='Mission End'/>
-                                </div>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
-                                </div>
+                                <div class="col-md-12" v-text='mission.body'></div>
 
                                 <div class='col-md-12'>
                                     <Location/>
-                                </div>
-
-                                <div class="col-md-12">
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a @click='create' class="cursor-pointer btn btn-primary">
-                                                Create Mission
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -64,9 +50,6 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
-import {
-    TablerInput
-} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'MissionsNew',
@@ -81,20 +64,17 @@ export default {
             }
         }
     },
+    mounted: async function() {
+        await this.fetch();
+    },
     methods: {
-        create: async function() {
-            const create = await window.std('/api/mission', {
-                method: 'POST',
-                body: this.mission
-            });
-
-            this.$router.push(`/mission/${create.id}`);
+        fetch: async function() {
+            this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
         }
     },
     components: {
         Location,
         PageFooter,
-        TablerInput
     }
 }
 </script>

@@ -62,13 +62,11 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='issue.id' v-for='issue in issues'>
-                                    <td v-text='a.name'></td>
-                                    <td v-text='a.status'></td>
+                                <tr :key='mission.id' v-for='mission in list.missions'>
+                                    <td><a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -87,10 +85,26 @@ import PageFooter from './PageFooter.vue';
 import { TablerSelect } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'Issues',
+    name: 'Missions',
     data: function() {
         return {
-            err: false,
+            query: {
+                filter: ''
+            },
+            list: {
+                total: 0,
+                missions: []
+            }
+        }
+    },
+    mounted: async function() {
+        await this.listMissions();
+    },
+    methods: {
+        listMissions: async function() {
+            const url = window.stdurl('/api/mission');
+            if (this.query.filter) url.searchParams.append('filter', this.query.filter);
+            this.list = await window.std(url)
         }
     },
     components: {
