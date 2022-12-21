@@ -71,8 +71,8 @@
                     </div>
                 </div>
 
-                <div class="col-md-9">
-                    <div :key='comment.id' v-for='comment in comments.issues_comments' class="card">
+                <div :key='comment.id' v-for='comment in comments.issues_comments' class="col-md-9">
+                    <div class="card">
                         <div class='card-header'>
                             <div class="col">
                                 <div class="d-flex">
