@@ -33,6 +33,10 @@ const router = new VueRouter.createRouter({
         { path: '/mission/new', name: 'missions-new', component: () => import('./components/MissionsNew.vue') },
         { path: '/mission/:missionid', name: 'mission', component: () => import('./components/Mission.vue') },
 
+        { path: '/training', name: 'trainings', component: () => import('./components/Trainings.vue') },
+        { path: '/training/new', name: 'trainings-new', component: () => import('./components/TrainingsNew.vue') },
+        { path: '/training/:trainingid', name: 'training', component: () => import('./components/Training.vue') },
+
         { path: '/team', name: 'team', component: () => import('./components/Team.vue') },
         { path: '/team/new', name: 'team-single-new', component: () => import('./components/TeamSingleNew.vue') },
         { path: '/team/:teamid', name: 'team-single', component: () => import('./components/TeamSingle.vue') },
