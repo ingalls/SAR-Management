@@ -16,7 +16,8 @@
         </div>
     </div>
 
-    <div class='page-body'>
+    <TablerLoading v-if='loading'/>
+    <div v-else class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
@@ -50,26 +51,30 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-lg-12">
+                    <CardTeamIam :team='team'/>
+                </div>
             </div>
         </div>
     </div>
 
     <PageFooter/>
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
+import CardTeamIam from './cards/TeamIam.vue'
 import {
-    TablerError
-} from '@tak-ps/vue-tabler'
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'TeamSingleEdit',
     data: function() {
         return {
-            err: false,
+            loading: true,
             errors: {
                 name: false,
                 body: false
@@ -80,27 +85,20 @@ export default {
             }
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
+            this.loading = false;
         },
         deleteTeam: async function() {
-            try {
-                await window.std(`/api/team/${this.$route.params.teamid}`, {
-                    method: 'DELETE'
-                });
+            await window.std(`/api/team/${this.$route.params.teamid}`, {
+                method: 'DELETE'
+            });
 
-                this.$router.push('/team');
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push('/team');
         },
         update: async function() {
             for (const field of ['name', 'body']) {
@@ -112,24 +110,21 @@ export default {
                 if (this.errors[e]) return;
             }
 
-            try {
-                const update = await window.std(`/api/team/${this.$route.params.teamid}`, {
-                    method: 'PATCH',
-                    body: {
-                        name: this.team.name,
-                        body: this.team.body,
-                    }
-                });
+            const update = await window.std(`/api/team/${this.$route.params.teamid}`, {
+                method: 'PATCH',
+                body: {
+                    name: this.team.name,
+                    body: this.team.body,
+                }
+            });
 
-                this.$router.push(`/team/${update.id}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push(`/team/${update.id}`);
         }
     },
     components: {
-        TablerError,
         PageFooter,
+        TablerLoading,
+        CardTeamIam
     }
 }
 </script>

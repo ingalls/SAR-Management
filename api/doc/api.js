@@ -578,6 +578,24 @@
 
 
 /**
+* @api {get} /team/:teamid/iam Get IAM
+* @apiVersion 1.0.0
+* @apiName GET-/team/:teamid/iam
+* @apiGroup IAM
+* @apiPermission user
+*
+* @apidescription
+*   Get IAM settings for a given team
+*
+* @apiParam {integer} teamid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListTeamIAM.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /team Get Teams
 * @apiVersion 1.0.0
 * @apiName GET-/team

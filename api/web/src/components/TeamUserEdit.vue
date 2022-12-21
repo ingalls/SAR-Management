@@ -68,7 +68,6 @@
     </div>
 
     <PageFooter/>
-    <TablerError v-if='err' :err='err' @close='err = null'/>
     <Upload
         v-if='upload'
         @err='upload = null; err = $event'
@@ -82,7 +81,6 @@
 import PageFooter from './PageFooter.vue';
 import Upload from './util/Upload.vue';
 import {
-    TablerError,
     TablerInput,
 } from '@tak-ps/vue-tabler'
 import UserProfile from './User/Profile.vue';
@@ -91,7 +89,6 @@ export default {
     name: 'TeamUserEdit',
     data: function() {
         return {
-            err: false,
             token: localStorage.token,
             base: window.stdurl('/').origin,
             upload: false,
@@ -113,28 +110,20 @@ export default {
             }
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                this.user = await window.std(`/api/user/${this.$route.params.userid}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.user = await window.std(`/api/user/${this.$route.params.userid}`);
         },
         asset: async function(asset) {
-            try {
-                this.user = await window.std(`/api/user/${this.$route.params.userid}`, {
-                    method: 'PATCH',
-                    body: {
-                        profile_id: asset.id
-                    }
-                });
-            } catch (err) {
-                this.err = err;
-            }
+            this.user = await window.std(`/api/user/${this.$route.params.userid}`, {
+                method: 'PATCH',
+                body: {
+                    profile_id: asset.id
+                }
+            });
         },
         create: async function() {
             for (const field of ['username', 'email', 'fname', 'lname']) {
@@ -146,27 +135,22 @@ export default {
                 if (this.errors[e]) return;
             }
 
-            try {
-                const create = await window.std(`/api/user/${this.$route.params.userid}`, {
-                    method: 'PATCH',
-                    body: {
-                        username: this.user.username,
-                        email: this.user.email,
-                        fname: this.user.fname,
-                        lname: this.user.lname,
-                        phone: this.user.phone,
-                        bday: this.user.bday,
-                    }
-                });
+            const create = await window.std(`/api/user/${this.$route.params.userid}`, {
+                method: 'PATCH',
+                body: {
+                    username: this.user.username,
+                    email: this.user.email,
+                    fname: this.user.fname,
+                    lname: this.user.lname,
+                    phone: this.user.phone,
+                    bday: this.user.bday,
+                }
+            });
 
-                this.$router.push(`/team/user/${create.id}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push(`/team/user/${create.id}`);
         }
     },
     components: {
-        TablerError,
         Upload,
         PageFooter,
         UserProfile,

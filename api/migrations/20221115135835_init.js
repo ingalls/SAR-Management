@@ -12,6 +12,7 @@ function up(knex) {
             id          BIGSERIAL PRIMARY KEY,
             created     TIMESTAMP NOT NULL DEFAULT Now(),
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
+            public      BOOLEAN NOT NULL DEFAULT True,
             name        TEXT NOT NULL,
             body        TEXT NOT NULL
         );
