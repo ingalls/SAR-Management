@@ -4,7 +4,11 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-6">
-                    <IssuesCard/>
+                    <IssuesCard :limit='5'/>
+                </div>
+
+                <div class="col-lg-6">
+                    <TrainingsCard :limit='5'/>
                 </div>
             </div>
         </div>
@@ -16,6 +20,7 @@
 
 <script>
 import IssuesCard from './cards/Issues.vue';
+import TrainingsCard from './cards/Trainings.vue';
 import PageFooter from './PageFooter.vue';
 
 export default {
@@ -27,7 +32,8 @@ export default {
     },
     components: {
         PageFooter,
-        IssuesCard
+        IssuesCard,
+        TrainingsCard
     }
 }
 </script>
