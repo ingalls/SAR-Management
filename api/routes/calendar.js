@@ -65,6 +65,7 @@ export default async function router(schema, config) {
                         events.push({
                             title: `${user.fname} ${user.lname.slice(0, 1)}'s B-Day`,
                             start: moment(query.start).year() + '-' + moment(user.bday).format('MM-DD'),
+                            path: `/team/user/${user.id}`,
                             end: moment(query.start).year() + '-' + moment(user.bday).format('MM-DD'),
                         });
                     }
@@ -75,6 +76,7 @@ export default async function router(schema, config) {
                         title: mission.title,
                         start: mission.start_ts,
                         end: mission.end_ts,
+                        path: `/mission/${mission.id}`,
                         color: '#ea4335'
                     });
                 }
@@ -84,6 +86,7 @@ export default async function router(schema, config) {
                         title: training.title,
                         start: training.start_ts,
                         end: training.end_ts,
+                        path: `/training/${training.id}`,
                         color: '#fbbc04'
                     });
                 }

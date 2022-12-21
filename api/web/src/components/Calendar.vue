@@ -68,6 +68,9 @@ export default {
             defaultView: 'dayGridMonth',
             selectable: true,
             unselectAuto: true,
+            eventClick: async (event) => {
+                this.$router.push(event.event._def.extendedProps.path);
+            },
             eventSources: async (fetchInfo, resolve, reject) => {
                 try {
                     let events = [];
