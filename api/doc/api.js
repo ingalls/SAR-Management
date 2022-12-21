@@ -686,52 +686,52 @@
 
 
 /**
-* @api {get} /mission/:missionid/assigned Get Assigned
+* @api {get} /training/:trainingid/assigned Get Assigned
 * @apiVersion 1.0.0
-* @apiName GET-/mission/:missionid/assigned
-* @apiGroup MissionAssigned
+* @apiName GET-/training/:trainingid/assigned
+* @apiGroup TrainingAssigned
 * @apiPermission user
 *
 * @apidescription
-*   Get users assigned to an mission
+*   Get users assigned to an training
 *
-* @apiParam {integer} missionid param
+* @apiParam {integer} trainingid param
 *
 *
 *
-* @apiSchema {jsonschema=../schema/res.ListMissionAssigned.json} apiSuccess
+* @apiSchema {jsonschema=../schema/res.ListTrainingAssigned.json} apiSuccess
 */
 
 
 /**
-* @api {post} /mission/:missionid/assigned Add Assigned
+* @api {post} /training/:trainingid/assigned Add Assigned
 * @apiVersion 1.0.0
-* @apiName POST-/mission/:missionid/assigned
-* @apiGroup MissionAssigned
+* @apiName POST-/training/:trainingid/assigned
+* @apiGroup TrainingAssigned
 * @apiPermission user
 *
 * @apidescription
 *   Remove an assignment
 *
-* @apiParam {integer} missionid param
+* @apiParam {integer} trainingid param
 *
 *
-* @apiSchema (Body) {jsonschema=../schema/req.body.CreateMissionAssigned.json} apiParam
-* @apiSchema {jsonschema=../schema/missions_assigned.json} apiSuccess
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateTrainingAssigned.json} apiParam
+* @apiSchema {jsonschema=../schema/training_assigned.json} apiSuccess
 */
 
 
 /**
-* @api {delete} /mission/:missionid/assigned/:assignedid Remove Assigned
+* @api {delete} /training/:trainingid/assigned/:assignedid Remove Assigned
 * @apiVersion 1.0.0
-* @apiName DELETE-/mission/:missionid/assigned/:assignedid
-* @apiGroup MissionAssigned
+* @apiName DELETE-/training/:trainingid/assigned/:assignedid
+* @apiGroup TrainingAssigned
 * @apiPermission user
 *
 * @apidescription
-*   Remove a user from an mission
+*   Remove a user from an training
 *
-* @apiParam {integer} missionid param
+* @apiParam {integer} trainingid param
 * @apiParam {integer} assignedid param
 *
 *

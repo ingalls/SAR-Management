@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "uid",
+        "confirmed",
+        "role"
+    ],
+    "properties": {
+        "uid": {
+            "type": "integer"
+        },
+        "confirmed": {
+            "type": "boolean",
+            "default": true
+        },
+        "role": {
+            "type": "string",
+            "default": "present"
+        }
+    }
+}

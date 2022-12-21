@@ -9,7 +9,7 @@
                             <h2 class="h2 text-center mb-4">Login to your account</h2>
                             <div class="mb-3">
                                 <label class="form-label">Username or Email</label>
-                                <input v-model='username' type="text" class="form-control" placeholder="your@email.com" autocomplete="off">
+                                <input v-model='username' v-on:keyup.enter='createLogin' type="text" class="form-control" placeholder="your@email.com" autocomplete="off">
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">
@@ -19,7 +19,7 @@
                                     </span>
                                 </label>
                                 <div class="input-group input-group-flat">
-                                    <input v-model='password' type="password" class="form-control" placeholder="Your password" autocomplete="off">
+                                    <input v-model='password' v-on:keyup.enter='createLogin' type="password" class="form-control" placeholder="Your password" autocomplete="off">
                                 </div>
                             </div>
                             <div class="form-footer">
