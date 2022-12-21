@@ -16,7 +16,7 @@
 
                         <button v-if='dropdown' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                         <div class="dropdown-menu dropdown-menu-end" style="">
-                            <a @click='$router.push("/team/user/new")' class="dropdown-item">New User</a>
+                            <a @click='$router.push("/user/new")' class="dropdown-item">New User</a>
                         </div>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                 </thead>
                 <tbody>
                     <tr :key='user.id' v-for='user in users.users'>
-                        <td @click='$router.push(`/team/user/${user.id}`)'>
+                        <td @click='$router.push(`/user/${user.id}`)'>
                             <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
                         </td>
                         <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
@@ -50,13 +50,13 @@
         <div class='row row-cards'>
             <div :key='user.id' v-for='user in users.users' class='col-sm-6 col-lg-4'>
                 <div class="card card-sm">
-                    <a @click='$router.push(`/team/user/${user.id}`)' class="d-block cursor-pointer">
+                    <a @click='$router.push(`/user/${user.id}`)' class="d-block cursor-pointer">
                         <UserProfile :user='user'/>
                     </a>
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <div @click='$router.push(`/team/user/${user.id}`)' class='cursor-pointer' v-text='`${user.fname} ${user.lname}`'></div>
+                                <div @click='$router.push(`/user/${user.id}`)' class='cursor-pointer' v-text='`${user.fname} ${user.lname}`'></div>
                                 <a class='text-muted cursor-pointer' :href='`tel:${user.email}`' v-text='user.phone'></a>
                             </div>
                         </div>
