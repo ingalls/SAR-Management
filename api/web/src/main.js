@@ -49,6 +49,8 @@ const router = new VueRouter.createRouter({
         { path: '/user/:userid', name: 'user', component: () => import('./components/User.vue') },
         { path: '/user/:userid/edit', name: 'user-edit', component: () => import('./components/UserEdit.vue') },
 
+        { path: '/admin', name: 'admin', component: () => import('./components/Admin.vue') },
+
         { path: '/(.*)', name: 'lost', component: () => import('./components/Lost.vue') },
     ]
 });
