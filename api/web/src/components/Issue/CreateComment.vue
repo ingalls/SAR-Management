@@ -23,43 +23,29 @@
             </div>
         </div>
     </div>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import {
-    TablerError
-} from '@tak-ps/vue-tabler';
-
 export default {
     name: 'CreateComment',
     data: function() {
         return {
-            err: false,
             body: '',
         }
     },
     methods: {
         create: async function() {
-            try {
-                await window.std(`/api/issue/${this.$route.params.issueid}/comment`, {
-                    method: 'POST',
-                    body: {
-                        body: this.body
-                    }
-                });
+            await window.std(`/api/issue/${this.$route.params.issueid}/comment`, {
+                method: 'POST',
+                body: {
+                    body: this.body
+                }
+            });
 
-                this.body = '';
-                this.$emit('comment');
-            } catch (err) {
-                this.err = err;
-            }
+            this.body = '';
+            this.$emit('comment');
         }
     },
-    components: {
-        TablerError,
-    }
 }
 </script>

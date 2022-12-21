@@ -50,10 +50,28 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body" v-text='issue.body'>
+                        <div class="card-body" v-text='issue.body'></div>
+                    </div>
+                </div>
+
+                <div class='col-md-3'>
+                    <div class='card'>
+                        <div class='card-body'>
+                            <template v-if='loading.assigned'>
+                                <TablerLoading/>
+                            </template>
+                            <template v-else>
+                                <UserSelect
+                                    v-model='assigned'
+                                    @push='postAssigned($event)'
+                                    @delete='deleteAssigned($event)'
+                                />
+                            </template>
                         </div>
                     </div>
+                </div>
 
+                <div class="col-md-9">
                     <div :key='comment.id' v-for='comment in comments.issues_comments' class="card">
                         <div class='card-header'>
                             <div class="col">
@@ -76,23 +94,6 @@
                             </div>
                         </div>
                         <div class="card-body" v-text='comment.body'></div>
-                    </div>
-                </div>
-
-                <div class='col-md-3'>
-                    <div class='card'>
-                        <div class='card-body'>
-                            <template v-if='loading.assigned'>
-                                <TablerLoading/>
-                            </template>
-                            <template v-else>
-                                <UserSelect
-                                    v-model='assigned'
-                                    @push='postAssigned($event)'
-                                    @delete='deleteAssigned($event)'
-                                />
-                            </template>
-                        </div>
                     </div>
                 </div>
 

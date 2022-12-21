@@ -1,15 +1,26 @@
 <template>
 <div class="card">
     <div class="card-body">
-        <h3 class="subheader" v-text='label'></h3>
-        <TablerProgress :progress='attended / total'/>
-    </div>
+        <div class='d-flex'>
+            <h3 class="subheader" v-text='label'></h3>
 
+            <div class='ms-auto'>
+                <h3 class="subheader" v-text='Math.round(percent * 100) + "%"'></h3>
+            </div>
+        </div>
+        <template v-if='loading'>
+            <TablerLoading/>
+        </template>
+        <template v-else>
+            <TablerProgress :key='percent' :progress='percent'/>
+        </template>
+    </div>
 </div>
 </template>
 
 <script>
 import {
+    TablerLoading,
     TablerProgress
 } from '@tak-ps/vue-tabler';
 
@@ -27,30 +38,32 @@ export default {
     },
     data: function() {
         return {
-            total: 0,
-            attended: 0
+            loading: true,
+            percent: 0
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                const url = window.stdurl('/api/training');
-                url.searchParams.append('limit', 1);
+            this.loading = true;
+            const url = window.stdurl('/api/training');
+            url.searchParams.append('limit', 1);
 
-                this.total = (await window.std(url)).total;
+            const total = (await window.std(url)).total;
 
-                url.searchParams.append('assigned', this.assigned);
+            url.searchParams.append('assigned', this.assigned);
 
-                this.attended = (await window.std(url)).total;
-            } catch (err) {
-                this.$emit('err', err);
-            }
+            const attended = (await window.std(url)).total;
+
+            this.percent = attended / total;
+
+            this.loading = false;
         }
     },
     components: {
+        TablerLoading,
         TablerProgress
     }
 }

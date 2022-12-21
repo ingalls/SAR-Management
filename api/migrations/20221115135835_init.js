@@ -64,7 +64,7 @@ function up(knex) {
 
         CREATE TABLE issues_comments (
             id          BIGSERIAL PRIMARY KEY,
-            issue       BIGINT REFERENCES issues(id),
+            issue       BIGINT NOT NULL REFERENCES issues(id),
             created     TIMESTAMP NOT NULL DEFAULT Now(),
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
             body        TEXT NOT NULL,

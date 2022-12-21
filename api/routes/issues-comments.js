@@ -34,6 +34,7 @@ export default async function router(schema, config) {
             await Auth.is_auth(req);
 
             res.json(await IssueComment.generate(config.pool, {
+                issue: req.params.issueid,
                 author: req.auth.id,
                 ...req.body
             }));
