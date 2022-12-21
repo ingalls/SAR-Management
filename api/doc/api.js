@@ -155,7 +155,7 @@
 *
 * @apiParam {string} calendar param
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListEvents.json} apiParam
 *
 *
 */

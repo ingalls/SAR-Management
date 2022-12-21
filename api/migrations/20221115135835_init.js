@@ -36,6 +36,11 @@ function up(knex) {
             CONSTRAINT users_email UNIQUE (email)
         );
 
+        CREATE OR REPLACE FUNCTION indexable_month_day(date) RETURNS TEXT as $BODY$
+            SELECT to_char($1, 'MM-DD');
+        $BODY$ language 'sql' IMMUTABLE STRICT;
+        CREATE INDEX users_bday_idx ON users(indexable_month_day(bday));
+
         CREATE TABLE users_to_teams (
             uid         BIGINT NOT NULL REFERENCES users(id),
             tid         BIGINT NOT NULL REFERENCES teams(id)

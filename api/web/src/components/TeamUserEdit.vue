@@ -155,6 +155,7 @@ export default {
                         fname: this.user.fname,
                         lname: this.user.lname,
                         phone: this.user.phone,
+                        bday: this.user.bday,
                     }
                 });
 
