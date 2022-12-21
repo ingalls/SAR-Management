@@ -90,7 +90,6 @@
                                     v-model='assigned'
                                     @push='postAssigned($event)'
                                     @delete='deleteAssigned($event)'
-                                    @err='err = $event'
                                 />
                             </template>
                         </div>

@@ -29,7 +29,6 @@
                                 <div class="col-md-2">
                                     <UserSelect
                                         v-model='issue.assigned'
-                                        @err='err = $event'
                                         label='Assigned'
                                     />
 

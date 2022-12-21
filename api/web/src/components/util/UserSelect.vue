@@ -18,7 +18,10 @@
                             <TablerInput placeholder='Filter Users' v-model='filter'/>
 
                             <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users'>
-                                <span v-text='`${user.fname} ${user.lname}`'/>
+                                <div class="d-flex align-items-center my-1 cursor-pointer">
+                                    <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
+                                    <span v-text='`${user.fname} ${user.lname}`'/>
+                                </div>
                             </div>
                         </div>
                     </ul>
@@ -76,8 +79,8 @@ export default {
         modelValue: function() {
             this.assigned = this.modelValue;
         },
-        filter: function() {
-            this.listUsers();
+        filter: async function() {
+            await this.listUsers();
         },
         assigned: function() {
             this.$emit('update:modelValue', this.assigned);
@@ -88,23 +91,25 @@ export default {
         this.listUsers();
     },
     methods: {
-        push_assigned: function(user) {
+        push_assigned: async function(user) {
             this.assigned.push(user);
             this.$emit('push', user);
         },
-        delete_assigned: function(idx, user) {
+        delete_assigned: async function(idx, user) {
             this.assigned.splice(idx, 1);
             this.$emit('delete', user);
+            await this.listUsers();
         },
         listUsers: async function() {
-            try {
-                const url = window.stdurl('/api/user');
-                url.searchParams.append('filter', this.filter);
-                url.searchParams.append('limit', this.limit);
-                this.list = await window.std(url);
-            } catch (err) {
-                this.$emit('err', err);
-            }
+            const url = window.stdurl('/api/user');
+            url.searchParams.append('filter', this.filter);
+            url.searchParams.append('limit', this.limit + this.assigned.length);
+            const list = await window.std(url);
+
+            const ids = this.assigned.map((a) => a.uid);
+            this.list.users = list.users.filter((user) => {
+                return !ids.includes(user.id);
+            }).splice(0, this.limit);
         }
     },
     components: {
