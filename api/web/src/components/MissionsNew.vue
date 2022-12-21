@@ -23,17 +23,17 @@
                     <div class="card">
                         <div class="card-body">
                             <div class='row row-cards'>
-                                <div class="col-md-10">
-                                    <label class="form-label">Mission Title</label>
-                                    <input type="text" class="form-control" placeholder="Mission Title">
+                                <div class="col-md-12">
+                                    <TablerInput v-model='mission.title' label='Mission Title'/>
                                 </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Assigned</label>
-                                    <label class="form-label">Labels</label>
+                                <div class="col-md-6">
+                                    <TablerInput type='date' v-model='mission.start_ts' label='Mission Start'/>
                                 </div>
-                                <div class="col-md-10">
-                                    <label class="form-label">Mission Title</label>
-                                    <textarea class="form-control" rows="6" placeholder="Mission Content.."></textarea>
+                                <div class="col-md-6">
+                                    <TablerInput type='date' v-model='mission.end_ts' label='Mission End'/>
+                                </div>
+                                <div class="col-md-12">
+                                    <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
                                 </div>
 
                                 <div class='col-md-12'>
@@ -64,21 +64,35 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
+import {
+    TablerInput
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'MissionsNew',
     data: function() {
         return {
             err: false,
+            mission: {
+                title: '',
+                body: '',
+                start_ts: '',
+                end_ts: ''
+            }
         }
     },
     methods: {
         create: async function() {
+            await window.std('/api/mission', {
+                method: 'POST',
+                body: this.mission
+            });
         }
     },
     components: {
         Location,
         PageFooter,
+        TablerInput
     }
 }
 </script>

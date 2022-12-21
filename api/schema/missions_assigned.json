@@ -8,6 +8,12 @@
         "mission_id": {
             "$ref": "./missions_assigned/mission_id.json"
         },
+        "confirmed": {
+            "$ref": "./missions_assigned/confirmed.json"
+        },
+        "role": {
+            "$ref": "./missions_assigned/role.json"
+        },
         "uid": {
             "$ref": "./missions_assigned/uid.json"
         }
@@ -15,6 +21,8 @@
     "required": [
         "id",
         "mission_id",
+        "confirmed",
+        "role",
         "uid"
     ]
 }

@@ -11,6 +11,12 @@
         "updated": {
             "$ref": "./missions/updated.json"
         },
+        "start_ts": {
+            "$ref": "./missions/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./missions/end_ts.json"
+        },
         "status": {
             "$ref": "./missions/status.json"
         },
@@ -19,14 +25,20 @@
         },
         "author": {
             "$ref": "./missions/author.json"
+        },
+        "body": {
+            "$ref": "./missions/body.json"
         }
     },
     "required": [
         "id",
         "created",
         "updated",
+        "start_ts",
+        "end_ts",
         "status",
         "title",
-        "author"
+        "author",
+        "body"
     ]
 }

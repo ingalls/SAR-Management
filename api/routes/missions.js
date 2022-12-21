@@ -20,6 +20,23 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.get('/mission/:missionid', {
+        name: 'Get Mission',
+        group: 'Mission',
+        auth: 'user',
+        description: 'Get a single mission',
+        ':missionid': 'integer',
+        res: 'missions.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req);
+
+            res.json(await Mission.from(config.pool, req.params.missionid));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.post('/mission', {
         name: 'Create Mission',
         group: 'Mission',

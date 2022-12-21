@@ -88,12 +88,15 @@ function up(knex) {
             end_ts      TIMESTAMP NOT NULL,
             status      TEXT NOT NULL DEFAULT 'open',
             title       TEXT NOT NULL,
+            body        TEXT NOT NULL,
             author      BIGINT NOT NULL REFERENCES users(id)
         );
 
         CREATE TABLE missions_assigned (
             id          BIGSERIAL PRIMARY KEY,
             mission_id  BIGINT NOT NULL REFERENCES missions(id),
+            confirmed   BOOLEAN NOT NULL DEFAULT False,
+            role        TEXT NOT NULL,
             uid         BIGINT NOT NULL REFERENCES users(id)
         );
 

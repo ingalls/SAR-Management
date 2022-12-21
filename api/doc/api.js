@@ -469,6 +469,24 @@
 
 
 /**
+* @api {get} /mission/:missionid Get Mission
+* @apiVersion 1.0.0
+* @apiName GET-/mission/:missionid
+* @apiGroup Mission
+* @apiPermission user
+*
+* @apidescription
+*   Get a single mission
+*
+* @apiParam {integer} missionid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/missions.json} apiSuccess
+*/
+
+
+/**
 * @api {post} /mission Create Mission
 * @apiVersion 1.0.0
 * @apiName POST-/mission

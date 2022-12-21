@@ -2,7 +2,16 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-        "name": {
+        "title": {
+            "type": "string"
+        },
+        "body": {
+            "type": "string"
+        },
+        "start_ts": {
+            "type": "string"
+        },
+        "end_ts": {
             "type": "string"
         }
     }
