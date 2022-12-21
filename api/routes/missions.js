@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Mission from '../lib/types/mission.js';
+import MissionAssigned from '../lib/types/mission-assigned.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
 
@@ -57,9 +58,23 @@ export default async function router(schema, config) {
             else delete req.body.end_ts
 
             res.json(await Mission.generate(config.pool, {
+                title: req.body.title,
+                body: req.body.body,
+                start_ts: req.body.start_ts,
+                end_ts: req.body.end_ts,
                 author: req.auth.id,
-                ...req.body
             }));
+
+            if (req.body.assigned) {
+                for (const a of req.body.assigned) {
+                    MissionAssigned.generate(config.pool, {
+                        mission_id: mission.id,
+                        role: a.role,
+                        confirmed: a.confirmed,
+                        uid: uid
+                    });
+                }
+            }
         } catch (err) {
             return Err.respond(err, res);
         }

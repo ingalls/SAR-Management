@@ -16,7 +16,20 @@
             "type": "array",
             "default": [],
             "items": {
-                "type": "integer"
+                "type": "object",
+                "properties": {
+                    "uid": {
+                        "type": "integer"
+                    },
+                    "role": {
+                        "type": "string",
+                        "default": "present"
+                    },
+                    "confirmed": {
+                        "type": "boolean",
+                        "default": true
+                    }
+                }
             }
         }
     }

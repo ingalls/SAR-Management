@@ -116,14 +116,14 @@ export default {
     },
     mounted: async function() {
         await this.listIssues();
-    },  
+    },
     methods: {
         listIssues: async function() {
             const url = window.stdurl('/api/issue');
             if (this.query.filter) url.searchParams.append('filter', this.query.filter);
-            this.issues = await window.std(url)
+            this.list = await window.std(url)
         }
-    }, 
+    },
     components: {
         PageFooter,
         TablerSelect,
