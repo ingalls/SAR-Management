@@ -32,7 +32,7 @@ export default {
                 zoom: 5.5,
                 projection: 'globe'
             });
-
+            this.map.scrollZoom.disable();
         },
     }
 }
