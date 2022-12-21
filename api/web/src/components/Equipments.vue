@@ -72,6 +72,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <template v-if='!list.total'>
+                            <None label='Equipment' :create='false'/>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -83,14 +86,23 @@
 </template>
 
 <script>
+import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
-import { Select } from '@tak-ps/vue-tabler';
+import { TablerSelect } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Equipments',
+    data: function() {
+        return {
+            list: {
+                total: 0
+            }
+        }
+    },
     components: {
+        None,
         PageFooter,
-        TablerSelect: Select
+        TablerSelect
     }
 }
 </script>

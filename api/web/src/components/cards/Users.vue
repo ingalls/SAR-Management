@@ -31,7 +31,6 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Teams</th>
                     </tr>
                 </thead>
                 <tbody>
