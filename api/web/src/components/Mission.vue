@@ -60,6 +60,7 @@
                         v-model='assigned'
                         :loading='loading.assigned'
                         @push='postAssigned($event)'
+                        @patch='patchAssigned($event)'
                         @delete='deleteAssigned($event)'
                     />
                 </div>
@@ -118,6 +119,15 @@ export default {
         deleteAssigned: async function(user) {
             await window.std(`/api/mission/${this.$route.params.missionid}/assigned/${user.id}`, {
                 method: 'DELETE'
+            })
+        },
+        patchAssigned: async function(user) {
+            await window.std(`/api/mission/${this.$route.params.missionid}/assigned/${user.id}`, {
+                method: 'PATCH',
+                body: {
+                    role: user.role,
+                    confirmed: user.confirmed
+                }
             })
         },
         postAssigned: async function(user) {

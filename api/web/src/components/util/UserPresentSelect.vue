@@ -36,7 +36,12 @@
                 <span v-text='`${a.fname} ${a.lname}`'/>
 
                 <div class='ms-auto'>
-                    <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer'/>
+                    <div class='btn-list'>
+                        <div v-if='!a.confirmed' class='btn btn--sm'>
+                            <CheckIcon @click='confirm_assigned(a)' height='16' class='cursor-pointer'/> Confirm
+                        </div>
+                        <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer my-2'/>
+                    </div>
                 </div>
             </div>
         </template>
@@ -47,7 +52,8 @@
 <script>
 import {
     SettingsIcon,
-    TrashIcon
+    TrashIcon,
+    CheckIcon
 } from 'vue-tabler-icons';
 import {
     TablerInput,
@@ -107,6 +113,10 @@ export default {
             this.$emit('delete', user);
             await this.listUsers();
         },
+        confirm_assigned: async function(user) {
+            user.confirmed = true;
+            this.$emit('patch', user);
+        },
         listUsers: async function() {
             const url = window.stdurl('/api/user');
             url.searchParams.append('filter', this.filter);
@@ -122,6 +132,7 @@ export default {
     components: {
         SettingsIcon,
         TrashIcon,
+        CheckIcon,
         TablerInput,
         TablerLoading
     }
