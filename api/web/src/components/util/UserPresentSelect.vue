@@ -30,6 +30,9 @@
         </div>
 
         <TablerLoading v-if='loading'/>
+        <template v-if='!assigned.length'>
+            <None label='Users Assigned' :create='false'/>
+        </template>
         <template v-else>
             <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
                 <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
@@ -59,6 +62,7 @@ import {
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler'
+import None from './None.vue';
 
 export default {
     name: 'UserPrecenseSelect',
@@ -130,6 +134,7 @@ export default {
         }
     },
     components: {
+        None,
         SettingsIcon,
         TrashIcon,
         CheckIcon,

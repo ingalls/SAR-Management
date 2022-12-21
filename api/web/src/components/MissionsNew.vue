@@ -40,14 +40,23 @@
                                     <Location/>
                                 </div>
 
-                                <div class="col-md-12">
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a @click='create' class="cursor-pointer btn btn-primary">
-                                                Create Mission
-                                            </a>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <UserPresentSelect
+                        v-model='mission.assigned'
+                    />
+                </div>
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class='d-flex'>
+                                <div class='ms-auto'>
+                                    <a @click='create' class="cursor-pointer btn btn-primary">
+                                        Create Mission
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -63,6 +72,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
 import {
     TablerInput
@@ -76,7 +86,8 @@ export default {
                 title: '',
                 body: '',
                 start_ts: '',
-                end_ts: ''
+                end_ts: '',
+                assigned: []
             }
         }
     },
@@ -93,7 +104,8 @@ export default {
     components: {
         Location,
         PageFooter,
-        TablerInput
+        TablerInput,
+        UserPresentSelect
     }
 }
 </script>
