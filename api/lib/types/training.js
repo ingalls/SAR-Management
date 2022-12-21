@@ -2,8 +2,8 @@ import Generic, { Params } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { sql } from 'slonik';
 
-export default class Mission extends Generic {
-    static _table = 'missions';
+export default class Training extends Generic {
+    static _table = 'training';
 
     static async list(pool, query) {
         query.limit = Params.integer(query.limit, { default: 20 });
@@ -19,13 +19,13 @@ export default class Mission extends Generic {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    missions.*
+                    training.*
                 FROM
-                    missions
+                    training
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
-                    AND (${query.start}::TIMESTAMP IS NULL OR missions.start_ts >= ${query.start}::TIMESTAMP)
-                    AND (${query.end}::TIMESTAMP IS NULL OR missions.end_ts >= ${query.end}::TIMESTAMP)
+                    AND (${query.start}::TIMESTAMP IS NULL OR training.start_ts >= ${query.start}::TIMESTAMP)
+                    AND (${query.end}::TIMESTAMP IS NULL OR training.end_ts >= ${query.end}::TIMESTAMP)
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
@@ -36,7 +36,7 @@ export default class Mission extends Generic {
 
             return this.deserialize_list(pgres);
         } catch (err) {
-            throw new Err(500, err, 'Failed to list Missions');
+            throw new Err(500, err, 'Failed to list Trainings');
         }
     }
 }
