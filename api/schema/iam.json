@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./iam/id.json"
+        },
+        "team_id": {
+            "$ref": "./iam/team_id.json"
+        },
+        "groupref": {
+            "$ref": "./iam/groupref.json"
+        },
+        "resource": {
+            "$ref": "./iam/resource.json"
+        },
+        "action": {
+            "$ref": "./iam/action.json"
+        }
+    },
+    "required": [
+        "id",
+        "team_id",
+        "groupref",
+        "resource",
+        "action"
+    ]
+}

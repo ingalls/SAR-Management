@@ -160,6 +160,7 @@ function up(knex) {
         CREATE TABLE iam (
             id              BIGSERIAL PRIMARY KEY,
             team_id         BIGINT NOT NULL REFERENCES teams(id),
+            groupref        TEXT NOT NULL,
             resource        TEXT NOT NULL,
             action          TEXT NOT NULL
         );

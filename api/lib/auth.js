@@ -24,6 +24,10 @@ export default class Auth {
         return true;
     }
 
+    static async is_iam(req) {
+        await Auth.is_auth(req);
+    }
+
     static async is_admin(req) {
         if (!req.auth || !req.auth.access || req.auth.access !== 'admin') {
             throw new Err(403, null, 'Admin token required');
