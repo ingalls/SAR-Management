@@ -156,6 +156,13 @@ function up(knex) {
                 issues_assigned
                     LEFT JOIN users
                         ON issues_assigned.uid = users.id
+
+        CREATE TABLE iam (
+            id              BIGSERIAL PRIMARY KEY,
+            team_id         BIGINT NOT NULL REFERENCES teams(id),
+            resource        TEXT NOT NULL,
+            action          TEXT NOT NULL
+        );
     `);
 }
 
