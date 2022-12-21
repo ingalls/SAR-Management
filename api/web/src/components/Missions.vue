@@ -77,6 +77,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <template v-if='!list.total'>
+                            <None label='Missions' :create='false'/>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -88,6 +91,7 @@
 </template>
 
 <script>
+import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 import { TablerSelect } from '@tak-ps/vue-tabler';
 
@@ -120,6 +124,7 @@ export default {
         }
     },
     components: {
+        None,
         PageFooter,
         TablerSelect
     }

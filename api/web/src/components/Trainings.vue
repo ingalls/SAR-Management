@@ -57,6 +57,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <template v-if='!list.total'>
+                            <None label='Trainings' :create='false'/>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -68,6 +71,7 @@
 </template>
 
 <script>
+import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 
 export default {
@@ -99,6 +103,7 @@ export default {
         }
     },
     components: {
+        None,
         PageFooter,
     }
 }

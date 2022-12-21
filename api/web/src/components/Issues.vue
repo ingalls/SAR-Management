@@ -64,6 +64,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <template v-if='!list.total'>
+                            <None label='Issues' :create='false'/>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -75,6 +78,7 @@
 </template>
 
 <script>
+import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 import { TablerSelect } from '@tak-ps/vue-tabler';
 import {
@@ -110,6 +114,7 @@ export default {
         }
     },
     components: {
+        None,
         PageFooter,
         TablerSelect,
         SearchIcon

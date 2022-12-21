@@ -48,6 +48,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <template v-if='!list.total'>
+                            <None label='Documents' :create='false'/>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -60,6 +63,7 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import None from './util/None.vue';
 
 export default {
     name: 'Docs',
@@ -83,6 +87,7 @@ export default {
         }
     },
     components: {
+        None,
         PageFooter,
     }
 }
