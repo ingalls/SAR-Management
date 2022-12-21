@@ -22,9 +22,6 @@
     },
     "homepage": "https://github.com/ingalls/SAR-Management#readme",
     "dependencies": {
-        "@fullcalendar/daygrid": "^5.11.3",
-        "@fullcalendar/interaction": "^5.11.3",
-        "@fullcalendar/vue": "^5.11.3",
         "@openaddresses/batch-error": "^1.1.0",
         "@openaddresses/batch-generic": "^13.0.1",
         "@openaddresses/batch-schema": "^7.3.0",
@@ -38,7 +35,7 @@
         "csv-stringify": "^6.2.1",
         "express": "^4.18.2",
         "express-minify": "^1.0.0",
-        "jsonwebtoken": "^8.5.1",
+        "jsonwebtoken": "^9.0.0",
         "knex": "^2.3.0",
         "mailgen": "^2.0.27",
         "minimist": "^1.2.7",
