@@ -3,6 +3,7 @@ import Leadership from '../lib/types/leadership.js';
 import Auth from '../lib/auth.js';
 import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';
+import Training from '../lib/types/training.js';
 import moment from 'moment';
 
 export default async function router(schema, config) {
@@ -23,6 +24,9 @@ export default async function router(schema, config) {
                 },{
                     id: 'mission',
                     name: 'Missions'
+                },{
+                    id: 'training',
+                    name: 'Training'
                 }]
             });
         } catch (err) {
@@ -71,6 +75,14 @@ export default async function router(schema, config) {
                         title: mission.title,
                         start: mission.start_ts,
                         end: mission.end_ts
+                    });
+                }
+            } else if (req.params.calendar === 'training') {
+                for (const training of (await Training.list(config.pool, req.query)).training) {
+                    events.push({
+                        title: training.title,
+                        start: training.start_ts,
+                        end: training.end_ts
                     });
                 }
             }
