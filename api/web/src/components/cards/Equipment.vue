@@ -60,19 +60,15 @@ export default {
             equipment: [],
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                const url = window.stdurl('/api/equipment');
-                url.searchParams.append('limit', this.limit);
-                if (this.assigned) url.searchParams.append('assigned', this.assigned);
-                this.equipement = (await window.std(url)).equipment;
-            } catch (err) {
-                this.$emit('err', err);
-            }
+            const url = window.stdurl('/api/equipment');
+            url.searchParams.append('limit', this.limit);
+            if (this.assigned) url.searchParams.append('assigned', this.assigned);
+            this.equipement = (await window.std(url)).equipment;
         }
     },
     components: {

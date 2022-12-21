@@ -31,23 +31,19 @@ export default {
             attended: 0
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                const url = window.stdurl('/api/mission');
-                url.searchParams.append('limit', 1);
+            const url = window.stdurl('/api/mission');
+            url.searchParams.append('limit', 1);
 
-                this.total = (await window.std(url)).total;
+            this.total = (await window.std(url)).total;
 
-                url.searchParams.append('assigned', this.assigned);
+            url.searchParams.append('assigned', this.assigned);
 
-                this.attended = (await window.std(url)).total;
-            } catch (err) {
-                this.$emit('err', err);
-            }
+            this.attended = (await window.std(url)).total;
         }
     },
     components: {

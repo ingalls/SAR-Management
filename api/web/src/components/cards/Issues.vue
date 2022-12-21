@@ -61,19 +61,15 @@ export default {
             issues: [],
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                const url = window.stdurl('/api/issue');
-                url.searchParams.append('limit', this.limit);
-                if (this.assigned) url.searchParams.append('assigned', this.assigned);
-                this.issues = (await window.std(url)).issues;
-            } catch (err) {
-                this.$emit('err', err);
-            }
+            const url = window.stdurl('/api/issue');
+            url.searchParams.append('limit', this.limit);
+            if (this.assigned) url.searchParams.append('assigned', this.assigned);
+            this.issues = (await window.std(url)).issues;
         }
     },
     components: {

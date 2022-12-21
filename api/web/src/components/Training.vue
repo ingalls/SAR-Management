@@ -55,7 +55,6 @@ export default {
     name: 'TrainingsNew',
     data: function() {
         return {
-            err: false,
             training: {
                 title: '',
                 body: '',

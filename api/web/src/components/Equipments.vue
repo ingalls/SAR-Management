@@ -88,11 +88,6 @@ import { Select } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Equipments',
-    data: function() {
-        return {
-            err: false,
-        }
-    },
     components: {
         PageFooter,
         TablerSelect: Select

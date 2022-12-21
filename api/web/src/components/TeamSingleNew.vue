@@ -53,21 +53,16 @@
     </div>
 
     <PageFooter/>
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
-import {
-    TablerError
-} from '@tak-ps/vue-tabler'
 
 export default {
     name: 'TeamNew',
     data: function() {
         return {
-            err: false,
             errors: {
                 name: false,
                 body: false
@@ -87,23 +82,18 @@ export default {
                 if (this.errors[e]) return;
             }
 
-            try {
-                const create = await window.std('/api/team', {
-                    method: 'POST',
-                    body: {
-                        name: this.name,
-                        body: this.body,
-                    }
-                });
+            const create = await window.std('/api/team', {
+                method: 'POST',
+                body: {
+                    name: this.name,
+                    body: this.body,
+                }
+            });
 
-                this.$router.push(`/team/${create.id}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push(`/team/${create.id}`);
         }
     },
     components: {
-        TablerError,
         PageFooter,
     }
 }

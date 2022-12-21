@@ -16,7 +16,7 @@ const router = new VueRouter.createRouter({
 
         { path: '/login', name: 'login', component: () => import('./components/Login.vue') },
 
-        { path: '/profile', name: 'profile', component: () => import('./components/TeamUser.vue') },
+        { path: '/profile', name: 'profile', component: () => import('./components/User.vue') },
 
         { path: '/issue', name: 'issues', component: () => import('./components/Issues.vue') },
         { path: '/issue/new', name: 'issues-new', component: () => import('./components/IssuesNew.vue') },
@@ -42,9 +42,10 @@ const router = new VueRouter.createRouter({
         { path: '/team/:teamid', name: 'team-single', component: () => import('./components/TeamSingle.vue') },
         { path: '/team/:teamid/edit', name: 'team-single-edit', component: () => import('./components/TeamSingleEdit.vue') },
         { path: '/team/leadership', name: 'team-leadership', component: () => import('./components/TeamLeadership.vue') },
-        { path: '/team/user/new', name: 'team-user-new', component: () => import('./components/TeamUserNew.vue') },
-        { path: '/team/user/:userid', name: 'team-user', component: () => import('./components/TeamUser.vue') },
-        { path: '/team/user/:userid/edit', name: 'team-user-edit', component: () => import('./components/TeamUserEdit.vue') },
+
+        { path: '/user/new', name: 'user-new', component: () => import('./components/UserNew.vue') },
+        { path: '/user/:userid', name: 'user', component: () => import('./components/User.vue') },
+        { path: '/user/:userid/edit', name: 'user-edit', component: () => import('./components/UserEdit.vue') },
 
         { path: '/(.*)', name: 'lost', component: () => import('./components/Lost.vue') },
     ]

@@ -62,26 +62,21 @@ export default {
     name: 'EquipmentsNew',
     data: function() {
         return {
-            err: false,
             name: '',
             description: ''
         }
     },
     methods: {
         create: async function() {
-            try {
-                const equip = await window.std('/api/equipment', {
-                    method: 'POST',
-                    body: {
-                        name: this.name,
-                        description: this.description
-                    }
-                })
+            const equip = await window.std('/api/equipment', {
+                method: 'POST',
+                body: {
+                    name: this.name,
+                    description: this.description
+                }
+            })
 
-                this.$router.push(`/equipment/${equip.id}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push(`/equipment/${equip.id}`);
         }
     },
     components: {

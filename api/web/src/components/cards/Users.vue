@@ -82,15 +82,10 @@
             </li>
         </ul>
     </div>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import {
-    TablerError
-} from '@tak-ps/vue-tabler';
 import { ListIcon, PolaroidIcon } from 'vue-tabler-icons'
 import UserProfile from '../User/Profile.vue';
 
@@ -106,27 +101,21 @@ export default {
     data: function() {
         return {
             mode: 'list',
-            err: false,
             users: { },
         }
     },
-    mounted: function() {
-        this.listUsers();
+    mounted: async function() {
+        await this.listUsers();
     },
     methods: {
         listUsers: async function() {
-            try {
-                const url = window.stdurl('/api/user');
-                if (this.team) url.searchParams.append('team', this.team);
+            const url = window.stdurl('/api/user');
+            if (this.team) url.searchParams.append('team', this.team);
 
-                this.users = await window.std(url);
-            } catch (err) {
-                this.err = err;
-            }
+            this.users = await window.std(url);
         },
     },
     components: {
-        TablerError,
         ListIcon,
         PolaroidIcon,
         UserProfile

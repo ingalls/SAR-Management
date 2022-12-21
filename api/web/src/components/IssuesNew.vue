@@ -56,7 +56,6 @@
     </div>
 
     <PageFooter/>
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
@@ -65,14 +64,12 @@ import PageFooter from './PageFooter.vue';
 import UserSelect from './util/UserSelect.vue';
 import {
     TablerInput,
-    TablerError
 } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'IssuesNew',
     data: function() {
         return {
-            err: false,
             errors: {
                 title: false,
                 body: false
@@ -95,27 +92,22 @@ export default {
                 if (this.errors[e]) return;
             }
 
-            try {
-                const create = await window.std('/api/issue', {
-                    method: 'POST',
-                    body: {
-                        title: this.issue.title,
-                        body: this.issue.body,
-                        assigned: this.issue.assigned.map((a) => {
-                            return a.id;
-                        })
-                    }
-                });
+            const create = await window.std('/api/issue', {
+                method: 'POST',
+                body: {
+                    title: this.issue.title,
+                    body: this.issue.body,
+                    assigned: this.issue.assigned.map((a) => {
+                        return a.id;
+                    })
+                }
+            });
 
-                this.$router.push(`/issue/${create.id}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push(`/issue/${create.id}`);
         }
     },
     components: {
         TablerInput,
-        TablerError,
         PageFooter,
         UserSelect
     }

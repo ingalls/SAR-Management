@@ -72,7 +72,6 @@ export default {
     name: 'MissionsNew',
     data: function() {
         return {
-            err: false,
             mission: {
                 title: '',
                 body: '',

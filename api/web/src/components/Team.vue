@@ -11,7 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/team/user/new")' class="cursor-pointer btn btn-primary">
+                            <a @click='$router.push("/user/new")' class="cursor-pointer btn btn-primary">
                                 New User
                             </a>
                         </div>
@@ -70,15 +70,10 @@
     </div>
 
     <PageFooter/>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import {
-    TablerError
-} from '@tak-ps/vue-tabler';
 import PageFooter from './PageFooter.vue';
 import CardLeadership from './cards/Leadership.vue';
 import CardUsers from './cards/Users.vue';
@@ -87,7 +82,6 @@ export default {
     name: 'Team',
     data: function() {
         return {
-            err: false,
             users: { },
             teams: {
                 total: 0,
@@ -95,20 +89,15 @@ export default {
             }
         }
     },
-    mounted: function() {
-        this.listTeams();
+    mounted: async function() {
+        await this.listTeams();
     },
     methods: {
         listTeams: async function() {
-            try {
-                this.teams = await window.std('/api/team');
-            } catch (err) {
-                this.err = err;
-            }
+            this.teams = await window.std('/api/team');
         }
     },
     components: {
-        TablerError,
         PageFooter,
         CardLeadership,
         CardUsers

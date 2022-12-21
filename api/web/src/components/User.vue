@@ -7,7 +7,7 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/team")' class="cursor-pointer">Team</a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/user")' class="cursor-pointer">Users</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">User</a></li>
                         </ol>
                     </div>
@@ -34,7 +34,7 @@
 
                                     <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                     <div class="dropdown-menu dropdown-menu-end" style="">
-                                        <a @click='$router.push(`/team/user/${userid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
+                                        <a @click='$router.push(`/user/${userid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +106,6 @@
     </div>
 
     <PageFooter/>
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
@@ -118,38 +117,29 @@ import CardEquipment from './cards/Equipment.vue';
 import CardMission from './cards/Missions.vue';
 import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
-import {
-    TablerError
-} from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'TeamUser',
+    name: 'User',
     props: {
         auth: Object
     },
     data: function() {
         return {
             userid: this.$route.name === 'profile' ? this.auth.id : this.$route.params.userid,
-            err: false,
             user: {
                 profile_id: null
             }
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                this.user = await window.std(`/api/user/${this.userid}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.user = await window.std(`/api/user/${this.userid}`);
         }
     },
     components: {
-        TablerError,
         PageFooter,
         UserProfile,
         CardIssues,

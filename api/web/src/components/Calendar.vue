@@ -50,7 +50,6 @@ export default {
     name: 'Calendar',
     data: function() {
         return {
-            err: false,
             calendar: null,
             layers: {
                 layers: []

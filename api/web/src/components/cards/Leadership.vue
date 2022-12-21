@@ -69,38 +69,24 @@
             </div>
         </div>
     </div>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import {
-    TablerError
-} from '@tak-ps/vue-tabler';
-
 export default {
     name: 'CardLeadership',
     data: function() {
         return {
-            err: false,
             leaders: []
         }
     },
-    mounted: function() {
-        this.listLeaders();
+    mounted: async function() {
+        await this.listLeaders();
     },
     methods: {
         listLeaders: async function() {
-            try {
-                this.leaders = await window.std('/api/user');
-            } catch (err) {
-                this.err = err;
-            }
+            this.leaders = await window.std('/api/user');
         },
     },
-    components: {
-        TablerError
-    }
 }
 </script>

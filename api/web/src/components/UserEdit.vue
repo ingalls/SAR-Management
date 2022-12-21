@@ -7,7 +7,7 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/team")' class="cursor-pointer">Team</a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/user")' class="cursor-pointer">Users</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='user.id'></a></li>
                         </ol>
                     </div>
@@ -86,7 +86,7 @@ import {
 import UserProfile from './User/Profile.vue';
 
 export default {
-    name: 'TeamUserEdit',
+    name: 'UserEdit',
     data: function() {
         return {
             token: localStorage.token,
@@ -147,7 +147,7 @@ export default {
                 }
             });
 
-            this.$router.push(`/team/user/${create.id}`);
+            this.$router.push(`/user/${create.id}`);
         }
     },
     components: {

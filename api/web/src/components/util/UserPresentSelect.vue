@@ -93,9 +93,9 @@ export default {
             this.$emit('update:modelValue', this.assigned);
         }
     },
-    mounted: function() {
+    mounted: async function() {
         this.assigned = this.modelValue;
-        this.listUsers();
+        await this.listUsers();
     },
     methods: {
         push_assigned: async function(user) {

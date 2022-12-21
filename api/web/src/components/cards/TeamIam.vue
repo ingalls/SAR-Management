@@ -109,15 +109,11 @@ export default {
             });
         },
         fetch: async function() {
-            try {
-                const url = window.stdurl(`/api/team/${this.team.id}/iam`);
-                this.policies = (await window.std(url)).map((policy) => {
-                    policy._edit = false;
-                    return policy;
-                });
-            } catch (err) {
-                this.$emit('err', err);
-            }
+            const url = window.stdurl(`/api/team/${this.team.id}/iam`);
+            this.policies = (await window.std(url)).map((policy) => {
+                policy._edit = false;
+                return policy;
+            });
         }
     },
     components: {

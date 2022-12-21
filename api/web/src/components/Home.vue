@@ -25,11 +25,6 @@ import PageFooter from './PageFooter.vue';
 
 export default {
     name: 'Home',
-    data: function() {
-        return {
-            err: false,
-        }
-    },
     components: {
         PageFooter,
         IssuesCard,

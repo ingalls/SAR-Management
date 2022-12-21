@@ -7,7 +7,7 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/team")' class="cursor-pointer">Team</a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/user")' class="cursor-pointer">Users</a></li>
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">New User</a></li>
                         </ol>
                     </div>
@@ -58,22 +58,19 @@
     </div>
 
     <PageFooter/>
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
 import {
-    TablerError,
     TablerInput
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'TeamUserNew',
+    name: 'UserNew',
     data: function() {
         return {
-            err: false,
             errors: {
                 username: false,
                 email: false,
@@ -102,20 +99,15 @@ export default {
                 if (this.errors[e]) return;
             }
 
-            try {
-                const create = await window.std('/api/user', {
-                    method: 'POST',
-                    body: this.user
-                });
+            const create = await window.std('/api/user', {
+                method: 'POST',
+                body: this.user
+            });
 
-                this.$router.push(`/team/user/${create.id}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push(`/user/${create.id}`);
         }
     },
     components: {
-        TablerError,
         TablerInput,
         PageFooter,
     }

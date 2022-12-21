@@ -48,44 +48,33 @@
     </div>
 
     <PageFooter/>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import {
-    TablerError
-} from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
 
 export default {
     name: 'TeamLeadership',
     data: function() {
         return {
-            err: false,
             leaders: {}
         }
     },
-    mounted: function() {
-        this.listLeaders();
+    mounted: async function() {
+        await this.listLeaders();
     },
     methods: {
         listLeaders: async function() {
-            try {
-                const leaders = (await window.std('/api/leadership')).leadership;
+            const leaders = (await window.std('/api/leadership')).leadership;
 
-                for (const lead of leaders) {
-                    if (!this.leaders[lead.name]) this.leaders[lead.name] = [];
-                    this.leaders[lead.name].push(lead.uid);
-                }
-            } catch (err) {
-                this.err = err;
+            for (const lead of leaders) {
+                if (!this.leaders[lead.name]) this.leaders[lead.name] = [];
+                this.leaders[lead.name].push(lead.uid);
             }
         }
     },
     components: {
-        TablerError,
         PageFooter,
     }
 }

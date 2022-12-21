@@ -16,7 +16,6 @@ export default {
     name: 'LocationCard',
     data: function() {
         return {
-            err: false,
             map: false,
         }
     },

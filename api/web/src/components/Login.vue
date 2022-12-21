@@ -34,46 +34,32 @@
             </div>
         </div>
     </div>
-
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
-import {
-    TablerError
-} from '@tak-ps/vue-tabler'
-
 export default {
     name: 'Login',
     data: function() {
         return {
-            err: false,
             username: '',
             password: ''
         }
     },
     methods: {
         createLogin: async function() {
-            try {
-                const login = await window.std('/api/login', {
-                    method: 'POST',
-                    body: {
-                        username: this.username,
-                        password: this.password
-                    }
-                });
+            const login = await window.std('/api/login', {
+                method: 'POST',
+                body: {
+                    username: this.username,
+                    password: this.password
+                }
+            });
 
-                localStorage.token = login.token;
+            localStorage.token = login.token;
 
-                this.$router.push("/");
-            } catch (err) {
-                this.err = err;
-            }
+            this.$router.push("/");
         }
-    },
-    components: {
-        TablerError,
     }
 }
 </script>

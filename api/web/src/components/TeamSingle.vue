@@ -48,22 +48,17 @@
     </div>
 
     <PageFooter/>
-    <TablerError v-if='err' :err='err' @close='err = null'/>
 </div>
 </template>
 
 <script>
 import PageFooter from './PageFooter.vue';
 import CardUsers from './cards/Users.vue';
-import {
-    TablerError
-} from '@tak-ps/vue-tabler'
 
 export default {
     name: 'TeamSingle',
     data: function() {
         return {
-            err: false,
             team: {
                 id: null,
                 name: '',
@@ -71,20 +66,15 @@ export default {
             }
         }
     },
-    mounted: function() {
-        this.fetch();
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
-            try {
-                this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
-            } catch (err) {
-                this.err = err;
-            }
+            this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
         }
     },
     components: {
-        TablerError,
         PageFooter,
         CardUsers
     }
