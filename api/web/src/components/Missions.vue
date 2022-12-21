@@ -28,6 +28,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex">
+                                <div class="input-icon w-50">
+                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
+                                    <span class="input-icon-addon">
+                                        <SearchIcon width='24'/>
+                                    </span>
+                                </div>
+
                                 <div class='ms-auto'>
                                     <div class="btn-list">
                                         <TablerSelect
@@ -95,6 +102,11 @@ export default {
                 total: 0,
                 missions: []
             }
+        }
+    },
+    watch: {
+        'query.filter': async function() {
+            await this.listMissions();
         }
     },
     mounted: async function() {

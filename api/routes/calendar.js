@@ -2,6 +2,7 @@ import Err from '@openaddresses/batch-error';
 import Leadership from '../lib/types/leadership.js';
 import Auth from '../lib/auth.js';
 import User from '../lib/types/user.js';
+import Mission from '../lib/types/mission.js';
 import moment from 'moment';
 
 export default async function router(schema, config) {
@@ -19,6 +20,9 @@ export default async function router(schema, config) {
                 layers: [{
                     id: 'birthday',
                     name: 'Birthdays'
+                },{
+                    id: 'mission',
+                    name: 'Missions'
                 }]
             });
         } catch (err) {
@@ -60,6 +64,14 @@ export default async function router(schema, config) {
                             end: moment(query.start).year() + '-' + moment(user.bday).format('MM-DD'),
                         });
                     }
+                }
+            } else if (req.params.calendar === 'mission') {
+                for (const mission of (await Mission.list(config.pool, req.query)).missions) {
+                    events.push({
+                        title: mission.title,
+                        start: mission.start_ts,
+                        end: mission.end_ts
+                    });
                 }
             }
 
