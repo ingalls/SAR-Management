@@ -19,6 +19,21 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
+                <div v-if='!loading.assigned && is_roster' class="col-lg-12">
+                    <div class='card'>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <h3 class="mb-1">Roster Correction</h3>
+                            <p>You aren't marked as present for this mission. If this is incorrect, request to be added to the mission roster</p>
+                            <div class='d-flex'>
+                                <div class='ms-auto'>
+                                    <a href="#" class="btn btn-info">Request Inclusion</a>
+                                </div>
+                            </div>
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-lg-12">
                     <div class="card">
                         <div class='card-header'>
@@ -63,6 +78,9 @@ import UserPresentSelect from './util/UserPresentSelect.vue';
 
 export default {
     name: 'Mission',
+    props: {
+        auth: Object
+    },
     data: function() {
         return {
             loading: {
@@ -80,6 +98,13 @@ export default {
     mounted: async function() {
         await this.fetch();
         await this.fetchAssigned();
+    },
+    computed: {
+        is_roster: function() {
+            return this.assigned.every((a) => {
+                return a.uid != this.auth.id;
+            });
+        }
     },
     methods: {
         fetch: async function() {

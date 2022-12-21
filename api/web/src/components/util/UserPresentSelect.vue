@@ -30,14 +30,16 @@
         </div>
 
         <TablerLoading v-if='loading'/>
-        <div v-else :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
-            <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-            <span v-text='`${a.fname} ${a.lname}`'/>
+        <template v-else>
+            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
+                <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
+                <span v-text='`${a.fname} ${a.lname}`'/>
 
-            <div class='ms-auto'>
-                <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer'/>
+                <div class='ms-auto'>
+                    <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer'/>
+                </div>
             </div>
-        </div>
+        </template>
     </div>
 </div>
 </template>
