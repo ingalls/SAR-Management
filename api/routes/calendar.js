@@ -74,7 +74,8 @@ export default async function router(schema, config) {
                     events.push({
                         title: mission.title,
                         start: mission.start_ts,
-                        end: mission.end_ts
+                        end: mission.end_ts,
+                        color: '#ea4335'
                     });
                 }
             } else if (req.params.calendar === 'training') {
@@ -82,7 +83,8 @@ export default async function router(schema, config) {
                     events.push({
                         title: training.title,
                         start: training.start_ts,
-                        end: training.end_ts
+                        end: training.end_ts,
+                        color: '#fbbc04'
                     });
                 }
             }
