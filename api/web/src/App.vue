@@ -19,7 +19,7 @@
                     </div>
 
 
-                    <a @click='$router.push("/profile")' class="btn btn-dark" target="_blank" rel="noreferrer">
+                    <a @click='$router.push("/notification")' class="btn btn-dark" target="_blank" rel="noreferrer">
                         <BellIcon/>
                     </a>
 

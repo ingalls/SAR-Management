@@ -29,6 +29,8 @@ const router = new VueRouter.createRouter({
 
         { path: '/calendar', name: 'calendar', component: () => import('./components/Calendar.vue') },
 
+        { path: '/notification', name: 'notifications', component: () => import('./components/Notifications.vue') },
+
         { path: '/mission', name: 'missions', component: () => import('./components/Missions.vue') },
         { path: '/mission/new', name: 'missions-new', component: () => import('./components/MissionsNew.vue') },
         { path: '/mission/:missionid', name: 'mission', component: () => import('./components/Mission.vue') },

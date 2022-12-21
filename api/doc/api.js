@@ -578,6 +578,24 @@
 
 
 /**
+* @api {get} /notification Get Notifications
+* @apiVersion 1.0.0
+* @apiName GET-/notification
+* @apiGroup User
+* @apiPermission user
+*
+* @apidescription
+*   Get all notifications
+*
+
+*
+*
+*
+*
+*/
+
+
+/**
 * @api {get} /team/:teamid/iam Get IAM
 * @apiVersion 1.0.0
 * @apiName GET-/team/:teamid/iam
