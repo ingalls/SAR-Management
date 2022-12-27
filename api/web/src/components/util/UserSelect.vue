@@ -19,8 +19,7 @@
 
                             <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users'>
                                 <div class="d-flex align-items-center my-1 cursor-pointer">
-                                    <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                                    <span v-text='`${user.fname} ${user.lname}`'/>
+                                    <Avatar :user='user'/>
                                 </div>
                             </div>
                         </div>
@@ -34,8 +33,7 @@
         </template>
         <template v-else>
             <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
-                <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                <span v-text='`${a.fname} ${a.lname}`'/>
+                <Avatar :user='a'/>
 
                 <div class='ms-auto'>
                     <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer'/>
@@ -48,6 +46,7 @@
 
 <script>
 import None from './None.vue';
+import Avatar from './Avatar.vue';
 import {
     SettingsIcon,
     TrashIcon
@@ -120,6 +119,7 @@ export default {
     },
     components: {
         None,
+        Avatar,
         SettingsIcon,
         TrashIcon,
         TablerInput

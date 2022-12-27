@@ -22,6 +22,12 @@
         },
         "author": {
             "$ref": "./issues/author.json"
+        },
+        "start_ts": {
+            "$ref": "./issues/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./issues/end_ts.json"
         }
     },
     "required": [
@@ -31,6 +37,8 @@
         "status",
         "title",
         "body",
-        "author"
+        "author",
+        "start_ts",
+        "end_ts"
     ]
 }

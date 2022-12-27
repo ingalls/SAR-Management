@@ -19,11 +19,19 @@ export default class Issue extends Generic {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    issues.*
+                    issues.*,
+                    json_build_object(
+                        'id', users.id,
+                        'profile_id', users.profile_id,
+                        'fname', users.fname,
+                        'lname', users.lname
+                    ) AS author
                 FROM
                     issues
                         LEFT JOIN issues_assigned
                             ON issues.id = issues_assigned.issue_id
+                        LEFT JOIN users
+                            ON issues.author = users.id
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR issues_assigned.uid = ${query.assigned})
