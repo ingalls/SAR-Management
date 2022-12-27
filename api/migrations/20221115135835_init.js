@@ -167,6 +167,36 @@ function up(knex) {
             resource        TEXT NOT NULL,
             action          TEXT NOT NULL
         );
+
+        CREATE VIEW view_issues AS
+            SELECT
+                count(*) OVER() AS count,
+                issues.*,
+                json_build_object(
+                    'id', users.id,
+                    'profile_id', users.profile_id,
+                    'fname', users.fname,
+                    'lname', users.lname
+                ) AS user
+            FROM
+                issues
+                    LEFT JOIN users
+                        ON issues.author = users.id
+
+        CREATE VIEW view_issues_comments AS
+            SELECT
+                count(*) OVER() AS count,
+                issues_comments.*,
+                json_build_object(
+                    'id', users.id,
+                    'profile_id', users.profile_id,
+                    'fname', users.fname,
+                    'lname', users.lname
+                ) AS user
+            FROM
+                issues_comments
+                    LEFT JOIN users
+                        ON issues_comments.author = users.id
     `);
 }
 

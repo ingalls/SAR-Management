@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Issue from '../lib/types/issue.js';
+import ViewIssue from '../lib/views/issue.js';
 import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth from '../lib/auth.js';
 
@@ -15,7 +16,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            res.json(await Issue.list(config.pool, req.query));
+            res.json(await ViewIssue.list(config.pool, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -27,7 +28,7 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Create a new issue',
         body: 'req.body.CreateIssue.json',
-        res: 'issues.json'
+        res: 'view_issues.json'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);
@@ -47,7 +48,7 @@ export default async function router(schema, config) {
                 }
             }
 
-            res.json(issue);
+            res.json(await ViewIssue.from(config.pool, issue.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -60,7 +61,7 @@ export default async function router(schema, config) {
         description: 'Update an issue',
         ':issueid': 'integer',
         body: 'req.body.PatchIssue.json',
-        res: 'issues.json'
+        res: 'view_issues.json'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);
@@ -73,7 +74,7 @@ export default async function router(schema, config) {
 
             await issue.commit(req.body);
 
-            return res.json(issue);
+            res.json(await ViewIssue.from(config.pool, issue.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -85,12 +86,12 @@ export default async function router(schema, config) {
         auth: 'user',
         ':issueid': 'integer',
         description: 'Get an issue',
-        res: 'issues.json'
+        res: 'view_issues.json'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);
 
-            res.json(await Issue.from(config.pool, req.params.issueid));
+            res.json(await ViewIssue.from(config.pool, req.params.issueid));
         } catch (err) {
             return Err.respond(err, res);
         }

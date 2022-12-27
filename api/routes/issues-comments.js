@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import IssueComment from '../lib/types/issue-comment.js';
+import ViewIssueComment from '../lib/views/issue-comment.js';
 import Auth from '../lib/auth.js';
 
 export default async function router(schema, config) {
@@ -15,7 +16,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            res.json(await IssueComment.list(config.pool, req.params.issueid, req.query));
+            res.json(await ViewIssueComment.list(config.pool, req.params.issueid, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -28,16 +29,18 @@ export default async function router(schema, config) {
         ':issueid': 'integer',
         description: 'Create a new issue comment',
         body: 'req.body.CreateIssueComment.json',
-        res: 'issues_comments.json'
+        res: 'view_issues_comments.json'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);
 
-            res.json(await IssueComment.generate(config.pool, {
+            const comment = await IssueComment.generate(config.pool, {
                 issue: req.params.issueid,
                 author: req.auth.id,
                 ...req.body
-            }));
+            });
+
+            return res.json(await ViewIssueComment(config.pool, comment.id));
         } catch (err) {
             return Err.respond(err, res);
         }

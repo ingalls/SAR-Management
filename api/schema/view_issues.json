@@ -1,0 +1,52 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "$ref": "./view_issues/count.json"
+        },
+        "id": {
+            "$ref": "./view_issues/id.json"
+        },
+        "created": {
+            "$ref": "./view_issues/created.json"
+        },
+        "updated": {
+            "$ref": "./view_issues/updated.json"
+        },
+        "status": {
+            "$ref": "./view_issues/status.json"
+        },
+        "title": {
+            "$ref": "./view_issues/title.json"
+        },
+        "body": {
+            "$ref": "./view_issues/body.json"
+        },
+        "author": {
+            "$ref": "./view_issues/author.json"
+        },
+        "start_ts": {
+            "$ref": "./view_issues/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./view_issues/end_ts.json"
+        },
+        "user": {
+            "$ref": "./view_issues/user.json"
+        }
+    },
+    "required": [
+        "count",
+        "id",
+        "created",
+        "updated",
+        "status",
+        "title",
+        "body",
+        "author",
+        "start_ts",
+        "end_ts",
+        "user"
+    ]
+}

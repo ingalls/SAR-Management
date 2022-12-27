@@ -1,0 +1,40 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "$ref": "./view_issues_comments/count.json"
+        },
+        "id": {
+            "$ref": "./view_issues_comments/id.json"
+        },
+        "issue": {
+            "$ref": "./view_issues_comments/issue.json"
+        },
+        "created": {
+            "$ref": "./view_issues_comments/created.json"
+        },
+        "updated": {
+            "$ref": "./view_issues_comments/updated.json"
+        },
+        "body": {
+            "$ref": "./view_issues_comments/body.json"
+        },
+        "author": {
+            "$ref": "./view_issues_comments/author.json"
+        },
+        "user": {
+            "$ref": "./view_issues_comments/user.json"
+        }
+    },
+    "required": [
+        "count",
+        "id",
+        "issue",
+        "created",
+        "updated",
+        "body",
+        "author",
+        "user"
+    ]
+}

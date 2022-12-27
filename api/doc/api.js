@@ -266,7 +266,7 @@
 *
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssueComment.json} apiParam
-* @apiSchema {jsonschema=../schema/issues_comments.json} apiSuccess
+* @apiSchema {jsonschema=../schema/view_issues_comments.json} apiSuccess
 */
 
 
@@ -302,7 +302,7 @@
 *
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.CreateIssue.json} apiParam
-* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+* @apiSchema {jsonschema=../schema/view_issues.json} apiSuccess
 */
 
 
@@ -320,7 +320,7 @@
 *
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.PatchIssue.json} apiParam
-* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+* @apiSchema {jsonschema=../schema/view_issues.json} apiSuccess
 */
 
 
@@ -338,7 +338,7 @@
 *
 *
 *
-* @apiSchema {jsonschema=../schema/issues.json} apiSuccess
+* @apiSchema {jsonschema=../schema/view_issues.json} apiSuccess
 */
 
 

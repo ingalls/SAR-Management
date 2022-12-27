@@ -21,36 +21,38 @@
             <div class='row row-deck row-cards'>
                 <div class="col-md-9">
                     <div class="card">
-                        <div class='card-header'>
-                            <div class="col">
-                                <div class="d-flex">
-                                    <div class='btn-list'>
-                                        <span v-if='issue.status === "closed"' class="badge bg-red">Closed</span>
-                                        <span v-if='issue.status === "open"' class="badge bg-green">Open</span>
-
-                                        <h3 class='card-title' v-text='issue.title'></h3>
-                                    </div>
-
-                                    <div class='ms-auto'>
+                        <TablerLoading v-if='loading.issue'/>
+                        <template v-else>
+                            <div class='card-header'>
+                                <div class="col">
+                                    <div class="d-flex">
                                         <div class='btn-list'>
-                                            <div class="d-flex align-items-center">
-                                                <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                                                Paweł Kuna
-                                            </div>
+                                            <span v-if='issue.status === "closed"' class="badge bg-red">Closed</span>
+                                            <span v-if='issue.status === "open"' class="badge bg-green">Open</span>
 
-                                            <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                            <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
-                                                <a v-if='issue.status === "open"' @click='update("closed")' class="dropdown-item cursor-pointer">Close</a>
-                                                <a v-if='issue.status === "closed"' @click='update("open")' class="dropdown-item cursor-pointer">Re-Open</a>
-                                                <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Delete</a>
+                                            <h3 class='card-title' v-text='issue.title'></h3>
+                                        </div>
+
+                                        <div class='ms-auto'>
+                                            <div class='btn-list'>
+                                                <div class="d-flex align-items-center">
+                                                    <Avatar :user='issue.user'/>
+                                                </div>
+
+                                                <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                                <div class="dropdown-menu dropdown-menu-end" style="">
+                                                    <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
+                                                    <a v-if='issue.status === "open"' @click='update("closed")' class="dropdown-item cursor-pointer">Close</a>
+                                                    <a v-if='issue.status === "closed"' @click='update("open")' class="dropdown-item cursor-pointer">Re-Open</a>
+                                                    <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Delete</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-body" v-text='issue.body'></div>
+                            <div class="card-body" v-text='issue.body'></div>
+                        </template>
                     </div>
                 </div>
 
@@ -79,8 +81,7 @@
                                     <div class='ms-auto'>
                                         <div class='btn-list'>
                                             <div class="d-flex align-items-center">
-                                                <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                                                Paweł Kuna
+                                                <Avatar :user='comment.user'/>
                                             </div>
 
                                             <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
@@ -115,6 +116,7 @@ import {
     TablerLoading,
 } from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
+import Avatar from './util/Avatar.vue';
 import CreateComment from './Issue/CreateComment.vue';
 import UserSelect from './util/UserSelect.vue';
 
@@ -129,6 +131,7 @@ export default {
                 status: 'open'
             },
             loading: {
+                issue: true,
                 assigned: true
             },
             assigned: [],
@@ -145,7 +148,9 @@ export default {
     },
     methods: {
         fetch: async function() {
+            this.loading.issue = true;
             this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`);
+            this.loading.issue = false;
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;
@@ -182,6 +187,7 @@ export default {
         }
     },
     components: {
+        Avatar,
         TablerLoading,
         PageFooter,
         CreateComment,
