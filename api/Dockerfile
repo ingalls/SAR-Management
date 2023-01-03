@@ -9,7 +9,7 @@ RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils tzdata \
     && apt-get install -y nginx curl
 
-RUN export NODEV='18.12.1' \
+RUN export NODEV='19.3.0' \
     && curl "https://nodejs.org/dist/v${NODEV}/node-v${NODEV}-linux-x64.tar.gz" | tar -xzv > /dev/null \
     && cp ./node-v${NODEV}-linux-x64/bin/node /usr/bin/ \
     && ./node-v${NODEV}-linux-x64/bin/npm install -g npm
@@ -29,4 +29,4 @@ RUN cd web \
     && cd ..
 
 CMD service nginx restart \
-    && npm run start
+    && npm run prod
