@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 EXPOSE 5000
 
-ENV HOME=/home/stats
+ENV HOME=/home/sar
 WORKDIR $HOME
 
 RUN apt-get update \
