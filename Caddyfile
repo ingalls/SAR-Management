@@ -4,6 +4,16 @@
 
 mesacountysar.com
 
-route * {
-    reverse_proxy localhost:5000
+log {
+    output stdout
+}
+
+route /api* {
+    reverse_proxy localhost:4999
+}
+
+route * { 
+    root * /home/eiger/SAR-Management/api/web/dist
+    try_files {path} {path}/ /index.html?{query}
+    file_server
 }
