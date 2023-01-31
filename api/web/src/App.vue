@@ -113,7 +113,10 @@
         </div>
     </div>
 
-    <template v-if='enableNav'>
+    <template v-if='loading.user'>
+        <TablerLoading desc='Loading User...'/>
+    </template>
+    <template v-else-if='enableNav'>
         <router-view
             :auth='user'
         />
@@ -127,7 +130,8 @@
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
 import {
-    TablerError
+    TablerError,
+    TablerLoading
 } from '@tak-ps/vue-tabler'
 
 import {
@@ -148,6 +152,9 @@ export default {
     name: 'SearchAndRescue',
     data: function() {
         return {
+            loading: {
+                user: false
+            },
             user: null,
             err: false,
         }
@@ -162,29 +169,32 @@ export default {
         }
     },
     watch: {
-        $route() {
+        $route: async function() {
             if (this.$route.name === 'logout') {
                 delete localStorage.token;
                 this.user = null;
                 this.$router.push("/login");
-            } else if (localStorage.token) {
-                return this.getSelf();
-            } else if (this.$route.name !== 'login') {
+            } else if (!this.$route.name.includes('login')) {
                 this.$router.push("/login");
             }
         }
     },
-    mounted: function() {
-        if (localStorage.token) return this.getSelf();
+    mounted: async function() {
+        if (localStorage.token) return await this.getUser();
         if (this.$route.name !== 'login') this.$router.push("/login");
     },
     methods: {
-        getSelf: async function() {
+        getUser: async function() {
             try {
+                this.loading.user = true;
                 this.user = await window.std('/api/login');
+                this.loading.user = false;
             } catch (err) {
-                delete localStorage.token;
-                this.$router.push("/login");
+                this.loading.user = false;
+
+                if (err.message === 'Authentication Required') {
+                    if (this.$route.path.split('/')[1] !== 'login') this.$router.push('/login');
+                }
             }
         }
     },
@@ -200,7 +210,8 @@ export default {
         CalendarIcon,
         AmbulanceIcon,
         AdjustmentsIcon,
-        TablerError
+        TablerError,
+        TablerLoading
     }
 }
 </script>

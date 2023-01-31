@@ -17,9 +17,9 @@ const router = new VueRouter.createRouter({
         { path: '/logout', name: 'logout', component: () => import('./components/Logout.vue') },
 
         { path: '/login', name: 'login', component: () => import('./components/Login.vue') },
-        { path: '/login/forgot', name: 'forgot', component: () => import('./components/Forgot.vue') },
-        { path: '/login/verify', name: 'verify', component: () => import('./components/Verify.vue') },
-        { path: '/login/reset', name: 'reset', component: () => import('./components/Reset.vue') },
+        { path: '/login/forgot', name: 'login-forgot', component: () => import('./components/Forgot.vue') },
+        { path: '/login/verify', name: 'login-verify', component: () => import('./components/Verify.vue') },
+        { path: '/login/reset', name: 'login-reset', component: () => import('./components/Reset.vue') },
 
         { path: '/profile', name: 'profile', component: () => import('./components/User.vue') },
 
