@@ -11,6 +11,12 @@
         "updated": {
             "$ref": "./users/updated.json"
         },
+        "disabled": {
+            "$ref": "./users/disabled.json"
+        },
+        "access": {
+            "$ref": "./users/access.json"
+        },
         "username": {
             "$ref": "./users/username.json"
         },
@@ -26,39 +32,33 @@
         "lname": {
             "$ref": "./users/lname.json"
         },
-        "validated": {
-            "$ref": "./users/validated.json"
-        },
-        "access": {
-            "$ref": "./users/access.json"
-        },
-        "disabled": {
-            "$ref": "./users/disabled.json"
-        },
         "phone": {
             "$ref": "./users/phone.json"
         },
-        "profile_id": {
-            "$ref": "./users/profile_id.json"
-        },
         "bday": {
             "$ref": "./users/bday.json"
+        },
+        "validated": {
+            "$ref": "./users/validated.json"
+        },
+        "profile_id": {
+            "$ref": "./users/profile_id.json"
         }
     },
     "required": [
         "id",
         "created",
         "updated",
+        "disabled",
+        "access",
         "username",
         "email",
         "password",
         "fname",
         "lname",
-        "validated",
-        "access",
-        "disabled",
         "phone",
-        "profile_id",
-        "bday"
+        "bday",
+        "validated",
+        "profile_id"
     ]
 }

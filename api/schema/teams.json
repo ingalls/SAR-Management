@@ -11,6 +11,9 @@
         "updated": {
             "$ref": "./teams/updated.json"
         },
+        "public": {
+            "$ref": "./teams/public.json"
+        },
         "name": {
             "$ref": "./teams/name.json"
         },
@@ -22,6 +25,7 @@
         "id",
         "created",
         "updated",
+        "public",
         "name",
         "body"
     ]

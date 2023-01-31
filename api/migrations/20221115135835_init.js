@@ -158,7 +158,7 @@ function up(knex) {
             FROM
                 issues_assigned
                     LEFT JOIN users
-                        ON issues_assigned.uid = users.id
+                        ON issues_assigned.uid = users.id;
 
         CREATE TABLE iam (
             id              BIGSERIAL PRIMARY KEY,
@@ -181,7 +181,7 @@ function up(knex) {
             FROM
                 issues
                     LEFT JOIN users
-                        ON issues.author = users.id
+                        ON issues.author = users.id;
 
         CREATE VIEW view_issues_comments AS
             SELECT
@@ -196,7 +196,7 @@ function up(knex) {
             FROM
                 issues_comments
                     LEFT JOIN users
-                        ON issues_comments.author = users.id
+                        ON issues_comments.author = users.id;
     `);
 }
 
