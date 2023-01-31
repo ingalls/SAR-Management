@@ -14,6 +14,8 @@ const router = new VueRouter.createRouter({
     routes: [
         { path: '/', name: 'home', component: () => import('./components/Home.vue') },
 
+        { path: '/logout', name: 'logout', component: () => import('./components/Logout.vue') },
+
         { path: '/login', name: 'login', component: () => import('./components/Login.vue') },
         { path: '/login/forgot', name: 'forgot', component: () => import('./components/Forgot.vue') },
         { path: '/login/verify', name: 'verify', component: () => import('./components/Verify.vue') },

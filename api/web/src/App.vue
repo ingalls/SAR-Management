@@ -163,8 +163,15 @@ export default {
     },
     watch: {
         $route() {
-            if (localStorage.token) return this.getSelf();
-            if (this.$route.name !== 'login') this.$router.push("/login");
+            if (this.$route.name === 'logout') {
+                delete localStorage.token;
+                this.user = null;
+                this.$router.push("/login");
+            } else if (localStorage.token) {
+                return this.getSelf();
+            } else if (this.$route.name !== 'login') {
+                this.$router.push("/login");
+            }
         }
     },
     mounted: function() {

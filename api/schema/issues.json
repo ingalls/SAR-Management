@@ -14,12 +14,6 @@
         "status": {
             "$ref": "./issues/status.json"
         },
-        "start_ts": {
-            "$ref": "./issues/start_ts.json"
-        },
-        "end_ts": {
-            "$ref": "./issues/end_ts.json"
-        },
         "title": {
             "$ref": "./issues/title.json"
         },
@@ -28,6 +22,12 @@
         },
         "author": {
             "$ref": "./issues/author.json"
+        },
+        "start_ts": {
+            "$ref": "./issues/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./issues/end_ts.json"
         }
     },
     "required": [
@@ -35,10 +35,10 @@
         "created",
         "updated",
         "status",
-        "start_ts",
-        "end_ts",
         "title",
         "body",
-        "author"
+        "author",
+        "start_ts",
+        "end_ts"
     ]
 }
