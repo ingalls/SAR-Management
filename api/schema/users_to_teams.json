@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "uid": {
+            "$ref": "./users_to_teams/uid.json"
+        },
+        "tid": {
+            "$ref": "./users_to_teams/tid.json"
+        }
+    },
+    "required": [
+        "uid",
+        "tid"
+    ]
+}
