@@ -20,25 +20,31 @@
             </div>
         </div>
     </div>
-    <table class="table card-table table-vcenter">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th colspan="2">Labels</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr :key='mission.id' v-for='mission in missions'>
-                <td><a @click='$router.push(`/mission/${mission.id}`)' v-text='mission.title' class='cursor-pointer'></a></td>
-                <td v-text='mission.priority'></td>
-            </tr>
-        </tbody>
-    </table>
+    <template v-if='!missions.length'>
+        <None :create='false' label='Missions'/>
+    </template>
+    <template v-else>
+        <table class="table card-table table-vcenter">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th colspan="2">Labels</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr :key='mission.id' v-for='mission in missions'>
+                    <td><a @click='$router.push(`/mission/${mission.id}`)' v-text='mission.title' class='cursor-pointer'></a></td>
+                    <td v-text='mission.priority'></td>
+                </tr>
+            </tbody>
+        </table>
+    </template>
 </div>
 </template>
 
 <script>
 import { TablerSelect } from '@tak-ps/vue-tabler';
+import None from '../util/None.vue';
 
 export default {
     name: 'MissionCard',
@@ -74,6 +80,7 @@ export default {
         }
     },
     components: {
+        None,
         TablerSelect
     }
 }
