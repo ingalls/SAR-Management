@@ -82,14 +82,13 @@ export default {
                 email: '',
                 fname: '',
                 lname: '',
-                phone: '',
-                bday: ''
+                phone: ''
             }
         }
     },
     methods: {
         create: async function() {
-            for (const field of ['username', 'email', 'fname', 'lname']) {
+            for (const field of ['username', 'email', 'fname', 'lname', 'phone']) {
                 if (!this.user[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = false;
             }

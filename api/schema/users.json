@@ -11,12 +11,6 @@
         "updated": {
             "$ref": "./users/updated.json"
         },
-        "disabled": {
-            "$ref": "./users/disabled.json"
-        },
-        "access": {
-            "$ref": "./users/access.json"
-        },
         "username": {
             "$ref": "./users/username.json"
         },
@@ -32,17 +26,23 @@
         "lname": {
             "$ref": "./users/lname.json"
         },
-        "phone": {
-            "$ref": "./users/phone.json"
-        },
-        "bday": {
-            "$ref": "./users/bday.json"
-        },
         "validated": {
             "$ref": "./users/validated.json"
         },
+        "access": {
+            "$ref": "./users/access.json"
+        },
+        "disabled": {
+            "$ref": "./users/disabled.json"
+        },
+        "phone": {
+            "$ref": "./users/phone.json"
+        },
         "profile_id": {
             "$ref": "./users/profile_id.json"
+        },
+        "bday": {
+            "$ref": "./users/bday.json"
         },
         "start_year": {
             "$ref": "./users/start_year.json"
@@ -67,17 +67,17 @@
         "id",
         "created",
         "updated",
-        "disabled",
-        "access",
         "username",
         "email",
         "password",
         "fname",
         "lname",
-        "phone",
-        "bday",
         "validated",
+        "access",
+        "disabled",
+        "phone",
         "profile_id",
+        "bday",
         "start_year",
         "emergency",
         "address_street",
