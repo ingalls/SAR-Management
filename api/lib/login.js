@@ -35,6 +35,7 @@ export default class Login {
 
         const user = await User.from(pool, reset.uid);
         await user.commit({
+            validated: true,
             password: await bcrypt.hash(body.password, 10)
         });
     }
