@@ -118,6 +118,7 @@
     </template>
     <template v-else-if='enableNav'>
         <router-view
+            @login='getUser'
             :auth='user'
         />
     </template>
@@ -174,7 +175,7 @@ export default {
                 delete localStorage.token;
                 this.user = null;
                 this.$router.push("/login");
-            } else if (!this.$route.name.includes('login')) {
+            } else if (!this.user && !localStorage.token && !this.$route.name.includes('login')) {
                 this.$router.push("/login");
             }
         }
@@ -193,8 +194,12 @@ export default {
                 this.loading.user = false;
 
                 if (err.message === 'Authentication Required') {
-                    if (this.$route.path.split('/')[1] !== 'login') this.$router.push('/login');
+                    if (this.$route.path.split('/')[1] !== 'login') return this.$router.push('/login');
                 }
+            }
+
+            if (this.$route.name.includes('login')) {
+                this.$router.push("/");
             }
         }
     },

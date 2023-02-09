@@ -58,6 +58,7 @@ export default {
 
             localStorage.token = login.token;
 
+            this.$emit('login');
             this.$router.push("/");
         }
     }
