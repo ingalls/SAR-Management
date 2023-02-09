@@ -86,12 +86,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-6">
                     <CardMissionMini
                         :assigned='auth.id'
                     />
                 </div>
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-6">
                     <CardTrainingMini
                         :assigned='auth.id'
                     />

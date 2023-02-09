@@ -3,37 +3,32 @@
     <div class="card-header row">
         <div class="d-flex">
             <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
-
-            <div class='ms-auto'>
-                <div class="btn-list">
-                    <TablerSelect
-                        default='Recent'
-                        :values='["Recent", "Priority"]'
-                        @select='fetch($event)'
-                    />
-                </div>
-            </div>
         </div>
     </div>
-    <table class="table card-table table-vcenter">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th colspan="2">Labels</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr :key='issue.id' v-for='issue in issues'>
-                <td><a @click='$router.push(`/issue/${issue.id}`)' v-text='issue.title' class='cursor-pointer'></a></td>
-                <td v-text='issue.priority'></td>
-            </tr>
-        </tbody>
-    </table>
+    <template v-if='!issues.length'>
+        <None :create='false' label='Assigned Issues' :compact='true'/>
+    </template>
+    <template v-else>
+        <table class="table card-table table-vcenter">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th colspan="2">Labels</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr :key='issue.id' v-for='issue in issues'>
+                    <td><a @click='$router.push(`/issue/${issue.id}`)' v-text='issue.title' class='cursor-pointer'></a></td>
+                    <td v-text='issue.priority'></td>
+                </tr>
+            </tbody>
+        </table>
+    </template>
 </div>
 </template>
 
 <script>
-import { TablerSelect } from '@tak-ps/vue-tabler';
+import None from '../util/None.vue';
 
 export default {
     name: 'IssueCard',
@@ -68,7 +63,8 @@ export default {
         }
     },
     components: {
-        TablerSelect
+        None,
+
     }
 }
 </script>
