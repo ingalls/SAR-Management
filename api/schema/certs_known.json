@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./certs_known/id.json"
+        },
+        "created": {
+            "$ref": "./certs_known/created.json"
+        },
+        "updated": {
+            "$ref": "./certs_known/updated.json"
+        },
+        "name": {
+            "$ref": "./certs_known/name.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "name"
+    ]
+}
