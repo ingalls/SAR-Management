@@ -33,6 +33,7 @@ export default {
                 projection: 'globe'
             });
             this.map.scrollZoom.disable();
+            this.map.addControl(new mapboxgl.NavigationControl());
         },
     }
 }
