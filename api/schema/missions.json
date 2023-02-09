@@ -23,11 +23,11 @@
         "title": {
             "$ref": "./missions/title.json"
         },
-        "author": {
-            "$ref": "./missions/author.json"
-        },
         "body": {
             "$ref": "./missions/body.json"
+        },
+        "author": {
+            "$ref": "./missions/author.json"
         }
     },
     "required": [
@@ -38,7 +38,7 @@
         "end_ts",
         "status",
         "title",
-        "author",
-        "body"
+        "body",
+        "author"
     ]
 }
