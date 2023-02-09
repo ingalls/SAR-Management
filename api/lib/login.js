@@ -34,7 +34,9 @@ export default class Login {
         await UserReset.delete_all(pool, reset.uid);
 
         const user = await User.from(pool, reset.uid);
-        await user.set_password(body.password);
+        await user.commit({
+            password: await bcrypt.hash(body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
+        });
     }
 
     /**
