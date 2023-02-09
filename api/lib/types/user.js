@@ -19,11 +19,12 @@ export default class User extends Generic {
                     count(*) OVER() AS count,
                     users.*
                 FROM
-                    users,
-                    users_to_teams
+                    users
+                        LEFT JOIN users_to_teams utt
+                        ON users.id = utt.uid
                 WHERE
                     (${query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${query.filter})
-                    AND (${query.team}::BIGINT IS NULL OR users_to_teams.uid = users.id AND users_to_teams.tid = ${query.team})
+                    AND (${query.team}::BIGINT IS NULL OR utt.tid = ${query.team})
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
