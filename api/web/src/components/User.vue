@@ -88,30 +88,35 @@
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <CardMissionMini
-                        :assigned='auth.id'
+                        :assigned='userid'
                     />
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <CardTrainingMini
-                        :assigned='auth.id'
+                        :assigned='userid'
                     />
                 </div>
                 <div class="col-lg-6">
                     <CardEquipment
                         label='Assigned Equipment'
-                        :assigned='auth.id'
+                        :assigned='userid'
                     />
                 </div>
                 <div class="col-lg-6">
                     <CardIssues
                         label='Assigned Issues'
-                        :assigned='auth.id'
+                        :assigned='userid'
                     />
                 </div>
-                <div class="col-lg-12">
+                <div class="col-lg-6">
+                    <CardCerts
+                        :assigned='userid'
+                    />
+                </div>
+                <div class="col-lg-6">
                     <CardMission
                         label='Mission Log'
-                        :assigned='auth.id'
+                        :assigned='userid'
                     />
                 </div>
             </div>
@@ -130,6 +135,7 @@ import CardEquipment from './cards/Equipment.vue';
 import CardMission from './cards/Missions.vue';
 import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
+import CardCerts from './cards/Certs.vue';
 
 export default {
     name: 'User',
@@ -159,7 +165,8 @@ export default {
         CardMission,
         CardMissionMini,
         CardTrainingMini,
-        CardEquipment
+        CardEquipment,
+        CardCerts
     }
 }
 </script>
