@@ -86,7 +86,7 @@ export default {
                 fname: '',
                 lname: '',
                 phone: '',
-                bday: null
+                bday: ''
             }
         }
     },
@@ -101,10 +101,15 @@ export default {
                 if (this.errors[e]) return;
             }
 
+            const body = JSON.stringify(JSON.parse(this.user));
+            for (const field of ['bday']) {
+                if (!body.bday) delete user.bday;
+            }
+
+
             this.loading = true;
             const create = await window.std('/api/user', {
-                method: 'POST',
-                body: this.user
+                method: 'POST', body
             });
             this.loading = false;
 
