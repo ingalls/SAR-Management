@@ -8,7 +8,7 @@
             <NotesOffIcon v-else width='48' height='48' />
         </div>
 
-        <div class='d-flex justify-content-center' :class='{
+        <div class='d-flex text-center' :class='{
             "mb-4 mt-2": !compact
         }'>
             <div>No <span v-text='label'/></div>
