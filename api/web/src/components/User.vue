@@ -64,8 +64,21 @@
                                             <div class="datagrid-content" v-text='user.bday'></div>
                                         </div>
                                         <div class="datagrid-item">
+                                            <div class="datagrid-title">Start Year</div>
+                                            <div class="datagrid-content" v-text='user.start_year || "UNKNOWN"'></div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Street Address</div>
+                                            <template v-if='user.address_street && user.address_city && user.address_state && user.address_zip'>
+                                                <div class="datagrid-content" v-text='`${user.address_street}\n${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
+                                            </template>
+                                            <template v-else>
+                                            <div class="datagrid-content">UNKNOWN</div>
+                                            </template>
+                                        </div>
+                                        <div class="datagrid-item">
                                             <div class="datagrid-title">Teams</div>
-                                            <div class="datagrid-content">So Many Teams!</div>
+                                            <div class="datagrid-content">TODO: So Many Teams!</div>
                                         </div>
                                     </div>
                                 </div>

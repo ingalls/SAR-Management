@@ -1,0 +1,20 @@
+{
+    "type": "array",
+    "description": "Emergency Contacts",
+    "items": {
+        "type": "object",
+        "required": [
+            "name",
+            "phone"
+        ],
+        "additionalProperties": false,
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "phone": {
+                "type": "string"
+            }
+        }
+    }
+}

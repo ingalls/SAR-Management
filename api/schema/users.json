@@ -43,6 +43,24 @@
         },
         "bday": {
             "$ref": "./users/bday.json"
+        },
+        "start_year": {
+            "$ref": "./users/start_year.json"
+        },
+        "emergency": {
+            "$ref": "./users/emergency.json"
+        },
+        "address_street": {
+            "$ref": "./users/address_street.json"
+        },
+        "address_city": {
+            "$ref": "./users/address_city.json"
+        },
+        "address_state": {
+            "$ref": "./users/address_state.json"
+        },
+        "address_zip": {
+            "$ref": "./users/address_zip.json"
         }
     },
     "required": [
@@ -59,6 +77,12 @@
         "disabled",
         "phone",
         "profile_id",
-        "bday"
+        "bday",
+        "start_year",
+        "emergency",
+        "address_street",
+        "address_city",
+        "address_state",
+        "address_zip"
     ]
 }

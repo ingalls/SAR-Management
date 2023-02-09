@@ -11,7 +11,13 @@
         "phone",
         "email",
         "lname",
-        "fname"
+        "fname",
+        "start_year",
+        "emergency",
+        "address_street",
+        "address_city",
+        "address_state",
+        "address_zip"
     ],
     "properties": {
         "id": {
@@ -46,6 +52,24 @@
         },
         "bday": {
             "type": ["null", "string"]
+        },
+        "start_year": {
+            "type": "integer"
+        },
+        "emergency": {
+            "$ref": "./util/emergency.json"
+        },
+        "address_street": {
+            "type": "string"
+        },
+        "address_city": {
+            "type": "string"
+        },
+        "address_state": {
+            "type": "string"
+        },
+        "address_zip": {
+            "type": "string"
         }
     }
 }
