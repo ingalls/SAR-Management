@@ -11,6 +11,7 @@ export default class User extends Generic {
         query.filter = Params.string(query.filter);
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
+        query.team = Params.integer(query.team);
 
         try {
             const pgres = await pool.query(sql`
@@ -18,9 +19,11 @@ export default class User extends Generic {
                     count(*) OVER() AS count,
                     users.*
                 FROM
-                    users
+                    users,
+                    users_to_teams
                 WHERE
                     (${query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${query.filter})
+                    AND (${query.team}::BIGINT IS NULL OR users_to_teams.uid = users.id AND users_to_teams.tid = ${query.team})
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
