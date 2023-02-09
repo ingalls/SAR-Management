@@ -1,5 +1,5 @@
 {
-    "name": "@tak-ps/stats.web",
+    "name": "SAR-Management.Web",
     "version": "0.1.0",
     "private": true,
     "scripts": {
