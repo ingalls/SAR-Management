@@ -39,7 +39,7 @@ export default class UserReset extends Generic {
         }
 
         if (pgres.rows.length !== 1) {
-            throw new Err(401, null, 'Invalid or Expired Reset Token');
+            throw new Err(400, null, 'Invalid or Expired Reset Token');
         }
 
         return this.deserialize(pool, pgres);

@@ -182,7 +182,6 @@ export default {
     },
     mounted: async function() {
         if (localStorage.token) return await this.getUser();
-        if (this.$route.name !== 'login') this.$router.push("/login");
     },
     methods: {
         getUser: async function() {

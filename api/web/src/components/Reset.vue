@@ -1,56 +1,82 @@
 <template>
-    <div class='col col--12 grid pt12'>
-        <div class='col col--12 flex flex--center-main'>
-            <h3 class='flex-child txt-h4 py6 color-white'>Reset Password</h3>
-        </div>
+<div class="page page-center">
+    <div class="container container-normal py-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg">
+                <div class="container-tight">
+                    <div class="card card-md">
+                        <div class="card-body">
+                            <template v-if='err'>
+                                <div class="text-center py-4">
+                                    <AlertCircleIcon height='48' width='48'/>
+                                    <h3 class='pt-3'>Password Reset Failed</h3>
+                                    <div class="text-muted" v-text='err.message'></div>
 
-        <div class='bg-white round px12 py12 col col--12'>
-            <template v-if='loading'>
-                <Loading/>
-            </template>
-            <template v-if='!success'>
-                <div class='col col--12 flex flex--center-main'>
-                    <div class='w240 col col--12 grid grid--gut12'>
-                        <label class='mt12'>Reset Token:</label>
-                        <input v-on:keyup.enter='reset' :class='{
-                             "input--border-red": attempted && !token
-                        }' v-model='token' type='text' class='input'/>
+                                    <div class="form-footer">
+                                        <button @click='$router.push("/login/forgot")' type="submit" class="btn btn-primary w-100">Forgot Password</button>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <h2 class="h2 text-center mb-4">Reset Password</h2>
+                                <template v-if='loading'>
+                                    <TablerLoading/>
+                                </template>
+                                <template v-else-if='success'>
+                                    <div class='d-flex justify-content-center mb-4'>
+                                        <CheckIcon width='48' height='48' />
+                                    </div>
 
-                        <label class='mt12 col col--12'>
-                            New Password:
-                        </label>
-                        <input v-on:keyup.enter='reset' :class='{
-                             "input--border-red": attempted && !password
-                       } ' v-model='password' type='password' class='input'/>
-
-                        <button @click='reset' class='mt12 w-full color-gray color-green-on-hover btn btn--stroke round'>Reset Password</button>
+                                    <div class='d-flex justify-content-center'>
+                                        <div>Password Reset</div>
+                                    </div>
+                                    <div class="form-footer">
+                                        <button @click='$router.push("/login")' type="submit" class="btn btn-primary w-100">Login</button>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <div class="mb-2">
+                                        <label class="form-label">
+                                            New Password
+                                        </label>
+                                        <div class="input-group input-group-flat">
+                                            <input v-model='password' v-on:keyup.enter='reset' type="password" class="form-control" placeholder="Your password" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="form-footer">
+                                        <button @click='reset' type="submit" class="btn btn-primary w-100">Reset Password</button>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="text-center text-muted mt-3">
+                        Don't have account yet? <a href='mailto:rescue@ingalls.ca'>Contact Us</a>
                     </div>
                 </div>
-            </template>
-            <template v-else>
-                <div class='col col--12 flex flex--center-main py24'>
-                    <svg class='icon color-green w60 h60'><use href='#icon-check'/></svg>
-                </div>
-                <div class='col col--12 flex flex--center-main'>
-                    <div>Password Reset</div>
-                </div>
-
-                <button @click='$router.push("/login")' class='mt12 w-full color-gray color-green-on-hover btn btn--stroke round'>Login</button>
-            </template>
+            </div>
         </div>
     </div>
+</div>
+
+
 </template>
 
 <script>
-import Loading from './util/Loading.vue';
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
+import {
+    CheckIcon,
+    AlertCircleIcon
+} from 'vue-tabler-icons';
 
 export default {
     name: 'Reset',
-    props: ['meta'],
     data: function() {
         return {
+            err: false,
             loading: false,
-            attempted: false,
             success: false,
             token: this.$route.query.token,
             password: ''
@@ -58,8 +84,6 @@ export default {
     },
     methods: {
         reset: async function() {
-            this.attempted = true;
-
             if (!this.token.length) return;
             if (!this.password.length) return;
 
@@ -76,14 +100,17 @@ export default {
 
                 this.success = true;
             } catch (err) {
-                this.$emit('err', err);
+                console.error('HERE');
+                this.err = err;
             }
 
-            this.loading = false;
+            this.loading = false
         }
     },
     components: {
-        Loading
+        CheckIcon,
+        TablerLoading,
+        AlertCircleIcon
     }
 }
 </script>
