@@ -24,8 +24,13 @@ export default class Auth {
         return true;
     }
 
-    static async is_iam(req) {
+    static async is_iam(req, permission) {
         await Auth.is_auth(req);
+
+        // Admins will be admins
+        if (req.auth && req.auth.access && req.auth.access === 'admin') return true;
+
+        throw new Err(403, null, 'Authentication Level Insufficient');
     }
 
     static async is_admin(req) {
