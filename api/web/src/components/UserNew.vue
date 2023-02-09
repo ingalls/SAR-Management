@@ -39,9 +39,6 @@
                                 <div class="col-md-6">
                                     <TablerInput label='Phone' v-model='user.phone' :errors='errors.phone'/>
                                 </div>
-                                <div class="col-md-6">
-                                    <TablerInput type='date' label='Birthday' v-model='user.bday' :errors='errors.bday'/>
-                                </div>
 
                                 <div class="col-md-12">
                                     <div class='d-flex'>
@@ -101,15 +98,9 @@ export default {
                 if (this.errors[e]) return;
             }
 
-            const body = JSON.stringify(JSON.parse(this.user));
-            for (const field of ['bday']) {
-                if (!body[field]) delete body[field];
-            }
-
-
             this.loading = true;
             const create = await window.std('/api/user', {
-                method: 'POST', body
+                method: 'POST', body: this.user
             });
             this.loading = false;
 
