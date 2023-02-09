@@ -7,6 +7,4 @@ cd api
 npm install
 cd web
 npm install
-cd ..
-npx knex migrate:latest
-cd ..
+npm run prod
