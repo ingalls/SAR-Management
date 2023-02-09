@@ -1,6 +1,6 @@
 <template>
 <div class="card">
-    <div class="card-body">
+    <div class="card-header row">
         <div class="d-flex">
             <h3 class="card-title"><a @click='$router.push("/training")' class='cursor-pointer' v-text='label'></a></h3>
         </div>
