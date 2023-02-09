@@ -1,11 +1,14 @@
 #! /bin/bash
 set -euo pipefail
 
+npm install -g npm
+
 git pull
 npm install
 cd api
 npm install
-cd web npm install
-
+cd web
+npm install
 cd ..
 npx knex migrate:latest
+cd ..
