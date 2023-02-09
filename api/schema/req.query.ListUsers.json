@@ -8,6 +8,10 @@
         "page": {
             "$ref": "./util/page.json"
         },
+        "team": {
+            "type": "integer",
+            "description": "Only show users part of a specific team"
+        },
         "filter": {
             "type": "string",
             "default": "",
