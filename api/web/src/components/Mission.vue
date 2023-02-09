@@ -102,6 +102,8 @@ export default {
     },
     computed: {
         is_roster: function() {
+            if (this.mission.end_ts > +new Date()) return false;
+
             return this.assigned.every((a) => {
                 return a.uid != this.auth.id;
             });

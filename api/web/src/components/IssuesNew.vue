@@ -25,6 +25,8 @@
                             <div class='row row-cards'>
                                 <div class="col-md-10">
                                     <TablerInput v-model='issue.title' label='Issue Title' :errors='errors.title'/>
+
+                                    <TablerInput v-model='issue.body' :rows='6' label='Issue Body' :errors='errors.body'/>
                                 </div>
                                 <div class="col-md-2">
                                     <UserSelect
@@ -34,16 +36,15 @@
 
                                     <label class="form-label">Labels</label>
                                 </div>
-                                <div class="col-md-10">
-                                    <TablerInput v-model='issue.body' :rows='6' label='Issue Body' :errors='errors.body'/>
-                                </div>
 
-                                <div class="col-md-10">
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a @click='create' class="cursor-pointer btn btn-primary">
-                                                Create Issue
-                                            </a>
+                                <div class="col-md-12">
+                                    <div class="col-md-10">
+                                        <div class='d-flex'>
+                                            <div class='ms-auto'>
+                                                <a @click='create' class="cursor-pointer btn btn-primary">
+                                                    Create Issue
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

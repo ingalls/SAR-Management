@@ -97,6 +97,15 @@ export default {
         await this.fetch();
         await this.fetchAssigned();
     },
+    computed: {
+        is_roster: function() {
+            if (this.training.end_ts > +new Date()) return false;
+
+            return this.assigned.every((a) => {
+                return a.uid != this.auth.id;
+            });
+        }
+    },  
     methods: {
         fetch: async function() {
             this.training = await window.std(`/api/training/${this.$route.params.trainingid}`);
