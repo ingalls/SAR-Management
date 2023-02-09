@@ -22,7 +22,8 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class='row row-cards'>
+                            <TablerLoading v-if='loading' desc='Creating User'/>
+                            <div v-else class='row row-cards'>
                                 <div class="col-md-6">
                                     <TablerInput label='First Name' v-model='user.fname' :errors='errors.fname'/>
                                 </div>
@@ -78,6 +79,7 @@ export default {
                 lname: false,
                 phone: false
             },
+            loading: false,
             user: {
                 username: '',
                 email: '',
@@ -99,10 +101,12 @@ export default {
                 if (this.errors[e]) return;
             }
 
+            this.loading = true;
             const create = await window.std('/api/user', {
                 method: 'POST',
                 body: this.user
             });
+            this.loading = false;
 
             this.$router.push(`/user/${create.id}`);
         }
