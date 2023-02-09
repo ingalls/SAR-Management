@@ -103,7 +103,7 @@ export default {
 
             const body = JSON.stringify(JSON.parse(this.user));
             for (const field of ['bday']) {
-                if (!body.bday) delete user.bday;
+                if (!body[field]) delete body[field];
             }
 
 
