@@ -5,7 +5,7 @@
         </div>
 
         <template v-if='loading'>
-            <Loading desc='Verifying Account'/>
+            <TablerLoading desc='Verifying Account'/>
         </template>
         <template v-else>
             <div class='col col--12 flex flex--center-main py24'>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Loading from './util/Loading.vue';
+import { TablerLoading } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Verify',
@@ -54,7 +54,7 @@ export default {
         }
     },
     components: {
-        Loading
+        TablerLoading
     }
 }
 </script>
