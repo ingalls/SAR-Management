@@ -2,8 +2,11 @@ import Err from '@openaddresses/batch-error';
 import User from '../lib/types/user.js';
 import Auth from '../lib/auth.js';
 import bcrypt from 'bcrypt';
+import Email from '../lib/email.js';
 
 export default async function router(schema, config) {
+    const email = new Email(config);
+
     await schema.get('/user', {
         name: 'Get Users',
         group: 'User',
@@ -32,10 +35,16 @@ export default async function router(schema, config) {
         try {
             await Auth.is_admin(req);
 
-            res.json(await User.generate(config.pool, {
+            const user = await User.generate(config.pool, {
                 ...req.body,
                 password: await bcrypt.hash(req.body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
-            }));
+            });
+
+            if (config.email) {
+                await email.newuser(user);
+            }
+
+            return res.json(user);
         } catch (err) {
             return Err.respond(err, res);
         }

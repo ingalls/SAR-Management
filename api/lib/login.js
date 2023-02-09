@@ -35,7 +35,7 @@ export default class Login {
 
         const user = await User.from(pool, reset.uid);
         await user.commit({
-            password: await bcrypt.hash(body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
+            password: await bcrypt.hash(body.password, 10)
         });
     }
 
