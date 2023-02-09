@@ -12,7 +12,7 @@ route /api* {
     reverse_proxy localhost:4999
 }
 
-route /docs/ { 
+route /docs { 
     root * /home/eiger/SAR-Management/api/doc/
     try_files {path} {path}/ /index.html?{query}
     file_server
