@@ -2,8 +2,11 @@
 <div class='page'>
     <header class='navbar navbar-expand-md navbar-dark d-print-none sticky-top'>
         <div class="container-xl">
-            <div class="col">
-                <div class="page-pretitle">Mesa County Search &amp; Rescue</div>
+            <div class="col-auto">
+                <img height='50' width='50' src='/logo.png'>
+            </div>
+            <div class="col mx-2">
+                <div class="page-pretitle text-white">Mesa County Search &amp; Rescue</div>
                 <h2 class="page-title">Team Management</h2>
             </div>
 
