@@ -23,7 +23,13 @@
             </div>
         </div>
     </div>
-    <template v-if='mode === "list"'>
+    <template v-if='loading'>
+        <TablerLoading desc='Loading Users'/>
+    </template>
+    <template v-else-if='!users.users.length'>
+        <None label='Users' :create='false'/>
+    </template>
+    <template v-else-if='mode === "list"'>
         <div class='table-responsive'>
             <table class="table card-table table-vcenter datatable">
                 <thead>
@@ -86,7 +92,11 @@
 
 <script>
 import { ListIcon, PolaroidIcon } from 'vue-tabler-icons'
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler'
 import UserProfile from '../User/Profile.vue';
+import None from '../util/None.vue';
 
 export default {
     name: 'CardUsers',
@@ -100,6 +110,7 @@ export default {
     data: function() {
         return {
             mode: 'list',
+            loading: true,
             users: { },
         }
     },
@@ -108,16 +119,20 @@ export default {
     },
     methods: {
         listUsers: async function() {
+            this.loading = true;
             const url = window.stdurl('/api/user');
             if (this.team) url.searchParams.append('team', this.team);
 
             this.users = await window.std(url);
+            this.loading = false;
         },
     },
     components: {
+        None,
         ListIcon,
         PolaroidIcon,
-        UserProfile
+        UserProfile,
+        TablerLoading
     }
 }
 </script>
