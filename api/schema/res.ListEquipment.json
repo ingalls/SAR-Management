@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "equipement"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "total": {
+            "type": "integer"
+        },
+        "equipment": {
+            "type": "array",
+            "items":  {
+                "type": "object"
+            }
+        }
+    }
+}

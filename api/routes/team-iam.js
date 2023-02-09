@@ -22,7 +22,7 @@ export default async function router(schema, config) {
                 resource: 'Get*',
                 action: 'Allow'
             }]);
-            //res.json(await IAM.list(config.pool, req.query));
+            // res.json(await IAM.list(config.pool, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }

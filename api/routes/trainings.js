@@ -52,17 +52,17 @@ export default async function router(schema, config) {
 
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
-            else delete req.body.start_ts
+            else delete req.body.start_ts;
 
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
-            else delete req.body.end_ts
+            else delete req.body.end_ts;
 
             res.json(await Training.generate(config.pool, {
                 title: req.body.title,
                 body: req.body.body,
                 start_ts: req.body.start_ts,
                 end_ts: req.body.end_ts,
-                author: req.auth.id,
+                author: req.auth.id
             }));
 
             if (req.body.assigned) {

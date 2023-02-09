@@ -47,7 +47,7 @@ export default async function router(schema, config) {
         auth: 'user',
         group: 'Assets',
         description: 'Get single raw asset',
-        ':assetid': 'integer',
+        ':assetid': 'integer'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req, true);

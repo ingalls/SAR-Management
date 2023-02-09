@@ -8,9 +8,9 @@ export default async function router(schema, config) {
         name: 'Get Notifications',
         group: 'User',
         auth: 'user',
-        description: 'Get all notifications',
-        //req: 'req.query.ListUsers.json',
-        //res: 'res.ListUsers.json'
+        description: 'Get all notifications'
+        // req: 'req.query.ListUsers.json',
+        // res: 'res.ListUsers.json'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);

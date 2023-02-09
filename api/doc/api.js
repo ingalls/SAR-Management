@@ -180,6 +180,60 @@
 
 
 /**
+* @api {get} /equipment List Equipment
+* @apiVersion 1.0.0
+* @apiName GET-/equipment
+* @apiGroup Equipment
+* @apiPermission user
+*
+* @apidescription
+*   Get all equipment in the Org
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListEquipment.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /equipment/:equipmentid Get Equipment
+* @apiVersion 1.0.0
+* @apiName GET-/equipment/:equipmentid
+* @apiGroup Equipment
+* @apiPermission user
+*
+* @apidescription
+*   Get a single equipment
+*
+* @apiParam {integer} equipmentid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/equipment.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /equipment Create Equipment
+* @apiVersion 1.0.0
+* @apiName POST-/equipment
+* @apiGroup Equipment
+* @apiPermission user
+*
+* @apidescription
+*   Create a new piece of equipment
+*
+
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateEquipment.json} apiParam
+* @apiSchema {jsonschema=../schema/equipment.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /issue/:issueid/assigned Get Assigned
 * @apiVersion 1.0.0
 * @apiName GET-/issue/:issueid/assigned

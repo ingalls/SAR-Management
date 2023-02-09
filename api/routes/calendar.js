@@ -48,7 +48,7 @@ export default async function router(schema, config) {
             const events = [];
 
             if (req.params.calendar === 'birthday') {
-                const queries = []
+                const queries = [];
 
                 if (moment(req.query.start).year() !== moment(req.query.end).year()) {
                     queries.push({ start: req.query.start, end: moment(moment(req.query.end).format('YYYY') + '-12-31') });
@@ -66,7 +66,7 @@ export default async function router(schema, config) {
                             title: `${user.fname} ${user.lname.slice(0, 1)}'s B-Day`,
                             start: moment(query.start).year() + '-' + moment(user.bday).format('MM-DD'),
                             path: `/team/user/${user.id}`,
-                            end: moment(query.start).year() + '-' + moment(user.bday).format('MM-DD'),
+                            end: moment(query.start).year() + '-' + moment(user.bday).format('MM-DD')
                         });
                     }
                 }

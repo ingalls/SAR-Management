@@ -24,7 +24,7 @@ export default async function router(schema, config) {
         group: 'Leadership',
         auth: 'admin',
         description: 'Create a new leader',
-        //body: 'req.body.CreateLeadership.json',
+        // body: 'req.body.CreateLeadership.json',
         res: 'leadership.json'
     }, async (req, res) => {
         try {
