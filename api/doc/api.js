@@ -427,8 +427,8 @@
 
 *
 *
-*
-* @apiSchema {jsonschema=../schema/leadership.json} apiSuccess
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateLeadership.json} apiParam
+* @apiSchema {jsonschema=../schema/res.Leadership.json} apiSuccess
 */
 
 

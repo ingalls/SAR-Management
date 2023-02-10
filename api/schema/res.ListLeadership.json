@@ -12,7 +12,7 @@
         "leadership": {
             "type": "array",
             "items":  {
-                "$ref": "./leadership.json"
+                "$ref": "./res.Leadership.json"
             }
         }
     }

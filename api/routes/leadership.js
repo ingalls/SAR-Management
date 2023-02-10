@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Leadership from '../lib/types/leadership.js';
+import LeadershipView from '../lib/views/leadership.js';
 import Auth from '../lib/auth.js';
 
 export default async function router(schema, config) {
@@ -13,7 +14,13 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            res.json(await Leadership.list(config.pool, req.query));
+                
+            const list = await LeadershipView.list(config.pool, req.query);
+
+            return res.json({
+                total: list.total,
+                leadership: list.leaders_view
+            });
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -25,12 +32,13 @@ export default async function router(schema, config) {
         auth: 'admin',
         description: 'Create a new leader',
         body: 'req.body.CreateLeadership.json',
-        res: 'leadership.json'
+        res: 'res.Leadership.json'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);
 
-            res.json(await Leadership.generate(config.pool, req.body));
+            const leader = await Leadership.generate(config.pool, req.body);
+            return res.json(await LeadershipView.from(config.pool, leader.id));
         } catch (err) {
             return Err.respond(err, res);
         }

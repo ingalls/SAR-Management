@@ -126,7 +126,7 @@ export default {
         },
         selected: function(leader, user) {
             leader.name = user.fname + ' ' + user.lname;
-            leader.uid = user.uid;
+            leader.uid = user.id;
         },
         saveLeader: async function(leader) {
             leader._edit = false;
