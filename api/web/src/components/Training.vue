@@ -34,12 +34,13 @@
                     </div>
                 </div>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <TablerLoading v-if='loading.training'/>
+                    <div v-else class="card">
                         <div class='card-header'>
                             <h3 class='card-title' v-text='training.title'/>
 
                             <div class='ms-auto'>
-                                <span class='' v-text='training.start_ts'/> - <span class='' v-text='training.end_ts'/>
+                                <Epoch :date='training.start_ts'/> - <Epoch :date='training.end_ts'/>
                             </div>
                         </div>
                         <div class="card-body">
@@ -76,13 +77,18 @@
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
+import Epoch from './util/Epoch.vue';
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'TrainingsNew',
     data: function() {
         return {
             loading: {
-                assigned: true
+                assigned: true,
+                training: true
             },
             assigned: [],
             training: {
@@ -105,10 +111,12 @@ export default {
                 return a.uid != this.auth.id;
             });
         }
-    },  
+    },
     methods: {
         fetch: async function() {
+            this.loading.training = true;
             this.training = await window.std(`/api/training/${this.$route.params.trainingid}`);
+            this.loading.training = false;
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;
@@ -142,9 +150,11 @@ export default {
         },
     },
     components: {
+        Epoch,
         Location,
         PageFooter,
-        UserPresentSelect
+        UserPresentSelect,
+        TablerLoading
     }
 }
 </script>
