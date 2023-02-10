@@ -47,17 +47,14 @@
                                 <tr :key='leader.id' v-for='leader in leaders'>
                                     <template v-if='leader._edit'>
                                         <td>
-                                            <TablerInput v-model='leader.groupref' placeholder='Group Ref'/>
-                                        </td>
-                                        <td>
-                                            <TablerInput v-model='policy.resource' placeholder='Resource'/>
+                                            <UserDropdown v-model='leader.name' @selected='selected(leader, $event)'/>
                                         </td>
                                         <td>
                                             <div class='d-flex'>
-                                                <TablerInput v-model='policy.action' placeholder='Action'/>
+                                                <TablerInput v-model='leader.position' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
                                                 <div class='ms-auto'>
                                                     <div class='btn-list'>
-                                                        <CheckIcon @click='policy._edit = false' class='my-1 cursor-pointer'/>
+                                                        <CheckIcon @click='saveLeader(leader)' class='my-1 cursor-pointer'/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -65,13 +62,12 @@
                                     </template>
                                     <template v-else>
                                         <td v-text='leader.fname + " " + leader.lname'></td>
-                                        <td v-text='leader.position'></td>
                                         <td>
                                             <div class='d-flex'>
-                                                <span v-text='policy.action'/>
+                                                <span v-text='leader.position'/>
                                                 <div class='ms-auto'>
                                                     <div class='btn-list'>
-                                                        <PencilIcon @click='policy._edit = true' class='cursor-pointer'/>
+                                                        <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
                                                         <TrashIcon class='cursor-pointer'/>
                                                     </div>
                                                 </div>
@@ -94,11 +90,16 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
+import UserDropdown from './util/UserDropdown.vue';
 import {
-    PlusIcon
+    PlusIcon,
+    TrashIcon,
+    PencilIcon,
+    CheckIcon,
 } from 'vue-tabler-icons'
 import {
-    TablerLoading
+    TablerLoading,
+    TablerInput
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -115,6 +116,25 @@ export default {
         await this.listLeaders();
     },
     methods: {
+        push: function() {
+            this.leaders.splice(0, 0, {
+                _edit: true,
+                uid: null,
+                name: '',
+                position: ''
+            });
+        },
+        selected: function(leader, user) {
+            leader.name = user.fname + ' ' + user.lname;
+            leader.uid = user.uid;
+        },
+        saveLeader: async function(leader) {
+            leader._edit = false;
+            await window.std('/api/leadership', {
+                method: 'POST',
+                body: leader
+            });
+        },
         listLeaders: async function() {
             this.loading.list = true;
             this.leaders = (await window.std('/api/leadership')).leadership;
@@ -124,8 +144,13 @@ export default {
     components: {
         None,
         PlusIcon,
+        TrashIcon,
+        CheckIcon,
+        PencilIcon,
         TablerLoading,
+        TablerInput,
         PageFooter,
+        UserDropdown
     }
 }
 </script>

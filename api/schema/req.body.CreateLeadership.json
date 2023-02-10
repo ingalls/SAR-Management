@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "uid",
+        "position"
+    ],
+    "properties": {
+        "uid": {
+            "type": "integer"
+        },
+        "position": {
+            "type": "string"
+        }
+    }
+}
