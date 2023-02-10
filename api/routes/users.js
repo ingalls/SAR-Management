@@ -35,6 +35,8 @@ export default async function router(schema, config) {
         try {
             await Auth.is_admin(req);
 
+            req.body.email = req.body.emailtoLowerCase();
+            req.body.username = req.body.username.toLowerCase();
             const user = await User.generate(config.pool, {
                 ...req.body,
                 password: await bcrypt.hash(req.body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)

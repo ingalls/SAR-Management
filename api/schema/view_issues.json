@@ -17,6 +17,12 @@
         "status": {
             "$ref": "./view_issues/status.json"
         },
+        "start_ts": {
+            "$ref": "./view_issues/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./view_issues/end_ts.json"
+        },
         "title": {
             "$ref": "./view_issues/title.json"
         },
@@ -25,12 +31,6 @@
         },
         "author": {
             "$ref": "./view_issues/author.json"
-        },
-        "start_ts": {
-            "$ref": "./view_issues/start_ts.json"
-        },
-        "end_ts": {
-            "$ref": "./view_issues/end_ts.json"
         },
         "user": {
             "$ref": "./view_issues/user.json"
@@ -42,11 +42,11 @@
         "created",
         "updated",
         "status",
+        "start_ts",
+        "end_ts",
         "title",
         "body",
         "author",
-        "start_ts",
-        "end_ts",
         "user"
     ]
 }

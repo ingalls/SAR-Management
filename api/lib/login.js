@@ -50,7 +50,7 @@ export default class Login {
     static async forgot(pool, username, action = 'reset') {
         if (!username || !username.length) throw new Err(400, null, 'username must not be empty');
 
-        const u = await User.from_username(pool, username);
+        const u = await User.from_username(pool, username.toLowerCase());
         await UserReset.delete_all(pool, u.id);
 
         const reset = await UserReset.generate(pool, u.id, action);
