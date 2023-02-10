@@ -8,6 +8,9 @@
         "body": {
             "type": "string"
         },
+        "location": {
+            "type": "string"
+        },
         "start_ts": {
             "type": "string"
         },

@@ -35,7 +35,9 @@
                                 <div class="col-md-12">
                                     <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>
                                 </div>
-
+                                <div class='col-md-12'>
+                                    <TablerInput v-model='training.location' label='Training Location'/>
+                                </div>
                                 <div class='col-md-12'>
                                     <Location/>
                                 </div>
@@ -75,6 +77,7 @@ export default {
             training: {
                 title: '',
                 body: '',
+                location: '',
                 start_ts: '',
                 end_ts: ''
             }

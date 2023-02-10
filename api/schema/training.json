@@ -25,6 +25,9 @@
         },
         "body": {
             "$ref": "./training/body.json"
+        },
+        "location": {
+            "$ref": "./training/location.json"
         }
     },
     "required": [
@@ -35,6 +38,7 @@
         "start_ts",
         "end_ts",
         "title",
-        "body"
+        "body",
+        "location"
     ]
 }
