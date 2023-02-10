@@ -28,33 +28,11 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex">
-                                <div class='ms-auto'>
-                                    <div class="btn-list">
-                                        <TablerSelect
-                                            default='Author'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Label'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Assignee'
-                                            :values='["All"]'
-                                        />
-
-                                        <TablerSelect
-                                            default='Sort'
-                                            :values='["All"]'
-                                        />
-
-                                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                        <div class="dropdown-menu dropdown-menu-end" style="">
-                                            <a @click='getExport' class="dropdown-item" href="#">Export CSV</a>
-                                        </div>
-                                    </div>
+                                <div class="input-icon w-50">
+                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
+                                    <span class="input-icon-addon">
+                                        <SearchIcon width='24'/>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -88,12 +66,17 @@
 <script>
 import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
-import { TablerSelect } from '@tak-ps/vue-tabler';
+import {
+    SearchIcon
+} from 'vue-tabler-icons'
 
 export default {
     name: 'Equipments',
     data: function() {
         return {
+            query: {
+                filter: ''
+            },
             list: {
                 total: 0
             }
@@ -102,7 +85,7 @@ export default {
     components: {
         None,
         PageFooter,
-        TablerSelect
+        SearchIcon
     }
 }
 </script>
