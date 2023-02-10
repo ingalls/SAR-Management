@@ -18,52 +18,11 @@
     </div>
     <div class="card-body">
         <div class="datagrid">
-            <div class="datagrid-item">
-                <div class="datagrid-title">President</div>
+            <div class="datagrid-item" :key='position' v-for='position in Object.keys(leaders)'>
+                <div class="datagrid-title" v-text='position'></div>
                 <div class="datagrid-content">
-                    <div class="d-flex align-items-center">
-                        <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                        Paweł Kuna
-                    </div>
-                </div>
-            </div>
-            <div class="datagrid-item">
-                <div class="datagrid-title">Vice-President</div>
-                <div class="datagrid-content">
-                    <div class="d-flex align-items-center">
-                        <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                        Paweł Kuna
-                    </div>
-                </div>
-            </div>
-            <div class="datagrid-item">
-                <div class="datagrid-title">Standards</div>
-                <div class="datagrid-content">
-                    <div class="avatar-list avatar-list-stacked">
-                        <span class="avatar avatar-xs avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                        <span class="avatar avatar-xs avatar-rounded">JL</span>
-                        <span class="avatar avatar-xs avatar-rounded" style="background-image: url(./static/avatars/002m.jpg)"></span>
-                        <span class="avatar avatar-xs avatar-rounded" style="background-image: url(./static/avatars/003m.jpg)"></span>
-                        <span class="avatar avatar-xs avatar-rounded" style="background-image: url(./static/avatars/000f.jpg)"></span>
-                        <span class="avatar avatar-xs avatar-rounded">+3</span>
-                    </div>
-                </div>
-            </div>
-            <div class="datagrid-item">
-                <div class="datagrid-title">Secretary</div>
-                <div class="datagrid-content">
-                    <div class="d-flex align-items-center">
-                        <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                        Paweł Kuna
-                    </div>
-                </div>
-            </div>
-            <div class="datagrid-item">
-                <div class="datagrid-title">Treasurer</div>
-                <div class="datagrid-content">
-                    <div class="d-flex align-items-center">
-                        <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                        Paweł Kuna
+                    <div :key='leader.id' v-for='leader in leaders[position]' class="d-flex align-items-center">
+                        <Avatar :user='leader'/>
                     </div>
                 </div>
             </div>
@@ -73,11 +32,13 @@
 </template>
 
 <script>
+import Avatar from '../util/Avatar.vue';
+
 export default {
     name: 'CardLeadership',
     data: function() {
         return {
-            leaders: []
+            leaders: {}
         }
     },
     mounted: async function() {
@@ -85,8 +46,17 @@ export default {
     },
     methods: {
         listLeaders: async function() {
-            this.leaders = await window.std('/api/user');
+            const list = await window.std('/api/leadership');
+
+            for (const leader of list.leadership) {
+                if (!this.leaders[leader.position]) this.leaders[leader.position] = [];
+                this.leaders[leader.position].push(leader);
+
+            }
         },
     },
+    components: {
+        Avatar
+    }
 }
 </script>
