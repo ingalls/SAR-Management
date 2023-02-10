@@ -38,7 +38,7 @@ export default async function router(schema, config) {
     }, async (req, res) => {
         try {
             req.auth = await Login.attempt(config.pool, {
-                username: req.body.username,
+                username: req.body.username.toLowerCase(),
                 password: req.body.password
             }, config.SigningSecret);
 
