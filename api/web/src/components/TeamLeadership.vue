@@ -61,7 +61,7 @@
                                         </td>
                                     </template>
                                     <template v-else>
-                                        <td v-text='leader.fname + " " + leader.lname'></td>
+                                        <td v-text='leader.name'></td>
                                         <td>
                                             <div class='d-flex'>
                                                 <span v-text='leader.position'/>
