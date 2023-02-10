@@ -29,6 +29,7 @@ const router = new VueRouter.createRouter({
 
         { path: '/equipment', name: 'equipment', component: () => import('./components/Equipments.vue') },
         { path: '/equipment/new', name: 'equipment-new', component: () => import('./components/EquipmentsNew.vue') },
+        { path: '/equipment/:equipid', name: 'equipment', component: () => import('./components/Equipment.vue') },
 
         { path: '/doc', name: 'docs', component: () => import('./components/Docs.vue') },
 
