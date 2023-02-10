@@ -25,22 +25,62 @@
                             <div class="col">
                                 <div class="d-flex">
                                     <h3 class='card-title'>Leadership Team</h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="datagrid">
-                                <div :key='position' v-for='position in Object.keys(leaders)' class="datagrid-item">
-                                    <div class="datagrid-title" v-text='position'></div>
-                                    <div class="datagrid-content">
-                                        <div class="d-flex align-items-center">
-                                            <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                                            <span v-text='"Nick Ingalls"'/>
-                                        </div>
+
+                                    <div class='ms-auto'>
+                                        <PlusIcon @click='push' class='cursor-pointer' height='24' width='24'/>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <TablerLoading v-if='loading.list'/>
+                        <template v-else-if='!leaders.length'>
+                            <None :create='false' label='Leaders'/>
+                        </template>
+                        <table v-else class="table card-table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr :key='leader.id' v-for='leader in leaders'>
+                                    <template v-if='leader._edit'>
+                                        <td>
+                                            <TablerInput v-model='leader.groupref' placeholder='Group Ref'/>
+                                        </td>
+                                        <td>
+                                            <TablerInput v-model='policy.resource' placeholder='Resource'/>
+                                        </td>
+                                        <td>
+                                            <div class='d-flex'>
+                                                <TablerInput v-model='policy.action' placeholder='Action'/>
+                                                <div class='ms-auto'>
+                                                    <div class='btn-list'>
+                                                        <CheckIcon @click='policy._edit = false' class='my-1 cursor-pointer'/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td v-text='leader.fname + " " + leader.lname'></td>
+                                        <td v-text='leader.position'></td>
+                                        <td>
+                                            <div class='d-flex'>
+                                                <span v-text='policy.action'/>
+                                                <div class='ms-auto'>
+                                                    <div class='btn-list'>
+                                                        <PencilIcon @click='policy._edit = true' class='cursor-pointer'/>
+                                                        <TrashIcon class='cursor-pointer'/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -53,12 +93,22 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import None from './util/None.vue';
+import {
+    PlusIcon
+} from 'vue-tabler-icons'
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'TeamLeadership',
     data: function() {
         return {
-            leaders: {}
+            loading: {
+                list: true
+            },
+            leaders: []
         }
     },
     mounted: async function() {
@@ -66,15 +116,15 @@ export default {
     },
     methods: {
         listLeaders: async function() {
-            const leaders = (await window.std('/api/leadership')).leadership;
-
-            for (const lead of leaders) {
-                if (!this.leaders[lead.name]) this.leaders[lead.name] = [];
-                this.leaders[lead.name].push(lead.uid);
-            }
+            this.loading.list = true;
+            this.leaders = (await window.std('/api/leadership')).leadership;
+            this.loading.list = false;
         }
     },
     components: {
+        None,
+        PlusIcon,
+        TablerLoading,
         PageFooter,
     }
 }

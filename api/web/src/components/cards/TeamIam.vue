@@ -5,9 +5,7 @@
             <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
             <div class='ms-auto'>
-                <div class='btn'>
-                    <PlusIcon @click='push' height='16' width='16'/>
-                </div>
+                <PlusIcon @click='push' class='cursor-pointer' height='24' width='24'/>
             </div>
         </div>
     </div>

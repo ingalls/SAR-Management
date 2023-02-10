@@ -5,8 +5,8 @@
         "id": {
             "$ref": "./leadership/id.json"
         },
-        "name": {
-            "$ref": "./leadership/name.json"
+        "position": {
+            "$ref": "./leadership/position.json"
         },
         "uid": {
             "$ref": "./leadership/uid.json"
@@ -14,7 +14,7 @@
     },
     "required": [
         "id",
-        "name",
+        "position",
         "uid"
     ]
 }
