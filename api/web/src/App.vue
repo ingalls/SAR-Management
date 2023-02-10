@@ -184,7 +184,9 @@ export default {
         }
     },
     mounted: async function() {
-        if (localStorage.token) return await this.getUser();
+        if (localStorage.token) {
+            return await this.getUser();
+        }
     },
     methods: {
         getUser: async function() {
@@ -200,7 +202,7 @@ export default {
                 }
             }
 
-            if (this.$route.name.includes('login')) {
+            if (this.$route.name && this.$route.name.includes('login')) {
                 this.$router.push("/");
             }
         }

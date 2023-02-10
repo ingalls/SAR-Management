@@ -40,7 +40,7 @@
                             <h3 class='card-title' v-text='mission.title'/>
 
                             <div class='ms-auto'>
-                                <span class='' v-text='mission.start_ts'/> - <span class='' v-text='mission.end_ts'/>
+                                 <Epoch :date='mission.start_ts'/> - <Epoch :date='mission.end_ts'/>
                             </div>
                         </div>
                         <div class="card-body">
@@ -76,6 +76,7 @@
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
+import Epoch from './util/Epoch.vue';
 
 export default {
     name: 'Mission',
@@ -145,6 +146,7 @@ export default {
         },
     },
     components: {
+        Epoch,
         Location,
         PageFooter,
         UserPresentSelect
