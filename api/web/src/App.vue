@@ -3,7 +3,7 @@
     <header class='navbar navbar-expand-md navbar-dark d-print-none sticky-top'>
         <div class="container-xl">
             <div class="col-auto">
-                <img height='50' width='50' src='/logo.png'>
+                <img @click='$router.push("/")' class='cursor-pointer' height='50' width='50' src='/logo.png'>
             </div>
             <div class="col mx-2">
                 <div class="page-pretitle text-white">Mesa County Search &amp; Rescue</div>

@@ -11,7 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/mission/new")' class="cursor-pointer btn btn-primary">
+                            <a @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
                                 New Training
                             </a>
                         </div>
