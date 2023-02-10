@@ -16,6 +16,9 @@
         },
         "name": {
             "$ref": "./equipment/name.json"
+        },
+        "description": {
+            "$ref": "./equipment/description.json"
         }
     },
     "required": [
@@ -23,6 +26,7 @@
         "created",
         "updated",
         "status",
-        "name"
+        "name",
+        "description"
     ]
 }

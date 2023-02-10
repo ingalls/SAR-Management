@@ -1,5 +1,11 @@
 {
     "type": "string",
     "description": "",
-    "$comment": "text"
+    "$comment": "text",
+    "default": "active",
+    "enum": [
+        "active",
+        "disrepair",
+        "retired"
+    ]
 }

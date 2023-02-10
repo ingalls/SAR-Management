@@ -44,9 +44,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='issue.id' v-for='issue in issues'>
-                                    <td v-text='a.name'></td>
-                                    <td v-text='a.status'></td>
+                                <tr :key='equip.id' v-for='equip in list.equipment'>
+                                    <td>
+                                        <a @click='$router.push(`/equipment/${equip.id}`)' class='cursor-pointer' v-text='equip.name'></a>
+                                    </td>
+                                    <td v-text='equip.status'></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -78,8 +80,19 @@ export default {
                 filter: ''
             },
             list: {
-                total: 0
+                total: 0,
+                equipment: []
             }
+        }
+    },
+    mounted: async function() {
+        await this.listEquipment();
+    },
+    methods: {
+        listEquipment: async function() {
+            const url = window.stdurl('/api/equipment');
+            if (this.query.filter) url.searchParams.append('filter', this.query.filter);
+            this.list = await window.std(url)
         }
     },
     components: {

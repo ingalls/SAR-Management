@@ -21,17 +21,15 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
+                        <TablerLoading v-if='loading'/>
+                        <div v-else class="card-body">
                             <div class='row row-cards'>
-                                <div class="col-md-4">
-                                    <label class="form-label">Photo</label>
-                                </div>
-                                <div class="col-md-8">
+                                <div class="col-md-12">
                                     <label class="form-label">Equipment Name</label>
-                                    <input v-model='name' type="text" class="form-control" placeholder="Equipment Name">
+                                    <input v-model='equipment.name' type="text" class="form-control" placeholder="Equipment Name">
 
                                     <label class="form-label">Equipment Description</label>
-                                    <textarea v-text='description' class="form-control" rows="6" placeholder="Equipment Description"></textarea>
+                                    <textarea v-text='equipment.description' class="form-control" rows="6" placeholder="Equipment Description"></textarea>
                                 </div>
 
                                 <div class="col-md-12">
@@ -62,18 +60,18 @@ export default {
     name: 'EquipmentsNew',
     data: function() {
         return {
-            name: '',
-            description: ''
+            loading: false,
+            equipment: {
+                name: '',
+                description: ''
+            }
         }
     },
     methods: {
         create: async function() {
             const equip = await window.std('/api/equipment', {
                 method: 'POST',
-                body: {
-                    name: this.name,
-                    description: this.description
-                }
+                body: this.equipment
             })
 
             this.$router.push(`/equipment/${equip.id}`);

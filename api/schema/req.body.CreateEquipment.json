@@ -3,14 +3,17 @@
     "additionalProperties": false,
     "required": [
         "name",
-        "status"
+        "description"
     ],
     "properties": {
-        "status": {
-            "$ref": "./equipment/status.json"
-        },
         "name": {
             "$ref": "./equipment/name.json"
+        },
+        "name": {
+            "$ref": "./equipment/description.json"
+        },
+        "status": {
+            "$ref": "./equipment/status.json"
         }
     }
 }

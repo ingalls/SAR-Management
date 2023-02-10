@@ -64,7 +64,7 @@ export default async function router(schema, config) {
                 }
             }
 
-            return res.json(equipement);
+            return res.json(equipment);
         } catch (err) {
             return Err.respond(err, res);
         }
