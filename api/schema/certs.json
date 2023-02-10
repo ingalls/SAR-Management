@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./certs/id.json"
+        },
+        "created": {
+            "$ref": "./certs/created.json"
+        },
+        "updated": {
+            "$ref": "./certs/updated.json"
+        },
+        "uid": {
+            "$ref": "./certs/uid.json"
+        },
+        "known": {
+            "$ref": "./certs/known.json"
+        },
+        "name": {
+            "$ref": "./certs/name.json"
+        },
+        "expiry": {
+            "$ref": "./certs/expiry.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "uid",
+        "known",
+        "name",
+        "expiry"
+    ]
+}
