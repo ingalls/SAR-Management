@@ -40,7 +40,7 @@
                             <h3 class='card-title' v-text='training.title'/>
 
                             <div class='ms-auto'>
-                                <Epoch :date='training.start_ts'/> - <Epoch :date='training.end_ts'/>
+                                <EpochRange :start='training.start_ts' :end='training.end_ts'/>
                             </div>
                         </div>
                         <div class="card-body">
@@ -77,7 +77,7 @@
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
-import Epoch from './util/Epoch.vue';
+import EpochRange from './util/EpochRange.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -150,7 +150,7 @@ export default {
         },
     },
     components: {
-        Epoch,
+        EpochRange,
         Location,
         PageFooter,
         UserPresentSelect,

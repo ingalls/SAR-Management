@@ -49,11 +49,13 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='mission.id' v-for='mission in list.missions'>
-                                    <td><a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a></td>
+                                <tr :key='training.id' v-for='training in list.training'>
+                                    <td><a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a></td>
+                                    <td><EpochRange :start='training.start_ts' :end='training.end_ts'/></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -72,7 +74,11 @@
 
 <script>
 import None from './util/None.vue';
+import EpochRange from './util/EpochRange.vue';
 import PageFooter from './PageFooter.vue';
+import {
+    SearchIcon
+} from 'vue-tabler-icons';
 
 export default {
     name: 'Trainings',
@@ -83,7 +89,7 @@ export default {
             },
             list: {
                 total: 0,
-                missions: []
+                training: []
             }
         }
     },
@@ -104,6 +110,8 @@ export default {
     },
     components: {
         None,
+        EpochRange,
+        SearchIcon,
         PageFooter,
     }
 }
