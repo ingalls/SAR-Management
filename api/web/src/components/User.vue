@@ -98,6 +98,18 @@
                                                     </template>
                                                 </div>
                                             </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Emergency Contacts</div>
+                                                <div class="datagrid-content">
+                                                    <div v-if='!user.emergency.length'>
+                                                        None
+                                                    </div>
+                                                    <div :key='contact_it' v-for='(contact, contact_it) in user.emergency'>
+                                                        <span v-text='contact.name'/>
+                                                        <a class='cursor-pointer' v-text='contact.phone'></a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +167,7 @@ import CardMission from './cards/Missions.vue';
 import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
 import CardCerts from './cards/Certs.vue';
-import { 
+import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
