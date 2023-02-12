@@ -32,57 +32,64 @@
                                 </div>
                             </div>
                         </div>
-                        <TablerLoading v-if='loading.list'/>
-                        <template v-else-if='!leaders.length'>
+
+                        <template v-if='loading.list'>
+                            <TablerLoading desc='Loading Leadership'/>
+                        </template>
+                        <template v-else-if='!list.leadership.length'>
                             <None :create='false' label='Leaders'/>
                         </template>
-                        <table v-else class="table card-table table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr :key='leader.id' v-for='(leader, leader_it) in leaders'>
-                                    <template v-if='leader._edit'>
-                                        <td>
-                                            <UserDropdown v-model='leader.name' :disabled='leader._loading' @selected='selected(leader, $event)'/>
-                                        </td>
-                                        <td>
-                                            <div class='d-flex'>
-                                                <TablerInput v-model='leader.position' :disabled='leader._loading' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
-                                                <div class='ms-auto'>
-                                                    <div v-if='!leader._loading' class='btn-list'>
-                                                        <CheckIcon @click='saveLeader(leader)' class='my-1 cursor-pointer'/>
-                                                    </div>
-                                                    <div v-else class='btn-list'>
-                                                        <TablerLoading :inline='true'/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </template>
-                                    <template v-else>
-                                        <td><Avatar :user='leader' :link='true'/></td>
-                                        <td>
-                                            <div class='d-flex'>
-                                                <span v-text='leader.position'/>
-                                                <div class='ms-auto'>
-                                                    <div v-if='!leader._loading' class='btn-list'>
-                                                        <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
-                                                        <TrashIcon @click='removeLeader(leader, leader_it)' class='cursor-pointer'/>
-                                                    </div>
-                                                    <div v-else class='btn-list'>
-                                                        <TablerLoading :inline='true'/>
+                        <template v-else>
+                            <table class="table card-table table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr :key='leader.id' v-for='(leader, leader_it) in list.leadership'>
+                                        <template v-if='leader._edit'>
+                                            <td>
+                                                <UserDropdown v-model='leader.name' :disabled='leader._loading' @selected='selected(leader, $event)'/>
+                                            </td>
+                                            <td>
+                                                <div class='d-flex'>
+                                                    <TablerInput v-model='leader.position' :disabled='leader._loading' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
+                                                    <div class='ms-auto'>
+                                                        <div v-if='!leader._loading' class='btn-list'>
+                                                            <CheckIcon @click='saveLeader(leader)' class='my-1 cursor-pointer'/>
+                                                        </div>
+                                                        <div v-else class='btn-list'>
+                                                            <TablerLoading :inline='true'/>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </template>
-                                </tr>
-                            </tbody>
-                        </table>
+                                            </td>
+                                        </template>
+                                        <template v-else>
+                                            <td><Avatar :user='leader' :link='true'/></td>
+                                            <td>
+                                                <div class='d-flex'>
+                                                    <span v-text='leader.position'/>
+                                                    <div class='ms-auto'>
+                                                        <div v-if='!leader._loading' class='btn-list'>
+                                                            <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
+                                                            <TrashIcon @click='removeLeader(leader, leader_it)' class='cursor-pointer'/>
+                                                        </div>
+                                                        <div v-else class='btn-list'>
+                                                            <TablerLoading :inline='true'/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </template>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </template>
+
+                        <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                     </div>
                 </div>
             </div>
@@ -94,6 +101,7 @@
 </template>
 
 <script>
+import TableFooter from './util/TableFooter.vue';
 import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 import UserDropdown from './util/UserDropdown.vue';
@@ -116,7 +124,14 @@ export default {
             loading: {
                 list: true
             },
-            leaders: []
+            paging: {
+                limit: 25,
+                page: 0
+            },
+            list: {
+                total: 0,
+                leadership: []
+            }
         }
     },
     mounted: async function() {
@@ -124,7 +139,7 @@ export default {
     },
     methods: {
         push: function() {
-            this.leaders.splice(0, 0, {
+            this.list.leadership.splice(0, 0, {
                 _edit: true,
                 _loading: false,
                 uid: null,
@@ -143,7 +158,8 @@ export default {
             });
             leader._loading = false;
 
-            this.leaders.splice(it, 1);
+            this.list.leadership.splice(it, 1);
+            this.list.total--;
         },
         saveLeader: async function(leader) {
             leader._loading = true;
@@ -166,7 +182,7 @@ export default {
         },
         listLeaders: async function() {
             this.loading.list = true;
-            this.leaders = (await window.std('/api/leadership')).leadership;
+            this.list = await window.std('/api/leadership');
             this.loading.list = false;
         }
     },
@@ -180,7 +196,8 @@ export default {
         TablerLoading,
         TablerInput,
         PageFooter,
-        UserDropdown
+        UserDropdown,
+        TableFooter
     }
 }
 </script>
