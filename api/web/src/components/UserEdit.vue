@@ -174,7 +174,7 @@ export default {
                     fname: this.user.fname,
                     lname: this.user.lname,
                     phone: this.user.phone,
-                    bday: this.user.bday,
+                    bday: this.user.bday || undefined,
                     address_street: this.user.address_street,
                     address_city: this.user.address_city,
                     address_zip: this.user.address_zip,
