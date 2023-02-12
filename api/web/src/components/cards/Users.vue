@@ -7,11 +7,14 @@
 
                 <div class='ms-auto'>
                     <div class="btn-list">
-                        <div class="btn-group" role="group">
+                        <div v-if='!edit' class="btn-group" role="group">
                             <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='list'>
                             <label @click='mode="list"' class="btn btn-icon"><ListIcon/></label>
                             <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='gallery'>
                             <label @click='mode="gallery"' class="btn btn-icon"><PolaroidIcon/></label>
+                        </div>
+                        <div v-else class='btn-list'>
+                            <PlusIcon @click='push' class='cursor-pointer' height='24' width='24'/>
                         </div>
 
                         <button v-if='dropdown' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
@@ -40,12 +43,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr :key='user.id' v-for='user in users.users'>
+                    <tr :key='user.id' v-for='(user, user_it) in users.users'>
                         <td @click='$router.push(`/user/${user.id}`)'>
                             <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
                         </td>
                         <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
-                        <td><a :href='`tel:${user.email}`' v-text='user.phone'></a></td>
+                        <td>
+                            <div class='d-flex'>
+                                <a :href='`tel:${user.email}`' v-text='user.phone'></a>
+                                <div v-if='edit' class='ms-auto'>
+                                    <div v-if='!user._loading' class='btn-list'>
+                                        <TrashIcon @click='removeUser(user, user_it)' class='cursor-pointer'/>
+                                    </div>
+                                    <div v-else class='btn-list'>
+                                        <TablerLoading :inline='true'/>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
                     </tr>
                 </tbody>
             </table>
@@ -76,7 +92,12 @@
 </template>
 
 <script>
-import { ListIcon, PolaroidIcon } from 'vue-tabler-icons'
+import {
+    ListIcon,
+    PolaroidIcon,
+    PlusIcon,
+    TrashIcon
+} from 'vue-tabler-icons'
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerLoading
@@ -90,6 +111,10 @@ export default {
         dropdown: {
             type: Boolean,
             default: true
+        },
+        edit: {
+            type: Boolean,
+            default: false
         },
         team: Number
     },
@@ -128,6 +153,8 @@ export default {
     },
     components: {
         None,
+        PlusIcon,
+        TrashIcon,
         ListIcon,
         PolaroidIcon,
         UserProfile,

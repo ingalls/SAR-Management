@@ -42,6 +42,7 @@
                     v-if='team.id'
                     :team='team.id'
                     :dropdown='false'
+                    :edit='true'
                 />
             </div>
         </div>
