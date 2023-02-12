@@ -60,7 +60,10 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            await TeamUser.add(config.pool, req.params.teamid, req.params.userid);
+            await TeamUser.generate(config.pool, {
+                tid: req.params.teamid,
+                uid: req.body.uid
+            });
 
             return res.json({
                 status: 200,
