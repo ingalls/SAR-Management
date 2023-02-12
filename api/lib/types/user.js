@@ -20,7 +20,7 @@ export default class User extends Generic {
                     users.*
                 FROM
                     users
-                        INNER JOIN users_to_teams utt
+                        LEFT JOIN users_to_teams utt
                             ON users.id = utt.uid
                 WHERE
                     (${query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${query.filter})
