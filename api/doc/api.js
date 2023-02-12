@@ -741,6 +741,24 @@
 
 
 /**
+* @api {post} /team/:teamid/user Add User
+* @apiVersion 1.0.0
+* @apiName POST-/team/:teamid/user
+* @apiGroup TeamUsers
+* @apiPermission user
+*
+* @apidescription
+*   Add a user to a team
+*
+* @apiParam {integer} teamid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.AddUID.json} apiParam
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /team Get Teams
 * @apiVersion 1.0.0
 * @apiName GET-/team

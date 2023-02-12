@@ -14,7 +14,8 @@
                             <label @click='mode="gallery"' class="btn btn-icon"><PolaroidIcon/></label>
                         </div>
                         <div v-else class='btn-list'>
-                            <PlusIcon @click='push' class='cursor-pointer' height='24' width='24'/>
+                            <TablerLoading v-if='loading.add' :inline='true'/>
+                            <UserDropdownIcon v-else @selected='addUser($event)'/>
                         </div>
 
                         <button v-if='dropdown' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
@@ -26,7 +27,7 @@
             </div>
         </div>
     </div>
-    <template v-if='loading'>
+    <template v-if='loading.list'>
         <TablerLoading desc='Loading Users'/>
     </template>
     <template v-else-if='!list.users.length'>
@@ -95,9 +96,9 @@
 import {
     ListIcon,
     PolaroidIcon,
-    PlusIcon,
     TrashIcon
 } from 'vue-tabler-icons'
+import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerLoading
@@ -125,7 +126,9 @@ export default {
     data: function() {
         return {
             mode: 'list',
-            loading: true,
+            loading: {
+                list: true,
+            },
             paging: {
                 limit: 10,
                 page: 0
@@ -152,23 +155,34 @@ export default {
             });
             user._loading = false;
 
-            this.list.users.splice(user_it, 1); 
+            this.list.users.splice(user_it, 1);
             this.list.total--;
         },
+        addUser: async function(user) {
+            this.loading.add = true;
+            await window.std(`${this.url}`, {
+                method: 'POST',
+                body: { uid: user.id }
+            });
+
+            this.list.users.splice(0, 0, user);
+            this.list.total++;
+            this.loading.add = false;
+        },
         listUsers: async function() {
-            this.loading = true;
+            this.loading.list = true;
             const url = window.stdurl(this.url);
             if (this.team) url.searchParams.append('team', this.team);
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
 
             this.list = await window.std(url);
-            this.loading = false;
+            this.loading.list = false;
         },
     },
     components: {
         None,
-        PlusIcon,
+        UserDropdownIcon,
         TrashIcon,
         ListIcon,
         PolaroidIcon,
