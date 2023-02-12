@@ -704,6 +704,43 @@
 
 
 /**
+* @api {get} /team/:teamid/user List Users
+* @apiVersion 1.0.0
+* @apiName GET-/team/:teamid/user
+* @apiGroup TeamUsers
+* @apiPermission user
+*
+* @apidescription
+*   Get all users that are part of a given team
+*
+* @apiParam {integer} teamid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListTeamUsers.json} apiSuccess
+*/
+
+
+/**
+* @api {delete} /team/:teamid/user/:userid Remove User
+* @apiVersion 1.0.0
+* @apiName DELETE-/team/:teamid/user/:userid
+* @apiGroup TeamUsers
+* @apiPermission user
+*
+* @apidescription
+*   Remove a user from a team
+*
+* @apiParam {integer} teamid param
+* @apiParam {integer} userid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /team Get Teams
 * @apiVersion 1.0.0
 * @apiName GET-/team

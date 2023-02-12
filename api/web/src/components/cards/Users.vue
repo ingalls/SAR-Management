@@ -29,7 +29,7 @@
     <template v-if='loading'>
         <TablerLoading desc='Loading Users'/>
     </template>
-    <template v-else-if='!users.users.length'>
+    <template v-else-if='!list.users.length'>
         <None label='Users' :create='false'/>
     </template>
     <template v-else-if='mode === "list"'>
@@ -43,7 +43,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr :key='user.id' v-for='(user, user_it) in users.users'>
+                    <tr :key='user.id' v-for='(user, user_it) in list.users'>
                         <td @click='$router.push(`/user/${user.id}`)'>
                             <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
                         </td>
@@ -69,7 +69,7 @@
     </template>
     <template v-else>
         <div class='row row-cards'>
-            <div :key='user.id' v-for='user in users.users' class='col-sm-6 col-lg-4'>
+            <div :key='user.id' v-for='user in list.users' class='col-sm-6 col-lg-4'>
                 <div class="card card-sm">
                     <a @click='$router.push(`/user/${user.id}`)' class="d-block cursor-pointer">
                         <UserProfile :user='user'/>
@@ -87,7 +87,7 @@
         </div>
     </template>
 
-    <TableFooter :limit='paging.limit' :total='users.total' @page='paging.page = $event'/>
+    <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
 </div>
 </template>
 
@@ -112,9 +112,13 @@ export default {
             type: Boolean,
             default: true
         },
+        url: {
+            type: String,
+            default: '/api/user'
+        },
         edit: {
             type: Boolean,
-            default: false
+            default: false,
         },
         team: Number
     },
@@ -126,8 +130,9 @@ export default {
                 limit: 10,
                 page: 0
             },
-            users: {
-                total: 0
+            list: {
+                total: 0,
+                users: []
             },
         }
     },
@@ -140,14 +145,24 @@ export default {
         await this.listUsers();
     },
     methods: {
+        removeUser: async function(user, user_it) {
+            user._loading = true;
+            await window.std(`${this.url}/${user.id}`, {
+                method: 'DELETE',
+            });
+            user._loading = false;
+
+            this.list.users.splice(user_it, 1); 
+            this.list.total--;
+        },
         listUsers: async function() {
             this.loading = true;
-            const url = window.stdurl('/api/user');
+            const url = window.stdurl(this.url);
             if (this.team) url.searchParams.append('team', this.team);
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
 
-            this.users = await window.std(url);
+            this.list = await window.std(url);
             this.loading = false;
         },
     },
