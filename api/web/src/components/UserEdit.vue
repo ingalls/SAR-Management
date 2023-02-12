@@ -21,63 +21,92 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class='row'>
-                            <div class='col-3'>
-                                <UserProfile :user='user'/>
+                        <template v-if='loading.user'>
+                            <TablerLoading/>
+                        </template>
+                        <template v-else>
+                            <div class='row'>
+                                <div class='col-3'>
+                                    <UserProfile :user='user'/>
 
-                                <div class='card-body d-flex justify-content-center'>
-                                    <a @click='upload = true' class="cursor-pointer btn btn-secondary">Update Profile</a>
+                                    <div class='card-body d-flex justify-content-center'>
+                                        <a @click='upload = true' class="cursor-pointer btn btn-secondary">Update Profile</a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class='col'>
-                                <div class="card-body">
-                                    <div class='row row-cards'>
-                                        <div class="col-md-6">
-                                            <TablerInput label='First Name' v-model='user.fname' :error='errors.fname' />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <TablerInput label='Last Name' v-model='user.lname' :error='errors.lname' />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <TablerInput label='Username' v-model='user.username' :error='errors.username' />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <TablerInput label='Email' v-model='user.email' :error='errors.email' />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <TablerInput label='Phone' v-model='user.phone' :error='errors.phone' />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <TablerInput type='date' label='Birthday' v-model='user.bday' :error='errors.bday' />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <TablerInput label='Start Year' v-model='user.start_year' :error='errors.start_year' />
-                                        </div>
-                                        <div class="col-md-12">
-                                            <TablerInput label='Street' v-model='user.address_street' :error='errors.address_street' />
-                                            <div class='row my-1'>
-                                                <div class="col-md-5">
-                                                    <TablerInput label='City' v-model='user.address_city' :error='errors.address_city' />
+                                <div class='col'>
+                                    <div class="card-body">
+                                        <div class='row row-cards'>
+                                            <div class="col-md-6">
+                                                <TablerInput label='First Name' v-model='user.fname' :error='errors.fname' />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <TablerInput label='Last Name' v-model='user.lname' :error='errors.lname' />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <TablerInput label='Username' v-model='user.username' :error='errors.username' />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <TablerInput label='Email' v-model='user.email' :error='errors.email' />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <TablerInput label='Phone' v-model='user.phone' :error='errors.phone' />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <TablerInput type='date' label='Birthday' v-model='user.bday' :error='errors.bday' />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <TablerInput label='Start Year' v-model='user.start_year' :error='errors.start_year' />
+                                            </div>
+                                            <div class="col-md-12">
+                                                <TablerInput label='Street' v-model='user.address_street' :error='errors.address_street' />
+                                                <div class='row my-1'>
+                                                    <div class="col-md-5">
+                                                        <TablerInput label='City' v-model='user.address_city' :error='errors.address_city' />
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <TablerInput label='State' v-model='user.address_state' :error='errors.address_state' />
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <TablerInput label='ZipCode' v-model='user.address_zip' :error='errors.address_zip' />
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <TablerInput label='State' v-model='user.address_state' :error='errors.address_state' />
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class='d-flex my-1'>
+                                                    Emergency Contacts
+                                                    <div class='ms-auto'>
+                                                        <PlusIcon @click='user.emergency.push({name: "", relationship: "", phone: ""})' width='24' height='24' class='cursor-pointer'/>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <TablerInput label='ZipCode' v-model='user.address_zip' :error='errors.address_zip' />
+                                                <template v-if='!user.emergency.length'>
+                                                    <None label='Emergency Contacts' :create='false'/>
+                                                </template>
+                                                <template v-else>
+                                                    <div :key='em_it' v-for='(em, em_it) of user.emergency' class='row my-1'>
+                                                        <div class="col-md-5">
+                                                            <TablerInput label='Name' v-model='em.name'/>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <TablerInput label='Relationship' v-model='em.relationship' />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <TablerInput label='Phone' v-model='em.phone'/>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 my-4">
+                                            <div class='d-flex'>
+                                                <div class='ms-auto'>
+                                                    <a @click='create' class="cursor-pointer btn btn-primary">Update User</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12 my-4">
-                                        <div class='d-flex'>
-                                            <div class='ms-auto'>
-                                                <a @click='create' class="cursor-pointer btn btn-primary">Update User</a>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -96,10 +125,14 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import None from './util/None.vue';
 import Upload from './util/Upload.vue';
 import {
     TablerInput,
 } from '@tak-ps/vue-tabler'
+import {
+    PlusIcon
+} from 'vue-tabler-icons';
 import UserProfile from './User/Profile.vue';
 
 export default {
@@ -109,6 +142,9 @@ export default {
             token: localStorage.token,
             base: window.stdurl('/').origin,
             upload: false,
+            loading: {
+                user: true
+            },
             errors: {
                 username: '',
                 email: '',
@@ -133,7 +169,8 @@ export default {
                 address_city: '',
                 address_state: '',
                 address_zip: '',
-                start_year: ''
+                start_year: '',
+                emergency: []
             }
         }
     },
@@ -142,15 +179,19 @@ export default {
     },
     methods: {
         fetch: async function() {
+            this.loading.user = true;
             this.user = await window.std(`/api/user/${this.$route.params.userid}`);
+            this.loading.user = false;
         },
         asset: async function(asset) {
+            this.loading.user = true;
             this.user = await window.std(`/api/user/${this.$route.params.userid}`, {
                 method: 'PATCH',
                 body: {
                     profile_id: asset.id
                 }
             });
+            this.loading.user = false;
         },
         create: async function() {
             for (const field of ['username', 'email', 'fname', 'lname']) {
@@ -179,7 +220,8 @@ export default {
                     address_city: this.user.address_city,
                     address_zip: this.user.address_zip,
                     address_state: this.user.address_state,
-                    start_year: this.user.start_year ? parseInt(this.user.start_year) : undefined
+                    start_year: this.user.start_year ? parseInt(this.user.start_year) : undefined,
+                    emergency: this.user.emergency
                 }
             });
 
@@ -187,7 +229,9 @@ export default {
         }
     },
     components: {
+        None,
         Upload,
+        PlusIcon,
         PageFooter,
         UserProfile,
         TablerInput,

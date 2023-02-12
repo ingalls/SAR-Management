@@ -105,8 +105,8 @@
                                                         None
                                                     </div>
                                                     <div :key='contact_it' v-for='(contact, contact_it) in user.emergency'>
-                                                        <span v-text='contact.name'/>
-                                                        <a class='cursor-pointer' v-text='contact.phone'></a>
+                                                        <a class='cursor-pointer' v-text='contact.phone'></a> - 
+                                                        <span v-text='contact.name'/> (<span v-text='contact.relationship'/>)
                                                     </div>
                                                 </div>
                                             </div>
