@@ -45,21 +45,29 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table card-table table-vcenter text-nowrap datatable">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr :key='team.id' v-for='team in teams.teams'>
-                                        <td><a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer' v-text='team.name'></a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <template v-if='loading.teams'>
+                            <TablerLoading desc='Loading Teams'/>
+                        </template>
+                        <template v-else-if='teams.total == 0'>
+                            <None label='Teams'/>
+                        </template>
+                        <template v-else>
+                            <div class="table-responsive">
+                                <table class="table card-table table-vcenter text-nowrap datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr :key='team.id' v-for='team in teams.teams'>
+                                            <td><a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer' v-text='team.name'></a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </template>
                     </div>
                 </div>
                 <div class="col-lg-12">
@@ -74,6 +82,9 @@
 </template>
 
 <script>
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 import PageFooter from './PageFooter.vue';
 import CardLeadership from './cards/Leadership.vue';
 import CardUsers from './cards/Users.vue';
@@ -83,6 +94,9 @@ export default {
     data: function() {
         return {
             users: { },
+            loading: {
+                teams: true
+            },
             teams: {
                 total: 0,
                 teams: []
@@ -94,10 +108,13 @@ export default {
     },
     methods: {
         listTeams: async function() {
+            this.loading.teams = true;
             this.teams = await window.std('/api/team');
+            this.loading.teams = false;
         }
     },
     components: {
+        TablerLoading,
         PageFooter,
         CardLeadership,
         CardUsers
