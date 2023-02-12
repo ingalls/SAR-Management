@@ -8,7 +8,7 @@
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
                             <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/user")' class="cursor-pointer">Users</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='user.id'></a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.userid'></a></li>
                         </ol>
                     </div>
                 </div>
