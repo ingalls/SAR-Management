@@ -85,6 +85,7 @@
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 import CardLeadership from './cards/Leadership.vue';
 import CardUsers from './cards/Users.vue';
@@ -114,6 +115,7 @@ export default {
         }
     },
     components: {
+        None,
         TablerLoading,
         PageFooter,
         CardLeadership,
