@@ -79,7 +79,9 @@
                         <div class="d-flex align-items-center">
                             <div>
                                 <div @click='$router.push(`/user/${user.id}`)' class='cursor-pointer' v-text='`${user.fname} ${user.lname}`'></div>
-                                <a class='text-muted cursor-pointer' :href='`tel:${user.email}`' v-text='user.phone'></a>
+                                <a class='text-muted cursor-pointer' :href='`mailto:${user.email}`' v-text='user.email'></a>
+                                <br/>
+                                <a class='text-muted cursor-pointer' :href='`tel:${user.phone}`' v-text='user.phone'></a>
                             </div>
                         </div>
                     </div>
