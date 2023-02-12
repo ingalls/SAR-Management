@@ -53,11 +53,15 @@
                                         </div>
                                         <div class="datagrid-item">
                                             <div class="datagrid-title">Email</div>
-                                            <div class="datagrid-content" v-text='user.email'></div>
+                                            <div class="datagrid-content">
+                                                <a :href='`mailto:${user.email}`' v-text='user.email'></a>
+                                            </div>
                                         </div>
                                         <div class="datagrid-item">
                                             <div class="datagrid-title">Phone</div>
-                                            <div class="datagrid-content" v-text='user.phone'></div>
+                                            <div class="datagrid-content">
+                                                <a :href='`tel:${user.email}`' v-text='user.phone'></a>
+                                            </div>
                                         </div>
                                         <div class="datagrid-item">
                                             <div class="datagrid-title">Birthday</div>
