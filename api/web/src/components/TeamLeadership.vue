@@ -61,7 +61,7 @@
                                         </td>
                                     </template>
                                     <template v-else>
-                                        <td v-text='leader.name'></td>
+                                        <td><Avatar :user='leader' link='true'/></td>
                                         <td>
                                             <div class='d-flex'>
                                                 <span v-text='leader.position'/>
@@ -91,6 +91,7 @@
 import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 import UserDropdown from './util/UserDropdown.vue';
+import Avatar from './util/Avatar.vue';
 import {
     PlusIcon,
     TrashIcon,
@@ -143,6 +144,7 @@ export default {
     },
     components: {
         None,
+        Avatar,
         PlusIcon,
         TrashIcon,
         CheckIcon,

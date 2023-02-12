@@ -22,7 +22,7 @@
                 <div class="datagrid-title" v-text='position'></div>
                 <div class="datagrid-content">
                     <div :key='leader.id' v-for='leader in leaders[position]' class="d-flex align-items-center">
-                        <Avatar :user='leader'/>
+                        <Avatar :user='leader' :link='true'/>
                     </div>
                 </div>
             </div>
