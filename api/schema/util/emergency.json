@@ -5,11 +5,15 @@
         "type": "object",
         "required": [
             "name",
-            "phone"
+            "phone",
+            "relationship"
         ],
         "additionalProperties": false,
         "properties": {
             "name": {
+                "type": "string"
+            },
+            "relationship": {
                 "type": "string"
             },
             "phone": {
