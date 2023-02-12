@@ -67,7 +67,7 @@
                                             </div>
                                             <div class="datagrid-item">
                                                 <div class="datagrid-title">Birthday</div>
-                                                <div class="datagrid-content" v-text='user.bday'></div>
+                                                <div class="datagrid-content" v-text='user.bday || "UNKNOWN"'></div>
                                             </div>
                                             <div class="datagrid-item">
                                                 <div class="datagrid-title">Start Year</div>
@@ -105,7 +105,7 @@
                                                         None
                                                     </div>
                                                     <div :key='contact_it' v-for='(contact, contact_it) in user.emergency'>
-                                                        <a class='cursor-pointer' v-text='contact.phone'></a> - 
+                                                        <a class='cursor-pointer' v-text='contact.phone'></a> -
                                                         <span v-text='contact.name'/> (<span v-text='contact.relationship'/>)
                                                     </div>
                                                 </div>
