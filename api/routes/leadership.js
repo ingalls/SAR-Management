@@ -44,6 +44,26 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.patch('/leadership/:leaderid', {
+        name: 'Patch Leadership',
+        group: 'Leadership',
+        auth: 'admin',
+        description: 'Update a leader',
+        ':leaderid': 'integer',
+        body: 'req.body.PatchLeadership.json',
+        res: 'res.Leadership.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req);
+
+            const leader = await Leadership.from(config.pool, req.params.leaderid);
+            leader.commit(req.body);
+            return res.json(leader);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.delete('/leadership/:leaderid', {
         name: 'dElete Leadership',
         group: 'Leadership',

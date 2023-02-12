@@ -433,6 +433,24 @@
 
 
 /**
+* @api {patch} /leadership/:leaderid Patch Leadership
+* @apiVersion 1.0.0
+* @apiName PATCH-/leadership/:leaderid
+* @apiGroup Leadership
+* @apiPermission admin
+*
+* @apidescription
+*   Update a leader
+*
+* @apiParam {integer} leaderid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchLeadership.json} apiParam
+* @apiSchema {jsonschema=../schema/res.Leadership.json} apiSuccess
+*/
+
+
+/**
 * @api {delete} /leadership/:leaderid dElete Leadership
 * @apiVersion 1.0.0
 * @apiName DELETE-/leadership/:leaderid

@@ -44,31 +44,37 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='leader.id' v-for='leader in leaders'>
+                                <tr :key='leader.id' v-for='(leader, leader_it) in leaders'>
                                     <template v-if='leader._edit'>
                                         <td>
-                                            <UserDropdown v-model='leader.name' @selected='selected(leader, $event)'/>
+                                            <UserDropdown v-model='leader.name' :disabled='leader._loading' @selected='selected(leader, $event)'/>
                                         </td>
                                         <td>
                                             <div class='d-flex'>
-                                                <TablerInput v-model='leader.position' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
+                                                <TablerInput v-model='leader.position' :disabled='leader._loading' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
                                                 <div class='ms-auto'>
-                                                    <div class='btn-list'>
+                                                    <div v-if='!leader._loading' class='btn-list'>
                                                         <CheckIcon @click='saveLeader(leader)' class='my-1 cursor-pointer'/>
+                                                    </div>
+                                                    <div v-else class='btn-list'>
+                                                        <TablerLoading :inline='true'/>
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                     </template>
                                     <template v-else>
-                                        <td><Avatar :user='leader' link='true'/></td>
+                                        <td><Avatar :user='leader' :link='true'/></td>
                                         <td>
                                             <div class='d-flex'>
                                                 <span v-text='leader.position'/>
                                                 <div class='ms-auto'>
-                                                    <div class='btn-list'>
+                                                    <div v-if='!leader._loading' class='btn-list'>
                                                         <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
-                                                        <TrashIcon @click='removeLeader(leader)' class='cursor-pointer'/>
+                                                        <TrashIcon @click='removeLeader(leader, leader_it)' class='cursor-pointer'/>
+                                                    </div>
+                                                    <div v-else class='btn-list'>
+                                                        <TablerLoading :inline='true'/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -120,6 +126,7 @@ export default {
         push: function() {
             this.leaders.splice(0, 0, {
                 _edit: true,
+                _loading: false,
                 uid: null,
                 name: '',
                 position: ''
@@ -129,17 +136,33 @@ export default {
             leader.name = user.fname + ' ' + user.lname;
             leader.uid = user.id;
         },
-        removeLeader: async function(leader) {
+        removeLeader: async function(leader, it) {
+            leader._loading = true;
             await window.std(`/api/leadership/${leader.id}`, {
                 method: 'DELETE',
             });
+            leader._loading = false;
+
+            this.leaders.splice(it, 1);
         },
         saveLeader: async function(leader) {
+            leader._loading = true;
+
+            if (leader.id) {
+                await window.std(`/api/leadership/${leader.id}`, {
+                    method: 'PATCH',
+                    body: leader
+                });
+            } else {
+                await window.std('/api/leadership', {
+                    method: 'POST',
+                    body: leader
+                });
+            }
+
+            leader._loading = false;
+
             leader._edit = false;
-            await window.std('/api/leadership', {
-                method: 'POST',
-                body: leader
-            });
         },
         listLeaders: async function() {
             this.loading.list = true;

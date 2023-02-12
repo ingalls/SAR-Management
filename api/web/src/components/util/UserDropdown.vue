@@ -2,7 +2,7 @@
 
 <div class="dropdown">
     <div type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        <TablerInput placeholder='Name' v-model='filter'/>
+        <TablerInput :disabled='disabled' placeholder='Name' v-model='filter'/>
     </div>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
         <div class='m-1'>
@@ -28,6 +28,10 @@ export default {
         modelValue: {
             type: String,
             required: true
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         },
         limit: {
             type: Number,
