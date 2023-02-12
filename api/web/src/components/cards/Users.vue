@@ -71,27 +71,13 @@
         </div>
     </template>
 
-    <div class="card-footer d-flex align-items-center">
-        <p class="m-0 text-muted">Showing <span>1</span> to <span>8</span> of <span>16</span> entries</p>
-        <ul class="pagination m-0 ms-auto">
-            <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">prev</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item active"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">5</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">next</a>
-            </li>
-        </ul>
-    </div>
+    <TableFooter :limit='paging.limit' :total='users.total'/>
 </div>
 </template>
 
 <script>
 import { ListIcon, PolaroidIcon } from 'vue-tabler-icons'
+import TableFooter from '../util/TableFooter.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -111,7 +97,12 @@ export default {
         return {
             mode: 'list',
             loading: true,
-            users: { },
+            paging: {
+                limit: 10,
+            },
+            users: {
+                total: 0
+            },
         }
     },
     mounted: async function() {
@@ -122,6 +113,7 @@ export default {
             this.loading = true;
             const url = window.stdurl('/api/user');
             if (this.team) url.searchParams.append('team', this.team);
+            url.searchParams.append('limit', this.paging.limit);
 
             this.users = await window.std(url);
             this.loading = false;
@@ -132,7 +124,8 @@ export default {
         ListIcon,
         PolaroidIcon,
         UserProfile,
-        TablerLoading
+        TablerLoading,
+        TableFooter
     }
 }
 </script>
