@@ -16,12 +16,15 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th colspan="2">Labels</th>
+                    <th colspan="2">Date</th>
                 </tr>
             </thead>
             <tbody>
                 <tr :key='training.id' v-for='training in list.training'>
                     <td><a @click='$router.push(`/training/${training.id}`)' v-text='training.title' class='cursor-pointer'></a></td>
+                    <td>
+                        <Epoch :date='training.start_ts'/> - <Epoch :date='training.end_ts'/>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -31,12 +34,13 @@
 
 <script>
 import None from '../util/None.vue';
+import Epoch from '../util/Epoch.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
 export default {
-    name: 'IssueCard',
+    name: 'TrainingCard',
     props: {
         label: {
             type: String,
@@ -70,6 +74,7 @@ export default {
     },
     components: {
         TablerLoading,
+        Epoch,
         None
     }
 }
