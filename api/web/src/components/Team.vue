@@ -49,7 +49,7 @@
                             <TablerLoading desc='Loading Teams'/>
                         </template>
                         <template v-else-if='teams.total == 0'>
-                            <None label='Teams'/>
+                            <None label='Teams' @ccreate='$router.push("/team/new")'/>
                         </template>
                         <template v-else>
                             <div class="table-responsive">
