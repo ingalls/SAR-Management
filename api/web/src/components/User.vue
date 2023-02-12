@@ -70,7 +70,7 @@
                                         <div class="datagrid-item">
                                             <div class="datagrid-title">Street Address</div>
                                             <template v-if='user.address_street && user.address_city && user.address_state && user.address_zip'>
-                                                <div class="datagrid-content" v-text='`${user.address_street}\n${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
+                                                <div class="datagrid-content" v-html='`${user.address_street}<br>${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
                                             </template>
                                             <template v-else>
                                             <div class="datagrid-content">UNKNOWN</div>

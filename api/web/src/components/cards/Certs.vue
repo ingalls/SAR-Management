@@ -5,7 +5,7 @@
             <h3 class="card-title">Certificates</h3>
         </div>
     </div>
-    <template v-if='!certs.length'>
+    <template v-if='!list.certs.length'>
         <None :create='false' label='Certificates'/>
     </template>
     <template v-else>
@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr :key='cert.id' v-for='cert in certs'>
+                <tr :key='cert.id' v-for='cert in list.certs'>
                     <td><a @click='$router.push(`/certs/${cert.id}`)' v-text='cert.name' class='cursor-pointer'></a></td>
                     <td v-text='cert.expiry'></td>
                 </tr>
@@ -44,7 +44,11 @@ export default {
     },
     data: function() {
         return {
-            certs: [],
+            page: 0,
+            list: {
+                total: 0,
+                certs: []
+            }
         }
     },
     mounted: async function() {
@@ -54,8 +58,9 @@ export default {
         fetch: async function() {
             const url = window.stdurl(`/api/user/${this.assigned}/certs`);
             url.searchParams.append('limit', this.limit);
+            url.searchParams.append('page', this.page);
 
-            this.certs = (await window.std(url)).certs;
+            this.list = await window.std(url);
         }
     },
     components: {

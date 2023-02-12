@@ -50,8 +50,22 @@
                                         <div class="col-md-6">
                                             <TablerInput type='date' label='Birthday' v-model='user.bday' :error='errors.bday' />
                                         </div>
+                                        <div class="col-md-12">
+                                            <TablerInput label='Street' v-model='user.address_street' :error='errors.address_street' />
+                                            <div class='row my-1'>
+                                                <div class="col-md-5">
+                                                    <TablerInput label='City' v-model='user.address_city' :error='errors.address_city' />
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <TablerInput label='State' v-model='user.address_state' :error='errors.address_state' />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <TablerInput label='ZipCode' v-model='user.address_zip' :error='errors.address_zip' />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 my-4">
                                         <div class='d-flex'>
                                             <div class='ms-auto'>
                                                 <a @click='create' class="cursor-pointer btn btn-primary">Update User</a>
@@ -98,7 +112,11 @@ export default {
                 fname: '',
                 lname: '',
                 phone: '',
-                bday: ''
+                bday: '',
+                address_street: '',
+                address_city: '',
+                address_state: '',
+                address_zip: '',
             },
             user: {
                 username: '',
@@ -106,7 +124,11 @@ export default {
                 fname: '',
                 lname: '',
                 phone: '',
-                bday: ''
+                bday: '',
+                address_street: '',
+                address_city: '',
+                address_state: '',
+                address_zip: '',
             }
         }
     },
@@ -144,6 +166,10 @@ export default {
                     lname: this.user.lname,
                     phone: this.user.phone,
                     bday: this.user.bday,
+                    address_street: this.user.address_street,
+                    address_city: this.user.address_city,
+                    address_zip: this.user.address_zip,
+                    address_state: this.user.address_state,
                 }
             });
 
