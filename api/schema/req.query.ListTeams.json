@@ -8,6 +8,9 @@
         "page": {
             "$ref": "./util/page.json"
         },
+        "userid": {
+            "type": "integer"
+        },
         "filter": {
             "type": "string",
             "default": "",

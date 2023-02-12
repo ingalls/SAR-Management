@@ -21,73 +21,88 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class='card-header'>
-                            <h3 class='card-title' v-text='`${user.fname} ${user.lname}`'></h3>
+                        <TablerLoading v-if='loading.user' desc='Loading User'/>
+                        <template v-else>
+                            <div class='card-header'>
+                                <h3 class='card-title' v-text='`${user.fname} ${user.lname}`'></h3>
 
-                            <div class='ms-auto'>
-                                <div class='btn-list'>
-                                    <div class='ms-auto'>
-                                        <span v-if='user.access === "admin"' class="badge bg-red">Admin</span>
-                                        <span v-if='user.access === "user"' class="badge bg-blue">User</span>
-                                        <span v-if='user.access === "read"' class="badge bg-gray">Read</span>
-                                    </div>
+                                <div class='ms-auto'>
+                                    <div class='btn-list'>
+                                        <div class='ms-auto'>
+                                            <span v-if='user.access === "admin"' class="badge bg-red">Admin</span>
+                                            <span v-if='user.access === "user"' class="badge bg-blue">User</span>
+                                            <span v-if='user.access === "read"' class="badge bg-gray">Read</span>
+                                        </div>
 
-                                    <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                    <div class="dropdown-menu dropdown-menu-end" style="">
-                                        <a @click='$router.push(`/user/${userid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class='row row-0'>
-                            <div class='col-3'>
-                                <UserProfile :user='user'/>
-                            </div>
-                            <div class='col'>
-                                <div class="card-body">
-                                    <div class="datagrid">
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">Username</div>
-                                            <div class="datagrid-content" v-text='user.username'></div>
-                                        </div>
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">Email</div>
-                                            <div class="datagrid-content">
-                                                <a :href='`mailto:${user.email}`' v-text='user.email'></a>
-                                            </div>
-                                        </div>
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">Phone</div>
-                                            <div class="datagrid-content">
-                                                <a :href='`tel:${user.email}`' v-text='user.phone'></a>
-                                            </div>
-                                        </div>
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">Birthday</div>
-                                            <div class="datagrid-content" v-text='user.bday'></div>
-                                        </div>
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">Start Year</div>
-                                            <div class="datagrid-content" v-text='user.start_year || "UNKNOWN"'></div>
-                                        </div>
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">Street Address</div>
-                                            <template v-if='user.address_street && user.address_city && user.address_state && user.address_zip'>
-                                                <div class="datagrid-content" v-html='`${user.address_street}<br>${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
-                                            </template>
-                                            <template v-else>
-                                            <div class="datagrid-content">UNKNOWN</div>
-                                            </template>
-                                        </div>
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">Teams</div>
-                                            <div class="datagrid-content">TODO: So Many Teams!</div>
+                                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                        <div class="dropdown-menu dropdown-menu-end" style="">
+                                            <a @click='$router.push(`/user/${userid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
-                        </div>
+                            <div class='row row-0'>
+                                <div class='col-3'>
+                                    <UserProfile :user='user'/>
+                                </div>
+                                <div class='col'>
+                                    <div class="card-body">
+                                        <div class="datagrid">
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Username</div>
+                                                <div class="datagrid-content" v-text='user.username'></div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Email</div>
+                                                <div class="datagrid-content">
+                                                    <a :href='`mailto:${user.email}`' v-text='user.email'></a>
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Phone</div>
+                                                <div class="datagrid-content">
+                                                    <a :href='`tel:${user.email}`' v-text='user.phone'></a>
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Birthday</div>
+                                                <div class="datagrid-content" v-text='user.bday'></div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Start Year</div>
+                                                <div class="datagrid-content" v-text='user.start_year || "UNKNOWN"'></div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Street Address</div>
+                                                <template v-if='user.address_street && user.address_city && user.address_state && user.address_zip'>
+                                                    <div class="datagrid-content" v-html='`${user.address_street}<br>${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
+                                                </template>
+                                                <template v-else>
+                                                <div class="datagrid-content">UNKNOWN</div>
+                                                </template>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Teams</div>
+                                                <div class="datagrid-content">
+                                                    <template v-if='loading.teams'>
+                                                        <TablerLoading desc='Loading Teams'/>
+                                                    </template>
+                                                    <template v-else-if='!teams.total'>
+                                                        None
+                                                    </template>
+                                                    <template v-else>
+                                                        <div :key='team.id' v-for='team in teams.teams'>
+                                                            <a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer'  v-text='team.name'></a>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-6">
@@ -140,6 +155,9 @@ import CardMission from './cards/Missions.vue';
 import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
 import CardCerts from './cards/Certs.vue';
+import { 
+    TablerLoading
+} from '@tak-ps/vue-tabler'
 
 export default {
     name: 'User',
@@ -148,18 +166,36 @@ export default {
     },
     data: function() {
         return {
-            userid: this.$route.name === 'profile' ? this.auth.id : this.$route.params.userid,
+            userid: this.$route.name === 'profile' ? this.auth.id : parseInt(this.$route.params.userid),
+            loading: {
+                user: true,
+                teams: true
+            },
             user: {
                 profile_id: null
+            },
+            teams: {
+                total: 0,
+                teams: []
             }
         }
     },
     mounted: async function() {
-        await this.fetch();
+        await Promise.all([
+            this.fetch(),
+            this.fetchTeams()
+        ])
     },
     methods: {
         fetch: async function() {
+            this.loading.user = true;
             this.user = await window.std(`/api/user/${this.userid}`);
+            this.loading.user = false;
+        },
+        fetchTeams: async function() {
+            this.loading.teams = true;
+            this.teams = await window.std(`/api/team?userid=${this.userid}`);
+            this.loading.teams = false;
         }
     },
     components: {
@@ -170,7 +206,8 @@ export default {
         CardMissionMini,
         CardTrainingMini,
         CardEquipment,
-        CardCerts
+        CardCerts,
+        TablerLoading
     }
 }
 </script>

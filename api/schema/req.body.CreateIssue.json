@@ -16,20 +16,7 @@
             "type": "array",
             "default": [],
             "items": {
-                "type": "object",
-                "properties": {
-                    "uid": {
-                        "type": "integer"
-                    },
-                    "role": {
-                        "type": "string",
-                        "default": "present"
-                    },
-                    "confirmed": {
-                        "type": "boolean",
-                        "default": true
-                    }
-                }
+                "type": "integer"
             }
         }
     }
