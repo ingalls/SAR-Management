@@ -2,18 +2,13 @@
 <div class='pagination m-0 ms-auto'>
     <div>
         <template v-if='parseInt(total) <= parseInt(limit)'>
-            <button @click='page(0)' class='btn' >
+            <button @click='page(0)' class='btn mx-1' >
                 <HomeIcon class='icon'/>Home
             </button>
         </template>
         <template v-else>
-            <button
-                @click='page(0)'
-                class='btn btn--s btn--pill btn--pill-hl'
-                :class='{ "btn--stroke": current !== 0 }'
-            >
-                <svg class='fl icon' style='margin-top: 4px;'><use xlink:href='#icon-home'/></svg>
-                Home
+            <button @click='page(0)' class='btn mx-1' :class='{ "btn-primary": current === 0 }'>
+                <HomeIcon class='icon'/>Home
             </button>
 
             <template v-if='end > 5 && current > 3'>
@@ -25,9 +20,9 @@
                     :key=i
                     v-for='i in middle'
                     @click='page(i)'
-                    class='btn btn--s btn--pill btn--pill-hc'
+                    class='btn mx-1'
                     v-text='i + 1'
-                    :class='{ "btn--stroke": current !== i }'
+                    :class='{ "btn-primary": current === i }'
                 >
                 </button>
             </template>
@@ -37,9 +32,9 @@
             </template>
             <button
                 @click='page(end - 1)'
-                class='btn btn--s btn--pill btn--pill-hr'
+                class='btn mx-1'
                 v-text='end'
-                :class='{ "btn--stroke": current !== end - 1 }'
+                :class='{ "btn-primary": current === end - 1 }'
             ></button>
         </template>
     </div>
@@ -117,7 +112,7 @@ export default {
         },
         page: function(page) {
             this.current = page;
-            this.$emit('page', page);
+            this.$emit('page', this.current);
         }
     },
     components: {

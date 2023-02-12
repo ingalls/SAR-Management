@@ -71,7 +71,7 @@
         </div>
     </template>
 
-    <TableFooter :limit='paging.limit' :total='users.total'/>
+    <TableFooter :limit='paging.limit' :total='users.total' @page='paging.page = $event'/>
 </div>
 </template>
 
@@ -99,10 +99,16 @@ export default {
             loading: true,
             paging: {
                 limit: 10,
+                page: 0
             },
             users: {
                 total: 0
             },
+        }
+    },
+    watch: {
+        'paging.page': async function() {
+            await this.listUsers();
         }
     },
     mounted: async function() {
@@ -114,6 +120,7 @@ export default {
             const url = window.stdurl('/api/user');
             if (this.team) url.searchParams.append('team', this.team);
             url.searchParams.append('limit', this.paging.limit);
+            url.searchParams.append('page', this.paging.page);
 
             this.users = await window.std(url);
             this.loading = false;
