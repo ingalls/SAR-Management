@@ -16,15 +16,13 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th colspan="2">Date</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
                 <tr :key='training.id' v-for='training in list.training'>
                     <td><a @click='$router.push(`/training/${training.id}`)' v-text='training.title' class='cursor-pointer'></a></td>
-                    <td>
-                        <Epoch :date='training.start_ts'/> - <Epoch :date='training.end_ts'/>
-                    </td>
+                    <td><Epoch :date='training.start_ts'/> - <Epoch :date='training.end_ts'/></td>
                 </tr>
             </tbody>
         </table>
