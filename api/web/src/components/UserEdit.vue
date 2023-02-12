@@ -50,6 +50,9 @@
                                         <div class="col-md-6">
                                             <TablerInput type='date' label='Birthday' v-model='user.bday' :error='errors.bday' />
                                         </div>
+                                        <div class="col-md-6">
+                                            <TablerInput label='Start Year' v-model='user.start_year' :error='errors.start_year' />
+                                        </div>
                                         <div class="col-md-12">
                                             <TablerInput label='Street' v-model='user.address_street' :error='errors.address_street' />
                                             <div class='row my-1'>
@@ -117,6 +120,7 @@ export default {
                 address_city: '',
                 address_state: '',
                 address_zip: '',
+                start_year: ''
             },
             user: {
                 username: '',
@@ -129,6 +133,7 @@ export default {
                 address_city: '',
                 address_state: '',
                 address_zip: '',
+                start_year: ''
             }
         }
     },
@@ -153,6 +158,10 @@ export default {
                 else this.errors[field] = false;
             }
 
+            if (this.user.start_year && isNaN(parseInt(this.user.start_year))) {
+                this.errors.start_year = 'Invalid Year'
+            }
+
             for (const e in this.errors) {
                 if (this.errors[e]) return;
             }
@@ -170,6 +179,7 @@ export default {
                     address_city: this.user.address_city,
                     address_zip: this.user.address_zip,
                     address_state: this.user.address_state,
+                    start_year: this.user.start_year ? parseInt(this.user.start_year) : undefined
                 }
             });
 
