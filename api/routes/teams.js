@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Team from '../lib/types/team.js';
+import TeamView from '../lib/views/team.js';
 import Auth from '../lib/auth.js';
 
 export default async function router(schema, config) {
@@ -14,7 +15,12 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-            res.json(await Team.list(config.pool, req.query));
+            const list = await TeamView.list(config.pool, req.query);
+
+            return res.json({
+                total: list.total,
+                teams: list.view_teams
+            });
         } catch (err) {
             return Err.respond(err, res);
         }

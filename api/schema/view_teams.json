@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./view_teams/id.json"
+        },
+        "created": {
+            "$ref": "./view_teams/created.json"
+        },
+        "updated": {
+            "$ref": "./view_teams/updated.json"
+        },
+        "public": {
+            "$ref": "./view_teams/public.json"
+        },
+        "name": {
+            "$ref": "./view_teams/name.json"
+        },
+        "body": {
+            "$ref": "./view_teams/body.json"
+        },
+        "members": {
+            "$ref": "./view_teams/members.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "public",
+        "name",
+        "body",
+        "members"
+    ]
+}

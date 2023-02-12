@@ -57,12 +57,13 @@
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Status</th>
+                                            <th>Members</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr :key='team.id' v-for='team in teams.teams'>
                                             <td><a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer' v-text='team.name'></a></td>
+                                            <td v-text='team.members  || "None"'></td>
                                         </tr>
                                     </tbody>
                                 </table>

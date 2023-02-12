@@ -12,7 +12,35 @@
         "teams": {
             "type": "array",
             "items":  {
-                "$ref": "./res.Team.json"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "id",
+                    "created",
+                    "updated",
+                    "name",
+                    "body"
+                ],  
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "created": {
+                        "type": "integer"
+                    },
+                    "updated": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "members": {
+                        "type": "integer"
+                    },
+                    "body": {
+                        "type": "string"
+                    }   
+                }   
             }
         }
     }
