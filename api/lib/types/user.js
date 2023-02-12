@@ -20,11 +20,13 @@ export default class User extends Generic {
                     users.*
                 FROM
                     users
-                        LEFT JOIN users_to_teams utt
-                        ON users.id = utt.uid
+                        INNER JOIN users_to_teams utt
+                            ON users.id = utt.uid
                 WHERE
                     (${query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${query.filter})
                     AND (${query.team}::BIGINT IS NULL OR utt.tid = ${query.team})
+                GROUP BY
+                    users.id
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
