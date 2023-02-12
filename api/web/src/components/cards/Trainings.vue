@@ -22,7 +22,7 @@
             <tbody>
                 <tr :key='training.id' v-for='training in list.training'>
                     <td><a @click='$router.push(`/training/${training.id}`)' v-text='training.title' class='cursor-pointer'></a></td>
-                    <td><Epoch :date='training.start_ts'/> - <Epoch :date='training.end_ts'/></td>
+                    <td><EpochRange :start='training.start_ts' :end='training.end_ts'/></td>
                 </tr>
             </tbody>
         </table>
@@ -32,7 +32,7 @@
 
 <script>
 import None from '../util/None.vue';
-import Epoch from '../util/Epoch.vue';
+import EpochRange from '../util/EpochRange.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -72,7 +72,7 @@ export default {
     },
     components: {
         TablerLoading,
-        Epoch,
+        EpochRange,
         None
     }
 }
