@@ -83,14 +83,20 @@
                                                 </template>
                                                 <template v-else>
                                                     <div :key='em_it' v-for='(em, em_it) of user.emergency' class='row my-1'>
-                                                        <div class="col-md-5">
+                                                        <div class="col-md-4">
                                                             <TablerInput label='Name' v-model='em.name'/>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <TablerInput label='Relationship' v-model='em.relationship' />
                                                         </div>
-                                                        <div class="col-md-4">
-                                                            <TablerInput label='Phone' v-model='em.phone'/>
+                                                        <div class="col-md-5">
+                                                            <div class='d-flex'>
+                                                                <TablerInput label='Phone' v-model='em.phone'/>
+                                            
+                                                                <div class='mx-2' style='padding-top: 32px;'>
+                                                                    <TrashIcon @click='user.emergency.splice(em_it, 1)' height='24' width='24' class='cursor-pointer'/>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </template>
@@ -131,7 +137,8 @@ import {
     TablerInput,
 } from '@tak-ps/vue-tabler'
 import {
-    PlusIcon
+    PlusIcon,
+    TrashIcon
 } from 'vue-tabler-icons';
 import UserProfile from './User/Profile.vue';
 
@@ -232,6 +239,7 @@ export default {
         None,
         Upload,
         PlusIcon,
+        TrashIcon,
         PageFooter,
         UserProfile,
         TablerInput,
