@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "users"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "total": {
+            "type": "integer"
+        },
+        "users": {
+            "type": "array",
+            "items":  {
+                "$ref": "./certs.json"
+            }
+        }
+    }
+}

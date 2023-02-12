@@ -903,6 +903,24 @@
 
 
 /**
+* @api {get} /user/:userid/certs Get Certs
+* @apiVersion 1.0.0
+* @apiName GET-/user/:userid/certs
+* @apiGroup Cert
+* @apiPermission user
+*
+* @apidescription
+*   Get all certs for the given user
+*
+* @apiParam {integer} userid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListCerts.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /user Get Users
 * @apiVersion 1.0.0
 * @apiName GET-/user
