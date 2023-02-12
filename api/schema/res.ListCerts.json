@@ -2,14 +2,14 @@
     "type": "object",
     "required": [
         "total",
-        "users"
+        "certs"
     ],
     "additionalProperties": false,
     "properties": {
         "total": {
             "type": "integer"
         },
-        "users": {
+        "certs": {
             "type": "array",
             "items":  {
                 "$ref": "./certs.json"
