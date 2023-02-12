@@ -433,6 +433,24 @@
 
 
 /**
+* @api {delete} /leadership/:leaderid dElete Leadership
+* @apiVersion 1.0.0
+* @apiName DELETE-/leadership/:leaderid
+* @apiGroup Leadership
+* @apiPermission admin
+*
+* @apidescription
+*   delete a leader
+*
+* @apiParam {integer} leaderid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /login Session Info
 * @apiVersion 1.0.0
 * @apiName GET-/login

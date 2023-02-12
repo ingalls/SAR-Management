@@ -68,7 +68,7 @@
                                                 <div class='ms-auto'>
                                                     <div class='btn-list'>
                                                         <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
-                                                        <TrashIcon class='cursor-pointer'/>
+                                                        <TrashIcon @click='removeLeader(leader)' class='cursor-pointer'/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -128,6 +128,11 @@ export default {
         selected: function(leader, user) {
             leader.name = user.fname + ' ' + user.lname;
             leader.uid = user.id;
+        },
+        removeLeader: async function(leader) {
+            await window.std(`/api/leadership/${leader.id}`, {
+                method: 'DELETE',
+            });
         },
         saveLeader: async function(leader) {
             leader._edit = false;

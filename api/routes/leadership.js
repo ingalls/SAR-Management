@@ -14,7 +14,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req);
 
-                
+
             const list = await LeadershipView.list(config.pool, req.query);
 
             return res.json({
@@ -39,6 +39,27 @@ export default async function router(schema, config) {
 
             const leader = await Leadership.generate(config.pool, req.body);
             return res.json(await LeadershipView.from(config.pool, leader.id));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+    await schema.delete('/leadership/:leaderid', {
+        name: 'dElete Leadership',
+        group: 'Leadership',
+        auth: 'admin',
+        description: 'delete a leader',
+        ':leaderid': 'integer',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req);
+
+            const leader = await Leadership.delete(config.pool, req.params.leaderid);
+            return res.json({
+                status: 200,
+                message: 'Leader Deleted'
+            });
         } catch (err) {
             return Err.respond(err, res);
         }
