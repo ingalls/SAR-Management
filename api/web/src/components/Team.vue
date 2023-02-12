@@ -28,48 +28,7 @@
                     <CardLeadership/>
                 </div>
                 <div class="col-lg-12">
-                    <div class="card">
-                        <div class='card-header'>
-                            <div class="col">
-                                <div class="d-flex">
-                                    <h3 class='card-title'>Teams</h3>
-
-                                    <div class='ms-auto'>
-                                        <div class="btn-list">
-                                            <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                            <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a @click='$router.push("/team/new")' class="dropdown-item cursor-pointer">New Team</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <template v-if='loading.teams'>
-                            <TablerLoading desc='Loading Teams'/>
-                        </template>
-                        <template v-else-if='teams.total == 0'>
-                            <None label='Teams' @create='$router.push("/team/new")'/>
-                        </template>
-                        <template v-else>
-                            <div class="table-responsive">
-                                <table class="table card-table table-vcenter text-nowrap datatable">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Members</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr :key='team.id' v-for='team in teams.teams'>
-                                            <td><a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer' v-text='team.name'></a></td>
-                                            <td v-text='team.members  || "None"'></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </template>
-                    </div>
+                    <CardTeams/>
                 </div>
                 <div class="col-lg-12">
                     <CardUsers/>
@@ -83,44 +42,18 @@
 </template>
 
 <script>
-import {
-    TablerLoading
-} from '@tak-ps/vue-tabler';
-import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 import CardLeadership from './cards/Leadership.vue';
 import CardUsers from './cards/Users.vue';
+import CardTeams from './cards/Teams.vue';
 
 export default {
     name: 'Team',
-    data: function() {
-        return {
-            users: { },
-            loading: {
-                teams: true
-            },
-            teams: {
-                total: 0,
-                teams: []
-            }
-        }
-    },
-    mounted: async function() {
-        await this.listTeams();
-    },
-    methods: {
-        listTeams: async function() {
-            this.loading.teams = true;
-            this.teams = await window.std('/api/team');
-            this.loading.teams = false;
-        }
-    },
     components: {
-        None,
-        TablerLoading,
         PageFooter,
         CardLeadership,
-        CardUsers
+        CardUsers,
+        CardTeams
     }
 }
 </script>
