@@ -21,7 +21,7 @@
             <div class="datagrid-item" :key='position' v-for='position in Object.keys(leaders)'>
                 <div class="datagrid-title" v-text='position'></div>
                 <div class="datagrid-content">
-                    <div :key='leader.id' v-for='leader in leaders[position]' class="d-flex align-items-center">
+                    <div :key='leader.id' v-for='leader in leaders[position]' class="d-flex align-items-center py-1">
                         <Avatar :user='leader' :link='true'/>
                     </div>
                 </div>
