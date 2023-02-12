@@ -146,6 +146,7 @@ export default {
                 name: '',
                 position: ''
             });
+            this.list.total++;
         },
         selected: function(leader, user) {
             leader.name = user.fname + ' ' + user.lname;
