@@ -1,13 +1,6 @@
 {
     "type": "object",
     "additionalProperties": false,
-    "required": [
-        "title",
-        "body",
-        "location",
-        "start_ts",
-        "end_ts"
-    ],
     "properties": {
         "title": {
             "type": "string"

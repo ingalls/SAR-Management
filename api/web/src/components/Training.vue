@@ -37,10 +37,13 @@
                     <TablerLoading v-if='loading.training'/>
                     <div v-else class="card">
                         <div class='card-header'>
-                            <h3 class='card-title' v-text='training.title'/>
+                            <h3 class='card-title' v-text='`${training.title} @ ${training.location}`'/>
 
                             <div class='ms-auto'>
-                                <EpochRange :start='training.start_ts' :end='training.end_ts'/>
+                                <div class='btn-list'>
+                                    <EpochRange :start='training.start_ts' :end='training.end_ts'/>
+                                    <SettingsIcon @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -78,6 +81,9 @@ import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
+import {
+    SettingsIcon
+} from 'vue-tabler-icons';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -152,6 +158,7 @@ export default {
     components: {
         EpochRange,
         Location,
+        SettingsIcon,
         PageFooter,
         UserPresentSelect,
         TablerLoading

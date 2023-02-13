@@ -21,7 +21,8 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
+                        <TablerLoading v-if='loading.training'/>
+                        <div v-else class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-12">
                                     <TablerInput v-model='training.title' label='Training Title'/>
@@ -45,7 +46,10 @@
                                 <div class="col-md-12">
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
-                                            <a @click='create' class="cursor-pointer btn btn-primary">
+                                            <a v-if='$route.params.trainingid' @click='update' class="cursor-pointer btn btn-primary">
+                                                Update Training
+                                            </a>
+                                            <a v-else @click='create' class="cursor-pointer btn btn-primary">
                                                 Create Training
                                             </a>
                                         </div>
@@ -67,13 +71,17 @@
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import {
-    TablerInput
+    TablerInput,
+    TablerLoading
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'TrainingsNew',
+    name: 'TrainingsEdit',
     data: function() {
         return {
+            loading: {
+                training: true
+            },
             training: {
                 title: '',
                 body: '',
@@ -83,10 +91,35 @@ export default {
             }
         }
     },
+    mounted: async function() {
+        if (this.$route.params.trainingid) {
+            await this.fetch();
+        } else {
+            this.loading.training = false;
+        }
+    },
     methods: {
+        fetch: async function() {
+            this.loading.training = true;
+            const training = await window.std(`/api/training/${this.$route.params.trainingid}`);
+
+            training.start_ts = (new Date(training.start_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
+            training.end_ts = (new Date(training.end_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
+
+            this.training = training;
+            this.loading.training = false;
+        },
         create: async function() {
             const create = await window.std('/api/training', {
                 method: 'POST',
+                body: this.training
+            });
+
+            this.$router.push(`/training/${create.id}`);
+        },
+        update: async function() {
+            const create = await window.std(`/api/training/${this.training.id}`, {
+                method: 'PATCH',
                 body: this.training
             });
 
@@ -96,7 +129,8 @@ export default {
     components: {
         Location,
         PageFooter,
-        TablerInput
+        TablerInput,
+        TablerLoading
     }
 }
 </script>

@@ -79,4 +79,37 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.patch('/training/:trainingid', {
+        name: 'Update Training',
+        group: 'Training',
+        auth: 'user',
+        description: 'Update an existing training',
+        body: 'req.body.PatchTraining.json',
+        res: 'training.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req);
+
+            // TODO: Generic should handle this
+            if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
+            else delete req.body.start_ts;
+
+            if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
+            else delete req.body.end_ts;
+
+            const training = await Training.from(config.pool, req.params.trainingid);
+
+            await training.commit({
+                title: req.body.title,
+                body: req.body.body,
+                start_ts: req.body.start_ts,
+                end_ts: req.body.end_ts
+            });
+
+            return res.json(training);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }
