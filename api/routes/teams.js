@@ -88,6 +88,10 @@ export default async function router(schema, config) {
         try {
             await Auth.is_admin(req);
 
+            if (req.auth.access !== 'admin') {
+                delete req.body.iam;
+            }
+
             res.json(await Team.commit(config.pool, req.params.teamid, req.body));
         } catch (err) {
             return Err.respond(err, res);

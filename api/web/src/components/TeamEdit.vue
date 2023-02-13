@@ -66,11 +66,18 @@
                                 <tr :key='group' v-for='group in Object.keys(iam)'>
                                     <td v-text='group'></td>
                                     <td>
-                                        <TablerSelect :default='team.iam[group] || iam[group][iam[group].length - 1]' :values='iam[group]'/>
+                                        <TablerSelect @select='team.iam[group] = $event' :default='team.iam[group] || iam[group][iam[group].length - 1]' :values='iam[group]'/>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="card-body">
+                            <div class='d-flex'>
+                                <div class='ms-auto'>
+                                    <a @click='updateIAM' class="cursor-pointer btn btn-primary">Update IAM</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,6 +147,16 @@ export default {
                 body: {
                     name: this.team.name,
                     body: this.team.body,
+                }
+            });
+
+            this.$router.push(`/team/${update.id}`);
+        },
+        updateIAM: async function() {
+            const update = await window.std(`/api/team/${this.$route.params.teamid}`, {
+                method: 'PATCH',
+                body: {
+                    iam: this.team.iam
                 }
             });
 
