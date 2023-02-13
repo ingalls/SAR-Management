@@ -62,7 +62,12 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            await Auth.is_admin(req);
+            await Auth.is_own(req, req.params.userid);
+
+            // Non-Admins can't upgrade their own accounts
+            if (req.auth.access !== 'admin') {
+                delete req.body.access;
+            }
 
             res.json(await User.commit(config.pool, req.params.userid, req.body));
         } catch (err) {
