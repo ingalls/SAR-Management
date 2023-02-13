@@ -1,4 +1,5 @@
 import Err from '@openaddresses/batch-error';
+import { sql } from 'slonik';
 
 const Permissions = {
     Calendar: [ 'View', 'None' ],
@@ -11,6 +12,40 @@ const Permissions = {
     Trainings: ['Admin', 'Manage', 'View', 'None' ],
     User: [ 'Admin', 'ManageOwn', 'View', 'None' ],
 };
+
+class AuthAugment {
+    static async iam(pool, userid) {
+        try {
+            const pgiam = await pool.query(sql`
+                SELECT
+                    iam
+                FROM
+                    users_to_teams
+                        LEFT JOIN teams
+                            ON tid = teams.id
+                WHERE
+                    uid = ${userid};
+            `);
+
+            const iam = {};
+            for (const iamrow of pgiam.rows) {
+                const i = iamrow.iam;
+                for (const group in i) {
+                    if (!iam[group]) {
+                        iam[group] = i[group];
+                    } else if (Permissions[group].indexOf(iam[group]) > Permissions[group].indexOf(i[group])) {
+                        iam[group] = i[group];
+                    }
+                }
+            }
+
+            console.error(iam);
+            return iam;
+        } catch (err) {
+            throw new Err(500, err, 'Server failed to get authentication levels');
+        }
+    }
+}
 
 /**
  * @class
@@ -68,5 +103,6 @@ export default class Auth {
 }
 
 export {
+    AuthAugment,
     Permissions
 }

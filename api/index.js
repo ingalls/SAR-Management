@@ -10,6 +10,7 @@ import minimist from 'minimist';
 import User from './lib/types/user.js';
 import jwt from 'jsonwebtoken';
 import Err from '@openaddresses/batch-error';
+import { AuthAugment } from './lib/auth.js';
 
 import Config from './lib/config.js';
 
@@ -120,6 +121,8 @@ export default async function server(config) {
         } else {
             req.auth = false;
         }
+
+        req.auth.iam = await AuthAugment.iam(config.pool, req.auth.id);
 
         return next();
     });
