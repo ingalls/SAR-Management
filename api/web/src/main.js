@@ -58,7 +58,7 @@ const router = new VueRouter.createRouter({
 
         { path: '/admin', name: 'admin', component: () => import('./components/Admin.vue') },
 
-        { path: '/(.*)', name: 'lost', component: () => import('./components/Lost.vue') },
+        { path: '/:catchAll(.*)', name: 'lost', component: () => import('./components/Lost.vue') },
     ]
 });
 
