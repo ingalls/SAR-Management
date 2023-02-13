@@ -21,7 +21,8 @@ export default async function router(schema, config) {
                 username: req.auth.username,
                 email: req.auth.email,
                 access: req.auth.access,
-                validated: req.auth.validated
+                validated: req.auth.validated,
+                iam: req.auth.iam
             });
         } catch (err) {
             return Err.respond(err, res);

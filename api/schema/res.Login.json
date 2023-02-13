@@ -4,7 +4,8 @@
         "id",
         "username",
         "email",
-        "access"
+        "access",
+        "iam"
     ],
     "additionalProperties": false,
     "properties": {
@@ -22,6 +23,9 @@
         },
         "validated": {
             "$ref": "./util/validated.json"
+        },
+        "iam": {
+            "type": "object"
         },
         "token": {
             "type": "string",
