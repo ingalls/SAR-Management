@@ -49,7 +49,7 @@ const router = new VueRouter.createRouter({
         { path: '/team', name: 'teams', component: () => import('./components/Teams.vue') },
         { path: '/team/new', name: 'teams-new', component: () => import('./components/TeamsNew.vue') },
         { path: '/team/:teamid', name: 'team', component: () => import('./components/Team.vue') },
-        { path: '/team/:teamid/edit', name: 'team-edit', component: () => import('./components/Team.vue') },
+        { path: '/team/:teamid/edit', name: 'team-edit', component: () => import('./components/TeamEdit.vue') },
         { path: '/team/leadership', name: 'team-leadership', component: () => import('./components/TeamLeadership.vue') },
 
         { path: '/user/new', name: 'user-new', component: () => import('./components/UserNew.vue') },
