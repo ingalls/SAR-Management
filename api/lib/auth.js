@@ -10,7 +10,7 @@ const Permissions = {
     Missions: ['Admin', 'Manage', 'View', 'None' ],
     Teams: [ 'Admin', 'Manage', 'View', 'None' ],
     Trainings: ['Admin', 'Manage', 'View', 'None' ],
-    User: [ 'Admin', 'ManageOwn', 'View', 'None' ],
+    User: [ 'Admin', 'View', 'None' ],
 };
 
 class AuthAugment {
@@ -39,7 +39,6 @@ class AuthAugment {
                 }
             }
 
-            console.error(iam);
             return iam;
         } catch (err) {
             throw new Err(500, err, 'Server failed to get authentication levels');
@@ -71,19 +70,19 @@ export default class Auth {
         return true;
     }
 
-    static async is_own(req, uid) {
+    static async is_own_or_iam(req, uid, permission) {
         await Auth.is_auth(req);
 
         // Admins will be admins
         if (req.auth && req.auth.access && req.auth.access === 'admin') return true;
+        if (req.auth.id === uid) return true;
 
-        if (req.auth.id === uid) {
-            return true;
-        }
+        await this.is_iam(req.permission);
 
         throw new Err(403, null, 'Authentication Level Insufficient');
     }
 
+    // Ensure IAM permission is at least permission
     static async is_iam(req, permission) {
         await Auth.is_auth(req);
 

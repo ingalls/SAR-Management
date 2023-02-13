@@ -16,7 +16,7 @@ export default async function router(schema, config) {
         res: 'res.ListUsers.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Read');
 
             res.json(await User.list(config.pool, req.query));
         } catch (err) {
@@ -33,7 +33,7 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            await Auth.is_admin(req);
+            await Auth.is_iam(req, 'Admin');
 
             req.body.email = req.body.emailtoLowerCase();
             req.body.username = req.body.username.toLowerCase();
@@ -62,12 +62,10 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            await Auth.is_own(req, req.params.userid);
+            await Auth.is_own_or_iam(req, req.params.userid, 'Admin');
 
             // Non-Admins can't upgrade their own accounts
-            if (req.auth.access !== 'admin') {
-                delete req.body.access;
-            }
+            if (req.auth.access !== 'admin') delete req.body.access;
 
             res.json(await User.commit(config.pool, req.params.userid, req.body));
         } catch (err) {
@@ -84,7 +82,7 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'View');
 
             res.json(await User.from(config.pool, req.params.userid));
         } catch (err) {
