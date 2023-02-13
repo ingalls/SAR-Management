@@ -11,7 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
+                            <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
                                 New Training
                             </a>
                         </div>
@@ -26,9 +26,10 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div v-if='is_iam("Calendar:View")' class="card-body">
                             <div id='calendar' style='width: 100%; height: 500px;'></div>
                         </div>
+                        <NoAccess v-else/>
                     </div>
                 </div>
             </div>
@@ -40,6 +41,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -48,6 +51,16 @@ import listPlugin from '@fullcalendar/list'
 
 export default {
     name: 'Calendar',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             calendar: null,
@@ -62,6 +75,7 @@ export default {
         }
     },
     mounted: async function() {
+        if (!this.is_iam("Calendar:View")) return;
         this.calendar = new Calendar(document.getElementById('calendar'), {
             plugins: [dayGridPlugin, interactionPlugin, listPlugin],
             defaultView: 'dayGridMonth',
@@ -91,11 +105,13 @@ export default {
         await this.fetchCalendars();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetchCalendars: async function() {
             this.layers = await window.std('/api/calendar');
         },
     },
     components: {
+        NoAccess,
         PageFooter,
     },
 }

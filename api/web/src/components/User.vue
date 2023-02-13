@@ -8,7 +8,7 @@
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
                             <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/user")' class="cursor-pointer">Users</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">User</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.userid'></a></li>
                         </ol>
                     </div>
                 </div>
@@ -21,7 +21,8 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <TablerLoading v-if='loading.user' desc='Loading User'/>
+                        <NoAccess v-if='is_iam("User:Read")'/>
+                        <TablerLoading v-else-if='loading.user' desc='Loading User'/>
                         <template v-else>
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='`${user.fname} ${user.lname}`'></h3>
@@ -159,6 +160,7 @@
 </template>
 
 <script>
+import iam from '../iam.js';
 import PageFooter from './PageFooter.vue';
 import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
@@ -167,6 +169,7 @@ import CardMission from './cards/Missions.vue';
 import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
 import CardCerts from './cards/Certs.vue';
+import NoAccess from './util/NoAccess.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -174,7 +177,14 @@ import {
 export default {
     name: 'User',
     props: {
-        auth: Object
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
     },
     data: function() {
         return {
@@ -199,6 +209,7 @@ export default {
         ])
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
             this.loading.user = true;
             this.user = await window.std(`/api/user/${this.userid}`);
@@ -219,7 +230,8 @@ export default {
         CardTrainingMini,
         CardEquipment,
         CardCerts,
-        TablerLoading
+        TablerLoading,
+        NoAccess
     }
 }
 </script>
