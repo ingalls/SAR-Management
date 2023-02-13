@@ -19,6 +19,9 @@
         },
         "body": {
             "$ref": "./teams/body.json"
+        },
+        "iam": {
+            "$ref": "./teams/iam.json"
         }
     },
     "required": [
@@ -27,6 +30,7 @@
         "updated",
         "public",
         "name",
-        "body"
+        "body",
+        "iam"
     ]
 }

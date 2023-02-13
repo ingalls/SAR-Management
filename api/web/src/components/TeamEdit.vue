@@ -53,7 +53,25 @@
                 </div>
 
                 <div class="col-lg-12">
-                    <CardTeamIam :team='team'/>
+                    <div class="card">
+                        <div class='card-header'>Team Access Management</div>
+                        <table class="table card-table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Access</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr :key='group' v-for='group in Object.keys(iam)'>
+                                    <td v-text='group'></td>
+                                    <td>
+                                        <TablerSelect :default='team.iam[group] || iam[group][iam[group].length - 1]' :values='iam[group]'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,9 +83,9 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
-import CardTeamIam from './cards/TeamIam.vue'
 import {
-    TablerLoading
+    TablerLoading,
+    TablerSelect
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -79,17 +97,24 @@ export default {
                 name: false,
                 body: false
             },
+            iam: {},
             team: {
                 name: '',
-                body: ''
+                body: '',
+                iam: {}
             }
         }
     },
     mounted: async function() {
+        await this.fetchiam();
         await this.fetch();
     },
     methods: {
+        fetchiam: async function() {
+            this.iam = await window.std(`/api/iam`);
+        },
         fetch: async function() {
+            this.loading = true;
             this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
             this.loading = false;
         },
@@ -124,7 +149,7 @@ export default {
     components: {
         PageFooter,
         TablerLoading,
-        CardTeamIam
+        TablerSelect
     }
 }
 </script>

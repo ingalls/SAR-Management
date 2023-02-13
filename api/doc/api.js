@@ -686,24 +686,6 @@
 
 
 /**
-* @api {get} /team/:teamid/iam Get IAM
-* @apiVersion 1.0.0
-* @apiName GET-/team/:teamid/iam
-* @apiGroup IAM
-* @apiPermission user
-*
-* @apidescription
-*   Get IAM settings for a given team
-*
-* @apiParam {integer} teamid param
-*
-*
-*
-* @apiSchema {jsonschema=../schema/res.ListTeamIAM.json} apiSuccess
-*/
-
-
-/**
 * @api {get} /team/:teamid/user List Users
 * @apiVersion 1.0.0
 * @apiName GET-/team/:teamid/user
@@ -755,6 +737,24 @@
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.AddUID.json} apiParam
 * @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /iam Get IAM
+* @apiVersion 1.0.0
+* @apiName GET-/iam
+* @apiGroup IAM
+* @apiPermission user
+*
+* @apidescription
+*   Get all teams on the server
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.IAM.json} apiSuccess
 */
 
 

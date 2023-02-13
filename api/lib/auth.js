@@ -1,5 +1,17 @@
 import Err from '@openaddresses/batch-error';
 
+const Permissions = {
+    Calendar: [ 'View', 'None' ],
+    Docs: [ 'Admin', 'Manage', 'View', 'None' ],
+    Equipment: [ 'Admin', 'Manage', 'View', 'None' ],
+    Issues: [ 'Admin', 'Manage', 'View', 'None' ],
+    Leadership: [ 'Admin', 'View', 'None' ],
+    Missions: ['Admin', 'Manage', 'View', 'None' ],
+    Teams: [ 'Admin', 'Manage', 'View', 'None' ],
+    Trainings: ['Admin', 'Manage', 'View', 'None' ],
+    User: [ 'Admin', 'ManageOwn', 'View', 'None' ],
+};
+
 /**
  * @class
  */
@@ -53,4 +65,8 @@ export default class Auth {
 
         return true;
     }
+}
+
+export {
+    Permissions
 }

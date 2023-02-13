@@ -1,9 +1,25 @@
 import Err from '@openaddresses/batch-error';
 import Team from '../lib/types/team.js';
 import TeamView from '../lib/views/team.js';
-import Auth from '../lib/auth.js';
+import Auth, { Permissions } from '../lib/auth.js';
 
 export default async function router(schema, config) {
+    await schema.get('/iam', {
+        name: 'Get IAM',
+        group: 'IAM',
+        auth: 'user',
+        description: 'Get all teams on the server',
+        res: 'res.IAM.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req);
+
+            return res.json(Permissions);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.get('/team', {
         name: 'Get Teams',
         group: 'Teams',
