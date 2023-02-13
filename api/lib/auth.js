@@ -15,6 +15,8 @@ const Permissions = {
 
 class AuthAugment {
     static async iam(pool, userid) {
+        if (!userid) return {};
+
         try {
             const pgiam = await pool.query(sql`
                 SELECT

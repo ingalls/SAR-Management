@@ -122,7 +122,7 @@ export default async function server(config) {
             req.auth = false;
         }
 
-        req.auth.iam = await AuthAugment.iam(config.pool, req.auth.id);
+        if (req.auth) req.auth.iam = await AuthAugment.iam(config.pool, req.auth.id);
 
         return next();
     });
