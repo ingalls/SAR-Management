@@ -15,7 +15,7 @@ export default async function router(schema, config) {
         res: 'res.ListCalendarLayers.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Calendar:Read');
 
             res.json({
                 layers: [{
@@ -43,7 +43,7 @@ export default async function router(schema, config) {
         query: 'req.query.ListEvents.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Calendar:Read');
 
             const events = [];
 

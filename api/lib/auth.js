@@ -91,6 +91,16 @@ export default class Auth {
         // Admins will be admins
         if (req.auth && req.auth.access && req.auth.access === 'admin') return true;
 
+        const iam = permission.split(':');
+        if (
+            req.auth.iam
+            && permission.length === 2
+            && req.auth.iam[permission[0]]
+            && Permissions[permission[0]].indexOf(permission[1]) <= Permissions[permission[0]].indexOf(req.auth.iam[permission[0]])
+        ) {
+            return true;
+        }
+
         throw new Err(403, null, 'Authentication Level Insufficient');
     }
 
