@@ -58,10 +58,7 @@ export default async function router(schema, config) {
             else delete req.body.end_ts;
 
             res.json(await Training.generate(config.pool, {
-                title: req.body.title,
-                body: req.body.body,
-                start_ts: req.body.start_ts,
-                end_ts: req.body.end_ts,
+                ...req.body,
                 author: req.auth.id
             }));
 
@@ -85,6 +82,7 @@ export default async function router(schema, config) {
         group: 'Training',
         auth: 'user',
         description: 'Update an existing training',
+        ':trainingid': 'integer',
         body: 'req.body.PatchTraining.json',
         res: 'training.json'
     }, async (req, res) => {
@@ -100,12 +98,7 @@ export default async function router(schema, config) {
 
             const training = await Training.from(config.pool, req.params.trainingid);
 
-            await training.commit({
-                title: req.body.title,
-                body: req.body.body,
-                start_ts: req.body.start_ts,
-                end_ts: req.body.end_ts
-            });
+            await training.commit(req.body);
 
             return res.json(training);
         } catch (err) {

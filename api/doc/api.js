@@ -958,6 +958,24 @@
 
 
 /**
+* @api {patch} /training/:trainingid Update Training
+* @apiVersion 1.0.0
+* @apiName PATCH-/training/:trainingid
+* @apiGroup Training
+* @apiPermission user
+*
+* @apidescription
+*   Update an existing training
+*
+* @apiParam {integer} trainingid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchTraining.json} apiParam
+* @apiSchema {jsonschema=../schema/training.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /user/:userid/certs Get Certs
 * @apiVersion 1.0.0
 * @apiName GET-/user/:userid/certs
