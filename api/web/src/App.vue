@@ -12,13 +12,17 @@
 
             <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
-                    <a class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="btn btn-dark dropdown-toggle d-lg-none" data-bs-toggle="dropdown" aria-expanded="false">
                         <PlusIcon/>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a @click='$router.push("/issue/new")' class="dropdown-item">New Issue</a>
-                        <a @click='$router.push("/equipment/new")' class="dropdown-item">New Equipment</a>
-                        <a @click='$router.push("/mission/new")' class="dropdown-item">New Mission</a>
+                        <a @click='$router.push("/")' class="dropdown-item">Home</a>
+                        <a @click='$router.push("/issue")' class="dropdown-item">Issues</a>
+                        <a @click='$router.push("/equipment")' class="dropdown-item">Equipment</a>
+                        <a @click='$router.push("/doc")' class="dropdown-item">Docs</a>
+                        <a @click='$router.push("/mission")' class="dropdown-item">Missions</a>
+                        <a @click='$router.push("/team")' class="dropdown-item">Team</a>
+                        <a @click='$router.push("/calendar")' class="dropdown-item">Calendar</a>
                     </div>
 
 
