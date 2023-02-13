@@ -12,8 +12,6 @@ export default async function router(schema, config) {
         res: 'res.IAM.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
-
             return res.json(Permissions);
         } catch (err) {
             return Err.respond(err, res);

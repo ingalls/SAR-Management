@@ -94,9 +94,9 @@ export default class Auth {
         const iam = permission.split(':');
         if (
             req.auth.iam
-            && permission.length === 2
-            && req.auth.iam[permission[0]]
-            && Permissions[permission[0]].indexOf(permission[1]) <= Permissions[permission[0]].indexOf(req.auth.iam[permission[0]])
+            && iam.length === 2
+            && req.auth.iam[iam[0]]
+            && Permissions[iam[0]].indexOf(iam[1]) <= Permissions[iam[0]].indexOf(req.auth.iam[iam[0]])
         ) {
             return true;
         }

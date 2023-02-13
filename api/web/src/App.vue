@@ -126,6 +126,7 @@
     <template v-else-if='enableNav'>
         <router-view
             @login='getUser'
+            :iam='iam'
             :auth='user'
         />
     </template>
@@ -163,6 +164,7 @@ export default {
             loading: {
                 user: false
             },
+            iam: {},
             user: null,
             err: false,
         }
@@ -188,11 +190,13 @@ export default {
         }
     },
     mounted: async function() {
-        if (localStorage.token) {
-            return await this.getUser();
-        }
+        await this.getIAM();
+        if (localStorage.token) return await this.getUser();
     },
     methods: {
+        getIAM: async function() {
+            this.iam = await window.std('/api/iam');
+        },
         getUser: async function() {
             try {
                 this.loading.user = true;

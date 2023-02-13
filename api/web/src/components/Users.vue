@@ -10,7 +10,7 @@
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Users</a></li>
                         </ol>
 
-                        <div class='ms-auto'>
+                        <div v-if='is_iam("User:Admin")' class='ms-auto'>
                             <a @click='$router.push("/user/new")' class="cursor-pointer btn btn-primary">
                                 New User
                             </a>
@@ -25,7 +25,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <CardUsers/>
+                    <CardUsers v-if='is_iam("User:View")'/>
+                    <NoAccess v-else/>
                 </div>
             </div>
         </div>
@@ -38,12 +39,30 @@
 <script>
 import PageFooter from './PageFooter.vue';
 import CardUsers from './cards/Users.vue';
+import NoAccess from './util/NoAccess.vue';
+import iam from '../iam.js';
 
 export default {
     name: 'Users',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
+    methods: {
+        is_iam: function(permission) {
+            return iam(this.iam, this.auth, permission)
+        }
+    },
     components: {
         PageFooter,
-        CardUsers
+        CardUsers,
+        NoAccess
     }
 }
 </script>
