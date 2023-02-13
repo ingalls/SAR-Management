@@ -26,7 +26,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <CardUsers v-if='is_iam("User:View")'/>
-                    <NoAccess v-else/>
+                    <NoAccess v-else title='Users'/>
                 </div>
             </div>
         </div>
@@ -55,9 +55,7 @@ export default {
         }
     },
     methods: {
-        is_iam: function(permission) {
-            return iam(this.iam, this.auth, permission)
-        }
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
     },
     components: {
         PageFooter,

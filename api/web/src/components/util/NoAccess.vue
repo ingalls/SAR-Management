@@ -1,5 +1,6 @@
 <template>
 <div class='card'>
+    <div v-if='title' class='card-header' v-text='title'></div>
     <div class='card-body'>
         <div class='d-flex justify-content-center' :class='{
             "mt-4 mb-2": !compact
@@ -25,6 +26,7 @@ import {
 export default {
     name: 'NoAccess',
     props: {
+        title: String,
         compact: {
             type: Boolean,
             default: false

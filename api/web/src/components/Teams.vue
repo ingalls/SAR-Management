@@ -31,7 +31,8 @@
                     <CardTeams/>
                 </div>
                 <div class="col-lg-12">
-                    <CardUsers/>
+                    <CardUsers v-if='is_iam("Users:Read")'/>
+                    <NoAccess title='Users' v-else/>
                 </div>
             </div>
         </div>
@@ -46,14 +47,30 @@ import PageFooter from './PageFooter.vue';
 import CardLeadership from './cards/Leadership.vue';
 import CardUsers from './cards/Users.vue';
 import CardTeams from './cards/Teams.vue';
+import NoAccess from './util/NoAccess.vue';
+import iam from '../iam.js';
 
 export default {
     name: 'Team',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     components: {
         PageFooter,
         CardLeadership,
         CardUsers,
-        CardTeams
+        CardTeams,
+        NoAccess
+    },
+    methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
     }
 }
 </script>
