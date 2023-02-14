@@ -13,6 +13,7 @@
         "lname",
         "fname",
         "start_year",
+        "last_login",
         "emergency",
         "address_street",
         "address_city",
@@ -54,6 +55,9 @@
             "type": ["null", "string"]
         },
         "start_year": {
+            "type": "integer"
+        },
+        "last_login": {
             "type": "integer"
         },
         "emergency": {
