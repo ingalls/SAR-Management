@@ -1136,3 +1136,21 @@
 *
 * @apiSchema {jsonschema=../schema/res.User.json} apiSuccess
 */
+
+
+/**
+* @api {delete} /user/:userid Create User
+* @apiVersion 1.0.0
+* @apiName DELETE-/user/:userid
+* @apiGroup User
+* @apiPermission user
+*
+* @apidescription
+*   Return a user
+*
+* @apiParam {integer} userid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.User.json} apiSuccess
+*/

@@ -89,4 +89,23 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.delete('/user/:userid', {
+        name: 'Create User',
+        group: 'User',
+        auth: 'user',
+        ':userid': 'integer',
+        description: 'Return a user',
+        res: 'res.User.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'User:Admin');
+
+            res.json(await User.commit(config.pool, req.params.userid, {
+                disabled: true
+            }));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }

@@ -4,8 +4,318 @@
         "query": true,
         "res": true
     },
-    "POST /record": {
+    "GET /asset": {
+        "body": false,
+        "query": true,
+        "res": true
+    },
+    "GET /asset/:assetid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /asset/:assetid/raw": {
+        "body": false,
+        "query": false,
+        "res": false
+    },
+    "POST /asset": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "PATCH /asset/:assetid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "DELETE /asset/:assetid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /calendar": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /calendar/:calendar/events": {
+        "body": false,
+        "query": true,
+        "res": false
+    },
+    "GET /doc": {
+        "body": false,
+        "query": true,
+        "res": true
+    },
+    "GET /equipment": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /equipment/:equipmentid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /equipment": {
         "body": true,
+        "query": false,
+        "res": true
+    },
+    "PATCH /equipment/:equipmentid": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /issue/:issueid/assigned": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /issue/:issueid/assigned": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "DELETE /issue/:issueid/assigned/:assignedid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /issue/:issueid/comment": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /issue/:issueid/comment": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /issue": {
+        "body": false,
+        "query": true,
+        "res": true
+    },
+    "POST /issue": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "PATCH /issue/:issueid": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /issue/:issueid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /leadership": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /leadership": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "PATCH /leadership/:leaderid": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "DELETE /leadership/:leaderid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /login": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /login": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "POST /login/verify": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "POST /login/forgot": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "POST /login/reset": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /mission/:missionid/assigned": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /mission/:missionid/assigned": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "DELETE /mission/:missionid/assigned/:assignedid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /mission": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /mission/:missionid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /mission": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /notification": {
+        "body": false,
+        "query": false,
+        "res": false
+    },
+    "GET /team/:teamid/user": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "DELETE /team/:teamid/user/:userid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /team/:teamid/user": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /iam": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /team": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /team": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /team/:teamid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "PATCH /team/:teamid": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "DELETE /team/:teamid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /training/:trainingid/assigned": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /training/:trainingid/assigned": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "POST /training/:trainingid/assigned/request": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "PATCH /training/:trainingid/assigned/:assignedid": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "DELETE /training/:trainingid/assigned/:assignedid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /training": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /training/:trainingid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /training": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "PATCH /training/:trainingid": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "DELETE /training/:trainingid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /user/:userid/certs": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "GET /user": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "POST /user": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "PATCH /user/:userid": {
+        "body": true,
+        "query": false,
+        "res": true
+    },
+    "GET /user/:userid": {
+        "body": false,
+        "query": false,
+        "res": true
+    },
+    "DELETE /user/:userid": {
+        "body": false,
         "query": false,
         "res": true
     }
