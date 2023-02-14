@@ -19,51 +19,54 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div v-if='!loading.assigned && is_roster' class="col-lg-12">
-                    <div class='card'>
-                        <div class="alert alert-info alert-dismissible" role="alert">
-                            <h3 class="mb-1">Roster Correction</h3>
-                            <p>You aren't marked as present for this mission. If this is incorrect, request to be added to the mission roster</p>
-                            <div class='d-flex'>
+                <NoAccess v-if='!is_iam("Mission:View")' title='Mission'/>
+                <template v-else>
+                    <div v-if='!loading.assigned && is_roster' class="col-lg-12">
+                        <div class='card'>
+                            <div class="alert alert-info alert-dismissible" role="alert">
+                                <h3 class="mb-1">Roster Correction</h3>
+                                <p>You aren't marked as present for this mission. If this is incorrect, request to be added to the mission roster</p>
+                                <div class='d-flex'>
+                                    <div class='ms-auto'>
+                                        <a href="#" class="btn btn-info">Request Inclusion</a>
+                                    </div>
+                                </div>
+                                <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class='card-header'>
+                                <h3 class='card-title' v-text='mission.title'/>
+
                                 <div class='ms-auto'>
-                                    <a href="#" class="btn btn-info">Request Inclusion</a>
+                                     <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
                                 </div>
                             </div>
-                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-                        </div>
-                    </div>
-                </div>
+                            <div class="card-body">
+                                <div class='row row-cards'>
+                                    <div class="col-md-12" v-text='mission.body'></div>
 
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class='card-header'>
-                            <h3 class='card-title' v-text='mission.title'/>
-
-                            <div class='ms-auto'>
-                                 <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-12" v-text='mission.body'></div>
-
-                                <div class='col-md-12'>
-                                    <Location/>
+                                    <div class='col-md-12'>
+                                        <Location/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-12">
-                    <UserPresentSelect
-                        v-model='assigned'
-                        :loading='loading.assigned'
-                        @push='postAssigned($event)'
-                        @patch='patchAssigned($event)'
-                        @delete='deleteAssigned($event)'
-                    />
-                </div>
+                    <div class="col-lg-12">
+                        <UserPresentSelect
+                            v-model='assigned'
+                            :loading='loading.assigned'
+                            @push='postAssigned($event)'
+                            @patch='patchAssigned($event)'
+                            @delete='deleteAssigned($event)'
+                        />
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -73,6 +76,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
@@ -105,8 +110,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.fetch();
-        await this.fetchAssigned();
+        if (this.is_iam("Mission:View")) {
+            await this.fetch();
+            await this.fetchAssigned();
+        }
     },
     computed: {
         is_roster: function() {
@@ -118,6 +125,7 @@ export default {
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
             this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
         },
@@ -156,7 +164,8 @@ export default {
         EpochRange,
         Location,
         PageFooter,
-        UserPresentSelect
+        UserPresentSelect,
+        NoAccess
     }
 }
 </script>

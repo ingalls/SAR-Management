@@ -19,49 +19,52 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='mission.title' label='Mission Title'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput type='datetime-local' v-model='mission.start_ts' label='Mission Start'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput type='datetime-local' v-model='mission.end_ts' label='Mission End'/>
-                                </div>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
-                                </div>
+                <NoAccess v-if='!is_iam("Mission:Manage")' title='New Mission'/>
+                <template v-else>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class='row row-cards'>
+                                    <div class="col-md-12">
+                                        <TablerInput v-model='mission.title' label='Mission Title'/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <TablerInput type='datetime-local' v-model='mission.start_ts' label='Mission Start'/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <TablerInput type='datetime-local' v-model='mission.end_ts' label='Mission End'/>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
+                                    </div>
 
-                                <div class='col-md-12'>
-                                    <Location/>
-                                </div>
+                                    <div class='col-md-12'>
+                                        <Location/>
+                                    </div>
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <UserPresentSelect
-                        v-model='mission.assigned'
-                    />
-                </div>
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class='d-flex'>
-                                <div class='ms-auto'>
-                                    <a @click='create' class="cursor-pointer btn btn-primary">
-                                        Create Mission
-                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div class="col-lg-12">
+                        <UserPresentSelect
+                            v-model='mission.assigned'
+                        />
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class='d-flex'>
+                                    <div class='ms-auto'>
+                                        <a @click='create' class="cursor-pointer btn btn-primary">
+                                            Create Mission
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -71,6 +74,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
@@ -102,6 +107,7 @@ export default {
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         create: async function() {
             const create = await window.std('/api/mission', {
                 method: 'POST',
@@ -115,7 +121,8 @@ export default {
         Location,
         PageFooter,
         TablerInput,
-        UserPresentSelect
+        UserPresentSelect,
+        NoAccess
     }
 }
 </script>
