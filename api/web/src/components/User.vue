@@ -8,7 +8,7 @@
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
                             <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/user")' class="cursor-pointer">Users</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.userid'></a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.userid || "Profile"'></a></li>
                         </ol>
                     </div>
                 </div>
@@ -209,10 +209,8 @@ export default {
         }
     },
     mounted: async function() {
-        await Promise.all([
-            this.fetch(),
-            this.fetchTeams()
-        ])
+        if (this.is_iam('User:View')) await this.fetch();
+        if (this.is_iam('Team:View')) await this.fetchTeams();
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
