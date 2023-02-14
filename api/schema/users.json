@@ -61,6 +61,9 @@
         },
         "address_zip": {
             "$ref": "./users/address_zip.json"
+        },
+        "last_login": {
+            "$ref": "./users/last_login.json"
         }
     },
     "required": [
@@ -83,6 +86,7 @@
         "address_street",
         "address_city",
         "address_state",
-        "address_zip"
+        "address_zip",
+        "last_login"
     ]
 }

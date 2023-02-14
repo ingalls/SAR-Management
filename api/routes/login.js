@@ -2,6 +2,8 @@ import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Login from '../lib/login.js';
 import Email from '../lib/email.js';
+import User from  '../lib/types/user.js';
+import { sql } from 'slonik';
 
 export default async function router(schema, config) {
     const email = new Email(config);
@@ -42,6 +44,10 @@ export default async function router(schema, config) {
                 username: req.body.username.toLowerCase(),
                 password: req.body.password
             }, config.SigningSecret);
+
+            User.commit(config.pool, req.auth.id, {
+                last_login: sql`Now()`
+            });
 
             return res.json({
                 id: req.auth.id,
