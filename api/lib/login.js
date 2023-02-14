@@ -83,7 +83,9 @@ export default class Login {
 
         const token = jwt.sign({
             u: user.id
-        }, secret);
+        }, secret, {
+            expiresIn: '12h'
+        });
 
         return {
             id: user.id,
