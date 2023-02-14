@@ -99,6 +99,14 @@ export default {
             }
         }
     },
+    watch: {
+        'user.fname': function() {
+             this.user.username = `${this.user.fname.toLowerCase()}.${this.user.lname.toLowerCase()}`;
+        },
+        'user.lname': function() {
+             this.user.username = `${this.user.fname.toLowerCase()}.${this.user.lname.toLowerCase()}`;
+        }
+    },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         create: async function() {
