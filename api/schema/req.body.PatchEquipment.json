@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "name": {
+            "$ref": "./equipment/name.json"
+        },
+        "name": {
+            "$ref": "./equipment/description.json"
+        },
+        "status": {
+            "$ref": "./equipment/status.json"
+        }
+    }
+}

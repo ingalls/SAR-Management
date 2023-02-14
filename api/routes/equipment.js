@@ -14,7 +14,7 @@ export default async function router(schema, config) {
         res: 'res.ListEquipment.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Equipment:View');
 
             res.json(await Equipment.list(config.pool, req.query));
         } catch (err) {
@@ -31,7 +31,7 @@ export default async function router(schema, config) {
         res: 'equipment.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Equipment:View');
 
             res.json(await Equipment.from(config.pool, req.params.equipmentid));
         } catch (err) {
@@ -48,7 +48,7 @@ export default async function router(schema, config) {
         res: 'equipment.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Equipment:Manage');
 
             const equipment = await Equipment.generate(config.pool, {
                 status: req.body.status,
@@ -64,6 +64,26 @@ export default async function router(schema, config) {
                 }
             }
 
+            return res.json(equipment);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+    await schema.patch('/equipment/:equipmentid', {
+        name: 'Update Equipment',
+        group: 'Equipment',
+        auth: 'user',
+        description: 'Update an existing piece of equipment',
+        ':equipmentid': 'integer',
+        body: 'req.body.PatchEquipment.json',
+        res: 'equipment.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Equipment:Manage');
+
+            const equipment = await Equipment.from(config.pool, req.params.equipmentid);
+            await equipment.commit(req.body);
             return res.json(equipment);
         } catch (err) {
             return Err.respond(err, res);

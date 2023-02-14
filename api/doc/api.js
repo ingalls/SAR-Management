@@ -234,6 +234,24 @@
 
 
 /**
+* @api {patch} /equipment/:equipmentid Update Equipment
+* @apiVersion 1.0.0
+* @apiName PATCH-/equipment/:equipmentid
+* @apiGroup Equipment
+* @apiPermission user
+*
+* @apidescription
+*   Update an existing piece of equipment
+*
+* @apiParam {integer} equipmentid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchEquipment.json} apiParam
+* @apiSchema {jsonschema=../schema/equipment.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /issue/:issueid/assigned Get Assigned
 * @apiVersion 1.0.0
 * @apiName GET-/issue/:issueid/assigned

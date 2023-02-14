@@ -11,7 +11,7 @@ export default async function router(schema, config) {
         res: 'res.ListDocs.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Users:Read');
 
             const list = await Doc.list(config.pool, req.query);
 
