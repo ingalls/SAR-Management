@@ -13,7 +13,7 @@ export default async function router(schema, config) {
         res: 'res.ListMissionAssigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Missions:View');
+            await Auth.is_iam(req, 'Mission:View');
 
             res.json(await MissionAssigned.list(config.pool, req.params.missionid, req.query));
         } catch (err) {
@@ -31,7 +31,7 @@ export default async function router(schema, config) {
         res: 'missions_assigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Missions:Manage');
+            await Auth.is_iam(req, 'Mission:Manage');
 
             res.json(await MissionAssigned.generate(config.pool, {
                 mission_id: req.params.missionid,
@@ -52,7 +52,7 @@ export default async function router(schema, config) {
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Missions:Manage');
+            await Auth.is_iam(req, 'Mission:Manage');
 
             const mission = await Mission.from(config.pool, req.params.missionid);
             const assigned = await MissionAssigned.from(config.pool, req.params.assignedid);

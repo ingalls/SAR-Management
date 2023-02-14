@@ -13,7 +13,7 @@ export default async function router(schema, config) {
         res: 'res.ListCerts.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Users:View');
+            await Auth.is_iam(req, 'User:View');
 
             res.json(await Cert.list(config.pool, req.query));
         } catch (err) {

@@ -13,7 +13,7 @@ export default async function router(schema, config) {
         res: 'res.ListTrainingAssigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Trainings:View');
+            await Auth.is_iam(req, 'Training:View');
 
             res.json(await TrainingAssigned.list(config.pool, req.params.trainingid, req.query));
         } catch (err) {
@@ -31,7 +31,7 @@ export default async function router(schema, config) {
         res: 'training_assigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Trainings:Manage');
+            await Auth.is_iam(req, 'Training:Manage');
 
             res.json(await TrainingAssigned.generate(config.pool, {
                 training_id: req.params.trainingid,
@@ -52,7 +52,7 @@ export default async function router(schema, config) {
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Trainings:Manage');
+            await Auth.is_iam(req, 'Training:Manage');
 
             const training = await Training.from(config.pool, req.params.trainingid);
             const assigned = await TrainingAssigned.from(config.pool, req.params.assignedid);

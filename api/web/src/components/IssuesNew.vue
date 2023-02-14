@@ -20,7 +20,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Issues:Manage")' title='New Issue'/>
+                    <NoAccess v-if='!is_iam("Issue:Manage")' title='New Issue'/>
                     <div v-else class="card">
                         <div class="card-body">
                             <div class='row row-cards'>

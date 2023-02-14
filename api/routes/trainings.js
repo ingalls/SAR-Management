@@ -14,7 +14,7 @@ export default async function router(schema, config) {
         res: 'res.ListTrainings.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Trainings:View');
+            await Auth.is_iam(req, 'Training:View');
 
             res.json(await Training.list(config.pool, req.query));
         } catch (err) {
@@ -31,7 +31,7 @@ export default async function router(schema, config) {
         res: 'training.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Trainings:View');
+            await Auth.is_iam(req, 'Training:View');
 
             res.json(await Training.from(config.pool, req.params.trainingid));
         } catch (err) {
@@ -48,7 +48,7 @@ export default async function router(schema, config) {
         res: 'training.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Trainings:Manage');
+            await Auth.is_iam(req, 'Training:Manage');
 
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
@@ -87,7 +87,7 @@ export default async function router(schema, config) {
         res: 'training.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Trainings:Manage');
+            await Auth.is_iam(req, 'Training:Manage');
 
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;

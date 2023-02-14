@@ -21,7 +21,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <NoAccess v-if='is_iam("User:Read")'/>
+                        <NoAccess v-if='is_iam("User:View")'/>
                         <TablerLoading v-else-if='loading.user' desc='Loading User'/>
                         <template v-else>
                             <div class='card-header'>

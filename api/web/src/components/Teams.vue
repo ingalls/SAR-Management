@@ -11,7 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/user/new")' class="cursor-pointer btn btn-primary">
+                            <a v-if='is_iam("User:Admin")' @click='$router.push("/user/new")' class="cursor-pointer btn btn-primary">
                                 New User
                             </a>
                         </div>
@@ -25,13 +25,15 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <CardLeadership/>
+                    <CardLeadership v-if='is_iam("Leadership:View")'/>
+                    <NoAccess title='Leadership Team' v-else/>
                 </div>
                 <div class="col-lg-12">
-                    <CardTeams/>
+                    <CardTeams v-if='is_iam("Team:View")'/>
+                    <NoAccess title='Teams' v-else/>
                 </div>
                 <div class="col-lg-12">
-                    <CardUsers v-if='is_iam("Users:Read")'/>
+                    <CardUsers v-if='is_iam("User:View")'/>
                     <NoAccess title='Users' v-else/>
                 </div>
             </div>

@@ -3,13 +3,13 @@ import { sql } from 'slonik';
 
 const Permissions = {
     Calendar: [ 'View', 'None' ],
-    Docs: [ 'Admin', 'Manage', 'View', 'None' ],
+    Doc: [ 'Admin', 'Manage', 'View', 'None' ],
     Equipment: [ 'Admin', 'Manage', 'View', 'None' ],
-    Issues: [ 'Admin', 'Manage', 'View', 'None' ],
+    Issue: [ 'Admin', 'Manage', 'View', 'None' ],
     Leadership: [ 'Admin', 'View', 'None' ],
-    Missions: ['Admin', 'Manage', 'View', 'None' ],
-    Teams: [ 'Admin', 'Manage', 'View', 'None' ],
-    Trainings: ['Admin', 'Manage', 'View', 'None' ],
+    Mission: ['Admin', 'Manage', 'View', 'None' ],
+    Team: [ 'Admin', 'Manage', 'View', 'None' ],
+    Training: ['Admin', 'Manage', 'View', 'None' ],
     User: [ 'Admin', 'View', 'None' ],
 };
 

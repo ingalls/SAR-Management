@@ -19,7 +19,7 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <NoAccess v-if='!is_iam("Issues:View")' title='Issue'/>
+                <NoAccess v-if='!is_iam("Issue:View")' title='Issue'/>
                 <template v-else>
                     <div class="col-md-9">
                         <div class="card">
@@ -156,7 +156,7 @@ export default {
         }
     },
     mounted: async function() {
-        if (this.is_iam("Issues:View")) {
+        if (this.is_iam("Issue:View")) {
             await this.fetch();
             await this.fetchAssigned();
             await this.fetchComments();

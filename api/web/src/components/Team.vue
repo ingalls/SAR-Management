@@ -19,36 +19,39 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <div class="card">
-                        <template v-if='loading.team'>
-                            <TablerLoading desc='Loading Team'/>
-                        </template>
-                        <template v-else>
-                            <div class='card-header'>
-                                <h3 class='card-title' v-text='team.name'></h3>
+                <NoAccess v-if='!is_iam("Team:View")' title='Team'/>
+                <template v-else>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <template v-if='loading.team'>
+                                <TablerLoading desc='Loading Team'/>
+                            </template>
+                            <template v-else>
+                                <div class='card-header'>
+                                    <h3 class='card-title' v-text='team.name'></h3>
 
-                                <div class='ms-auto'>
-                                    <div class='btn-list'>
-                                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                        <div class="dropdown-menu dropdown-menu-end" style="">
-                                            <a @click='$router.push(`/team/${$route.params.teamid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
+                                    <div class='ms-auto'>
+                                        <div class='btn-list'>
+                                            <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                            <div class="dropdown-menu dropdown-menu-end" style="">
+                                                <a @click='$router.push(`/team/${$route.params.teamid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
-
-                            </div>
-                            <div class="card-body" v-text='team.body'></div>
-                        </template>
+                                <div class="card-body" v-text='team.body'></div>
+                            </template>
+                        </div>
                     </div>
-                </div>
 
-                <CardUsers
-                    v-if='team.id'
-                    :dropdown='false'
-                    :url='`/api/team/${$route.params.teamid}/user`'
-                    :edit='true'
-                />
+                    <CardUsers
+                        v-if='team.id'
+                        :dropdown='false'
+                        :url='`/api/team/${$route.params.teamid}/user`'
+                        :edit='true'
+                    />
+                </template>
             </div>
         </div>
     </div>
@@ -58,6 +61,8 @@
 </template>
 
 <script>
+import NoAccess from './util/NoAccess.vue';
+import iam from '../iam.js';
 import PageFooter from './PageFooter.vue';
 import CardUsers from './cards/Users.vue';
 import {
@@ -65,7 +70,17 @@ import {
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'TeamSingle',
+    name: 'Team',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             loading: {
@@ -79,9 +94,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.fetch();
+        if (this.is_iam("Team:View")) await this.fetch();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
             this.loading.team = true;
             this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
@@ -89,6 +105,7 @@ export default {
         }
     },
     components: {
+        NoAccess,
         TablerLoading,
         PageFooter,
         CardUsers

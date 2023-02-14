@@ -16,7 +16,7 @@ export default async function router(schema, config) {
         res: 'res.ListUsers.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Users:Read');
+            await Auth.is_iam(req, 'User:View');
 
             res.json(await User.list(config.pool, req.query));
         } catch (err) {
@@ -33,7 +33,7 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Users:Admin');
+            await Auth.is_iam(req, 'User:Admin');
 
             req.body.email = req.body.emailtoLowerCase();
             req.body.username = req.body.username.toLowerCase();
@@ -82,7 +82,7 @@ export default async function router(schema, config) {
         res: 'res.User.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Users:View');
+            await Auth.is_iam(req, 'User:View');
 
             res.json(await User.from(config.pool, req.params.userid));
         } catch (err) {

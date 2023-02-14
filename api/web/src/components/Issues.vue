@@ -11,7 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a v-if='is_iam("Issues:Manage")' @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
+                            <a v-if='is_iam("Issue:Manage")' @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
                                 New Issue
                             </a>
                         </div>
@@ -26,7 +26,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <NoAccess v-if='!is_iam("Issues:View")' title='Issues'/>
+                        <NoAccess v-if='!is_iam("Issue:View")' title='Issues'/>
                         <template v-else>
                             <div class="card-body">
                                 <div class="d-flex">
@@ -114,7 +114,7 @@ export default {
         }
     },
     mounted: async function() {
-        if (this.is_iam("Issues:Read")) await this.listIssues();
+        if (this.is_iam("Issue:View")) await this.listIssues();
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },

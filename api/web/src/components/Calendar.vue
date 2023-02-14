@@ -29,7 +29,7 @@
                         <div v-if='is_iam("Calendar:View")' class="card-body">
                             <div id='calendar' style='width: 100%; height: 500px;'></div>
                         </div>
-                        <NoAccess v-else/>
+                        <NoAccess v-else title='Calendar'/>
                     </div>
                 </div>
             </div>

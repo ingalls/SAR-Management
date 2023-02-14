@@ -13,7 +13,7 @@ export default async function router(schema, config) {
         res: 'res.ListIssueAssigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issues:View');
+            await Auth.is_iam(req, 'Issue:View');
 
             res.json(await IssueAssigned.list(config.pool, req.params.issueid, req.query));
         } catch (err) {
@@ -31,7 +31,7 @@ export default async function router(schema, config) {
         res: 'issues_assigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issues:Manage');
+            await Auth.is_iam(req, 'Issue:Manage');
 
             res.json(await IssueAssigned.generate(config.pool, {
                 issue_id: req.params.issueid,
@@ -52,7 +52,7 @@ export default async function router(schema, config) {
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issues:Manage');
+            await Auth.is_iam(req, 'Issue:Manage');
 
             const issue = await Issue.from(config.pool, req.params.issueid);
             const assigned = await IssueAssigned.from(config.pool, req.params.assignedid);
