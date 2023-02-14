@@ -13,9 +13,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'User:View');
 
-            const list = await Doc.list(config.pool, req.query);
-
-            return res.json(list);
+            return res.json({});
         } catch (err) {
             return Err.respond(err, res);
         }

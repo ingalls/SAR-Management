@@ -12,9 +12,9 @@
 
             <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
-                    <a class="btn btn-dark dropdown-toggle d-lg-none" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-dark dropdown-toggle d-md-none" type='button' data-bs-toggle="dropdown" aria-expanded="false">
                         <PlusIcon/>
-                    </a>
+                    </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a @click='$router.push("/")' class="dropdown-item">Home</a>
                         <a @click='$router.push("/issue")' class="dropdown-item">Issues</a>
@@ -30,9 +30,9 @@
                         <BellIcon/>
                     </a>
 
-                    <a class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-dark dropdown-toggle" type='button' data-bs-toggle="dropdown" aria-expanded="false">
                         <UserIcon/>
-                    </a>
+                    </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a @click='$router.push("/profile")' class="dropdown-item">Profile</a>
                         <a @click='$router.push("/logout")' class="dropdown-item">Logout</a>
