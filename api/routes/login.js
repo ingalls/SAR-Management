@@ -10,7 +10,7 @@ export default async function router(schema, config) {
         name: 'Session Info',
         group: 'Login',
         auth: 'user',
-        description: 'REturn information about the currently logged in user',
+        description: 'Return information about the currently logged in user',
         res: 'res.Login.json'
     }, async (req, res) => {
         try {

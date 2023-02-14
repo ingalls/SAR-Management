@@ -14,7 +14,7 @@ export default async function router(schema, config) {
         res: 'res.ListIssueComments.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Issues:View');
 
             res.json(await ViewIssueComment.list(config.pool, req.params.issueid, req.query));
         } catch (err) {
@@ -32,7 +32,7 @@ export default async function router(schema, config) {
         res: 'view_issues_comments.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Issues:Comment');
 
             const comment = await IssueComment.generate(config.pool, {
                 issue: req.params.issueid,

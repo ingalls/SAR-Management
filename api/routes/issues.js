@@ -14,7 +14,7 @@ export default async function router(schema, config) {
         res: 'res.ListIssues.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Issues:View');
 
             res.json(await ViewIssue.list(config.pool, req.query));
         } catch (err) {
@@ -31,7 +31,7 @@ export default async function router(schema, config) {
         res: 'view_issues.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Issues:Manage');
 
             const issue = await Issue.generate(config.pool, {
                 author: req.auth.id,
@@ -64,7 +64,7 @@ export default async function router(schema, config) {
         res: 'view_issues.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Issues:Manage');
 
             const issue = await Issue.from(config.pool, req.params.issueid);
 
@@ -89,7 +89,7 @@ export default async function router(schema, config) {
         res: 'view_issues.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_iam(req, 'Issues:View');
 
             res.json(await ViewIssue.from(config.pool, req.params.issueid));
         } catch (err) {

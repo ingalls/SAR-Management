@@ -469,7 +469,7 @@
 
 
 /**
-* @api {delete} /leadership/:leaderid dElete Leadership
+* @api {delete} /leadership/:leaderid Delete Leadership
 * @apiVersion 1.0.0
 * @apiName DELETE-/leadership/:leaderid
 * @apiGroup Leadership
@@ -494,7 +494,7 @@
 * @apiPermission user
 *
 * @apidescription
-*   REturn information about the currently logged in user
+*   Return information about the currently logged in user
 *
 
 *
