@@ -118,6 +118,7 @@ export default {
     computed: {
         is_roster: function() {
             if (this.mission.end_ts > +new Date()) return false;
+            if (this.mission.end_ts < +new Date() - 604800000) return false; //Only request in last week
 
             return this.assigned.every((a) => {
                 return a.uid != this.auth.id;
