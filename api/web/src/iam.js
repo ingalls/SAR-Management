@@ -5,14 +5,19 @@ export default function(Permissions, auth, permission)  {
 
     const iam = permission.split(':');
 
-    if (
-        auth.iam
-        && iam.length === 2
-        && auth.iam[iam[0]]
-        && Permissions[iam[0]].indexOf(iam[1]) <= Permissions[iam[0]].indexOf(auth.iam[iam[0]])
-    ) {
-        return true;
-    }
+    // WebUI is misconfigured
+    if (!auth.iam || iam.length !== 2) return false;
+
+    const group = Permissions[iam[0]];
+
+    // IAM Group specified does not exist in API
+    if (!group) return false;
+
+    // User does not have that permission specified
+    if (!auth.iam[iam[0]]) return false;
+
+    // Auth Added
+    if (group.indexOf(iam[1]) >= group.indexOf(auth.iam[iam[0]])) return true;
 
     return false;
 }

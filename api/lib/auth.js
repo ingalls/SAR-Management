@@ -97,7 +97,7 @@ export default class Auth {
             req.auth.iam
             && iam.length === 2
             && req.auth.iam[iam[0]]
-            && Permissions[iam[0]].indexOf(iam[1]) <= Permissions[iam[0]].indexOf(req.auth.iam[iam[0]])
+            && Permissions[iam[0]].indexOf(iam[1]) >= Permissions[iam[0]].indexOf(req.auth.iam[iam[0]])
         ) {
             return true;
         }
