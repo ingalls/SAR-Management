@@ -11,7 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
+                            <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
                                 New Training
                             </a>
                         </div>
@@ -25,7 +25,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Training:View")' title='Trainings'/>
+                    <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class="input-icon w-50">
@@ -33,15 +34,6 @@
                                     <span class="input-icon-addon">
                                         <SearchIcon width='24'/>
                                     </span>
-                                </div>
-
-                                <div class='ms-auto'>
-                                    <div class="btn-list">
-                                        <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                        <div class="dropdown-menu dropdown-menu-end" style="">
-                                            <a @click='getExport' class="dropdown-item" href="#">Export CSV</a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -75,6 +67,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import PageFooter from './PageFooter.vue';
@@ -111,9 +105,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.listTrainings();
+        if (this.is_iam("Training:View")) await this.listTrainings();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listTrainings: async function() {
             const url = window.stdurl('/api/training');
             if (this.query.filter) url.searchParams.append('filter', this.query.filter);
@@ -125,6 +120,7 @@ export default {
         EpochRange,
         SearchIcon,
         PageFooter,
+        NoAccess
     }
 }
 </script>

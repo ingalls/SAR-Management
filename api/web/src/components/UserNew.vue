@@ -20,7 +20,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("User:Admin")' title='New User'/>
+                    <div v-else class="card">
                         <div class="card-body">
                             <TablerLoading v-if='loading' desc='Creating User'/>
                             <div v-else class='row row-cards'>
@@ -60,6 +61,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import {
     TablerInput
@@ -97,6 +100,7 @@ export default {
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         create: async function() {
             for (const field of ['username', 'email', 'fname', 'lname', 'phone']) {
                 if (!this.user[field]) this.errors[field] = 'Cannot be empty';
@@ -117,6 +121,7 @@ export default {
         }
     },
     components: {
+        NoAccess,
         TablerInput,
         PageFooter,
     }

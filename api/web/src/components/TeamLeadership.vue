@@ -20,7 +20,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Leadership:Admin")' title='Leadership'/>
+                    <div v-else class="card">
                         <div class='card-header'>
                             <div class="col">
                                 <div class="d-flex">
@@ -101,6 +102,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import TableFooter from './util/TableFooter.vue';
 import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
@@ -145,9 +148,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.listLeaders();
+        if (this.is_iam("Team:Admin")) await this.listLeaders();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         push: function() {
             this.list.leadership.splice(0, 0, {
                 _edit: true,
@@ -208,7 +212,8 @@ export default {
         TablerInput,
         PageFooter,
         UserDropdown,
-        TableFooter
+        TableFooter,
+        NoAccess
     }
 }
 </script>

@@ -20,7 +20,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Training:Manage")' title='Edit Training'/>
+                    <div v-else class="card">
                         <TablerLoading v-if='loading.training'/>
                         <div v-else class="card-body">
                             <div class='row row-cards'>
@@ -68,6 +69,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import {
@@ -102,13 +105,14 @@ export default {
         }
     },
     mounted: async function() {
-        if (this.$route.params.trainingid) {
+        if (this.$route.params.trainingid && this.is_iam('Training:Manage')) {
             await this.fetch();
         } else {
             this.loading.training = false;
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
             this.loading.training = true;
             const training = await window.std(`/api/training/${this.$route.params.trainingid}`);
@@ -140,7 +144,8 @@ export default {
         Location,
         PageFooter,
         TablerInput,
-        TablerLoading
+        TablerLoading,
+        NoAccess
     }
 }
 </script>

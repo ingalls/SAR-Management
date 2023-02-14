@@ -19,55 +19,58 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div v-if='!loading.assigned && is_roster' class="col-lg-12">
-                    <div class='card'>
-                        <div class="alert alert-info alert-dismissible" role="alert">
-                            <h3 class="mb-1">Roster Correction</h3>
-                            <p>You aren't marked as present for this training. If this is incorrect, request to be added to the training roster</p>
-                            <div class='d-flex'>
+                <NoAccess v-if='!is_iam("Training:View")' title='Training'/>
+                <template v-else>
+                    <div v-if='!loading.assigned && is_roster' class="col-lg-12">
+                        <div class='card'>
+                            <div class="alert alert-info alert-dismissible" role="alert">
+                                <h3 class="mb-1">Roster Correction</h3>
+                                <p>You aren't marked as present for this training. If this is incorrect, request to be added to the training roster</p>
+                                <div class='d-flex'>
+                                    <div class='ms-auto'>
+                                        <a href="#" class="btn btn-info">Request Inclusion</a>
+                                    </div>
+                                </div>
+                                <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <TablerLoading v-if='loading.training'/>
+                        <div v-else class="card">
+                            <div class='card-header'>
+                                <h3 class='card-title' v-text='`${training.title} @ ${training.location}`'/>
+
                                 <div class='ms-auto'>
-                                    <a href="#" class="btn btn-info">Request Inclusion</a>
+                                    <div class='btn-list'>
+                                        <EpochRange :start='training.start_ts' :end='training.end_ts'/>
+                                        <SettingsIcon @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                    </div>
                                 </div>
                             </div>
-                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <TablerLoading v-if='loading.training'/>
-                    <div v-else class="card">
-                        <div class='card-header'>
-                            <h3 class='card-title' v-text='`${training.title} @ ${training.location}`'/>
+                            <div class="card-body">
+                                <div class='row row-cards'>
+                                    <div class="col-md-12" v-text='training.body'></div>
 
-                            <div class='ms-auto'>
-                                <div class='btn-list'>
-                                    <EpochRange :start='training.start_ts' :end='training.end_ts'/>
-                                    <SettingsIcon @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-12" v-text='training.body'></div>
-
-                                <div class='col-md-12'>
-                                    <Location/>
+                                    <div class='col-md-12'>
+                                        <Location/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-12">
-                    <UserPresentSelect
-                        label='Training Roster'
-                        v-model='assigned'
-                        :loading='loading.assigned'
-                        @push='postAssigned($event)'
-                        @patch='patchAssigned($event)'
-                        @delete='deleteAssigned($event)'
-                    />
-                </div>
+                    <div class="col-lg-12">
+                        <UserPresentSelect
+                            label='Training Roster'
+                            v-model='assigned'
+                            :loading='loading.assigned'
+                            @push='postAssigned($event)'
+                            @patch='patchAssigned($event)'
+                            @delete='deleteAssigned($event)'
+                        />
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -77,6 +80,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
@@ -116,8 +121,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.fetch();
-        await this.fetchAssigned();
+        if (this.is_iam('Training:View')) {
+            await this.fetch();
+            await this.fetchAssigned();
+        }
     },
     computed: {
         is_roster: function() {
@@ -129,6 +136,7 @@ export default {
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
             this.loading.training = true;
             this.training = await window.std(`/api/training/${this.$route.params.trainingid}`);
@@ -171,7 +179,8 @@ export default {
         SettingsIcon,
         PageFooter,
         UserPresentSelect,
-        TablerLoading
+        TablerLoading,
+        NoAccess
     }
 }
 </script>
