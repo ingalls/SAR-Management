@@ -120,39 +120,39 @@
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <NoAccess v-if='!is_iam("Mission:View")' title='Mission Rate'/>
-                    <CardMissionMini
+                    <CardMissionMini v-else
                         :assigned='userid'
                     />
                 </div>
                 <div class="col-sm-6 col-lg-6">
                     <NoAccess v-if='!is_iam("Training:View")' title='Training Rate'/>
-                    <CardTrainingMini
+                    <CardTrainingMini v-else
                         :assigned='userid'
                     />
                 </div>
                 <div class="col-lg-6">
                     <NoAccess v-if='!is_iam("Equipment:View")' title='Assigned Equipment'/>
-                    <CardEquipment
+                    <CardEquipment v-else
                         label='Assigned Equipment'
                         :assigned='userid'
                     />
                 </div>
                 <div class="col-lg-6">
                     <NoAccess v-if='!is_iam("Issue:View")' title='Assigned Issues'/>
-                    <CardIssues
+                    <CardIssues v-else
                         label='Assigned Issues'
                         :assigned='userid'
                     />
                 </div>
                 <div class="col-lg-6">
                     <NoAccess v-if='!is_iam("User:View")' title='Certificates'/>
-                    <CardCerts
+                    <CardCerts v-else
                         :assigned='userid'
                     />
                 </div>
                 <div class="col-lg-6">
                     <NoAccess v-if='!is_iam("Mission:View")' title='Mission Log'/>
-                    <CardMission
+                    <CardMission v-else
                         label='Mission Log'
                         :assigned='userid'
                     />
