@@ -20,7 +20,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Equipment:Manage")' title='New Equipment'/>
+                    <div v-else class="card">
                         <TablerLoading v-if='loading'/>
                         <div v-else class="card-body">
                             <div class='row row-cards'>
@@ -55,6 +56,8 @@
 
 <script>
 import PageFooter from './PageFooter.vue';
+import NoAccess from './util/NoAccess.vue';
+import iam from '../iam.js';
 
 export default {
     name: 'EquipmentsNew',
@@ -78,6 +81,7 @@ export default {
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         create: async function() {
             const equip = await window.std('/api/equipment', {
                 method: 'POST',
@@ -88,6 +92,7 @@ export default {
         }
     },
     components: {
+        NoAccess,
         PageFooter,
     }
 }

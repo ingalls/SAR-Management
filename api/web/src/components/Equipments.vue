@@ -10,7 +10,7 @@
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Equipment</a></li>
                         </ol>
 
-                        <div class='ms-auto'>
+                        <div v-if='is_iam("Equipment:Manage")' class='ms-auto'>
                             <a @click='$router.push("/equipment/new")' class="cursor-pointer btn btn-primary">
                                 New Gear
                             </a>
@@ -25,7 +25,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
+                    <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class="input-icon w-50">
@@ -66,6 +67,8 @@
 </template>
 
 <script>
+import NoAccess from './util/NoAccess.vue';
+import iam from '../iam.js';
 import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 import {
@@ -96,9 +99,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.listEquipment();
+        if (this.is_iam("Equipment:View")) await this.listEquipment();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listEquipment: async function() {
             const url = window.stdurl('/api/equipment');
             if (this.query.filter) url.searchParams.append('filter', this.query.filter);
@@ -107,6 +111,7 @@ export default {
     },
     components: {
         None,
+        NoAccess,
         PageFooter,
         SearchIcon
     }
