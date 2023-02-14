@@ -10,7 +10,7 @@
                             <li class="breadcrumb-item active" aria-current="page"><a href="#">Docs</a></li>
                         </ol>
 
-                        <div class='ms-auto'>
+                        <div v-if='is_iam("Doc:Manage")' class='ms-auto'>
                             <a @click='$router.push("/doc/new")' class="cursor-pointer btn btn-primary">New Doc</a>
                         </div>
                     </div>
@@ -23,7 +23,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Doc:View")' title='Documents'/>
+                    <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class="input-icon w-50">
@@ -62,6 +63,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 
@@ -89,9 +92,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.listDocs();
+        if (this.is_iam("Doc:View")) await this.listDocs();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listDocs: async function() {
             this.list = await window.std('/api/doc');
         }
@@ -99,6 +103,7 @@ export default {
     components: {
         None,
         PageFooter,
+        NoAccess
     }
 }
 </script>
