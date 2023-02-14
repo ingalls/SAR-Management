@@ -6,6 +6,9 @@
                 <div class="container-tight">
                     <div class="card card-md">
                         <div class="card-body">
+                            <div class='text-center' style='margin-bottom: 24px;'>
+                                <img src='/logo.png' height='150'/>
+                            </div>
                             <h2 class="h2 text-center mb-4">Login to your account</h2>
                             <div class="mb-3">
                                 <label class="form-label">Username or Email</label>
