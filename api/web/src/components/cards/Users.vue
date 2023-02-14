@@ -7,7 +7,7 @@
 
                 <div class='ms-auto'>
                     <div class="btn-list">
-                        <div class="input-icon">
+                        <div v-if='!edit' class="input-icon">
                             <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
                             <span class="input-icon-addon">
                                 <SearchIcon width='24'/>

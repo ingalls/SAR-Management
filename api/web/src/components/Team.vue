@@ -49,7 +49,7 @@
                         v-if='team.id'
                         :dropdown='false'
                         :url='`/api/team/${$route.params.teamid}/user`'
-                        :edit='true'
+                        :edit='is_iam("Team:Manage")'
                     />
                 </template>
             </div>
