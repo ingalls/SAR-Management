@@ -103,7 +103,7 @@
                             </a>
                         </li>
                     </ul>
-                    <div class='ms-auto'>
+                    <div v-if='auth && auth.access === "admin"' class='ms-auto'>
                         <ul class="navbar-nav">
                             <li class="nav-item">
                                 <a class="nav-link cursor-pointer" @click='$router.push("/admin")'>
