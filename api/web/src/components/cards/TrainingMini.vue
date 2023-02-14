@@ -12,7 +12,7 @@
             <TablerLoading/>
         </template>
         <template v-else>
-            <TablerProgress :key='percent' :progress='percent'/>
+            <TablerProgress :key='percent' :percent='percent'/>
         </template>
     </div>
 </div>
@@ -29,7 +29,7 @@ export default {
     props: {
         label: {
             type: String,
-            default: 'Training Rate'
+            default: 'Annual Training Rate'
         },
         assigned: {
             type: Number,
@@ -57,7 +57,8 @@ export default {
 
             const attended = (await window.std(url)).total;
 
-            this.percent = attended / total;
+            if (total === 0) this.percent = 1;
+            else this.percent = attended / total;
 
             this.loading = false;
         }
