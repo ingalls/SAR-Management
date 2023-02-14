@@ -11,7 +11,7 @@
                 <div class='d-flex'>
                     <div class='ms-auto'>
                         <div class='btn-list'>
-                            <a @click='create' class="cursor-pointer btn btn-outline-secondary">
+                            <a @click='create(true)' class="cursor-pointer btn btn-outline-secondary">
                                 Comment &amp; Close
                             </a>
                             <a @click='create' class="cursor-pointer btn btn-primary">
@@ -35,7 +35,7 @@ export default {
         }
     },
     methods: {
-        create: async function() {
+        create: async function(close) {
             await window.std(`/api/issue/${this.$route.params.issueid}/comment`, {
                 method: 'POST',
                 body: {
@@ -45,6 +45,7 @@ export default {
 
             this.body = '';
             this.$emit('comment');
+            if (close) this.$emit('close');
         }
     },
 }

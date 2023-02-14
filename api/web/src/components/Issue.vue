@@ -103,6 +103,7 @@
                     <template v-if='issue.status === "open"'>
                         <CreateComment
                             @comment='fetchComments'
+                            @close='update("closed")'
                         />
                     </template>
                 </template>

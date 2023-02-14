@@ -69,10 +69,16 @@ export default async function router(schema, config) {
             const issue = await Issue.from(config.pool, req.params.issueid);
 
             if (req.auth.id !== issue.author && req.auth.access !== 'admin') {
-                throw new Err(401, null, 'Cannot edit another\'s issue');
+                if (req.body.status !== undefined) {
+                    await issue.commit({
+                        status: req.body.status
+                    });
+                } else {
+                    throw new Err(401, null, 'Cannot edit another\'s issue');
+                }
+            } else {
+                await issue.commit(req.body);
             }
-
-            await issue.commit(req.body);
 
             res.json(await ViewIssue.from(config.pool, issue.id));
         } catch (err) {
