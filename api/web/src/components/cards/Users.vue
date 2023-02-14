@@ -7,6 +7,14 @@
 
                 <div class='ms-auto'>
                     <div class="btn-list">
+                        <div class="input-icon">
+                            <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
+                            <span class="input-icon-addon">
+                                <SearchIcon width='24'/>
+                            </span>
+                        </div>
+
+
                         <div v-if='!edit' class="btn-group" role="group">
                             <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='list'>
                             <label @click='mode="list"' class="btn btn-icon"><ListIcon/></label>
@@ -18,7 +26,7 @@
                             <UserDropdownIcon v-else @selected='addUser($event)'/>
                         </div>
 
-                        <button v-if='dropdown' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                        <button v-if='dropdown && edit' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                         <div class="dropdown-menu dropdown-menu-end" style="">
                             <a @click='$router.push("/user/new")' class="dropdown-item">New User</a>
                         </div>
@@ -97,6 +105,7 @@
 <script>
 import {
     ListIcon,
+    SearchIcon,
     PolaroidIcon,
     TrashIcon
 } from 'vue-tabler-icons'
@@ -132,6 +141,7 @@ export default {
                 list: true,
             },
             paging: {
+                filter: '',
                 limit: 10,
                 page: 0
             },
@@ -143,6 +153,9 @@ export default {
     },
     watch: {
         'paging.page': async function() {
+            await this.listUsers();
+        },
+        'paging.filter': async function() {
             await this.listUsers();
         }
     },
@@ -177,6 +190,7 @@ export default {
             if (this.team) url.searchParams.append('team', this.team);
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
+            url.searchParams.append('filter', this.paging.filter);
 
             this.list = await window.std(url);
             this.loading.list = false;
@@ -186,6 +200,7 @@ export default {
         None,
         UserDropdownIcon,
         TrashIcon,
+        SearchIcon,
         ListIcon,
         PolaroidIcon,
         UserProfile,
