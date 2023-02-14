@@ -16,12 +16,13 @@
         </div>
     </div>
 
-    <TablerLoading v-if='loading'/>
-    <div v-else class='page-body'>
+    <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Team:Manage")' title='Edit Team'/>
+                    <TablerLoading v-else-if='loading'/>
+                    <div v-else class="card">
                         <div class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-12">
@@ -52,7 +53,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-12">
+                <div v-if='is_iam("Team:Admin")' class="col-lg-12">
                     <div class="card">
                         <div class='card-header'>Team Access Management</div>
                         <table class="table card-table table-vcenter">
@@ -89,6 +90,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import {
     TablerLoading,
@@ -123,10 +126,13 @@ export default {
         }
     },
     mounted: async function() {
-        await this.fetchiam();
-        await this.fetch();
+        if (this.is_iam("Team:Manage")) {
+            await this.fetchiam();
+            await this.fetch();
+        }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetchiam: async function() {
             this.iamlist = await window.std(`/api/iam`);
         },
@@ -174,6 +180,7 @@ export default {
         }
     },
     components: {
+        NoAccess,
         PageFooter,
         TablerLoading,
         TablerSelect

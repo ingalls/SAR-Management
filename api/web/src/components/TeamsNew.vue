@@ -20,19 +20,20 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Team:Manage")' title='New Team'/>
+                    <div v-else class="card">
                         <div class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-12">
                                     <label class="form-label">Team Name</label>
-                                    <input v-model='name' type="text" :class='{
+                                    <input v-model='team.name' type="text" :class='{
                                         "is-invalid": errors.name
                                     }' class="form-control" placeholder="Team Name">
                                     <div v-if='errors.name' v-text='errors.name' class="invalid-feedback"></div>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Charter</label>
-                                    <textarea rows=5 v-model='body' type="text" :class='{
+                                    <textarea rows=5 v-model='team.body' type="text" :class='{
                                         "is-invalid": errors.body
                                     }' class="form-control" placeholder="Team Charter"/>
                                     <div v-if='errors.body' v-text='errors.body' class="invalid-feedback"></div>
@@ -57,6 +58,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 
 export default {
@@ -77,14 +80,17 @@ export default {
                 name: false,
                 body: false
             },
-            name: '',
-            body: ''
+            team: {
+                name: '',
+                body: ''
+            }
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         create: async function() {
             for (const field of ['name', 'body']) {
-                if (!this[field]) this.errors[field] = 'Cannot be empty';
+                if (!this.team[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = false;
             }
 
@@ -94,16 +100,14 @@ export default {
 
             const create = await window.std('/api/team', {
                 method: 'POST',
-                body: {
-                    name: this.name,
-                    body: this.body,
-                }
+                body: this.team
             });
 
             this.$router.push(`/team/${create.id}`);
         }
     },
     components: {
+        NoAccess,
         PageFooter,
     }
 }
