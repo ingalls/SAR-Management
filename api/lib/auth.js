@@ -35,7 +35,7 @@ class AuthAugment {
                 for (const group in i) {
                     if (!iam[group]) {
                         iam[group] = i[group];
-                    } else if (Permissions[group].indexOf(iam[group]) > Permissions[group].indexOf(i[group])) {
+                    } else if (Permissions[group] && Permissions[group].indexOf(iam[group]) > Permissions[group].indexOf(i[group])) {
                         iam[group] = i[group];
                     }
                 }
@@ -43,6 +43,7 @@ class AuthAugment {
 
             return iam;
         } catch (err) {
+            console.error(err);
             throw new Err(500, err, 'Server failed to get authentication levels');
         }
     }
