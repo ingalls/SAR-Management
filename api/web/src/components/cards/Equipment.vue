@@ -1,9 +1,7 @@
 <template>
 <div class="card">
     <div class="card-body">
-        <div class="d-flex">
-            <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
-        </div>
+        <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
     </div>
     <template v-if='!equipment.length'>
         <None :create='false' label='Personal Equipment' :compact='true'/>
