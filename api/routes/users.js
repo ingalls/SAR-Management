@@ -35,7 +35,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'User:Admin');
 
-            req.body.email = req.body.emailtoLowerCase();
+            req.body.email = req.body.email.toLowerCase();
             req.body.username = req.body.username.toLowerCase();
             const user = await User.generate(config.pool, {
                 ...req.body,
