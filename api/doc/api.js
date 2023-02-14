@@ -892,12 +892,30 @@
 * @apiPermission user
 *
 * @apidescription
-*   Remove an assignment
+*   Create an assignment
 *
 * @apiParam {integer} trainingid param
 *
 *
 * @apiSchema (Body) {jsonschema=../schema/req.body.CreateTrainingAssigned.json} apiParam
+* @apiSchema {jsonschema=../schema/training_assigned.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /training/:trainingid/assigned/request Request Assignment
+* @apiVersion 1.0.0
+* @apiName POST-/training/:trainingid/assigned/request
+* @apiGroup TrainingAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Request an assignment
+*
+* @apiParam {integer} trainingid param
+*
+*
+*
 * @apiSchema {jsonschema=../schema/training_assigned.json} apiSuccess
 */
 

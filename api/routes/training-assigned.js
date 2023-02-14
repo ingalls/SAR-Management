@@ -26,7 +26,7 @@ export default async function router(schema, config) {
         group: 'TrainingAssigned',
         auth: 'user',
         ':trainingid': 'integer',
-        description: 'Remove an assignment',
+        description: 'Create an assignment',
         body: 'req.body.CreateTrainingAssigned.json',
         res: 'training_assigned.json'
     }, async (req, res) => {
@@ -36,6 +36,28 @@ export default async function router(schema, config) {
             res.json(await TrainingAssigned.generate(config.pool, {
                 training_id: req.params.trainingid,
                 ...req.body
+            }));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+    await schema.post('/training/:trainingid/assigned/request', {
+        name: 'Request Assignment',
+        group: 'TrainingAssigned',
+        auth: 'user',
+        ':trainingid': 'integer',
+        description: 'Request an assignment',
+        res: 'training_assigned.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Training:View');
+
+            res.json(await TrainingAssigned.generate(config.pool, {
+                training_id: req.params.trainingid,
+                uid: req.auth.id,
+                role: 'present',
+                confirmed: false
             }));
         } catch (err) {
             return Err.respond(err, res);

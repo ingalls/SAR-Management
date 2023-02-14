@@ -28,7 +28,8 @@
                                 <p>You aren't marked as present for this training. If this is incorrect, request to be added to the training roster</p>
                                 <div class='d-flex'>
                                     <div class='ms-auto'>
-                                        <a href="#" class="btn btn-info">Request Inclusion</a>
+                                        <TablerLoading v-if='loading.request' :inline='true'/>
+                                        <button v-else @click='request' class="btn btn-info cursor-pointer">Request Inclusion</button>
                                     </div>
                                 </div>
                                 <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
@@ -110,6 +111,7 @@ export default {
         return {
             loading: {
                 assigned: true,
+                request: false,
                 training: true
             },
             assigned: [],
@@ -147,6 +149,13 @@ export default {
             this.loading.assigned = true;
             this.assigned = (await window.std(`/api/training/${this.$route.params.trainingid}/assigned`)).assigned;
             this.loading.assigned = false;
+        },
+        request: async function() {
+            this.loading.request = true;
+            await window.std(`/api/training/${this.$route.params.trainingid}/assigned/request`, {
+                method: 'POST'
+            })
+            this.loading.request = false;
         },
         deleteAssigned: async function(user) {
             await window.std(`/api/training/${this.$route.params.trainingid}/assigned/${user.id}`, {
