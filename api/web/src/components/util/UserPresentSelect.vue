@@ -39,8 +39,8 @@
 
                 <div v-if='!disabled' class='ms-auto'>
                     <div class='btn-list'>
-                        <div v-if='!a.confirmed' class='btn btn--sm'>
-                            <CheckIcon @click='confirm_assigned(a)' height='16' class='cursor-pointer'/> Confirm
+                        <div v-if='!a.confirmed' @click='confirm_assigned(a)' class='btn btn--sm'>
+                            <CheckIcon height='16'/> Confirm
                         </div>
                         <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer my-2'/>
                     </div>

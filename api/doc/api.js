@@ -874,7 +874,7 @@
 * @apiPermission user
 *
 * @apidescription
-*   Get users assigned to an training
+*   Get users assigned to a training
 *
 * @apiParam {integer} trainingid param
 *
@@ -921,6 +921,25 @@
 
 
 /**
+* @api {patch} /training/:trainingid/assigned/:assignedid Update Assigned
+* @apiVersion 1.0.0
+* @apiName PATCH-/training/:trainingid/assigned/:assignedid
+* @apiGroup TrainingAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Update a user in a training
+*
+* @apiParam {integer} trainingid param
+* @apiParam {integer} assignedid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/training_assigned.json} apiSuccess
+*/
+
+
+/**
 * @api {delete} /training/:trainingid/assigned/:assignedid Remove Assigned
 * @apiVersion 1.0.0
 * @apiName DELETE-/training/:trainingid/assigned/:assignedid
@@ -928,7 +947,7 @@
 * @apiPermission user
 *
 * @apidescription
-*   Remove a user from an training
+*   Remove a user from a training
 *
 * @apiParam {integer} trainingid param
 * @apiParam {integer} assignedid param
