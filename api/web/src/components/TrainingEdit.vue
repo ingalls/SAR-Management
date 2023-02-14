@@ -46,6 +46,9 @@
 
                                 <div class="col-md-12">
                                     <div class='d-flex'>
+                                        <a v-if='$route.params.trainingid && is_iam("Training:Admin")' @click='deleteTraining' class="cursor-pointer btn btn-danger">
+                                            Delete Training
+                                        </a>
                                         <div class='ms-auto'>
                                             <a v-if='$route.params.trainingid' @click='update' class="cursor-pointer btn btn-primary">
                                                 Update Training
@@ -130,6 +133,12 @@ export default {
             });
 
             this.$router.push(`/training/${create.id}`);
+        },
+        deleteTraining: async function() {
+            await window.std(`/api/training/${this.training.id}`, {
+                method: 'DELETE'
+            });
+            this.$router.push(`/training`);
         },
         update: async function() {
             const create = await window.std(`/api/training/${this.training.id}`, {

@@ -994,6 +994,24 @@
 
 
 /**
+* @api {delete} /training/:trainingid Delete Training
+* @apiVersion 1.0.0
+* @apiName DELETE-/training/:trainingid
+* @apiGroup Training
+* @apiPermission user
+*
+* @apidescription
+*   Remove an existing training
+*
+* @apiParam {integer} trainingid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /user/:userid/certs Get Certs
 * @apiVersion 1.0.0
 * @apiName GET-/user/:userid/certs

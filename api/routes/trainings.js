@@ -105,4 +105,27 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.delete('/training/:trainingid', {
+        name: 'Delete Training',
+        group: 'Training',
+        auth: 'user',
+        description: 'Remove an existing training',
+        ':trainingid': 'integer',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Training:Admin');
+
+            const training = await Training.from(config.pool, req.params.trainingid);
+            await training.delete();
+
+            return res.json({
+                status: 200,
+                message: 'Training Deleted'
+            });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }

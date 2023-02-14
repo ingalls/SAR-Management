@@ -43,4 +43,24 @@ export default class Training extends Generic {
             throw new Err(500, err, 'Failed to list Trainings');
         }
     }
+
+    async delete(opts = {}) {
+        try {
+            await this._pool.query(sql`
+                DELETE FROM training_assigned
+                    WHERE
+                        training_id = ${this.id}
+            `);
+
+            await this._pool.query(sql`
+                DELETE FROM ${sql.identifier([this._table])}
+                    WHERE
+                        id = ${this.id}
+            `);
+
+            return true;
+        } catch (err) {
+            throw new Err(500, new Error(err), `Failed to delete from ${this._table}`);
+        }
+    }
 }
