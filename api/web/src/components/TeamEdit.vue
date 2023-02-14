@@ -21,7 +21,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Team:Manage")' title='Edit Team'/>
-                    <TablerLoading v-else-if='loading'/>
+                    <TablerLoading v-else-if='loading.team'/>
                     <div v-else class="card">
                         <div class="card-body">
                             <div class='row row-cards'>
@@ -54,7 +54,8 @@
                 </div>
 
                 <div v-if='is_iam("Team:Admin")' class="col-lg-12">
-                    <div class="card">
+                    <TablerLoading v-if='loading.iam || loading.team'/>
+                    <div v-else class="card">
                         <div class='card-header'>Team Access Management</div>
                         <table class="table card-table table-vcenter">
                             <thead>
@@ -112,7 +113,10 @@ export default {
     },
     data: function() {
         return {
-            loading: true,
+            loading: {
+                team: true,
+                iam: true
+            },
             errors: {
                 name: false,
                 body: false
@@ -134,12 +138,14 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetchiam: async function() {
+            this.loading.iam = true;
             this.iamlist = await window.std(`/api/iam`);
+            this.loading.iam = false;
         },
         fetch: async function() {
-            this.loading = true;
+            this.loading.team = true;
             this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
-            this.loading = false;
+            this.loading.team = false;
         },
         deleteTeam: async function() {
             await window.std(`/api/team/${this.$route.params.teamid}`, {
