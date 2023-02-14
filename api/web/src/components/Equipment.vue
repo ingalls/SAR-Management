@@ -45,7 +45,14 @@ import PageFooter from './PageFooter.vue';
 export default {
     name: 'Equipment',
     props: {
-        auth: Object
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
     },
     data: function() {
         return {

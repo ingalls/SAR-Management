@@ -144,6 +144,16 @@ import UserProfile from './User/Profile.vue';
 
 export default {
     name: 'UserEdit',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             token: localStorage.token,

@@ -20,7 +20,8 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <div class="card">
+                    <NoAccess v-if='!is_iam("Issues:Manage")' title='New Issue'/>
+                    <div v-else class="card">
                         <div class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-10">
@@ -61,6 +62,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import UserSelect from './util/UserSelect.vue';
 import {
@@ -69,6 +72,16 @@ import {
 
 export default {
     name: 'IssuesNew',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             errors: {
@@ -83,6 +96,7 @@ export default {
         }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         create: async function() {
             for (const field of ['title', 'body']) {
                 if (!this.issue[field]) this.errors[field] = 'Cannot be empty';
@@ -108,6 +122,7 @@ export default {
         }
     },
     components: {
+        NoAccess,
         TablerInput,
         PageFooter,
         UserSelect

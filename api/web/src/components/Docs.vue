@@ -67,6 +67,16 @@ import None from './util/None.vue';
 
 export default {
     name: 'Docs',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             query: {

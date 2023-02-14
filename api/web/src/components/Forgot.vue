@@ -51,7 +51,6 @@ import {
 
 export default {
     name: 'Forgot',
-    props: ['meta'],
     data: function() {
         return {
             submitted: false,

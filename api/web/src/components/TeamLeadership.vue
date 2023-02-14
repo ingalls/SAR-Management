@@ -119,6 +119,16 @@ import {
 
 export default {
     name: 'TeamLeadership',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             loading: {

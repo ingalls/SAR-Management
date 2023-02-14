@@ -11,7 +11,7 @@
                         </ol>
 
                         <div class='ms-auto'>
-                            <a @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
+                            <a v-if='is_iam("Issues:Manage")' @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
                                 New Issue
                             </a>
                         </div>
@@ -26,41 +26,44 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="input-icon w-50">
-                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
-                                    <span class="input-icon-addon">
-                                        <SearchIcon width='24'/>
-                                    </span>
-                                </div>
+                        <NoAccess v-if='!is_iam("Issues:View")' title='Issues'/>
+                        <template v-else>
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="input-icon w-50">
+                                        <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
+                                        <span class="input-icon-addon">
+                                            <SearchIcon width='24'/>
+                                        </span>
+                                    </div>
 
-                                <div class='ms-auto'>
-                                    <div class="btn-list">
-                                        <TablerSelect
-                                            default='Open'
-                                            :values='["Open", "Closed"]'
-                                        />
+                                    <div class='ms-auto'>
+                                        <div class="btn-list">
+                                            <TablerSelect
+                                                default='Open'
+                                                :values='["Open", "Closed"]'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <table class="table card-table table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr :key='issue.id' v-for='issue in list.issues'>
-                                    <td><a @click='$router.push(`/issue/${issue.id}`)' class='cursor-pointer' v-text='issue.title'></a></td>
-                                    <td v-text='issue.status'></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <template v-if='!list.total'>
-                            <None label='Issues' :create='false'/>
+                            <table class="table card-table table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr :key='issue.id' v-for='issue in list.issues'>
+                                        <td><a @click='$router.push(`/issue/${issue.id}`)' class='cursor-pointer' v-text='issue.title'></a></td>
+                                        <td v-text='issue.status'></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <template v-if='!list.total'>
+                                <None label='Issues' :create='false'/>
+                            </template>
                         </template>
                     </div>
                 </div>
@@ -73,6 +76,8 @@
 </template>
 
 <script>
+import iam from '../iam.js';
+import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 import { TablerSelect } from '@tak-ps/vue-tabler';
@@ -82,6 +87,16 @@ import {
 
 export default {
     name: 'Issues',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             list: {
@@ -99,9 +114,10 @@ export default {
         }
     },
     mounted: async function() {
-        await this.listIssues();
+        if (this.is_iam("Issues:Read")) await this.listIssues();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listIssues: async function() {
             const url = window.stdurl('/api/issue');
             if (this.query.filter) url.searchParams.append('filter', this.query.filter);
@@ -110,6 +126,7 @@ export default {
     },
     components: {
         None,
+        NoAccess,
         PageFooter,
         TablerSelect,
         SearchIcon

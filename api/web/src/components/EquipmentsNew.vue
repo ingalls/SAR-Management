@@ -58,6 +58,16 @@ import PageFooter from './PageFooter.vue';
 
 export default {
     name: 'EquipmentsNew',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             loading: false,

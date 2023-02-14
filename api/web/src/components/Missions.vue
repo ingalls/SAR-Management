@@ -97,6 +97,16 @@ import { TablerSelect } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Missions',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             query: {

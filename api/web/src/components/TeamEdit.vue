@@ -63,10 +63,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='group' v-for='group in Object.keys(iam)'>
+                                <tr :key='group' v-for='group in Object.keys(iamlist)'>
                                     <td v-text='group'></td>
                                     <td>
-                                        <TablerSelect @select='team.iam[group] = $event' :default='team.iam[group] || iam[group][iam[group].length - 1]' :values='iam[group]'/>
+                                        <TablerSelect @select='team.iam[group] = $event' :default='team.iam[group] || iamlist[group][iamlist[group].length - 1]' :values='iamlist[group]'/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -96,7 +96,17 @@ import {
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'TeamSingleEdit',
+    name: 'TeamEdit',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             loading: true,
@@ -104,7 +114,7 @@ export default {
                 name: false,
                 body: false
             },
-            iam: {},
+            iamlist: {},
             team: {
                 name: '',
                 body: '',
@@ -118,7 +128,7 @@ export default {
     },
     methods: {
         fetchiam: async function() {
-            this.iam = await window.std(`/api/iam`);
+            this.iamlist = await window.std(`/api/iam`);
         },
         fetch: async function() {
             this.loading = true;

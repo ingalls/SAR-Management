@@ -81,7 +81,14 @@ import EpochRange from './util/EpochRange.vue';
 export default {
     name: 'Mission',
     props: {
-        auth: Object
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
     },
     data: function() {
         return {

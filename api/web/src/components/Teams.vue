@@ -62,15 +62,15 @@ export default {
             required: true
         }
     },
+    methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
+    },
     components: {
         PageFooter,
         CardLeadership,
         CardUsers,
         CardTeams,
         NoAccess
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
     }
 }
 </script>

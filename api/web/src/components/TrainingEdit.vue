@@ -77,6 +77,16 @@ import {
 
 export default {
     name: 'TrainingsEdit',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             loading: {

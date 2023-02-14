@@ -90,6 +90,16 @@ import {
 
 export default {
     name: 'TrainingsNew',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             loading: {

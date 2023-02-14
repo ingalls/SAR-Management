@@ -67,6 +67,16 @@ import {
 
 export default {
     name: 'UserNew',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             errors: {

@@ -74,6 +74,16 @@ import {
 
 export default {
     name: 'Equipments',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             query: {

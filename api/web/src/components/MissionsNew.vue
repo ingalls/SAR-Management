@@ -80,6 +80,16 @@ import {
 
 export default {
     name: 'MissionsNew',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     data: function() {
         return {
             mission: {

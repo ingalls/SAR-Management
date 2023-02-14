@@ -43,6 +43,16 @@ import CardStandards from './Admin/Standards.vue';
 
 export default {
     name: 'Admin',
+    props: {
+        iam: {
+            type: Object,
+            required: true
+        },
+        auth: {
+            type: Object,
+            required: true
+        }
+    },
     components: {
         PageFooter,
         CardRoles,
