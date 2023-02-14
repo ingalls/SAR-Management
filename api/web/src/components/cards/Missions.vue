@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import { TablerSelect } from '@tak-ps/vue-tabler';
 import None from '../util/None.vue';
 
 export default {
@@ -64,7 +63,6 @@ export default {
     },
     components: {
         None,
-        TablerSelect
     }
 }
 </script>
