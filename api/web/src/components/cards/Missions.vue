@@ -1,24 +1,7 @@
 <template>
 <div class="card">
     <div class="card-body">
-        <div class="d-flex">
-            <h3 class="card-title" v-text='label'></h3>
-
-            <div class='ms-auto'>
-                <div class="btn-list">
-                    <TablerSelect
-                        default='Recent'
-                        :values='["Recent"]'
-                        @select='fetch($event)'
-                    />
-
-                    <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                    <div class="dropdown-menu dropdown-menu-end" style="">
-                        <a @click='getExport' class="dropdown-item" href="#">Page</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h3 class="card-title" v-text='label'></h3>
     </div>
     <template v-if='!missions.length'>
         <None :create='false' label='Missions'/>
