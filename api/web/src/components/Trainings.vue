@@ -49,12 +49,14 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Location</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr :key='training.id' v-for='training in list.training'>
                                     <td><a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a></td>
+                                    <td v-text='training.location'></td>
                                     <td><EpochRange :start='training.start_ts' :end='training.end_ts'/></td>
                                 </tr>
                             </tbody>
