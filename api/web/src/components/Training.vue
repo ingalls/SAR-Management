@@ -156,6 +156,9 @@ export default {
             await window.std(`/api/training/${this.$route.params.trainingid}/assigned/request`, {
                 method: 'POST'
             })
+
+            await this.fetchAssigned();
+
             this.loading.request = false;
         },
         deleteAssigned: async function(user) {

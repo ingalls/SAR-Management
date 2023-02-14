@@ -934,7 +934,7 @@
 * @apiParam {integer} assignedid param
 *
 *
-*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchTrainingAssigned.json} apiParam
 * @apiSchema {jsonschema=../schema/training_assigned.json} apiSuccess
 */
 
