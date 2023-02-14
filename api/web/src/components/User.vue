@@ -75,6 +75,13 @@
                                                 <div class="datagrid-content" v-text='user.start_year || "UNKNOWN"'></div>
                                             </div>
                                             <div class="datagrid-item">
+                                                <div class="datagrid-title">Last Login</div>
+                                                <div class="datagrid-content">
+                                                    <span v-if='!user.last_login'>Never</span>
+                                                    <Epoch v-else :date='user.last_login'/>
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
                                                 <div class="datagrid-title">Street Address</div>
                                                 <template v-if='user.address_street && user.address_city && user.address_state && user.address_zip'>
                                                     <div class="datagrid-content" v-html='`${user.address_street}<br>${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
@@ -167,6 +174,7 @@
 
 <script>
 import iam from '../iam.js';
+import Epoch from './util/Epoch.vue';
 import PageFooter from './PageFooter.vue';
 import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
@@ -226,6 +234,7 @@ export default {
         }
     },
     components: {
+        Epoch,
         PageFooter,
         UserProfile,
         CardIssues,
