@@ -9,7 +9,7 @@
         <TablerLoading desc='Loading Issues'/>
     </template>
     <template v-else-if='!issues.length'>
-        <None :create='false' label='Assigned Issues' :compact='true'/>
+        <None :create='false' label='Assigned Issues'/>
     </template>
     <template v-else>
         <table class="table card-table table-vcenter">
