@@ -4,7 +4,7 @@
         <div class="d-flex align-items-center mb-3">
             <div class="subheader" v-text='label'></div>
 
-            <div class='ms-auto'>
+            <div v-if='!disabled' class='ms-auto'>
                 <div class="dropdown">
                     <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                         <SettingsIcon
@@ -30,15 +30,14 @@
         </div>
 
         <TablerLoading v-if='loading'/>
-        <template v-if='!assigned.length'>
+        <template v-else-if='!assigned.length'>
             <None label='Users Assigned' :create='false'/>
         </template>
         <template v-else>
-            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
-                <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                <span v-text='`${a.fname} ${a.lname}`'/>
+            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-2">
+                <Avatar :user='a'/>
 
-                <div class='ms-auto'>
+                <div v-if='!disabled' class='ms-auto'>
                     <div class='btn-list'>
                         <div v-if='!a.confirmed' class='btn btn--sm'>
                             <CheckIcon @click='confirm_assigned(a)' height='16' class='cursor-pointer'/> Confirm
@@ -63,6 +62,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import None from './None.vue';
+import Avatar from './Avatar.vue';
 
 export default {
     name: 'UserPrecenseSelect',
@@ -70,6 +70,10 @@ export default {
         modelValue: {
             type: Array,
             required: true
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         },
         label: {
             type: String,
@@ -135,6 +139,7 @@ export default {
     },
     components: {
         None,
+        Avatar,
         SettingsIcon,
         TrashIcon,
         CheckIcon,

@@ -44,7 +44,7 @@
                                 <div class='ms-auto'>
                                     <div class='btn-list'>
                                         <EpochRange :start='training.start_ts' :end='training.end_ts'/>
-                                        <SettingsIcon @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                        <SettingsIcon v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
                                     </div>
                                 </div>
                             </div>
@@ -63,6 +63,7 @@
                     <div class="col-lg-12">
                         <UserPresentSelect
                             label='Training Roster'
+                            :disabled='!is_iam("Training:Manage")'
                             v-model='assigned'
                             :loading='loading.assigned'
                             @push='postAssigned($event)'
