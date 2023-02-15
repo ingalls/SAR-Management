@@ -25,6 +25,9 @@
                         <div class="card">
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='equipment.name'/>
+                                <div class='ms-auto'>
+                                    <SettingsIcon @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
@@ -46,6 +49,9 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import PageFooter from './PageFooter.vue';
+import {
+    SettingsIcon
+} from 'vue-tabler-icons';
 
 export default {
     name: 'Equipment',
@@ -79,6 +85,7 @@ export default {
     components: {
         NoAccess,
         PageFooter,
+        SettingsIcon
     }
 }
 </script>

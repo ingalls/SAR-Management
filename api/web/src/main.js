@@ -27,8 +27,9 @@ const router = new VueRouter.createRouter({
         { path: '/issue/:issueid', name: 'issue', component: () => import('./components/Issue.vue') },
 
         { path: '/equipment', name: 'equipments', component: () => import('./components/Equipments.vue') },
-        { path: '/equipment/new', name: 'equipment-new', component: () => import('./components/EquipmentsNew.vue') },
+        { path: '/equipment/new', name: 'equipment-new', component: () => import('./components/EquipmentEdit.vue') },
         { path: '/equipment/:equipid', name: 'equipment', component: () => import('./components/Equipment.vue') },
+        { path: '/equipment/:equipid/edit', name: 'equipment-edit', component: () => import('./components/EquipmentEdit.vue') },
 
         { path: '/doc', name: 'docs', component: () => import('./components/Docs.vue') },
 

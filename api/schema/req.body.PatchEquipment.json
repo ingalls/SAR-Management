@@ -5,7 +5,7 @@
         "name": {
             "$ref": "./equipment/name.json"
         },
-        "name": {
+        "description": {
             "$ref": "./equipment/description.json"
         },
         "status": {
