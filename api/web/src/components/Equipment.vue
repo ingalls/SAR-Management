@@ -26,7 +26,7 @@
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='equipment.name'/>
                                 <div class='ms-auto'>
-                                    <SettingsIcon @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
+                                    <SettingsIcon v-if='is_iam("Equipment:Manage")' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
                                 </div>
                             </div>
                             <div class="card-body">
