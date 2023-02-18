@@ -105,15 +105,18 @@ export default {
                     method: 'PATCH',
                     body: this.equipment
                 })
+
+                this.loading.equipment = false;
+                this.$router.push(`/equipment/${this.$route.params.equipid}`);
             } else {
-                await window.std('/api/equipment', {
+                const equip = await window.std('/api/equipment', {
                     method: 'POST',
                     body: this.equipment
                 })
-            }
 
-            this.loading.equipment = false;
-            this.$router.push(`/equipment/${this.$route.params.equipid}`);
+                this.loading.equipment = false;
+                this.$router.push(`/equipment/${equip.id}`);
+            }
         }
     },
     components: {
