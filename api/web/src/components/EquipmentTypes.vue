@@ -39,7 +39,8 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Updated</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,7 +48,8 @@
                                     <td>
                                         <a @click='$router.push(`/equipment/type/${type.id}`)' class='cursor-pointer' v-text='type.type'></a>
                                     </td>
-                                    <td></td>
+                                    <td><Epoch :date='type.created'/></td>
+                                    <td><Epoch :date='type.updated'/></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -66,6 +68,7 @@
 
 <script>
 import NoAccess from './util/NoAccess.vue';
+import Epoch from './util/Epoch.vue';
 import iam from '../iam.js';
 import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
@@ -110,6 +113,7 @@ export default {
     },
     components: {
         None,
+        Epoch,
         PlusIcon,
         NoAccess,
         PageFooter,
