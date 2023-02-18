@@ -37,7 +37,7 @@
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
                                             <a @click='save' class="cursor-pointer btn btn-primary">
-                                                <span v-text='$route.params.equipid ? "Update Type" : "Create Type"'/>
+                                                <span v-text='$route.params.typeid ? "Update Type" : "Create Type"'/>
                                             </a>
                                         </div>
                                     </div>
@@ -91,7 +91,7 @@ export default {
         }
     },
     mounted: async function() {
-        if (this.is_iam("Equipment:Manage") && this.$route.params.equipid) {
+        if (this.is_iam("Equipment:Manage") && this.$route.params.typeid) {
             await this.fetch();
         }
     },
@@ -123,7 +123,7 @@ export default {
 
             this.loading.type = true;
 
-            if (this.$route.params.equipid) {
+            if (this.$route.params.typeid) {
                 await window.std(`/api/equipment-type/${this.$route.params.typeid}`, {
                     method: 'PATCH',
                     body: {

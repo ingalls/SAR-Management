@@ -8,7 +8,8 @@
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
                             <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/equipment")' class="cursor-pointer">Equipment</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.equipid'></a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/equipment/type")' class="cursor-pointer">Type</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.typeid'></a></li>
                         </ol>
                     </div>
                 </div>
@@ -21,17 +22,20 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
+                    <TablerLoading v-else-if='loading.type'/>
                     <template v-else>
                         <div class="card">
                             <div class='card-header'>
-                                <h3 class='card-title' v-text='equipment.name'/>
+                                <h3 class='card-title' v-text='type.type'/>
                                 <div class='ms-auto'>
-                                    <SettingsIcon v-if='is_iam("Equipment:Manage")' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
+                                    <SettingsIcon v-if='is_iam("Equipment:Admin")' @click='$router.push(`/equipment/type/${$route.params.typeid}/edit`)' class='cursor-pointer'/>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-12" v-text='equipment.description'></div>
+                                    <div class="col-md-12">
+                                        <pre v-text='type.schema'/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -49,6 +53,9 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import PageFooter from './PageFooter.vue';
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 import {
     SettingsIcon
 } from 'vue-tabler-icons';
@@ -68,9 +75,9 @@ export default {
     data: function() {
         return {
             loading: {
-                equipment: true
+                type: true
             },
-            equipment: {},
+            type: {},
         }
     },
     mounted: async function() {
@@ -79,12 +86,15 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
-            this.equipment = await window.std(`/api/equipment/${this.$route.params.equipid}`);
+            this.loading.type = true;
+            this.type = await window.std(`/api/equipment-type/${this.$route.params.typeid}`);
+            this.loading.type = false;
         },
     },
     components: {
         NoAccess,
         PageFooter,
+        TablerLoading,
         SettingsIcon
     }
 }

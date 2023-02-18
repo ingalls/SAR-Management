@@ -32,7 +32,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Equipment:View');
 
-            res.json(await EquipmentType.from(config.pool, req.params.equipmentid));
+            res.json(await EquipmentType.from(config.pool, req.params.typeid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -68,7 +68,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Equipment:Admin');
 
-            const type = await EquipmentType.from(config.pool, req.params.equipmentid);
+            const type = await EquipmentType.from(config.pool, req.params.typeid);
             await type.commit(req.body);
             return res.json(type);
         } catch (err) {
