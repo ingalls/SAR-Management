@@ -28,6 +28,9 @@ const router = new VueRouter.createRouter({
 
         { path: '/equipment', name: 'equipments', component: () => import('./components/Equipments.vue') },
         { path: '/equipment/type', name: 'equipment-types', component: () => import('./components/EquipmentTypes.vue') },
+        { path: '/equipment/type/new', name: 'equipment-type-new', component: () => import('./components/EquipmentTypeEdit.vue') },
+        { path: '/equipment/type/:typeid', name: 'equipment-type', component: () => import('./components/EquipmentType.vue') },
+        { path: '/equipment/type/:typeid/edit', name: 'equipment-type-edit', component: () => import('./components/EquipmentTypeEdit.vue') },
         { path: '/equipment/new', name: 'equipment-new', component: () => import('./components/EquipmentEdit.vue') },
         { path: '/equipment/:equipid', name: 'equipment', component: () => import('./components/Equipment.vue') },
         { path: '/equipment/:equipid/edit', name: 'equipment-edit', component: () => import('./components/EquipmentEdit.vue') },
