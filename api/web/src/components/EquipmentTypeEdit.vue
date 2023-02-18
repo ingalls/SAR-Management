@@ -28,9 +28,9 @@
                         <div v-else class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-12">
-                                    <TablerInput v-model='type.type' label='Equipment Type'/>
+                                    <TablerInput v-model='type.type' label='Equipment Type' :error='errors.type'/>
 
-                                    <TablerInput v-model='type.schema' :rows='10' label='Equipment Schema'/>
+                                    <TablerInput v-model='type.schema' :rows='10' label='Equipment Schema' :error='errors.schema'/>
                                 </div>
 
                                 <div class="col-md-12">
@@ -100,50 +100,52 @@ export default {
         fetch: async function() {
             this.loading.type = true;
             const type = await window.std(`/api/equipment-type/${this.$route.params.typeid}`);
-            type.type = JSON.stringify(type.type, null, 4);
+            type.schema = JSON.stringify(type.schema, null, 4);
             this.type = type;
             this.loading.type = false;
         },
         save: async function() {
-            this.loading.type = true;
-
             for (const field of ['type', 'schema']) {
                 if (!this.type[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = false;
             }
 
             try {
-                JSON.parse(this.type.type);
+                JSON.parse(this.type.schema);
                 this.errors.schema = '';
             } catch (err) {
-                this.errors.schema = 'Invalid JSON';
+                this.errors.schema = `Invalid JSON: ${err.message}`;
             }
 
             for (const e in this.errors) {
                 if (this.errors[e]) return;
             }
 
+            this.loading.type = true;
 
             if (this.$route.params.equipid) {
                 await window.std(`/api/equipment-type/${this.$route.params.typeid}`, {
                     method: 'PATCH',
                     body: {
                         type: this.type.type,
-                        schema: JSON.parse(this.type.type)
+                        schema: JSON.parse(this.type.schema)
                     }
                 })
+
+                this.loading.type = false;
+                this.$router.push(`/equipment/type/${this.$route.params.typeid}`);
             } else {
-                await window.std('/api/equipment-type', {
+                const type = await window.std('/api/equipment-type', {
                     method: 'POST',
                     body: {
                         type: this.type.type,
-                        schema: JSON.parse(this.type.type)
+                        schema: JSON.parse(this.type.schema)
                     }
                 })
-            }
 
-            this.loading.type = false;
-            this.$router.push(`/equipment/type/${this.$route.params.typeid}`);
+                this.loading.type = false;
+                this.$router.push(`/equipment/type/${type.id}`);
+            }
         }
     },
     components: {
