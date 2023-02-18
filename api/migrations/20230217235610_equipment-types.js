@@ -4,7 +4,7 @@ function up(knex) {
             id          BIGSERIAL PRIMARY KEY,
             created     TIMESTAMP NOT NULL DEFAULT Now(),
             updated     TIMESTAMP NOT NULL DEFAULT Now(),
-            type        TEXT NOT NULL,
+            type        TEXT UNIQUE NOT NULL,
             schema      JSONB
         );
     `);

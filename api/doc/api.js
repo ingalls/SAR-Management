@@ -180,6 +180,78 @@
 
 
 /**
+* @api {get} /equipment-type List Type
+* @apiVersion 1.0.0
+* @apiName GET-/equipment-type
+* @apiGroup EquipmentType
+* @apiPermission user
+*
+* @apidescription
+*   Get all equipment types in the Org
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListEquipmentTypes.json} apiSuccess
+*/
+
+
+/**
+* @api {get} /equipment-type/:typeid Get Type
+* @apiVersion 1.0.0
+* @apiName GET-/equipment-type/:typeid
+* @apiGroup EquipmentType
+* @apiPermission user
+*
+* @apidescription
+*   Get a single equipment type
+*
+* @apiParam {integer} typeid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/equipment_types.json} apiSuccess
+*/
+
+
+/**
+* @api {post} /equipment-type Create Type
+* @apiVersion 1.0.0
+* @apiName POST-/equipment-type
+* @apiGroup EquipmentType
+* @apiPermission user
+*
+* @apidescription
+*   Create a new type of equipment
+*
+
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.CreateEquipmentType.json} apiParam
+* @apiSchema {jsonschema=../schema/equipment_types.json} apiSuccess
+*/
+
+
+/**
+* @api {patch} /equipment-type/:typeid Update Type
+* @apiVersion 1.0.0
+* @apiName PATCH-/equipment-type/:typeid
+* @apiGroup Equipment
+* @apiPermission user
+*
+* @apidescription
+*   Update an existing type of equipment
+*
+* @apiParam {integer} typeid param
+*
+*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchEquipmentType.json} apiParam
+* @apiSchema {jsonschema=../schema/equipment_types.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /equipment List Equipment
 * @apiVersion 1.0.0
 * @apiName GET-/equipment

@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "type": {
+            "$ref": "./equipment_types/type.json"
+        },
+        "schema": {
+            "$ref": "./equipment_types/schema.json"
+        }
+    },
+    "required": [
+        "type",
+        "schema"
+    ]
+}

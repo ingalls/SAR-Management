@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./equipment_types/id.json"
+        },
+        "created": {
+            "$ref": "./equipment_types/created.json"
+        },
+        "updated": {
+            "$ref": "./equipment_types/updated.json"
+        },
+        "type": {
+            "$ref": "./equipment_types/type.json"
+        },
+        "schema": {
+            "$ref": "./equipment_types/schema.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "type",
+        "schema"
+    ]
+}
