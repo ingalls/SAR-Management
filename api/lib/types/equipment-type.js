@@ -1,4 +1,6 @@
-import Generic from '@openaddresses/batch-generic';
+import Generic, { Params } from '@openaddresses/batch-generic';
+import Err from '@openaddresses/batch-error';
+import { sql } from 'slonik';
 
 export default class Equipment extends Generic {
     static _table = 'equipment_types';
@@ -18,7 +20,7 @@ export default class Equipment extends Generic {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    equipment.*
+                    equipment_types.*
                 FROM
                     equipment_types
                 WHERE

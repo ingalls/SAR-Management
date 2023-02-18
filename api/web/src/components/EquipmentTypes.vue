@@ -7,19 +7,9 @@
                     <div class="col d-flex">
                         <ol class="breadcrumb" aria-label="breadcrumbs">
                             <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Equipment</a></li>
+                            <li class="breadcrumb-item" aria-current="page"><a @click='$router.push("/equipment")' class='cursor-pointer'>Equipment</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Types</a></li>
                         </ol>
-
-                        <div v-if='is_iam("Equipment:Manage")' class='ms-auto'>
-                            <div class='btn-list'>
-                                <a @click='$router.push("/equipment/type")' class="cursor-pointer btn btn-secondary">
-                                    Types
-                                </a>
-                                <a @click='$router.push("/equipment/new")' class="cursor-pointer btn btn-primary">
-                                    New Gear
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -30,7 +20,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
+                    <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment Types'/>
                     <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
@@ -39,6 +29,9 @@
                                     <span class="input-icon-addon">
                                         <SearchIcon width='24'/>
                                     </span>
+                                </div>
+                                <div v-if='is_iam("Equipment:Admin")' class='ms-auto'>
+                                    <PlusIcon @click='$router.push("/equipment/type/new")' class='cursor-pointer'/>
                                 </div>
                             </div>
                         </div>
@@ -50,16 +43,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='equip.id' v-for='equip in list.equipment'>
+                                <tr :key='type.id' v-for='type in list.types'>
                                     <td>
-                                        <a @click='$router.push(`/equipment/${equip.id}`)' class='cursor-pointer' v-text='equip.name'></a>
+                                        <a @click='$router.push(`/equipment/type/${type.id}`)' class='cursor-pointer' v-text='type.type'></a>
                                     </td>
-                                    <td v-text='equip.status'></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
                         <template v-if='!list.total'>
-                            <None label='Equipment' :create='false'/>
+                            <None label='Equipment Types' :create='false'/>
                         </template>
                     </div>
                 </div>
@@ -77,11 +70,12 @@ import iam from '../iam.js';
 import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
 import {
+    PlusIcon,
     SearchIcon
 } from 'vue-tabler-icons'
 
 export default {
-    name: 'Equipments',
+    name: 'EquipmentTypes',
     props: {
         iam: {
             type: Object,
@@ -99,23 +93,24 @@ export default {
             },
             list: {
                 total: 0,
-                equipment: []
+                types: []
             }
         }
     },
     mounted: async function() {
-        if (this.is_iam("Equipment:View")) await this.listEquipment();
+        if (this.is_iam("Equipment:View")) await this.listTypes();
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        listEquipment: async function() {
-            const url = window.stdurl('/api/equipment');
+        listTypes: async function() {
+            const url = window.stdurl('/api/equipment-type');
             if (this.query.filter) url.searchParams.append('filter', this.query.filter);
             this.list = await window.std(url)
         }
     },
     components: {
         None,
+        PlusIcon,
         NoAccess,
         PageFooter,
         SearchIcon
