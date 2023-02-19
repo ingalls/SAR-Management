@@ -11,6 +11,9 @@
         "assigned": {
             "type": "integer"
         },
+        "parent": {
+            "type": "integer"
+        },
         "filter": {
             "type": "string",
             "default": "",
