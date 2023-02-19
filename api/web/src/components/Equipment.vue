@@ -54,6 +54,9 @@ import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import PageFooter from './PageFooter.vue';
 import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
+import {
     SettingsIcon
 } from 'vue-tabler-icons';
 import CardEquipment from './cards/Equipment.vue';
@@ -93,7 +96,8 @@ export default {
         NoAccess,
         PageFooter,
         SettingsIcon,
-        CardEquipment
+        CardEquipment,
+        TablerLoading
     }
 }
 </script>
