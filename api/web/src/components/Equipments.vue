@@ -31,37 +31,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
-                    <div v-else class="card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="input-icon w-50">
-                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
-                                    <span class="input-icon-addon">
-                                        <SearchIcon width='24'/>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <table class="table card-table table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr :key='equip.id' v-for='equip in list.equipment'>
-                                    <td>
-                                        <a @click='$router.push(`/equipment/${equip.id}`)' class='cursor-pointer' v-text='equip.name'></a>
-                                    </td>
-                                    <td v-text='equip.status'></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <template v-if='!list.total'>
-                            <None label='Equipment' :create='false'/>
-                        </template>
-                    </div>
+                    <CardEquipment/>
                 </div>
             </div>
         </div>
@@ -74,11 +44,8 @@
 <script>
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
-import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
-import {
-    SearchIcon
-} from 'vue-tabler-icons'
+import CardEquipment from './cards/Equipment.vue';
 
 export default {
     name: 'Equipments',
@@ -92,33 +59,13 @@ export default {
             required: true
         }
     },
-    data: function() {
-        return {
-            query: {
-                filter: ''
-            },
-            list: {
-                total: 0,
-                equipment: []
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Equipment:View")) await this.listEquipment();
-    },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        listEquipment: async function() {
-            const url = window.stdurl('/api/equipment');
-            if (this.query.filter) url.searchParams.append('filter', this.query.filter);
-            this.list = await window.std(url)
-        }
     },
     components: {
-        None,
         NoAccess,
         PageFooter,
-        SearchIcon
+        CardEquipment
     }
 }
 </script>

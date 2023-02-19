@@ -19,10 +19,10 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
-                    <TablerLoading v-else-if='loading.equipment'/>
-                    <template v-else>
+                <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
+                <TablerLoading v-else-if='loading.equipment'/>
+                <template v-else>
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='equipment.name'/>
@@ -36,8 +36,11 @@
                                 </div>
                             </div>
                         </div>
-                    </template>
-                </div>
+                    </div>
+                    <div v-if='equipment.container' class="col-lg-12">
+                        <CardEquipment :parent='equipment.id'/>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -53,6 +56,7 @@ import PageFooter from './PageFooter.vue';
 import {
     SettingsIcon
 } from 'vue-tabler-icons';
+import CardEquipment from './cards/Equipment.vue';
 
 export default {
     name: 'Equipment',
@@ -88,7 +92,8 @@ export default {
     components: {
         NoAccess,
         PageFooter,
-        SettingsIcon
+        SettingsIcon,
+        CardEquipment
     }
 }
 </script>
