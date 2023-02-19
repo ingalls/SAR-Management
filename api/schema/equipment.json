@@ -19,6 +19,18 @@
         },
         "description": {
             "$ref": "./equipment/description.json"
+        },
+        "type_id": {
+            "$ref": "./equipment/type_id.json"
+        },
+        "container": {
+            "$ref": "./equipment/container.json"
+        },
+        "container_parent": {
+            "$ref": "./equipment/container_parent.json"
+        },
+        "meta": {
+            "$ref": "./equipment/meta.json"
         }
     },
     "required": [
@@ -27,6 +39,10 @@
         "updated",
         "status",
         "name",
-        "description"
+        "description",
+        "type_id",
+        "container",
+        "container_parent",
+        "meta"
     ]
 }

@@ -21,6 +21,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
+                    <TablerLoading v-else-if='loading.equipment'/>
                     <template v-else>
                         <div class="card">
                             <div class='card-header'>
@@ -79,7 +80,9 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
+            this.loading.equipment = true;
             this.equipment = await window.std(`/api/equipment/${this.$route.params.equipid}`);
+            this.loading.equipment = false;
         },
     },
     components: {

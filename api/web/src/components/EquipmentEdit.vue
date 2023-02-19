@@ -26,10 +26,34 @@
                         <TablerLoading v-if='loading.equipment'/>
                         <div v-else class="card-body">
                             <div class='row row-cards'>
-                                <div class="col-md-12">
+                                <div class="col-md-8">
                                     <TablerInput v-model='equipment.name' label='Equipment Name'/>
-
+                                </div>
+                                <div class="col-md-4">
+                                    <TablerList
+                                        v-model='type'
+                                        label='Equipment Type'
+                                        url='/api/equipment-type'
+                                        listkey='types'
+                                        namekey='type'
+                                    />
+                                </div>
+                                <div class="col-md-12">
                                     <TablerInput v-model='equipment.description' rows='5' label='Equipment Description'/>
+                                </div>
+                                <div class="col-md-3">
+                                    <TablerToggle v-model='equipment.container' label='Equipment Container'/>
+                                </div>
+                                <div class="col-md-3">
+                                    <TablerList
+                                        v-model='type'
+                                        label='Resides In'
+                                        url='/api/equipment?container=true'
+                                        listkey='equipment'
+                                        namekey='name'
+                                    />
+                                </div>
+                                <div class="col-md-6">
                                 </div>
 
                                 <div class="col-md-12">
@@ -56,7 +80,9 @@
 <script>
 import {
     TablerLoading,
-    TablerInput
+    TablerToggle,
+    TablerInput,
+    TablerList
 } from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
 import NoAccess from './util/NoAccess.vue';
@@ -79,9 +105,11 @@ export default {
             loading: {
                 equipment: false,
             },
+            type: '',
             equipment: {
                 name: '',
-                description: ''
+                description: '',
+                type: null
             }
         }
     },
@@ -122,7 +150,9 @@ export default {
     components: {
         NoAccess,
         PageFooter,
+        TablerList,
         TablerInput,
+        TablerToggle,
         TablerLoading
     }
 }
