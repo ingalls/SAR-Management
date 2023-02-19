@@ -23,11 +23,19 @@ export default class Training extends Generic {
                     training.*
                 FROM
                     training
-                        LEFT JOIN training_assigned
-                            ON training.id = training_assigned.training_id
+                        LEFT JOIN (
+                            SELECT
+                                training_id,
+                                ARRAY_AGG(uid) AS users
+                            FROM
+                                training_assigned
+                            GROUP BY
+                                training_id
+                        ) ta
+                            ON training.id = ta.training_id
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
-                    AND (${query.assigned}::BIGINT IS NULL OR training_assigned.uid = ${query.assigned})
+                    AND (${query.assigned}::BIGINT IS NULL OR ta.users @> ARRAY[${query.assigned}::BIGINT])
                     AND (${query.start}::TIMESTAMP IS NULL OR training.start_ts >= ${query.start}::TIMESTAMP)
                     AND (${query.end}::TIMESTAMP IS NULL OR training.end_ts >= ${query.end}::TIMESTAMP)
                 ORDER BY
