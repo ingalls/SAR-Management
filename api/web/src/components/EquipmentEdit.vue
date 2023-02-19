@@ -42,18 +42,20 @@
                                 <div class="col-md-12">
                                     <TablerInput v-model='equipment.description' rows='5' label='Equipment Description'/>
                                 </div>
-                                <div class="col-md-3">
-                                    <TablerToggle v-model='equipment.container' label='Equipment Container'/>
-                                </div>
-                                <div class="col-md-3">
-                                    <TablerList
-                                        v-model='type'
-                                        label='Resides In'
-                                        url='/api/equipment?container=true'
-                                        @selected='equipment.container_parent = $event.id'
-                                        listkey='equipment'
-                                        namekey='name'
-                                    />
+                                <div class="col-md-6">
+                                    <label class='form-label'>Equipment Heiarchy</label>
+                                    <div class='row border rounded px-2 py-2' style='margin-left: 0px; margin-right: 0px;'>
+                                        <TablerToggle v-model='equipment.container' label='Equipment Container?'/>
+
+                                        <TablerList
+                                            v-model='type'
+                                            label='Resides In'
+                                            url='/api/equipment?container=true'
+                                            @selected='equipment.container_parent = $event.id'
+                                            listkey='equipment'
+                                            namekey='name'
+                                        />
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                 </div>
