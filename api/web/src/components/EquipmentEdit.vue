@@ -31,9 +31,10 @@
                                 </div>
                                 <div class="col-md-4">
                                     <TablerList
-                                        v-model='type'
+                                        :type='type'
                                         label='Equipment Type'
                                         url='/api/equipment-type'
+                                        @selected='equipment.type_id = $event.id'
                                         listkey='types'
                                         namekey='type'
                                     />
@@ -49,6 +50,7 @@
                                         v-model='type'
                                         label='Resides In'
                                         url='/api/equipment?container=true'
+                                        @selected='equipment.container_parent = $event.id'
                                         listkey='equipment'
                                         namekey='name'
                                     />
@@ -105,7 +107,9 @@ export default {
             loading: {
                 equipment: false,
             },
-            type: '',
+            type: {
+                type: ''
+            },
             equipment: {
                 name: '',
                 description: '',

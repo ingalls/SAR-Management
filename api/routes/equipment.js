@@ -50,13 +50,13 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Equipment:Manage');
 
-            const equipment = await Equipment.generate(config.pool, {
-                status: req.body.status,
-                name: req.body.name
-            });
+            const assigned = req.body.assigned;
+            delete req.body.assigned;
 
-            if (req.body.assigned) {
-                for (const a of req.body.assigned) {
+            const equipment = await Equipment.generate(config.pool, req.body);
+
+            if (assigned) {
+                for (const a of assigned) {
                     await EquipmentAssigned.generate(config.pool, {
                         equip_id: equipment.id,
                         uid: uid
@@ -83,6 +83,7 @@ export default async function router(schema, config) {
             await Auth.is_iam(req, 'Equipment:Manage');
 
             const equipment = await Equipment.from(config.pool, req.params.equipmentid);
+
             await equipment.commit(req.body);
             return res.json(equipment);
         } catch (err) {
