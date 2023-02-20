@@ -125,6 +125,7 @@
     </template>
     <template v-else-if='enableNav'>
         <router-view
+            :key="$route.fullPath"
             @login='getUser'
             :iam='iam'
             :auth='user'
