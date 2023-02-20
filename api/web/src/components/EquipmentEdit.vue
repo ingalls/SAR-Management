@@ -40,7 +40,7 @@
                                     />
                                 </div>
                                 <div class="col-md-12">
-                                    <TablerInput v-model='equipment.description' rows='5' label='Equipment Description'/>
+                                    <TablerInput v-model='equipment.description' :rows='5' label='Equipment Description'/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class='form-label'>Equipment Heiarchy</label>

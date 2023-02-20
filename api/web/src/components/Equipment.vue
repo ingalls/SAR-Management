@@ -27,7 +27,11 @@
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='equipment.name'/>
                                 <div class='ms-auto'>
-                                    <SettingsIcon v-if='is_iam("Equipment:Manage")' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
+                                    <div class='btn-list'>
+                                        <span v-if='equipment.container' class="badge bg-blue">Container</span>
+
+                                        <SettingsIcon v-if='is_iam("Equipment:Manage")' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -38,7 +42,7 @@
                         </div>
                     </div>
                     <div v-if='equipment.container' class="col-lg-12">
-                        <CardEquipment :parent='equipment.id'/>
+                        <CardEquipment label='Contained Equipment' :parent='equipment.id'/>
                     </div>
                 </template>
             </div>
