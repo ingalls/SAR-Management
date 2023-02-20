@@ -31,7 +31,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <TablerList
-                                        :type='type'
+                                        key='type'
+                                        :initial='type'
                                         label='Equipment Type'
                                         url='/api/equipment-type'
                                         @selected='equipment.type_id = $event.id'
@@ -48,8 +49,9 @@
                                         <TablerToggle v-model='equipment.container' label='Equipment Container?'/>
 
                                         <TablerList
-                                            v-model='type'
-                                            label='Resides In'
+                                            key='parent'
+                                            :initial='parent'
+                                            label='Parent Container'
                                             url='/api/equipment?container=true'
                                             @selected='equipment.container_parent = $event.id'
                                             listkey='equipment'
@@ -109,9 +111,8 @@ export default {
             loading: {
                 equipment: false,
             },
-            type: {
-                type: ''
-            },
+            type: {},
+            parent: {},
             equipment: {
                 name: '',
                 description: '',
@@ -129,6 +130,14 @@ export default {
         fetch: async function() {
             this.loading.equipment = true;
             this.equipment = await window.std(`/api/equipment/${this.$route.params.equipid}`);
+
+            if (this.equipment.type_id) {
+                this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
+            }
+            if (this.equipment.container_parent) {
+                this.parent = await window.std(`/api/equipment/${this.equipment.container_parent}`);
+            }
+
             this.loading.equipment = false;
         },
         save: async function() {
