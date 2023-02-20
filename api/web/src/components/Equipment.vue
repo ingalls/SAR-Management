@@ -82,6 +82,8 @@ export default {
             loading: {
                 equipment: true
             },
+            type: {},
+            parent: {},
             equipment: {},
         }
     },
@@ -93,6 +95,14 @@ export default {
         fetch: async function() {
             this.loading.equipment = true;
             this.equipment = await window.std(`/api/equipment/${this.$route.params.equipid}`);
+
+            if (this.equipment.type_id) {
+                this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
+            }
+            if (this.equipment.container_parent) {
+                this.parent = await window.std(`/api/equipment/${this.equipment.container_parent}`);
+            }
+
             this.loading.equipment = false;
         },
     },
