@@ -2,7 +2,6 @@ import Err from '@openaddresses/batch-error';
 import Equipment from '../lib/types/equipment.js';
 import EquipmentAssigned from '../lib/types/equipment-assigned.js';
 import Auth from '../lib/auth.js';
-import moment from 'moment';
 
 export default async function router(schema, config) {
     await schema.get('/equipment', {
@@ -59,7 +58,7 @@ export default async function router(schema, config) {
                 for (const a of assigned) {
                     await EquipmentAssigned.generate(config.pool, {
                         equip_id: equipment.id,
-                        uid: uid
+                        uid: a.uid
                     });
                 }
             }

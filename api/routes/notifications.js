@@ -1,9 +1,7 @@
 import Err from '@openaddresses/batch-error';
-import User from '../lib/types/user.js';
 import Auth from '../lib/auth.js';
-import bcrypt from 'bcrypt';
 
-export default async function router(schema, config) {
+export default async function router(schema) {
     await schema.get('/notification', {
         name: 'Get Notifications',
         group: 'User',

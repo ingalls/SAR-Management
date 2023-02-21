@@ -1,5 +1,4 @@
 import Err from '@openaddresses/batch-error';
-import Leadership from '../lib/types/leadership.js';
 import Auth from '../lib/auth.js';
 import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';

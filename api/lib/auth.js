@@ -2,15 +2,15 @@ import Err from '@openaddresses/batch-error';
 import { sql } from 'slonik';
 
 const Permissions = {
-    Calendar: [ 'View', 'None' ],
-    Doc: [ 'Admin', 'Manage', 'View', 'None' ],
-    Equipment: [ 'Admin', 'Manage', 'View', 'None' ],
-    Issue: [ 'Admin', 'Manage', 'View', 'None' ],
-    Leadership: [ 'Admin', 'View', 'None' ],
-    Mission: ['Admin', 'Manage', 'View', 'None' ],
-    Team: [ 'Admin', 'Manage', 'View', 'None' ],
-    Training: ['Admin', 'Manage', 'View', 'None' ],
-    User: [ 'Admin', 'View', 'None' ],
+    Calendar: ['View', 'None'],
+    Doc: ['Admin', 'Manage', 'View', 'None'],
+    Equipment: ['Admin', 'Manage', 'View', 'None'],
+    Issue: ['Admin', 'Manage', 'View', 'None'],
+    Leadership: ['Admin', 'View', 'None'],
+    Mission: ['Admin', 'Manage', 'View', 'None'],
+    Team: ['Admin', 'Manage', 'View', 'None'],
+    Training: ['Admin', 'Manage', 'View', 'None'],
+    User: ['Admin', 'View', 'None']
 };
 
 class AuthAugment {
@@ -80,7 +80,7 @@ export default class Auth {
         if (req.auth && req.auth.access && req.auth.access === 'admin') return true;
         if (req.auth.id === uid) return true;
 
-        await this.is_iam(req.permission);
+        await this.is_iam(req, permission);
 
         throw new Err(403, null, 'Authentication Level Insufficient');
     }
@@ -117,4 +117,4 @@ export default class Auth {
 export {
     AuthAugment,
     Permissions
-}
+};

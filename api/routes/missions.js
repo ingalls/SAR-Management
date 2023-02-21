@@ -71,7 +71,7 @@ export default async function router(schema, config) {
                         mission_id: mission.id,
                         role: a.role,
                         confirmed: a.confirmed,
-                        uid: uid
+                        uid: a.uid
                     });
                 }
             }

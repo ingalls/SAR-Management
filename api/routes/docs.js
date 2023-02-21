@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 
-export default async function router(schema, config) {
+export default async function router(schema) {
     await schema.get('/doc', {
         name: 'List Docs',
         auth: 'user',

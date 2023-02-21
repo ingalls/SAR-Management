@@ -57,21 +57,23 @@ export default async function router(schema, config) {
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
             else delete req.body.end_ts;
 
-            res.json(await Training.generate(config.pool, {
+            const training = await Training.generate(config.pool, {
                 ...req.body,
                 author: req.auth.id
-            }));
+            });
 
             if (req.body.assigned) {
                 for (const a of req.body.assigned) {
-                    TrainingAssigned.generate(config.pool, {
+                    await TrainingAssigned.generate(config.pool, {
                         training_id: training.id,
                         role: a.role,
                         confirmed: a.confirmed,
-                        uid: uid
+                        uid: a.uid
                     });
                 }
             }
+
+            return res.json(training);
         } catch (err) {
             return Err.respond(err, res);
         }

@@ -74,7 +74,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Leadership:Admin');
 
-            const leader = await Leadership.delete(config.pool, req.params.leaderid);
+            await Leadership.delete(config.pool, req.params.leaderid);
             return res.json({
                 status: 200,
                 message: 'Leader Deleted'
