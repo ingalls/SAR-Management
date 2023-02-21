@@ -50,7 +50,7 @@ export default {
         },
         parent: {
             type: Number,
-            default: null
+            default: 0
         }
     },
     data: function() {
@@ -88,8 +88,8 @@ export default {
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
 
-            if (this.assigned) url.searchParams.append('assigned', this.assigned);
-            if (this.parent) url.searchParams.append('parent', this.parent);
+            if (typeof this.assigned === 'number') url.searchParams.append('assigned', this.assigned);
+            if (typeof this.parent === 'number') url.searchParams.append('parent', this.parent);
             this.list = await window.std(url);
             this.loading.list = false;
         }
