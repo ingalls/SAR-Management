@@ -31,6 +31,9 @@
         },
         "meta": {
             "$ref": "./equipment/meta.json"
+        },
+        "archived": {
+            "$ref": "./equipment/archived.json"
         }
     },
     "required": [
@@ -43,6 +46,7 @@
         "type_id",
         "container",
         "container_parent",
-        "meta"
+        "meta",
+        "archived"
     ]
 }

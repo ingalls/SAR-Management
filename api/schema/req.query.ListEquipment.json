@@ -14,6 +14,10 @@
         "container": {
             "type": "boolean"
         },
+        "archived": {
+            "type": "boolean",
+            "default": false
+        },
         "parent": {
             "type": "integer",
             "description": "By default all equipment regardless of container status is returned. Set to 0 for root containers or to the parent ID for items in a specific container"

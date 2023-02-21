@@ -11,6 +11,9 @@
         "type_id": {
             "$ref": "./equipment/type_id.json"
         },
+        "archived": {
+            "$ref": "./equipment/archived.json"
+        },
         "container": {
             "$ref": "./equipment/container.json"
         },

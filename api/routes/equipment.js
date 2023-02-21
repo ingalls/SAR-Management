@@ -83,7 +83,12 @@ export default async function router(schema, config) {
 
             const equipment = await Equipment.from(config.pool, req.params.equipmentid);
 
+            if (equipment.archived) {
+                throw new Err(400, null, 'Cannot modify archived equipment');
+            }
+
             await equipment.commit(req.body);
+
             return res.json(equipment);
         } catch (err) {
             return Err.respond(err, res);

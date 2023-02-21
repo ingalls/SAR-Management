@@ -64,6 +64,10 @@
 
                                 <div class="col-md-12">
                                     <div class='d-flex'>
+                                        <a v-if='$route.params.equipid' @click='archive' class="cursor-pointer btn btn-danger">
+                                            Archive Equipment
+                                        </a>
+
                                         <div class='ms-auto'>
                                             <a @click='save' class="cursor-pointer btn btn-primary">
                                                 <span v-text='$route.params.equipid ? "Update Equipment" : "Create Equipment"'/>
@@ -139,6 +143,19 @@ export default {
             }
 
             this.loading.equipment = false;
+        },
+        arhive: async function() {
+            this.loading.equipment = true;
+
+            await window.std(`/api/equipment/${this.$route.params.equipid}`, {
+                method: 'PATCH',
+                body: {
+                    archived: true
+                }
+            })
+
+            this.loading.equipment = false;
+            this.$router.push(`/equipment/${this.$route.params.equipid}`);
         },
         save: async function() {
             this.loading.equipment = true;
