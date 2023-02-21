@@ -13,8 +13,8 @@ export default class Training extends Generic {
         query.order = Params.order(query.order);
 
         query.assigned = Params.integer(query.assigned);
-        query.start = Params.timestamp(query.timestamp);
-        query.end = Params.timestamp(query.timestamp);
+        query.start = Params.timestamp(query.start);
+        query.end = Params.timestamp(query.end);
 
         try {
             const pgres = await pool.query(sql`

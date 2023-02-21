@@ -11,6 +11,12 @@
         "assigned": {
             "type": "integer"
         },
+        "start": {
+            "type": "integer"
+        },
+        "end": {
+            "type": "integer"
+        },
         "filter": {
             "type": "string",
             "default": "",

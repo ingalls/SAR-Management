@@ -66,6 +66,7 @@ export default {
             this.loading = true;
             const url = window.stdurl('/api/training');
             url.searchParams.append('limit', this.limit);
+            url.searchParams.append('start', +new Date());
             this.list = await window.std(url);
             this.loading = false;
         }
