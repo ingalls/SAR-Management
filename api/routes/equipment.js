@@ -9,7 +9,7 @@ export default async function router(schema, config) {
         group: 'Equipment',
         auth: 'user',
         description: 'Get all equipment in the Org',
-        req: 'req.query.ListEquipment.json',
+        query: 'req.query.ListEquipment.json',
         res: 'res.ListEquipment.json'
     }, async (req, res) => {
         try {

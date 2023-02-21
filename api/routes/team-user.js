@@ -10,7 +10,7 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get all users that are part of a given team',
         ':teamid': 'integer',
-        req: 'req.query.ListTeamUsers.json',
+        query: 'req.query.ListTeamUsers.json',
         res: 'res.ListTeamUsers.json'
     }, async (req, res) => {
         try {

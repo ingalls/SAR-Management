@@ -23,7 +23,7 @@ export default async function router(schema, config) {
         group: 'Teams',
         auth: 'user',
         description: 'Get all teams on the server',
-        req: 'req.query.ListTeams.json',
+        query: 'req.query.ListTeams.json',
         res: 'res.ListTeams.json'
     }, async (req, res) => {
         try {

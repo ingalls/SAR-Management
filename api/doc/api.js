@@ -102,7 +102,7 @@
 * @apiParam {integer} assetid param
 *
 *
-*
+* @apiSchema (Body) {jsonschema=../schema/req.body.PatchAsset.json} apiParam
 * @apiSchema {jsonschema=../schema/assets.json} apiSuccess
 */
 
@@ -191,7 +191,7 @@
 *
 
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListEquipmentTypes.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListEquipmentTypes.json} apiSuccess
 */
@@ -263,7 +263,7 @@
 *
 
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListEquipment.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListEquipment.json} apiSuccess
 */
@@ -390,7 +390,7 @@
 *
 * @apiParam {integer} issueid param
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListIssueComments.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListIssueComments.json} apiSuccess
 */
@@ -715,7 +715,7 @@
 *
 
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListMissions.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListMissions.json} apiSuccess
 */
@@ -787,7 +787,7 @@
 *
 * @apiParam {integer} teamid param
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListTeamUsers.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListTeamUsers.json} apiSuccess
 */
@@ -860,7 +860,7 @@
 *
 
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListTeams.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListTeams.json} apiSuccess
 */
@@ -1042,7 +1042,7 @@
 *
 
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListTrainings.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListTrainings.json} apiSuccess
 */
@@ -1132,7 +1132,7 @@
 *
 * @apiParam {integer} userid param
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListCerts.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListCerts.json} apiSuccess
 */
@@ -1150,7 +1150,7 @@
 *
 
 *
-*
+* @apiSchema (Query) {jsonschema=../schema/req.query.ListUsers.json} apiParam
 *
 * @apiSchema {jsonschema=../schema/res.ListUsers.json} apiSuccess
 */

@@ -15,6 +15,7 @@ export default class Equipment extends Generic {
         query.assigned = Params.integer(query.assigned);
         query.parent = Params.integer(query.parent);
         query.container = Params.boolean(query.container);
+        query.archived = Params.boolean(query.archived);
 
         query.start = Params.timestamp(query.timestamp);
         query.end = Params.timestamp(query.timestamp);
@@ -35,6 +36,7 @@ export default class Equipment extends Generic {
                         OR (${query.parent}::BIGINT IS NOT NULL AND container_parent = ${query.parent}::BIGINT)
                     )
                     AND (${query.container}::BOOLEAN IS NULL OR container = ${query.container})
+                    AND (${query.archived}::BOOLEAN IS NULL OR archived = ${query.archived})
                     AND (${query.filter}::TEXT IS NULL OR name ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR equipment_assigned.uid = ${query.assigned})
                 ORDER BY

@@ -9,7 +9,7 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get all certs for the given user',
         ':userid': 'integer',
-        req: 'req.query.ListCerts.json',
+        query: 'req.query.ListCerts.json',
         res: 'res.ListCerts.json'
     }, async (req, res) => {
         try {

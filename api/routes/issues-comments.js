@@ -10,7 +10,7 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get all comments for a given issue',
         ':issueid': 'integer',
-        req: 'req.query.ListIssueComments.json',
+        query: 'req.query.ListIssueComments.json',
         res: 'res.ListIssueComments.json'
     }, async (req, res) => {
         try {

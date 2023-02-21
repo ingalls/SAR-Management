@@ -12,7 +12,7 @@ export default async function router(schema, config) {
         group: 'User',
         auth: 'user',
         description: 'Get all users on the server',
-        req: 'req.query.ListUsers.json',
+        query: 'req.query.ListUsers.json',
         res: 'res.ListUsers.json'
     }, async (req, res) => {
         try {

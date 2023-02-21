@@ -127,7 +127,7 @@ export default async function router(schema, config) {
         group: 'Assets',
         description: 'Update Asset',
         ':assetid': 'integer',
-        req: 'req.body.PatchAsset.json',
+        body: 'req.body.PatchAsset.json',
         res: 'assets.json'
     }, async (req, res) => {
         await Auth.is_auth(req);
