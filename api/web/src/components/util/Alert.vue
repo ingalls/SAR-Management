@@ -23,7 +23,7 @@ import {
 } from 'vue-tabler-icons'
 
 export default {
-    name: 'None',
+    name: 'Alert',
     props: {
         label: {
             type: String,
