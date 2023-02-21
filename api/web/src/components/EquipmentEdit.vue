@@ -22,6 +22,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Equipment:Manage")' title='Equipment Editing'/>
+                    <Alert v-if='equipment.archived' label='Cannot Edit Archived Equipment'/>
                     <div v-else class="card">
                         <TablerLoading v-if='loading.equipment'/>
                         <div v-else class="card-body">
@@ -96,6 +97,7 @@ import {
 } from '@tak-ps/vue-tabler'
 import PageFooter from './PageFooter.vue';
 import NoAccess from './util/NoAccess.vue';
+import Alert from './util/Alert.vue';
 import iam from '../iam.js';
 
 export default {
@@ -181,6 +183,7 @@ export default {
         }
     },
     components: {
+        Alert,
         NoAccess,
         PageFooter,
         TablerList,
