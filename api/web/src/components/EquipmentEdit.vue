@@ -120,6 +120,7 @@ export default {
             equipment: {
                 name: '',
                 description: '',
+                container: false,
                 type: null
             }
         }
@@ -144,7 +145,7 @@ export default {
 
             this.loading.equipment = false;
         },
-        arhive: async function() {
+        archive: async function() {
             this.loading.equipment = true;
 
             await window.std(`/api/equipment/${this.$route.params.equipid}`, {
