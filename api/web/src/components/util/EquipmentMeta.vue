@@ -59,8 +59,12 @@
 
 <script>
 import {
+    TablerToggle,
     TablerInput,
 } from '@tak-ps/vue-tabler';
+import {
+    PlusIcon
+} from 'vue-tabler-icons'
 
 export default {
     name: 'EquipmentMetadata',
@@ -113,6 +117,8 @@ export default {
         }
     },
     components: {
+        PlusIcon,
+        TablerToggle,
         TablerInput,
     }
 }
