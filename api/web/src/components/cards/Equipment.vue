@@ -26,7 +26,7 @@
         </table>
     </template>
 
-    <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
+    <TableFooter v-if='footer' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
 </div>
 </template>
 
@@ -51,6 +51,10 @@ export default {
         parent: {
             type: Number,
             default: 0
+        },
+        footer: {
+            type: Boolean,
+            default: true
         }
     },
     data: function() {

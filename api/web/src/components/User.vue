@@ -141,6 +141,7 @@
                     <NoAccess v-if='!is_iam("Equipment:View")' title='Assigned Equipment'/>
                     <CardEquipment v-else
                         label='Assigned Equipment'
+                        :footer='false'
                         :assigned='userid'
                     />
                 </div>
