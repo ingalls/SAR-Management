@@ -56,6 +56,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <EquipmentMeta v-model='equipment.meta' :disabled='true' :schema='type.schema'/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -83,6 +86,7 @@ import {
     SettingsIcon
 } from 'vue-tabler-icons';
 import CardEquipment from './cards/Equipment.vue';
+import EquipmentMeta from './util/EquipmentMeta.vue';
 
 export default {
     name: 'Equipment',
@@ -130,7 +134,8 @@ export default {
         PageFooter,
         SettingsIcon,
         CardEquipment,
-        TablerLoading
+        TablerLoading,
+        EquipmentMeta
     }
 }
 </script>
