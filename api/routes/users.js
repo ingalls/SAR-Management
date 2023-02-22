@@ -42,6 +42,13 @@ export default async function router(schema, config) {
                 password: await bcrypt.hash(req.body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
             });
 
+            if (req.body.teams) {
+                const uid = user.id;
+                for (const tid of req.body.teams) {
+                    await TeamUser.generate(config.pool, { tid, uid });
+                }
+            }
+
             if (config.email) {
                 await email.newuser(user);
             }

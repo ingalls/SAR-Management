@@ -12,6 +12,12 @@
         "username": {
             "type": "string"
         },
+        "teams": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            }
+        },
         "email": {
             "type": "string"
         },
@@ -32,21 +38,21 @@
         },
         "start_year": {
             "type": "integer"
-        },  
+        },
         "emergency": {
             "$ref": "./util/emergency.json"
-        },  
+        },
         "address_street": {
             "type": "string"
-        },  
+        },
         "address_city": {
             "type": "string"
-        },  
+        },
         "address_state": {
             "type": "string"
         },
         "address_zip": {
             "type": "string"
-        }  
+        }
     }
 }

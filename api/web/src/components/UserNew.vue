@@ -41,7 +41,8 @@
                                     <TablerInput label='Phone' v-model='user.phone' :errors='errors.phone'/>
                                 </div>
                                 <div class="col-md-12">
-                                    <CardTeams :select='true'/>
+                                    <NoAccess v-if='!is_iam("Team:View")' title='Team Selection'/>
+                                    <CardTeams v-else :select='true' @selected='user.teams = $event'/>
                                 </div>
 
                                 <div class="col-md-12">
@@ -99,7 +100,8 @@ export default {
                 email: '',
                 fname: '',
                 lname: '',
-                phone: ''
+                phone: '',
+                teams: []
             }
         }
     },
