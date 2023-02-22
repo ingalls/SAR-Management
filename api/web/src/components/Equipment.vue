@@ -56,10 +56,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        <EquipmentMeta v-model='equipment.meta' :disabled='true' :schema='type.schema'/>
-                                    </div>
                                 </div>
+                            </div>
+                            <div v-if='type.schema' class="col-md-12">
+                                <EquipmentMeta v-model='equipment.meta' :disabled='true' :schema='type.schema'/>
                             </div>
                         </div>
                     </div>

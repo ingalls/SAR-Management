@@ -25,59 +25,67 @@
                     <Alert v-if='equipment.archived' label='Cannot Edit Archived Equipment'/>
                     <div v-else class="card">
                         <TablerLoading v-if='loading.equipment'/>
-                        <div v-else class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-8">
-                                    <TablerInput v-model='equipment.name' label='Equipment Name'/>
-                                </div>
-                                <div class="col-md-4">
-                                    <TablerList
-                                        key='type'
-                                        :initial='type'
-                                        label='Equipment Type'
-                                        url='/api/equipment-type'
-                                        @selected='equipment.type_id = $event.id'
-                                        listkey='types'
-                                        namekey='type'
-                                    />
-                                </div>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='equipment.description' :rows='5' label='Equipment Description'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class='form-label'>Equipment Heiarchy</label>
-                                    <div class='row border rounded px-2 py-2' style='margin-left: 0px; margin-right: 0px;'>
-                                        <TablerToggle v-model='equipment.container' label='Equipment Container?'/>
-
+                        <template v-else>
+                            <div class='card-header'>
+                                <div class='card-title'>Equipment Editor</div>
+                            </div>
+                            <div class="card-body">
+                                <div class='row row-cards'>
+                                    <div class="col-md-8">
+                                        <TablerInput v-model='equipment.name' label='Equipment Name'/>
+                                    </div>
+                                    <div class="col-md-4">
                                         <TablerList
-                                            key='parent'
-                                            :initial='parent'
-                                            label='Parent Container'
-                                            url='/api/equipment?container=true'
-                                            @selected='equipment.container_parent = $event.id'
-                                            listkey='equipment'
-                                            namekey='name'
+                                            key='type'
+                                            :initial='type'
+                                            label='Equipment Type'
+                                            url='/api/equipment-type'
+                                            @selected='equipment.type_id = $event.id'
+                                            listkey='types'
+                                            namekey='type'
                                         />
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                </div>
+                                    <div class="col-md-12">
+                                        <TablerInput v-model='equipment.description' :rows='5' label='Equipment Description'/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class='form-label'>Equipment Heiarchy</label>
+                                        <div class='row border rounded px-2 py-2' style='margin-left: 0px; margin-right: 0px;'>
+                                            <TablerToggle v-model='equipment.container' label='Equipment Container?'/>
 
-                                <div class="col-md-12">
-                                    <div class='d-flex'>
-                                        <a v-if='$route.params.equipid' @click='archive' class="cursor-pointer btn btn-danger">
-                                            Archive Equipment
-                                        </a>
-
-                                        <div class='ms-auto'>
-                                            <a @click='save' class="cursor-pointer btn btn-primary">
-                                                <span v-text='$route.params.equipid ? "Update Equipment" : "Create Equipment"'/>
-                                            </a>
+                                            <TablerList
+                                                key='parent'
+                                                :initial='parent'
+                                                label='Parent Container'
+                                                url='/api/equipment?container=true'
+                                                @selected='equipment.container_parent = $event.id'
+                                                listkey='equipment'
+                                                namekey='name'
+                                            />
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-md-12">
+                                <EquipmentMeta v-model='equipment.meta' :schema='type.schema'/>
+                            </div>
+
+                            <div class="card-body col-md-12">
+                                <div class='d-flex'>
+                                    <a v-if='$route.params.equipid' @click='archive' class="cursor-pointer btn btn-danger">
+                                        Archive Equipment
+                                    </a>
+
+                                    <div class='ms-auto'>
+                                        <a @click='save' class="cursor-pointer btn btn-primary">
+                                            <span v-text='$route.params.equipid ? "Update Equipment" : "Create Equipment"'/>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -98,6 +106,7 @@ import {
 import PageFooter from './PageFooter.vue';
 import NoAccess from './util/NoAccess.vue';
 import Alert from './util/Alert.vue';
+import EquipmentMeta from './util/EquipmentMeta.vue';
 import iam from '../iam.js';
 
 export default {
@@ -117,7 +126,9 @@ export default {
             loading: {
                 equipment: false,
             },
-            type: {},
+            type: {
+                schema: {}
+            },
             parent: {},
             equipment: {
                 name: '',
@@ -130,6 +141,11 @@ export default {
     mounted: async function() {
         if (this.is_iam("Equipment:Manage") && this.$route.params.equipid) {
             await this.fetch();
+        }
+    },
+    watch: {
+        'equipment.type_id': async function() {
+            this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
         }
     },
     methods: {
@@ -189,7 +205,8 @@ export default {
         TablerList,
         TablerInput,
         TablerToggle,
-        TablerLoading
+        TablerLoading,
+        EquipmentMeta
     }
 }
 </script>

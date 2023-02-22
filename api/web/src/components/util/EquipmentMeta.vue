@@ -1,7 +1,7 @@
 <template>
 <div class='col-md-12 my-3'>
-    <div class='d-flex'>
-        <h3>Equipment Metadata</h3>
+    <div class='card-header'>
+        <span class='card-title'>Equipment Metadata</span>
     </div>
 
     <div class="col">
@@ -10,8 +10,13 @@
                 Only Object Schemas are Supported.
             </div>
         </template>
+        <template v-else-if='!schema.properties || Object.keys(schema.properties).length === 0'>
+            <div class="d-flex justify-content-center my-4">
+                No metadata properties defined in type
+            </div>
+        </template>
         <template v-else>
-            <div :key='key' v-for='key in Object.keys(schema.properties)' class='py-2 floating-input'>
+            <div :key='key' v-for='key in Object.keys(schema.properties)' class='py-2 px-3 floating-input'>
                 <template v-if='schema.properties[key].enum'>
                     <div class='row round px-2 py-2'>
                         SELECT
@@ -58,7 +63,7 @@ import {
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'LayerEnvironment',
+    name: 'EquipmentMetadata',
     props: {
         modelValue: {
             type: Object,
@@ -76,10 +81,15 @@ export default {
     data: function() {
         return {
             meta: {},
-            mode: null,
         };
     },
     watch: {
+        schema: {
+            deep: true,
+            handler: function() {
+                this.format();
+            }
+        },
         meta: {
             deep: true,
             handler: function() {
@@ -89,11 +99,15 @@ export default {
     },
     mounted: async function() {
         this.meta = this.modelValue;
-
-        if (this.schema.type === 'object' && this.schema.properties) {
-            for (const key in this.schema.properties) {
-                if (!this.meta[key] && this.schema.properties[key].type === 'array') {
-                    this.meta[key] = [];
+        this.format();
+    },
+    methods: {
+        format: function() {
+            if (this.schema && this.schema.type === 'object' && this.schema.properties) {
+                for (const key in this.schema.properties) {
+                    if (!this.meta[key] && this.schema.properties[key].type === 'array') {
+                        this.meta[key] = [];
+                    }
                 }
             }
         }
