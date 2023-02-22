@@ -6,7 +6,8 @@
                 <h3 class='card-title'>Teams</h3>
 
                 <div class='ms-auto'>
-                    <div class="btn-list">
+                    <div v-if='select' v-text='`${selected.length} Selected`'></div>
+                    <div v-if='!select' class="btn-list">
                         <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                         <div class="dropdown-menu dropdown-menu-end" style="">
                             <a @click='$router.push("/team/new")' class="dropdown-item cursor-pointer">New Team</a>
@@ -33,7 +34,10 @@
                 </thead>
                 <tbody>
                     <tr :key='team.id' v-for='team in teams.teams'>
-                        <td><a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer' v-text='team.name'></a></td>
+                        <td>
+                            <a @click='click(team)' class='cursor-pointer' v-text='team.name'></a>
+                            <span v-if='selected.includes(team.id)' class="badge bg-blue mx-2">Selected</span>
+                        </td>
                         <td v-text='team.members  || "None"'></td>
                     </tr>
                 </tbody>
@@ -54,8 +58,15 @@ import TableFooter from '../util/TableFooter.vue';
 
 export default {
     name: 'CardTeams',
+    props: {
+        select: {
+            type: Boolean,
+            default: false
+        }
+    },
     data: function() {
         return {
+            selected: [],
             loading: {
                 teams: true
             },
@@ -72,12 +83,26 @@ export default {
     watch: {
         'paging.page': async function() {
             await this.listUsers();
+        },
+        selected: function() {
+            this.$emit('selected', this.selected);
         }
     },
     mounted: async function() {
         await this.listTeams();
     },
     methods: {
+        click: function(team) {
+            if (this.select) {
+                if (this.selected.includes(team.id)) {
+                    this.selected.splice(this.selected.indexOf(team.id), 1);
+                } else {
+                    this.selected.push(team.id);
+                }
+            } else {
+                this.$router.push(`/team/${team.id}`);
+            }
+        },
         listTeams: async function() {
             this.loading.teams = true;
             const url = window.stdurl('/api/team');

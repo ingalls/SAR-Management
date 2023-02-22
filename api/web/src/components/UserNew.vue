@@ -40,6 +40,9 @@
                                 <div class="col-md-6">
                                     <TablerInput label='Phone' v-model='user.phone' :errors='errors.phone'/>
                                 </div>
+                                <div class="col-md-12">
+                                    <CardTeams :select='true'/>
+                                </div>
 
                                 <div class="col-md-12">
                                     <div class='d-flex'>
@@ -64,6 +67,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
+import CardTeams from './cards/Teams.vue';
 import {
     TablerInput
 } from '@tak-ps/vue-tabler';
@@ -130,6 +134,7 @@ export default {
     },
     components: {
         NoAccess,
+        CardTeams,
         TablerInput,
         PageFooter,
     }
