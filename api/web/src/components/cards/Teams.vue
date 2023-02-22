@@ -84,9 +84,6 @@ export default {
         'paging.page': async function() {
             await this.listUsers();
         },
-        selected: function() {
-            this.$emit('selected', this.selected);
-        }
     },
     mounted: async function() {
         await this.listTeams();
@@ -99,6 +96,8 @@ export default {
                 } else {
                     this.selected.push(team.id);
                 }
+
+                this.$emit('selected', this.selected);
             } else {
                 this.$router.push(`/team/${team.id}`);
             }

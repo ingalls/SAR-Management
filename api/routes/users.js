@@ -3,6 +3,7 @@ import User from '../lib/types/user.js';
 import Auth from '../lib/auth.js';
 import bcrypt from 'bcrypt';
 import Email from '../lib/email.js';
+import TeamUser from '../lib/types/team-user.js';
 
 export default async function router(schema, config) {
     const email = new Email(config);
@@ -37,14 +38,18 @@ export default async function router(schema, config) {
 
             req.body.email = req.body.email.toLowerCase();
             req.body.username = req.body.username.toLowerCase();
+
+            const teams = req.body.teams;
+            delete req.body.teams;
+
             const user = await User.generate(config.pool, {
                 ...req.body,
                 password: await bcrypt.hash(req.body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
             });
 
-            if (req.body.teams) {
+            if (teams) {
                 const uid = user.id;
-                for (const tid of req.body.teams) {
+                for (const tid of teams) {
                     await TeamUser.generate(config.pool, { tid, uid });
                 }
             }
