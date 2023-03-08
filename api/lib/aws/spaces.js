@@ -1,5 +1,6 @@
 import S3 from '@aws-sdk/client-s3';
 import Err from '@openaddresses/batch-error';
+import { Upload } from "@aws-sdk/lib-storage";
 
 export default class Spaces {
     constructor() {
@@ -26,6 +27,16 @@ export default class Spaces {
         throw new Err(400, err, 'Failed to Head Object');
     }
 
+    async upload(params) {
+        if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
+
+        const upload = new Upload({ client: this.client, params });
+
+        return await upload.done();
+    } catch (err) {
+        throw new Err(400, err, 'Failed to Put Object');
+    }
+
     async put(params) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
@@ -38,6 +49,14 @@ export default class Spaces {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         return await this.client.send(new S3.HeadObjectCommand(params));
+    } catch (err) {
+        throw new Err(400, err, 'Failed to Head Object');
+    }
+
+    async get(params) {
+        if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
+
+        return await this.client.send(new S3.GetObjectCommand(params));
     } catch (err) {
         throw new Err(400, err, 'Failed to Head Object');
     }

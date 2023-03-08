@@ -30,7 +30,7 @@
                                     <UserProfile :user='user'/>
 
                                     <div class='card-body d-flex justify-content-center'>
-                                        <a @click='upload = true' class="cursor-pointer btn btn-secondary">Update Profile</a>
+                                        <a @click='upload = true' class="cursor-pointer btn btn-secondary">Update Photo</a>
                                     </div>
                                 </div>
                                 <div class='col'>

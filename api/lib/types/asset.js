@@ -52,17 +52,4 @@ export default class Asset extends Generic {
             throw new Err(500, err, 'Failed to list assets');
         }
     }
-
-    async upload(stream) {
-        try {
-            await pipeline(
-                stream,
-                fs.createWriteStream(new URL(`../../assets/${this.id}${path.parse(this.name).ext}`, import.meta.url))
-            );
-
-            return this;
-        } catch (err) {
-            throw new Error(500, err, 'Failed to upload file');
-        }
-    }
 }

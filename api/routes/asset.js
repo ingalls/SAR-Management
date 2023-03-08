@@ -4,8 +4,11 @@ import fs from 'fs/promises';
 import path from 'path';
 import Auth from '../lib/auth.js';
 import Asset from '../lib/types/asset.js';
+import Spaces from '../lib/aws/spaces.js';
 
 export default async function router(schema, config) {
+    const spaces = new Spaces();
+
     await schema.get('/asset', {
         name: 'List Assets',
         auth: 'user',
@@ -52,18 +55,14 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req, true);
 
-            // this should be optimized to read directly... maybe store the extension in the DB?
-            // could also allow user restricted files in the future..
-            let afile = null;
-            for (const file of await fs.readdir(new URL('../assets/', import.meta.url))) {
-                if (parseInt(path.parse(file).name) === req.params.assetid) {
-                    afile = file;
-                    break;
-                }
-            }
+            const asset = await Asset.from(config.pool, req.params.assetid);
 
-            res.contentType(afile);
-            res.send(await fs.readFile(new URL('../assets/' + afile, import.meta.url)));
+            const raw = await spaces.get({
+                Key: `assets/${asset.id}-${asset.name}`,
+            });
+
+            res.contentType(asset.name);
+            raw.Body.pipe(res);
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -98,18 +97,22 @@ export default async function router(schema, config) {
         }
 
 
+        let asset;
         const assets = [];
         bb.on('file', async (fieldname, file, blob) => {
-            const asset = await Asset.generate(config.pool, {
+            asset = await Asset.generate(config.pool, {
                 name: blob.filename
             });
 
-            assets.push(asset.upload(file));
+            assets.push(spaces.upload({
+                Key: `assets/${asset.id}-${asset.name}`,
+                Body: file
+            }));
         }).on('finish', async () => {
             try {
                 if (!assets.length) throw new Err(400, null, 'No Asset Provided');
 
-                const asset = await assets[0];
+                await assets[0];
                 await asset.commit({ storage: true });
 
                 return res.json(asset.serialize());
