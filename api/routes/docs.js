@@ -17,11 +17,20 @@ export default async function router(schema) {
             await Auth.is_iam(req, 'User:View');
 
             req.query.prefix = 'documents/' + req.query.prefix
+
             const s3list = await spaces.list({
-                Prefix: req.query.prefix
+                Prefix: req.query.prefix,
+                Delimiter: '/'
             });
 
-            const documents = s3list.Contents.filter((obj) => {
+            const documents = (s3list.CommonPrefixes || []).map((dir) => {
+                return {
+                    key: dir.Prefix.replace(req.query.prefix, ''),
+                    last_modified: '',
+                    size: 0
+                }
+            });
+            documents.push(...(s3list.Contents || []).filter((obj) => {
                 return obj.Key !== req.query.prefix;
             }).map((obj) => {
                 return {
@@ -29,7 +38,7 @@ export default async function router(schema) {
                     last_modified: obj.LastModified,
                     size: obj.Size
                 }
-            });
+            }));
 
             return res.json({
                 total: documents.length,
