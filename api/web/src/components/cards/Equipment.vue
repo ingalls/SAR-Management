@@ -1,6 +1,6 @@
 <template>
 <div class="card">
-    <div class="card-body">
+    <div class="card-header">
         <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
     </div>
     <template v-if='loading.list'>

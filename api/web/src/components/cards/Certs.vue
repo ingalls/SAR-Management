@@ -1,6 +1,6 @@
 <template>
 <div class="card">
-    <div class="card-body">
+    <div class="card-header">
         <div class="d-flex">
             <h3 class="card-title">Certificates</h3>
         </div>
