@@ -29,12 +29,12 @@ export default {
     props: {
         label: {
             type: String,
-            default: 'Annual Training Rate'
+            default: 'Annual Training Rate (To Date)'
         },
         assigned: {
             type: Number,
             default: null
-        }
+        },
     },
     data: function() {
         return {
@@ -50,9 +50,12 @@ export default {
             this.loading = true;
             const url = window.stdurl('/api/training');
             url.searchParams.append('limit', 1);
+            url.searchParams.append('required', 'true');
+            url.searchParams.append('end', +new Date());
 
             const total = (await window.std(url)).total;
 
+            url.searchParams.delete('required');
             url.searchParams.append('assigned', this.assigned);
 
             const attended = (await window.std(url)).total;

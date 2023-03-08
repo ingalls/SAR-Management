@@ -13,6 +13,7 @@ export default class Training extends Generic {
         query.order = Params.order(query.order);
 
         query.assigned = Params.integer(query.assigned);
+        query.required = Params.boolean(query.required);
         query.start = Params.timestamp(query.start);
         query.end = Params.timestamp(query.end);
 
@@ -36,6 +37,7 @@ export default class Training extends Generic {
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR ta.users @> ARRAY[${query.assigned}::BIGINT])
+                    AND (${query.required}::BOOLEAN IS NULL OR training.required = ${query.required}::BOOLEAN)
                     AND (${query.start}::TIMESTAMP IS NULL OR training.start_ts >= ${query.start}::TIMESTAMP)
                     AND (${query.end}::TIMESTAMP IS NULL OR training.end_ts <= ${query.end}::TIMESTAMP)
                 ORDER BY
