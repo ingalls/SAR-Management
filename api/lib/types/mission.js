@@ -29,7 +29,7 @@ export default class Mission extends Generic {
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR missions_assigned.uid = ${query.assigned})
                     AND (${query.start}::TIMESTAMP IS NULL OR missions.start_ts >= ${query.start}::TIMESTAMP)
-                    AND (${query.end}::TIMESTAMP IS NULL OR missions.end_ts >= ${query.end}::TIMESTAMP)
+                    AND (${query.end}::TIMESTAMP IS NULL OR missions.end_ts <= ${query.end}::TIMESTAMP)
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT

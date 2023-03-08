@@ -37,7 +37,7 @@ export default class Training extends Generic {
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR ta.users @> ARRAY[${query.assigned}::BIGINT])
                     AND (${query.start}::TIMESTAMP IS NULL OR training.start_ts >= ${query.start}::TIMESTAMP)
-                    AND (${query.end}::TIMESTAMP IS NULL OR training.end_ts >= ${query.end}::TIMESTAMP)
+                    AND (${query.end}::TIMESTAMP IS NULL OR training.end_ts <= ${query.end}::TIMESTAMP)
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT

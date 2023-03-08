@@ -78,7 +78,6 @@ export default {
         if (!this.is_iam("Calendar:View")) return;
         this.calendar = new Calendar(document.getElementById('calendar'), {
             plugins: [dayGridPlugin, interactionPlugin, listPlugin],
-            defaultView: 'dayGridMonth',
             selectable: true,
             unselectAuto: true,
             eventClick: async (event) => {
@@ -94,7 +93,11 @@ export default {
                         events = events.concat(await window.std(url));
                     }
 
-                    return resolve(events);
+                    return resolve(events.map((event) => {
+                        event.start = new Date(event.start);
+                        event.end = new Date(event.end);
+                        return event;
+                    }));
                 } catch (err) {
                     return reject(err);
                 }
