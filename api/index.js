@@ -12,6 +12,16 @@ import jwt from 'jsonwebtoken';
 import Err from '@openaddresses/batch-error';
 import { AuthAugment } from './lib/auth.js';
 
+try {
+    const dotfile = new URL('.env', import.meta.url);
+
+    fs.accessSync(dotfile);
+
+    Object.assign(process.env, JSON.parse(fs.readFileSync(dotfile)));
+} catch (err) {
+    console.log('ok - no .env file loaded');
+}
+
 import Config from './lib/config.js';
 
 const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url)));

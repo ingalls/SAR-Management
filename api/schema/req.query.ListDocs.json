@@ -3,7 +3,8 @@
     "additionalProperties": false,
     "properties": {
         "prefix": {
-            "type": "string"
+            "type": "string",
+            "default": ""
         },
         "filter": {
             "type": "string",

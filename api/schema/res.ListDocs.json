@@ -12,7 +12,23 @@
         "documents": {
             "type": "array",
             "items": {
-                "$ref": "documents.json"
+                "type": "object",
+                "required": [
+                    "key",
+                    "last_modified",
+                    "size"
+                ],
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "last_modified": {
+                        "type": "string"
+                    },
+                    "size": {
+                        "type": "integer"
+                    }
+                }
             }
         }
     }
