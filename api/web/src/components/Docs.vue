@@ -30,6 +30,14 @@
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Doc:View")' title='Documents'/>
                     <TablerLoading v-else-if='loading.list'/>
+                    <div v-else-if='file' class="card">
+                        <div class='card-header'>
+                            <h1 class="card-title" v-text='file'></h1>
+                        </div>
+                        <div class="card-body">
+
+                        </div>
+                    </div>
                     <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
@@ -52,17 +60,17 @@
                             <tbody>
                                 <tr :key='doc.key' v-for='doc in list.documents'>
                                     <td>
-                                        <template v-if='doc.key.endsWith("/")'>
+                                        <template v-if='doc.type === "dir"'>
                                             <FolderFilledIcon class='mx-2'/>
                                             <a class='cursor-pointer' @click='paging.prefix = paging.prefix + doc.key' v-text='doc.key'></a>
                                         </template>
                                         <template v-else>
                                             <FileFilledIcon class='mx-2'/>
-                                            <a class='cursor-pointer' v-text='doc.key'></a>
+                                            <a class='cursor-pointer' @click='file = doc.key' v-text='doc.key'></a>
                                         </template>
                                     </td>
                                     <td>
-                                        <span v-if='doc.key.endsWith("/")'>-</span>
+                                        <span v-if='doc.type === "dir"'>-</span>
                                         <span v-else v-text='human(doc.size)'/>
                                     </td>
                                     <td v-text='doc.last_modified'></td>
@@ -112,6 +120,7 @@ export default {
     },
     data: function() {
         return {
+            file: null,
             paging: {
                 filter: '',
                 prefix: '',

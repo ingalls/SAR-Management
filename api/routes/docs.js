@@ -25,6 +25,7 @@ export default async function router(schema) {
 
             const documents = (s3list.CommonPrefixes || []).map((dir) => {
                 return {
+                    type: 'dir',
                     key: dir.Prefix.replace(req.query.prefix, ''),
                     last_modified: '',
                     size: 0
@@ -34,6 +35,7 @@ export default async function router(schema) {
                 return obj.Key !== req.query.prefix;
             }).map((obj) => {
                 return {
+                    type: 'file',
                     key: obj.Key.replace(req.query.prefix, ''),
                     last_modified: obj.LastModified,
                     size: obj.Size

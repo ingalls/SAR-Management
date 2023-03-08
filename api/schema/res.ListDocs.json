@@ -16,9 +16,17 @@
                 "required": [
                     "key",
                     "last_modified",
-                    "size"
+                    "size",
+                    "type"
                 ],
                 "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "dir",
+                            "file"
+                        ]
+                    },
                     "key": {
                         "type": "string"
                     },
