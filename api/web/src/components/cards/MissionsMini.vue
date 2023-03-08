@@ -14,6 +14,7 @@
         <template v-else>
             <TablerProgress :key='percent' :percent='percent'/>
         </template>
+        <h3 class="mt-2 subheader" v-text='`${this.attended} of ${this.total} Missions`'></h3>
     </div>
 </div>
 </template>
@@ -39,6 +40,8 @@ export default {
     data: function() {
         return {
             loading: true,
+            total: 0,
+            attended: 0,
             percent: 0
         }
     },
@@ -51,14 +54,14 @@ export default {
             const url = window.stdurl('/api/mission');
             url.searchParams.append('limit', 1);
 
-            const total = (await window.std(url)).total;
+            this.total = (await window.std(url)).total;
 
             url.searchParams.append('assigned', this.assigned);
 
-            const attended = (await window.std(url)).total;
+            this.attended = (await window.std(url)).total;
 
-            if (total === 0) this.percent = 1;
-            else this.percent = attended / total;
+            if (this.total === 0) this.percent = 1;
+            else this.percent = this.attended / this.total;
 
             this.loading = false;
         }
