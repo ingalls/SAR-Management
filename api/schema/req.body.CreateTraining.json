@@ -6,7 +6,8 @@
         "body",
         "location",
         "start_ts",
-        "end_ts"
+        "end_ts",
+        "required"
     ],
     "properties": {
         "title": {
@@ -14,6 +15,9 @@
         },
         "body": {
             "type": "string"
+        },
+        "required": {
+            "type": "boolean"
         },
         "location": {
             "type": "string"

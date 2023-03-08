@@ -48,7 +48,14 @@
                             </thead>
                             <tbody>
                                 <tr :key='training.id' v-for='training in list.training'>
-                                    <td><a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a></td>
+                                    <td>
+                                        <div class='d-flex'>
+                                            <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
+                                            <div class='ms-auto'>
+                                                <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td v-text='training.location'></td>
                                     <td><EpochRange :start='training.start_ts' :end='training.end_ts'/></td>
                                 </tr>

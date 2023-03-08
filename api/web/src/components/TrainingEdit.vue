@@ -23,44 +23,53 @@
                     <NoAccess v-if='!is_iam("Training:Manage")' title='Edit Training'/>
                     <div v-else class="card">
                         <TablerLoading v-if='loading.training'/>
-                        <div v-else class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='training.title' label='Training Title'/>
+                        <template v-else>
+                            <div class='card-header'>
+                                <h1 class='card-title' v-text='training.title'></h1>
+                                <div class='ms-auto'>
+                                    <TablerToggle label='Required Training' v-model='training.required'/>
                                 </div>
-                                <div class="col-md-6">
-                                    <TablerInput type='datetime-local' v-model='training.start_ts' label='Training Start'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
-                                </div>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>
-                                </div>
-                                <div class='col-md-12'>
-                                    <TablerInput v-model='training.location' label='Training Location'/>
-                                </div>
-                                <div class='col-md-12'>
-                                    <Location/>
-                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class='row row-cards'>
+                                    <div class="col-md-12">
+                                        <TablerInput v-model='training.title' label='Training Title'/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <TablerInput type='datetime-local' v-model='training.start_ts' label='Training Start'/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>
+                                    </div>
+                                    <div class='col-md-12'>
+                                        <TablerInput v-model='training.location' label='Training Location'/>
+                                    </div>
+                                    <div class='col-md-12'>
+                                        <Location/>
+                                    </div>
 
-                                <div class="col-md-12">
-                                    <div class='d-flex'>
-                                        <a v-if='$route.params.trainingid && is_iam("Training:Admin")' @click='deleteTraining' class="cursor-pointer btn btn-danger">
-                                            Delete Training
-                                        </a>
-                                        <div class='ms-auto'>
-                                            <a v-if='$route.params.trainingid' @click='update' class="cursor-pointer btn btn-primary">
-                                                Update Training
+                                    <div class="col-md-12">
+                                        <div class='d-flex'>
+                                            <a v-if='$route.params.trainingid && is_iam("Training:Admin")' @click='deleteTraining' class="cursor-pointer btn btn-danger">
+                                                Delete Training
                                             </a>
-                                            <a v-else @click='create' class="cursor-pointer btn btn-primary">
-                                                Create Training
-                                            </a>
+                                            <div class='ms-auto'>
+
+                                                <a v-if='$route.params.trainingid' @click='update' class="cursor-pointer btn btn-primary">
+                                                    Update Training
+                                                </a>
+                                                <a v-else @click='create' class="cursor-pointer btn btn-primary">
+                                                    Create Training
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -78,6 +87,7 @@ import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import {
     TablerInput,
+    TablerToggle,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
@@ -100,6 +110,7 @@ export default {
             },
             training: {
                 title: '',
+                required: false,
                 body: '',
                 location: '',
                 start_ts: '',
@@ -153,6 +164,7 @@ export default {
         Location,
         PageFooter,
         TablerInput,
+        TablerToggle,
         TablerLoading,
         NoAccess
     }

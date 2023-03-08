@@ -8,6 +8,9 @@
         "body": {
             "type": "string"
         },
+        "required": {
+            "type": "boolean"
+        },
         "location": {
             "type": "string"
         },

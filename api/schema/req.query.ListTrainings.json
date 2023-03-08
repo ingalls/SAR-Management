@@ -11,6 +11,9 @@
         "order": {
             "$ref": "./util/order.json"
         },
+        "required": {
+            "type": "boolean"
+        },
         "sort": {
             "type": "string",
             "default": "start_ts",

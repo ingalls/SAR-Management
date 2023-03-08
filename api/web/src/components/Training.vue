@@ -41,6 +41,7 @@
                         <div v-else class="card">
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='`${training.title} @ ${training.location}`'/>
+                                <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
 
                                 <div class='ms-auto'>
                                     <div class='btn-list'>
