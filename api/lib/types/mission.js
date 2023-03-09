@@ -32,7 +32,7 @@ export default class Mission extends Generic {
                             GROUP BY
                                 mission_id
                         ) ma
-                            ON mission.id = ma.mission_id
+                            ON missions.id = ma.mission_id
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR ma.users @> ARRAY[${query.assigned}::BIGINT])
