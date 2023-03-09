@@ -64,7 +64,7 @@
                         </div>
                     </div>
                     <div v-if='equipment.container' class="col-lg-12">
-                        <CardEquipment label='Contained Equipment' :parent='equipment.id'/>
+                        <CardEquipment :create='is_iam("Equipment:Manage")' label='Contained Equipment' :parent='equipment.id'/>
                     </div>
                 </template>
             </div>

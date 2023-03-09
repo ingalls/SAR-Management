@@ -2,6 +2,9 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
+        <div class='ms-auto'>
+            <PlusIcon v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' class='cursor-pointer'/>
+        </div>
     </div>
     <template v-if='loading.list'>
         <TablerLoading/>
@@ -34,6 +37,9 @@
 import None from '../util/None.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    PlusIcon
+} from 'vue-tabler-icons';
+import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
@@ -51,6 +57,10 @@ export default {
         parent: {
             type: Number,
             default: 0
+        },
+        create: {
+            type: Boolean,
+            default: false
         },
         footer: {
             type: Boolean,
@@ -100,6 +110,7 @@ export default {
     },
     components: {
         None,
+        PlusIcon,
         TableFooter,
         TablerLoading
     }

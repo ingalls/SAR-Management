@@ -124,7 +124,7 @@ export default {
     data: function() {
         return {
             loading: {
-                equipment: false,
+                equipment: true,
             },
             type: {
                 schema: {}
@@ -141,6 +141,13 @@ export default {
     mounted: async function() {
         if (this.is_iam("Equipment:Manage") && this.$route.params.equipid) {
             await this.fetch();
+        } else if (!this.$route.params.equipid) {
+            const url = new URL(window.location);
+            if (url.searchParams.has('parent')) {
+                this.parent = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
+            }
+
+            this.loading.equipment = false;
         }
     },
     watch: {
