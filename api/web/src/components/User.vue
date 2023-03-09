@@ -142,6 +142,7 @@
                     <CardEquipment v-else
                         label='Assigned Equipment'
                         :footer='false'
+                        :parent='null'
                         :assigned='userid'
                     />
                 </div>

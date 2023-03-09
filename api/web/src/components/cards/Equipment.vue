@@ -55,7 +55,7 @@ export default {
             default: null
         },
         parent: {
-            type: Number,
+            type: [Number, null],
             default: 0
         },
         create: {
