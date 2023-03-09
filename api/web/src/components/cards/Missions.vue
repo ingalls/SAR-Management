@@ -1,6 +1,6 @@
 <template>
 <div class="card">
-    <div class="card-body">
+    <div class="card-header">
         <h3 class="card-title" v-text='label'></h3>
     </div>
     <template v-if='!missions.length'>
