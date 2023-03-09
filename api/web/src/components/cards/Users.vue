@@ -81,7 +81,7 @@
             <div :key='user.id' v-for='user in list.users' class='col-sm-6 col-lg-4'>
                 <div class="card card-sm">
                     <a @click='$router.push(`/user/${user.id}`)' class="d-block cursor-pointer">
-                        <UserProfile style='cover' :user='user'/>
+                        <UserProfile bgstyle='cover' :user='user'/>
                     </a>
                     <div class="card-body">
                         <div class="d-flex align-items-center">
