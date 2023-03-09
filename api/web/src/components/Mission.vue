@@ -20,6 +20,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <NoAccess v-if='!is_iam("Mission:View")' title='Mission'/>
+                <TablerLoading v-if='loading.mission'/>
                 <template v-else>
                     <div v-if='!loading.assigned && is_roster' class="col-lg-12">
                         <div class='card'>
@@ -82,6 +83,9 @@ import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Mission',
@@ -98,6 +102,7 @@ export default {
     data: function() {
         return {
             loading: {
+                mission: true,
                 assigned: true
             },
             mission: {
@@ -128,7 +133,9 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
+            this.loading.mission = true;
             this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
+            this.loading.mission = false;
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;
@@ -136,11 +143,16 @@ export default {
             this.loading.assigned = false;
         },
         deleteAssigned: async function(user) {
+            this.loading.assigned = true;
+
             await window.std(`/api/mission/${this.$route.params.missionid}/assigned/${user.id}`, {
                 method: 'DELETE'
             })
+
+            await this.fetchAssigned();
         },
         patchAssigned: async function(user) {
+            this.loading.assigned = true;
             await window.std(`/api/mission/${this.$route.params.missionid}/assigned/${user.id}`, {
                 method: 'PATCH',
                 body: {
@@ -148,6 +160,8 @@ export default {
                     confirmed: user.confirmed
                 }
             })
+
+            await this.fetchAssigned();
         },
         postAssigned: async function(user) {
             this.loading.assigned = true;
@@ -166,6 +180,7 @@ export default {
         Location,
         PageFooter,
         UserPresentSelect,
+        TablerLoading,
         NoAccess
     }
 }

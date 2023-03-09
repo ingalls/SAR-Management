@@ -79,6 +79,10 @@ export default {
             type: String,
             default: 'Mission Roster'
         },
+        confirmed: {
+            type: Boolean,
+            default: false
+        },
         loading: {
             type: Boolean
         },
@@ -113,6 +117,8 @@ export default {
     },
     methods: {
         push_assigned: async function(user) {
+            if (this.confirmed) user.confirmed = true;
+            user.role = 'General';
             this.assigned.push(user);
             this.$emit('push', user);
             this.filter = '';

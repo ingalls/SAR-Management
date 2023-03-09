@@ -20,6 +20,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <NoAccess v-if='!is_iam("Mission:Manage")' title='New Mission'/>
+                <TablerLoading v-if='loading'/>
                 <template v-else>
                     <div class="col-lg-12">
                         <div class="card">
@@ -48,6 +49,7 @@
                     </div>
                     <div class="col-lg-12">
                         <UserPresentSelect
+                            :confirmed='true'
                             v-model='mission.assigned'
                         />
                     </div>
@@ -80,7 +82,8 @@ import PageFooter from './PageFooter.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
 import {
-    TablerInput
+    TablerInput,
+    TablerLoading
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -103,17 +106,28 @@ export default {
                 start_ts: '',
                 end_ts: '',
                 assigned: []
-            }
+            },
         }
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         create: async function() {
+            this.loading = true;
             const create = await window.std('/api/mission', {
                 method: 'POST',
-                body: this.mission
+                body: {
+                    ...this.mission,
+                    assigned: this.mission.assigned.map((a) => {
+                        return {
+                            uid: a.id,
+                            role: a.role || 'General',
+                            confirmed: a.confirmed || true
+                        }
+                    })
+                }
             });
 
+            this.loading = false;
             this.$router.push(`/mission/${create.id}`);
         }
     },
@@ -122,6 +136,7 @@ export default {
         PageFooter,
         TablerInput,
         UserPresentSelect,
+        TablerLoading,
         NoAccess
     }
 }

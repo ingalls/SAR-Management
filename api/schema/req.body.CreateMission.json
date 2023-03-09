@@ -13,6 +13,12 @@
         },
         "end_ts": {
             "type": "string"
+        },
+        "assigned": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
         }
     }
 }
