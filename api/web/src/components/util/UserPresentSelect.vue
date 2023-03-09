@@ -115,6 +115,7 @@ export default {
         push_assigned: async function(user) {
             this.assigned.push(user);
             this.$emit('push', user);
+            this.filter = '';
         },
         delete_assigned: async function(idx, user) {
             this.assigned.splice(idx, 1);
