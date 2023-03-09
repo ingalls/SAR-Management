@@ -26,11 +26,12 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Mission:View")' title='Missions'/>
+                    <TablerLoading v-else-if='loading.list'/>
                     <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class="input-icon w-50">
-                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
+                                    <input v-model='paging.filter' type="text" class="form-control" placeholder="Search…">
                                     <span class="input-icon-addon">
                                         <SearchIcon width='24'/>
                                     </span>
@@ -41,17 +42,22 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr :key='mission.id' v-for='mission in list.missions'>
                                     <td><a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a></td>
+                                    <td v-text='mission.location'></td>
+                                    <td><EpochRange :start='mission.start_ts' :end='mission.end_ts'/></td>
                                 </tr>
                             </tbody>
                         </table>
                         <template v-if='!list.total'>
                             <None label='Missions' :create='false'/>
                         </template>
+                        <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                     </div>
                 </div>
             </div>
@@ -67,6 +73,11 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import PageFooter from './PageFooter.vue';
+import EpochRange from './util/EpochRange.vue';
+import TableFooter from './util/TableFooter.vue';
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Missions',
@@ -82,8 +93,13 @@ export default {
     },
     data: function() {
         return {
-            query: {
-                filter: ''
+            loading: {
+                list: true
+            },
+            paging: {
+                filter: '',
+                limit: 100,
+                page: 0
             },
             list: {
                 total: 0,
@@ -92,9 +108,13 @@ export default {
         }
     },
     watch: {
-        'query.filter': async function() {
-            await this.listMissions();
-        }
+      'paging.page': async function() {
+           await this.listMissions();
+       },
+       'paging.filter': async function() {
+           await this.listMissions();
+       },
+
     },
     mounted: async function() {
         if (this.is_iam('Mission:View')) await this.listMissions();
@@ -102,15 +122,23 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listMissions: async function() {
+            this.loading.list = true;
             const url = window.stdurl('/api/mission');
-            if (this.query.filter) url.searchParams.append('filter', this.query.filter);
+            url.searchParams.append('limit', this.paging.limit);
+            url.searchParams.append('page', this.paging.page);
+            url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('order', 'desc');
             this.list = await window.std(url)
+            this.loading.list = false;
         }
     },
     components: {
         None,
         PageFooter,
-        NoAccess
+        NoAccess,
+        EpochRange,
+        TableFooter,
+        TablerLoading
     }
 }
 </script>

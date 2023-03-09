@@ -124,9 +124,6 @@ export default {
        'paging.filter': async function() {
            await this.listTrainings();
        },
-       'paging.prefix': async function() {
-           await this.listTrainings();
-       }
     },
     mounted: async function() {
         if (this.is_iam("Training:View")) await this.listTrainings();
