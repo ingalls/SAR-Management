@@ -87,7 +87,22 @@ export default async function router(schema, config) {
                 throw new Err(400, null, 'Cannot modify archived equipment');
             }
 
+            const assigned = req.body.assigned;
+            delete req.body.assigned;
+
             await equipment.commit(req.body);
+
+            if (Array.isArray(assigned)) {
+                await EquipmentAssigned.delete(config.pool, equipment.id, {
+                    column: 'equip_id'
+                });
+
+                for (const uid of assigned) {
+                    await EquipmentAssigned.generate(config.pool, {
+                        equip_id: equipment.id, uid
+                    });
+                }
+            }
 
             return res.json(equipment);
         } catch (err) {

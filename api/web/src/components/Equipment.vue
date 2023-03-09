@@ -54,6 +54,15 @@
                                                     <span v-else>None</span>
                                                 </div>
                                             </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Assigned</div>
+                                                <div class="datagrid-content">
+                                                    <template v-if='assigned.length'>
+                                                        <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1'/>
+                                                    </template>
+                                                    <span v-else>None</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -87,6 +96,7 @@ import {
 } from 'vue-tabler-icons';
 import CardEquipment from './cards/Equipment.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
+import Avatar from './util/Avatar.vue';
 
 export default {
     name: 'Equipment',
@@ -107,6 +117,7 @@ export default {
             },
             type: {},
             parent: {},
+            assigned: [],
             equipment: {},
         }
     },
@@ -126,11 +137,14 @@ export default {
                 this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
 
+            this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).assigned;
+
             this.loading.equipment = false;
         },
     },
     components: {
         NoAccess,
+        Avatar,
         PageFooter,
         SettingsIcon,
         CardEquipment,

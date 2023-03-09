@@ -65,6 +65,13 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
+                                        <label class='form-label'>Assigned Equipment</label>
+                                        <div class='row border rounded px-2 py-2' style='margin-left: 0px; margin-right: 0px;'>
+                                            <UserSelect
+                                                v-model='assigned'
+                                                label=''
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -103,6 +110,7 @@ import {
     TablerInput,
     TablerList
 } from '@tak-ps/vue-tabler'
+import UserSelect from './util/UserSelect.vue';
 import PageFooter from './PageFooter.vue';
 import NoAccess from './util/NoAccess.vue';
 import Alert from './util/Alert.vue';
@@ -130,6 +138,7 @@ export default {
                 schema: {}
             },
             parent: {},
+            assigned: [],
             equipment: {
                 name: '',
                 description: '',
@@ -171,6 +180,8 @@ export default {
                 this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
 
+            this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).assigned;
+
             this.loading.equipment = false;
         },
         archive: async function() {
@@ -192,7 +203,10 @@ export default {
             if (this.$route.params.equipid) {
                 await window.std(`/api/equipment/${this.$route.params.equipid}`, {
                     method: 'PATCH',
-                    body: this.equipment
+                    body: {
+                        ...this.equipment,
+                        assigned: this.assigned.map((a) => { return a.uid || a.id })
+                    }
                 })
 
                 this.loading.equipment = false;
@@ -200,7 +214,10 @@ export default {
             } else {
                 const equip = await window.std('/api/equipment', {
                     method: 'POST',
-                    body: this.equipment
+                    body: {
+                        ...this.equipment,
+                        assigned: this.assigned.map((a) => { return a.uid || a.id })
+                    }
                 })
 
                 this.loading.equipment = false;
@@ -211,6 +228,7 @@ export default {
     components: {
         Alert,
         NoAccess,
+        UserSelect,
         PageFooter,
         TablerList,
         TablerInput,

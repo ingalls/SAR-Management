@@ -180,6 +180,24 @@
 
 
 /**
+* @api {get} /equipment/:equipmentid/assigned Get Assigned
+* @apiVersion 1.0.0
+* @apiName GET-/equipment/:equipmentid/assigned
+* @apiGroup EquipmentAssigned
+* @apiPermission user
+*
+* @apidescription
+*   Get users assigned to an mission
+*
+* @apiParam {integer} equipmentid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListEquipmentAssigned.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /equipment-type List Type
 * @apiVersion 1.0.0
 * @apiName GET-/equipment-type

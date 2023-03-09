@@ -23,6 +23,14 @@
         },
         "meta": {
             "$ref": "./equipment/meta.json"
+        },
+        "assigned": {
+            "type": "array",
+            "default": [], 
+            "items": {
+                "type": "integer"
+            }
         }
+
     }
 }
