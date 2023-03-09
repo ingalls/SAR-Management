@@ -58,7 +58,7 @@
                                                 :initial='parent'
                                                 label='Parent Container'
                                                 url='/api/equipment?container=true'
-                                                @selected='equipment.container_parent = $event.id'
+                                                @selected='equipment.parent = $event.id'
                                                 listkey='equipment'
                                                 namekey='name'
                                             />
@@ -134,7 +134,9 @@ export default {
                 name: '',
                 description: '',
                 container: false,
-                type: null
+                parent: null,
+                type: null,
+                meta: {}
             }
         }
     },
@@ -145,6 +147,7 @@ export default {
             const url = new URL(window.location);
             if (url.searchParams.has('parent')) {
                 this.parent = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
+                this.equipment.parent = this.parent.id;
             }
 
             this.loading.equipment = false;
@@ -164,8 +167,8 @@ export default {
             if (this.equipment.type_id) {
                 this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
             }
-            if (this.equipment.container_parent) {
-                this.parent = await window.std(`/api/equipment/${this.equipment.container_parent}`);
+            if (this.equipment.parent) {
+                this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
 
             this.loading.equipment = false;

@@ -17,8 +17,8 @@
         "container": {
             "$ref": "./equipment/container.json"
         },
-        "container_parent": {
-            "$ref": "./equipment/container_parent.json"
+        "parent": {
+            "$ref": "./equipment/parent.json"
         },
         "meta": {
             "$ref": "./equipment/meta.json"

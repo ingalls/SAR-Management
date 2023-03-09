@@ -122,8 +122,8 @@ export default {
             if (this.equipment.type_id) {
                 this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
             }
-            if (this.equipment.container_parent) {
-                this.parent = await window.std(`/api/equipment/${this.equipment.container_parent}`);
+            if (this.equipment.parent) {
+                this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
 
             this.loading.equipment = false;

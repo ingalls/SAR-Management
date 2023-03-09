@@ -32,8 +32,8 @@ export default class Equipment extends Generic {
                 WHERE
                     (
                         (${query.parent}::BIGINT IS NULL)
-                        OR (${query.parent}::BIGINT = 0 AND container_parent IS NULL)
-                        OR (${query.parent}::BIGINT IS NOT NULL AND container_parent = ${query.parent}::BIGINT)
+                        OR (${query.parent}::BIGINT = 0 AND parent IS NULL)
+                        OR (${query.parent}::BIGINT IS NOT NULL AND parent = ${query.parent}::BIGINT)
                     )
                     AND (${query.container}::BOOLEAN IS NULL OR container = ${query.container})
                     AND (${query.archived}::BOOLEAN IS NULL OR archived = ${query.archived})
