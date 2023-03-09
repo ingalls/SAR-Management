@@ -84,7 +84,7 @@ export default {
     },
     data: function() {
         return {
-            meta: {},
+            meta: this.modelValue,
         };
     },
     watch: {
@@ -102,7 +102,6 @@ export default {
         },
     },
     mounted: async function() {
-        this.meta = this.modelValue;
         this.format();
     },
     methods: {
@@ -111,6 +110,10 @@ export default {
                 for (const key in this.schema.properties) {
                     if (!this.meta[key] && this.schema.properties[key].type === 'array') {
                         this.meta[key] = [];
+                    }
+
+                    if (!this.meta[key] && this.schema.properties[key].type === 'boolean') {
+                        this.meta[key] = this.schema.properties[key].default || false;
                     }
                 }
             }
