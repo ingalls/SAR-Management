@@ -26,19 +26,19 @@
                             <TablerLoading v-if='loading' desc='Creating User'/>
                             <div v-else class='row row-cards'>
                                 <div class="col-md-6">
-                                    <TablerInput label='First Name' v-model='user.fname' :errors='errors.fname'/>
+                                    <TablerInput label='First Name' v-model='user.fname' :error='errors.fname'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput label='Last Name' v-model='user.lname' :errors='errors.lname'/>
+                                    <TablerInput label='Last Name' v-model='user.lname' :error='errors.lname'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput label='Username' v-model='user.username' :errors='errors.username'/>
+                                    <TablerInput label='Username' v-model='user.username' :error='errors.username'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput label='Email' v-model='user.email' :errors='errors.email'/>
+                                    <TablerInput label='Email' v-model='user.email' :error='errors.email'/>
                                 </div>
                                 <div class="col-md-6">
-                                    <TablerInput label='Phone' v-model='user.phone' :errors='errors.phone'/>
+                                    <TablerInput label='Phone' v-model='user.phone' :error='errors.phone'/>
                                 </div>
                                 <div class="col-md-12">
                                     <NoAccess v-if='!is_iam("Team:View")' title='Team Selection'/>
@@ -70,7 +70,8 @@ import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import CardTeams from './cards/Teams.vue';
 import {
-    TablerInput
+    TablerInput,
+    TablerLoading
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -139,6 +140,7 @@ export default {
         CardTeams,
         TablerInput,
         PageFooter,
+        TablerLoading
     }
 }
 </script>

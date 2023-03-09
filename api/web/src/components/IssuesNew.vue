@@ -25,9 +25,9 @@
                         <div class="card-body">
                             <div class='row row-cards'>
                                 <div class="col-md-10">
-                                    <TablerInput v-model='issue.title' label='Issue Title' :errors='errors.title'/>
+                                    <TablerInput v-model='issue.title' label='Issue Title' :error='errors.title'/>
 
-                                    <TablerInput v-model='issue.body' :rows='6' label='Issue Body' :errors='errors.body'/>
+                                    <TablerInput v-model='issue.body' :rows='6' label='Issue Body' :error='errors.body'/>
                                 </div>
                                 <div class="col-md-2">
                                     <UserSelect
