@@ -13,7 +13,7 @@
 export default {
     name: 'UserProfile',
     props: {
-        user: Object
+        user: Object,
         style: {
             type: String,
             default: 'contain' // or cover
