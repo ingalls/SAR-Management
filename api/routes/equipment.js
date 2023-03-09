@@ -55,11 +55,8 @@ export default async function router(schema, config) {
             const equipment = await Equipment.generate(config.pool, req.body);
 
             if (assigned) {
-                for (const a of assigned) {
-                    await EquipmentAssigned.generate(config.pool, {
-                        equip_id: equipment.id,
-                        uid: a.uid
-                    });
+                for (const uid of assigned) {
+                    await EquipmentAssigned.generate(config.pool, { equip_id: equipment.id, uid });
                 }
             }
 

@@ -75,7 +75,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div v-if='type.schema.properties' class="col-md-12">
                                 <EquipmentMeta v-model='equipment.meta' :schema='type.schema'/>
                             </div>
 

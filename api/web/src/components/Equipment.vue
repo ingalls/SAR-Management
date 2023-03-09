@@ -58,7 +58,7 @@
                                                 <div class="datagrid-title">Assigned</div>
                                                 <div class="datagrid-content">
                                                     <template v-if='assigned.length'>
-                                                        <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1'/>
+                                                        <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1' :link='true'/>
                                                     </template>
                                                     <span v-else>None</span>
                                                 </div>
