@@ -28,6 +28,9 @@
         },
         "author": {
             "$ref": "./missions/author.json"
+        },
+        "location": {
+            "$ref": "./missions/location.json"
         }
     },
     "required": [
@@ -39,6 +42,7 @@
         "status",
         "title",
         "body",
-        "author"
+        "author",
+        "location"
     ]
 }

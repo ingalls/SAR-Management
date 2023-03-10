@@ -1,6 +1,5 @@
 import Err from '@openaddresses/batch-error';
 import busboy from 'busboy';
-import fs from 'fs/promises';
 import path from 'path';
 import Auth from '../lib/auth.js';
 import Asset from '../lib/types/asset.js';
@@ -157,9 +156,12 @@ export default async function router(schema, config) {
 
         try {
             const asset = await Asset.from(config.pool, req.params.assetid);
-            await asset.delete();
 
-            await fs.unlink(new URL(`../assets/${asset.id}${path.parse(asset.name).ext}`, import.meta.url));
+            await spaces.delete({
+                Key: `assets/${asset.id}-${asset.name}`
+            });
+
+            await asset.delete();
 
             return res.json({
                 status: 200,

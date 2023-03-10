@@ -15,9 +15,6 @@
                             }'><a @click='paging.prefix = paging.prefix.substring(0, paging.prefix.length - 1).split("/").splice(0, fit).join("/") + "/"' class='cursor-pointer' v-text='folder.replace("/", )'></a></li>
                         </ol>
 
-                        <div v-if='is_iam("Doc:Manage")' class='ms-auto'>
-                            <a @click='$router.push("/doc/new")' class="cursor-pointer btn btn-primary">New Doc</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -46,6 +43,13 @@
                                     <span class="input-icon-addon">
                                         <SearchIcon width='24'/>
                                     </span>
+                                </div>
+                                <div class='ms-auto'>
+                                    <div class='btn-list'>
+                                        <div v-if='is_iam("Doc:Manage")' class='ms-auto'>
+                                            <PlusIcon @click='upload = true' class='cursor-pointer my-1'/>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -88,6 +92,15 @@
     </div>
 
     <PageFooter/>
+
+    <Upload
+        v-if='upload'
+        url='api/doc'
+        :prefix='paging.prefix'
+        @err='error($event)'
+        @close='upload = null'
+        @upload='upload = null; listDocs($event)'
+    />
 </div>
 </template>
 
@@ -97,10 +110,12 @@ import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
+import Upload from './util/Upload.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
+    PlusIcon,
     SearchIcon,
     FileFilledIcon,
     FolderFilledIcon
@@ -121,6 +136,7 @@ export default {
     data: function() {
         return {
             file: null,
+            upload: false,
             paging: {
                 filter: '',
                 prefix: '',
@@ -156,6 +172,10 @@ export default {
             var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
             return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
         },
+        error: function($event) {
+            this.upload = null;
+            throw $event;
+        },
         listDocs: async function() {
             this.loading.list = true;
             const url = window.stdurl('/api/doc');
@@ -170,6 +190,8 @@ export default {
     },
     components: {
         None,
+        Upload,
+        PlusIcon,
         PageFooter,
         NoAccess,
         SearchIcon,

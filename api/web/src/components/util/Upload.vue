@@ -25,6 +25,16 @@ export default {
             dropzone: null
         }
     },
+    props: {
+        url: {
+            type: String,
+            default: '/api/asset'
+        },
+        prefix: {
+            type: String,
+            default: ''
+        }
+    },
     mounted: function() {
         this.$nextTick(() => {
             this.dropzone = new Dropzone("#dropzone-default", {
@@ -36,7 +46,10 @@ export default {
                 body.append('file', file);
 
                 try {
-                    this.$emit('upload', await window.std('/api/asset', {
+                    const url = window.stdurl(this.url);
+                    if (this.prefix) url.searchParams.append('prefix', this.prefix);
+
+                    this.$emit('upload', await window.std(url, {
                         method: 'POST',
                         body
                     }));

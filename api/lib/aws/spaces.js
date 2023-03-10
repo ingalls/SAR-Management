@@ -60,5 +60,13 @@ export default class Spaces {
     } catch (err) {
         throw new Err(400, err, 'Failed to Head Object');
     }
+
+    async delete(params) {
+        if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
+
+        return await this.client.send(new S3.DeleteObjectCommand(params));
+    } catch (err) {
+        throw new Err(400, err, 'Failed to Head Object');
+    }
 }
 
