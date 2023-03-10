@@ -54,7 +54,35 @@
                 </div>
 
                 <div v-if='is_iam("Team:Admin")' class="col-lg-12">
-                    <TablerLoading v-if='loading.iam || loading.team'/>
+                    <TablerLoading v-if='loading.iam || loading.team || loading.fieldability'/>
+                    <div v-else class="card">
+                        <div class='card-header'>Team Fieldability Requirements</div>
+                        <table class="table card-table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Requirement</th>
+                                    <th>Access</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr :key='field.id' v-for='field in fieldability'>
+                                    <td v-text='field.name'></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="card-body">
+                            <div class='d-flex'>
+                                <div class='ms-auto'>
+                                    <a @click='updateField' class="cursor-pointer btn btn-primary">Update</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if='is_iam("Team:Admin")' class="col-lg-12">
+                    <TablerLoading v-if='loading.iam || loading.team || loading.fieldability'/>
                     <div v-else class="card">
                         <div class='card-header'>Team Access Management</div>
                         <table class="table card-table table-vcenter">
@@ -114,6 +142,7 @@ export default {
     data: function() {
         return {
             loading: {
+                fieldability: false,
                 team: true,
                 iam: true
             },
@@ -122,6 +151,7 @@ export default {
                 body: false
             },
             iamlist: {},
+            fieldability: [],
             team: {
                 name: '',
                 body: '',
@@ -132,6 +162,7 @@ export default {
     mounted: async function() {
         if (this.is_iam("Team:Manage")) {
             await this.fetchiam();
+            await this.fetchFieldability();
             await this.fetch();
         }
     },
@@ -141,6 +172,11 @@ export default {
             this.loading.iam = true;
             this.iamlist = await window.std(`/api/iam`);
             this.loading.iam = false;
+        },
+        fetchFieldability: async function() {
+            this.loading.fieldability = true;
+            this.team = await window.std(`/api/team/${this.$route.params.teamid}/fieldability`);
+            this.loading.fieldability = false;
         },
         fetch: async function() {
             this.loading.team = true;
@@ -169,6 +205,16 @@ export default {
                 body: {
                     name: this.team.name,
                     body: this.team.body,
+                }
+            });
+
+            this.$router.push(`/team/${update.id}`);
+        },
+        updateField: async function() {
+            const update = await window.std(`/api/team/${this.$route.params.teamid}/fieldability`, {
+                method: 'PATCH',
+                body: {
+                    fieldability: this.fieldability
                 }
             });
 

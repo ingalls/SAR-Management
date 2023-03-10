@@ -867,6 +867,24 @@
 
 
 /**
+* @api {get} /team/:teamid/fieldability List Fieldability
+* @apiVersion 1.0.0
+* @apiName GET-/team/:teamid/fieldability
+* @apiGroup Teams
+* @apiPermission user
+*
+* @apidescription
+*   Return fieldability settings for a team
+*
+* @apiParam {integer} teamid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/fieldability.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /iam Get IAM
 * @apiVersion 1.0.0
 * @apiName GET-/iam

@@ -45,12 +45,14 @@
                         </div>
                     </div>
 
-                    <CardUsers
-                        v-if='team.id'
-                        :dropdown='false'
-                        :url='`/api/team/${$route.params.teamid}/user`'
-                        :edit='is_iam("Team:Manage")'
-                    />
+                    <div class='col-lg-12'>
+                        <CardUsers
+                            v-if='team.id'
+                            :dropdown='false'
+                            :url='`/api/team/${$route.params.teamid}/user`'
+                            :edit='is_iam("Team:Manage")'
+                        />
+                    </div>
                 </template>
             </div>
         </div>
