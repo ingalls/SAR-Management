@@ -98,8 +98,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -111,7 +109,6 @@ import {
     TablerList
 } from '@tak-ps/vue-tabler'
 import UserSelect from './util/UserSelect.vue';
-import PageFooter from './PageFooter.vue';
 import NoAccess from './util/NoAccess.vue';
 import Alert from './util/Alert.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
@@ -229,7 +226,6 @@ export default {
         Alert,
         NoAccess,
         UserSelect,
-        PageFooter,
         TablerList,
         TablerInput,
         TablerToggle,

@@ -44,15 +44,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
-import PageFooter from './PageFooter.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -93,7 +90,6 @@ export default {
     },
     components: {
         NoAccess,
-        PageFooter,
         TablerLoading,
         SettingsIcon
     }

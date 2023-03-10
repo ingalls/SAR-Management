@@ -77,15 +77,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
@@ -192,7 +189,6 @@ export default {
         EpochRange,
         Location,
         SettingsIcon,
-        PageFooter,
         UserPresentSelect,
         TablerLoading,
         NoAccess

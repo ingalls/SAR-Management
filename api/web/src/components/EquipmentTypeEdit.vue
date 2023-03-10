@@ -49,8 +49,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -59,7 +57,6 @@ import {
     TablerLoading,
     TablerInput
 } from '@tak-ps/vue-tabler'
-import PageFooter from './PageFooter.vue';
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 
@@ -150,7 +147,6 @@ export default {
     },
     components: {
         NoAccess,
-        PageFooter,
         TablerInput,
         TablerLoading
     }

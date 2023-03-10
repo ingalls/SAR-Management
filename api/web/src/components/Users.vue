@@ -31,13 +31,10 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
-import PageFooter from './PageFooter.vue';
 import CardUsers from './cards/Users.vue';
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
@@ -58,7 +55,6 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
     },
     components: {
-        PageFooter,
         CardUsers,
         NoAccess
     }

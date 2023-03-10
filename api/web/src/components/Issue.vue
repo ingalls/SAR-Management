@@ -110,8 +110,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -121,7 +119,6 @@ import NoAccess from './util/NoAccess.vue';
 import {
     TablerLoading,
 } from '@tak-ps/vue-tabler'
-import PageFooter from './PageFooter.vue';
 import Avatar from './util/Avatar.vue';
 import CreateComment from './Issue/CreateComment.vue';
 import UserSelect from './util/UserSelect.vue';
@@ -208,7 +205,6 @@ export default {
         Avatar,
         NoAccess,
         TablerLoading,
-        PageFooter,
         CreateComment,
         UserSelect
     }

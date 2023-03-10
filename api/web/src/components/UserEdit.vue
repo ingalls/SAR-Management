@@ -119,7 +119,6 @@
         </div>
     </div>
 
-    <PageFooter/>
     <Upload
         v-if='upload'
         @err='upload = null; err = $event'
@@ -130,7 +129,6 @@
 </template>
 
 <script>
-import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 import Upload from './util/Upload.vue';
 import {
@@ -250,7 +248,6 @@ export default {
         Upload,
         PlusIcon,
         TrashIcon,
-        PageFooter,
         UserProfile,
         TablerInput,
     }

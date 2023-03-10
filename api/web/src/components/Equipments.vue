@@ -5,11 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Equipment</a></li>
-                        </ol>
-
+                        <BreadCrumb/>
                         <div v-if='is_iam("Equipment:Manage")' class='ms-auto'>
                             <div class='btn-list'>
                                 <a @click='$router.push("/equipment/type")' class="cursor-pointer btn btn-secondary">
@@ -36,16 +32,14 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
-import PageFooter from './PageFooter.vue';
 import CardEquipment from './cards/Equipment.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 
 export default {
     name: 'Equipments',
@@ -64,7 +58,7 @@ export default {
     },
     components: {
         NoAccess,
-        PageFooter,
+        BreadCrumb,
         CardEquipment
     }
 }

@@ -70,8 +70,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -79,7 +77,6 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
-import PageFooter from './PageFooter.vue';
 import { TablerSelect } from '@tak-ps/vue-tabler';
 import {
     SearchIcon
@@ -127,7 +124,6 @@ export default {
     components: {
         None,
         NoAccess,
-        PageFooter,
         TablerSelect,
         SearchIcon
     }

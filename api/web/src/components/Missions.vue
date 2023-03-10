@@ -63,8 +63,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -72,7 +70,6 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
-import PageFooter from './PageFooter.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
 import {
@@ -134,7 +131,6 @@ export default {
     },
     components: {
         None,
-        PageFooter,
         NoAccess,
         EpochRange,
         TableFooter,

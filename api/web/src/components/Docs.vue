@@ -91,8 +91,6 @@
         </div>
     </div>
 
-    <PageFooter/>
-
     <Upload
         v-if='upload'
         url='api/doc'
@@ -107,7 +105,6 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
 import Upload from './util/Upload.vue';
@@ -192,7 +189,6 @@ export default {
         None,
         Upload,
         PlusIcon,
-        PageFooter,
         NoAccess,
         SearchIcon,
         FileFilledIcon,

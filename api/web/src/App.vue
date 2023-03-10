@@ -133,12 +133,15 @@
     </template>
 
     <TablerError v-if='err' :err='err' @close='err = null'/>
+
+    <PageFooter/>
 </div>
 </template>
 
 <script>
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
+import PageFooter from './components/util/PageFooter.vue';
 import {
     TablerError,
     TablerLoading
@@ -229,7 +232,8 @@ export default {
         AmbulanceIcon,
         AdjustmentsIcon,
         TablerError,
-        TablerLoading
+        TablerLoading,
+        PageFooter
     }
 }
 </script>

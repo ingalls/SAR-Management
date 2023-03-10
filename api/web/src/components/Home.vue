@@ -15,8 +15,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -24,7 +22,6 @@
 import iam from '../iam.js';
 import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
-import PageFooter from './PageFooter.vue';
 import NoAccess from './util/NoAccess.vue';
 
 export default {
@@ -43,7 +40,6 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
     },
     components: {
-        PageFooter,
         IssuesCard,
         TrainingsCard,
         NoAccess

@@ -56,15 +56,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import PageFooter from './PageFooter.vue';
 import UserSelect from './util/UserSelect.vue';
 import {
     TablerInput,
@@ -124,7 +121,6 @@ export default {
     components: {
         NoAccess,
         TablerInput,
-        PageFooter,
         UserSelect
     }
 }

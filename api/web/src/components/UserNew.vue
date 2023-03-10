@@ -59,15 +59,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import PageFooter from './PageFooter.vue';
 import CardTeams from './cards/Teams.vue';
 import {
     TablerInput,
@@ -139,7 +136,6 @@ export default {
         NoAccess,
         CardTeams,
         TablerInput,
-        PageFooter,
         TablerLoading
     }
 }

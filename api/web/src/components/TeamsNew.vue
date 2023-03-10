@@ -52,15 +52,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import PageFooter from './PageFooter.vue';
 
 export default {
     name: 'TeamNew',
@@ -108,7 +105,6 @@ export default {
     },
     components: {
         NoAccess,
-        PageFooter,
     }
 }
 </script>

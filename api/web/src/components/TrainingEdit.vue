@@ -75,15 +75,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import PageFooter from './PageFooter.vue';
 import Location from './Mission/Location.vue';
 import {
     TablerInput,
@@ -162,7 +159,6 @@ export default {
     },
     components: {
         Location,
-        PageFooter,
         TablerInput,
         TablerToggle,
         TablerLoading,

@@ -96,8 +96,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -105,7 +103,6 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import TableFooter from './util/TableFooter.vue';
-import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 import UserDropdown from './util/UserDropdown.vue';
 import Avatar from './util/Avatar.vue';
@@ -210,7 +207,6 @@ export default {
         PencilIcon,
         TablerLoading,
         TablerInput,
-        PageFooter,
         UserDropdown,
         TableFooter,
         NoAccess

@@ -30,13 +30,10 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
-import PageFooter from './PageFooter.vue';
 import CardRoles from './Admin/Roles.vue';
 import CardLabels from './Admin/Labels.vue';
 import CardStandards from './Admin/Standards.vue';
@@ -54,7 +51,6 @@ export default {
         }
     },
     components: {
-        PageFooter,
         CardRoles,
         CardLabels,
         CardStandards,

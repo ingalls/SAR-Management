@@ -169,15 +169,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import iam from '../iam.js';
 import Epoch from './util/Epoch.vue';
-import PageFooter from './PageFooter.vue';
 import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
 import CardEquipment from './cards/Equipment.vue';
@@ -237,7 +234,6 @@ export default {
     },
     components: {
         Epoch,
-        PageFooter,
         UserProfile,
         CardIssues,
         CardMission,

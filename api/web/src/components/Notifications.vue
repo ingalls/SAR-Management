@@ -30,13 +30,10 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
-import PageFooter from './PageFooter.vue';
 import None from './util/None.vue';
 
 export default {
@@ -59,7 +56,6 @@ export default {
     },
     components: {
         None,
-        PageFooter,
     }
 }
 </script>

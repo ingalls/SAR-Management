@@ -117,15 +117,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import PageFooter from './PageFooter.vue';
 import {
     PlusIcon
 } from 'vue-tabler-icons';
@@ -241,7 +238,6 @@ export default {
     components: {
         PlusIcon,
         NoAccess,
-        PageFooter,
         TablerLoading,
         TablerSelect
     }

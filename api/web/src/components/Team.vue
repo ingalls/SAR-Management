@@ -57,15 +57,12 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
 <script>
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
-import PageFooter from './PageFooter.vue';
 import CardUsers from './cards/Users.vue';
 import {
     TablerLoading
@@ -109,7 +106,6 @@ export default {
     components: {
         NoAccess,
         TablerLoading,
-        PageFooter,
         CardUsers
     }
 }

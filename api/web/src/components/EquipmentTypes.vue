@@ -61,8 +61,6 @@
             </div>
         </div>
     </div>
-
-    <PageFooter/>
 </div>
 </template>
 
@@ -71,7 +69,6 @@ import NoAccess from './util/NoAccess.vue';
 import Epoch from './util/Epoch.vue';
 import iam from '../iam.js';
 import None from './util/None.vue';
-import PageFooter from './PageFooter.vue';
 import {
     PlusIcon,
     SearchIcon
@@ -116,7 +113,6 @@ export default {
         Epoch,
         PlusIcon,
         NoAccess,
-        PageFooter,
         SearchIcon
     }
 }
