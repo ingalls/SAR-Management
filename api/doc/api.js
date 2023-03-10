@@ -1175,6 +1175,24 @@
 
 
 /**
+* @api {get} /certs Get Certs
+* @apiVersion 1.0.0
+* @apiName GET-/certs
+* @apiGroup KnownCerts
+* @apiPermission user
+*
+* @apidescription
+*   Get all known certs
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.ListKnownCerts.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /user/:userid/certs Get Certs
 * @apiVersion 1.0.0
 * @apiName GET-/user/:userid/certs
