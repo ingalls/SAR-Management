@@ -5,12 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/equipment")' class="cursor-pointer">Equipment</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/equipment/type")' class="cursor-pointer">Type</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.typeid'></a></li>
-                        </ol>
+                        <BreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -49,6 +44,7 @@
 
 <script>
 import NoAccess from './util/NoAccess.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 import iam from '../iam.js';
 import {
     TablerLoading
@@ -90,6 +86,7 @@ export default {
     },
     components: {
         NoAccess,
+        BreadCrumb,
         TablerLoading,
         SettingsIcon
     }

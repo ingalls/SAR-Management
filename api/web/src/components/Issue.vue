@@ -5,11 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item"><a @click='$router.push("/issue")' class='cursor-pointer'>Issues</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a v-text='$route.params.issueid'></a></li>
-                        </ol>
+                        <BreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -120,6 +116,7 @@ import {
     TablerLoading,
 } from '@tak-ps/vue-tabler'
 import Avatar from './util/Avatar.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 import CreateComment from './Issue/CreateComment.vue';
 import UserSelect from './util/UserSelect.vue';
 
@@ -205,6 +202,7 @@ export default {
         Avatar,
         NoAccess,
         TablerLoading,
+        BreadCrumb,
         CreateComment,
         UserSelect
     }

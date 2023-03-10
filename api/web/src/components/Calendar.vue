@@ -5,10 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Calendar</a></li>
-                        </ol>
+                        <BreadCrumb/>
 
                         <div class='ms-auto'>
                             <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
@@ -45,6 +42,7 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
+import BreadCrumb from './util/BreadCrumb.vue';
 
 export default {
     name: 'Calendar',
@@ -111,6 +109,7 @@ export default {
         },
     },
     components: {
+        BreadCrumb,
         NoAccess,
     },
 }

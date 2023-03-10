@@ -5,12 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/equipment")' class="cursor-pointer">Equipment</a></li>
-                            <li v-if='$route.params.equipid' class="breadcrumb-item" aria-current="page"><a  @click='$router.push(`/equipment/${$route.params.equipid}`)' class="cursor-pointer" v-text='$route.params.equipid'></a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.equipid ? "Edit" : "New"'></a></li>
-                        </ol>
+                        <BreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -109,6 +104,7 @@ import {
     TablerList
 } from '@tak-ps/vue-tabler'
 import UserSelect from './util/UserSelect.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 import NoAccess from './util/NoAccess.vue';
 import Alert from './util/Alert.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
@@ -225,6 +221,7 @@ export default {
     components: {
         Alert,
         NoAccess,
+        BreadCrumb,
         UserSelect,
         TablerList,
         TablerInput,

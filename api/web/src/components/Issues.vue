@@ -5,10 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Issues</a></li>
-                        </ol>
+                        <BreadCrumb/>
 
                         <div class='ms-auto'>
                             <a v-if='is_iam("Issue:Manage")' @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
@@ -77,6 +74,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 import { TablerSelect } from '@tak-ps/vue-tabler';
 import {
     SearchIcon
@@ -123,6 +121,7 @@ export default {
     },
     components: {
         None,
+        BreadCrumb,
         NoAccess,
         TablerSelect,
         SearchIcon

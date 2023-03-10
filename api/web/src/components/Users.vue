@@ -5,10 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Users</a></li>
-                        </ol>
+                        <BreadCrumb/>
 
                         <div v-if='is_iam("User:Admin")' class='ms-auto'>
                             <a @click='$router.push("/user/new")' class="cursor-pointer btn btn-primary">
@@ -37,6 +34,7 @@
 <script>
 import CardUsers from './cards/Users.vue';
 import NoAccess from './util/NoAccess.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 import iam from '../iam.js';
 
 export default {
@@ -56,7 +54,8 @@ export default {
     },
     components: {
         CardUsers,
-        NoAccess
+        NoAccess,
+        BreadCrumb
     }
 }
 </script>

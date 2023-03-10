@@ -5,10 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Admin</a></li>
-                        </ol>
+                        <BreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -37,6 +34,7 @@
 import CardRoles from './Admin/Roles.vue';
 import CardLabels from './Admin/Labels.vue';
 import CardStandards from './Admin/Standards.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 
 export default {
     name: 'Admin',
@@ -52,6 +50,7 @@ export default {
     },
     components: {
         CardRoles,
+        BreadCrumb,
         CardLabels,
         CardStandards,
     }

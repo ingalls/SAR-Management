@@ -5,10 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#">Trainings</a></li>
-                        </ol>
+                        <BreadCrumb/>
 
                         <div class='ms-auto'>
                             <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
@@ -79,6 +76,7 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -144,7 +142,8 @@ export default {
         EpochRange,
         SearchIcon,
         NoAccess,
-        TablerLoading
+        TablerLoading,
+        BreadCrumb
     }
 }
 </script>

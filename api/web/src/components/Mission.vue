@@ -5,11 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class="cursor-pointer">Home</a></li>
-                            <li class="breadcrumb-item" aria-current="page"><a  @click='$router.push("/mission")' class="cursor-pointer">Mission</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><a href="#" v-text='$route.params.missionid'></a></li>
-                        </ol>
+                        <BreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -80,6 +76,7 @@ import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
+import BreadCrumb from './util/BreadCrumb.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -176,6 +173,7 @@ export default {
         EpochRange,
         Location,
         UserPresentSelect,
+        BreadCrumb,
         TablerLoading,
         NoAccess
     }
