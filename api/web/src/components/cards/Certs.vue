@@ -1,8 +1,14 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <div class="d-flex">
-            <h3 class="card-title">Certificates</h3>
+        <div class='col'>
+            <div class="d-flex">
+                <h3 class="card-title">Certificates</h3>
+
+                <div class='ms-auto'>
+                    <PlusIcon v-if='$route.name === "profile"' @click='upload = true' class='cursor-pointer'/>
+                </div>
+            </div>
         </div>
     </div>
     <template v-if='!list.certs.length'>
@@ -24,11 +30,21 @@
             </tbody>
         </table>
     </template>
+    <UploadCertificate
+        v-if='upload'
+        @err='error($event)'
+        @close='upload = null'
+        @upload='upload = null; fetch($event)'
+    />
 </div>
 </template>
 
 <script>
 import None from '../util/None.vue';
+import UploadCertificate from '../util/UploadCertificate.vue';
+import {
+    PlusIcon
+} from 'vue-tabler-icons'
 
 export default {
     name: 'CertsCard',
@@ -45,6 +61,7 @@ export default {
     data: function() {
         return {
             page: 0,
+            upload: null,
             list: {
                 total: 0,
                 certs: []
@@ -65,6 +82,8 @@ export default {
     },
     components: {
         None,
+        UploadCertificate,
+        PlusIcon
     }
 }
 </script>

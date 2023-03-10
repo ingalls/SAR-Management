@@ -6,12 +6,6 @@
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
                         <BreadCrumb/>
-
-                        <div class='ms-auto'>
-                            <a v-if='is_iam("Mission:Manage")' @click='$router.push("/mission/new")' class="cursor-pointer btn btn-primary">
-                                New Mission
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -32,6 +26,9 @@
                                     <span class="input-icon-addon">
                                         <SearchIcon width='24'/>
                                     </span>
+                                </div>
+                                <div class='ms-auto'>
+                                    <PlusIcon v-if='is_iam("Mission:Manage")' @click='$router.push("/mission/new")' class="cursor-pointer my-1"/>
                                 </div>
                             </div>
                         </div>
@@ -70,6 +67,9 @@ import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
 import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    PlusIcon
+} from 'vue-tabler-icons';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -129,6 +129,7 @@ export default {
     },
     components: {
         None,
+        PlusIcon,
         NoAccess,
         EpochRange,
         TableFooter,
