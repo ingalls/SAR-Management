@@ -56,12 +56,16 @@
                 <div v-if='is_iam("Team:Admin")' class="col-lg-12">
                     <TablerLoading v-if='loading.iam || loading.team || loading.fieldability'/>
                     <div v-else class="card">
-                        <div class='card-header'>Team Fieldability Requirements</div>
+                        <div class='card-header'>
+                            <h2 class='card-title'>Team Fieldability Requirements</h2>
+                            <div class='ms-auto'>
+                                <PlusIcon class='cursor-pointer'/>
+                            </div>
+                        </div>
                         <table class="table card-table table-vcenter">
                             <thead>
                                 <tr>
-                                    <th>Requirement</th>
-                                    <th>Access</th>
+                                    <th>Name</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,6 +126,9 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import PageFooter from './PageFooter.vue';
+import {
+    PlusIcon
+} from 'vue-tabler-icons';
 import {
     TablerLoading,
     TablerSelect
@@ -232,6 +239,7 @@ export default {
         }
     },
     components: {
+        PlusIcon,
         NoAccess,
         PageFooter,
         TablerLoading,
