@@ -33,8 +33,8 @@
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-8" v-text='equipment.description'></div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-12 pb-4" v-text='equipment.description'></div>
+                                    <div class="col-md-12">
                                         <div class="datagrid">
                                             <div class="datagrid-item">
                                                 <div class="datagrid-title">Parent Container</div>
@@ -48,6 +48,19 @@
                                                 <div class="datagrid-content">
                                                     <a v-if='type.id' @click='$router.push(`/equipment/type/${type.id}`)' class='cursor-pointer' v-text='type.type'></a>
                                                     <span v-else>None</span>
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Quantity</div>
+                                                <div class="datagrid-content">
+                                                    <span v-text='equipment.quantity'/>
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Item Value</div>
+                                                <div class="datagrid-content">
+                                                    <span v-if='equipment.value' v-text='equipment.value'/>
+                                                    <span v-else>Unknown</span>
                                                 </div>
                                             </div>
                                             <div class="datagrid-item">

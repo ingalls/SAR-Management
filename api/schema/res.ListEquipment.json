@@ -12,7 +12,7 @@
         "equipment": {
             "type": "array",
             "items":  {
-                "type": "object"
+                "$ref": "./equipment.json"
             }
         }
     }

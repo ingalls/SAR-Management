@@ -34,6 +34,12 @@
         },
         "archived": {
             "$ref": "./equipment/archived.json"
+        },
+        "quantity": {
+            "$ref": "./equipment/quantity.json"
+        },
+        "value": {
+            "$ref": "./equipment/value.json"
         }
     },
     "required": [
@@ -47,6 +53,8 @@
         "container",
         "parent",
         "meta",
-        "archived"
+        "archived",
+        "quantity",
+        "value"
     ]
 }

@@ -20,6 +20,12 @@
         "parent": {
             "$ref": "./equipment/parent.json"
         },
+        "quantity": {
+            "$ref": "./equipment/quantity.json"
+        },
+        "value": {
+            "$ref": "./equipment/value.json"
+        },
         "meta": {
             "$ref": "./equipment/meta.json"
         },

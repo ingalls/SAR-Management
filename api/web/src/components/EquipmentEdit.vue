@@ -26,10 +26,10 @@
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-8">
+                                    <div class="col-md-8 pb-2">
                                         <TablerInput v-model='equipment.name' label='Equipment Name'/>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 pb-2">
                                         <TablerList
                                             key='type'
                                             :initial='type'
@@ -40,10 +40,16 @@
                                             namekey='type'
                                         />
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 pb-2">
                                         <TablerInput v-model='equipment.description' :rows='5' label='Equipment Description'/>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 pb-2">
+                                        <TablerInput v-model='equipment.quantity' label='Quantity'/>
+                                    </div>
+                                    <div class="col-md-6 pb-2">
+                                        <TablerInput v-model='equipment.value' label='Per Item Value ($)'/>
+                                    </div>
+                                    <div class="col-md-6 pb-2">
                                         <label class='form-label'>Equipment Heiarchy</label>
                                         <div class='row border rounded px-2 py-2' style='margin-left: 0px; margin-right: 0px;'>
                                             <TablerToggle v-model='equipment.container' label='Equipment Container?'/>
@@ -59,7 +65,7 @@
                                             />
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 pb-2">
                                         <label class='form-label'>Assigned Equipment</label>
                                         <div class='row border rounded px-2 py-2' style='margin-left: 0px; margin-right: 0px;'>
                                             <UserSelect
@@ -136,6 +142,8 @@ export default {
                 name: '',
                 description: '',
                 container: false,
+                value: '',
+                quantity: 1,
                 parent: null,
                 type: null,
                 meta: {}
@@ -198,6 +206,8 @@ export default {
                     method: 'PATCH',
                     body: {
                         ...this.equipment,
+                        value: this.equipment.value ? Number(this.equipment.value) : null,
+                        quantity: this.equipment.quantity ? parseInt(this.equipment.quantity) : null,
                         assigned: this.assigned.map((a) => { return a.uid || a.id })
                     }
                 })
@@ -209,6 +219,8 @@ export default {
                     method: 'POST',
                     body: {
                         ...this.equipment,
+                        value: this.equipment.value ? Number(this.equipment.value) : null,
+                        quantity: this.equipment.quantity ? parseInt(this.equipment.quantity) : null,
                         assigned: this.assigned.map((a) => { return a.uid || a.id })
                     }
                 })
