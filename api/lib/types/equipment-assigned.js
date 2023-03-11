@@ -5,7 +5,7 @@ import { sql } from 'slonik';
 export default class EquipmentAssigned extends Generic {
     static _table = 'equipment_assigned';
 
-    static async list(pool, equip_id, query) {
+    static async list(pool, equip_id, query={}) {
         equip_id = Params.integer(equip_id);
 
         query.limit = Params.integer(query.limit, { default: 20 });
