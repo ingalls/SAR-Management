@@ -48,6 +48,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
+                        <th>Last Login</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,6 +69,10 @@
                                     </div>
                                 </div>
                             </div>
+                        </td>
+                        <td>
+                            <Epoch v-if='user.last_login' :date='user.last_login'/>
+                            <span v-else>Never</span>
                         </td>
                     </tr>
                 </tbody>
@@ -109,6 +114,7 @@ import {
 } from 'vue-tabler-icons'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableFooter from '../util/TableFooter.vue';
+import Epoch from '../util/Epoch.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -196,6 +202,7 @@ export default {
     },
     components: {
         None,
+        Epoch,
         UserDropdownIcon,
         TrashIcon,
         SearchIcon,
