@@ -807,7 +807,7 @@
 *
 *
 *
-*
+* @apiSchema {jsonschema=../schema/res.ListNotifications.json} apiSuccess
 */
 
 

@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "notifications"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "total": {
+            "type": "integer"
+        },
+        "notifications": {
+            "type": "array",
+            "items":  {
+                "$ref": "./notifications.json"
+            }
+        }
+    }
+}

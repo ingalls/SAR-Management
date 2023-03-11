@@ -31,6 +31,14 @@
                                 <template v-if='!list.total'>
                                     <None label='Notifications' :create='false'/>
                                 </template>
+                                <template v-else>
+                                    <div key='notify.id' v-for='notify in list.notifications'  class='col my-2 d-flex'>
+                                        <CircleDotIcon class='mx-2' /><span v-text='notify.text'/>
+                                        <div class='ms-auto'>
+                                            <TrashIcon click='clearNotifications(notify)' class='cursor-pointer'/>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                         </template>
                     </div>
@@ -48,6 +56,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
+    CircleDotIcon,
     TrashIcon
 } from 'vue-tabler-icons';
 
@@ -73,16 +82,23 @@ export default {
             this.list = await window.std('/api/notification');
             this.loading.list = false;
         },
-        clearNotifications: async function() {
+        clearNotifications: async function(notify=null) {
             this.loading.list = true;
-            this.list = await window.std('/api/notification', {
-                method: 'DELETE'
-            });
+            if (notify) {
+                this.list = await window.std(`/api/notification/${notify.id}`, {
+                    method: 'DELETE'
+                });
+            } else {
+                this.list = await window.std('/api/notification', {
+                    method: 'DELETE'
+                });
+            }
             this.loading.list = false;
         }
     },
     components: {
         None,
+        CircleDotIcon,
         TablerLoading,
         TrashIcon,
         BreadCrumb
