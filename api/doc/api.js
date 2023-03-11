@@ -797,7 +797,7 @@
 * @api {get} /notification Get Notifications
 * @apiVersion 1.0.0
 * @apiName GET-/notification
-* @apiGroup User
+* @apiGroup Notifications
 * @apiPermission user
 *
 * @apidescription
@@ -808,6 +808,24 @@
 *
 *
 *
+*/
+
+
+/**
+* @api {delete} /notification Delete Notifications
+* @apiVersion 1.0.0
+* @apiName DELETE-/notification
+* @apiGroup Notifications
+* @apiPermission user
+*
+* @apidescription
+*   Delete all notifications
+*
+
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
 */
 
 

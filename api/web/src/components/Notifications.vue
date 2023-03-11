@@ -17,11 +17,22 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
-                            <template v-if='!list.total'>
-                                <None label='Notifications' :create='false'/>
-                            </template>
-                        </div>
+                        <TablerLoading v-if='loading.list'/>
+                        <template v-else>
+                            <div class="card-header">
+                                <div class='col d-flex'>
+                                    <h1 class='card-title'>Notifications</h1>
+                                    <div class='ms-auto'>
+                                        <TrashIcon click='clearNotifications' class='cursor-pointer'/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <template v-if='!list.total'>
+                                    <None label='Notifications' :create='false'/>
+                                </template>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -33,11 +44,20 @@
 <script>
 import None from './util/None.vue';
 import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
+import {
+    TrashIcon
+} from 'vue-tabler-icons';
 
 export default {
     name: 'Notifications',
     data: function() {
         return {
+            loading: {
+                list: true
+            },
             list: {
                 total: 0,
                 notifications: []
@@ -49,11 +69,22 @@ export default {
     },
     methods: {
         listNotifications: async function() {
+            this.loading.list = true;
             this.list = await window.std('/api/notification');
+            this.loading.list = false;
+        },
+        clearNotifications: async function() {
+            this.loading.list = true;
+            this.list = await window.std('/api/notification', {
+                method: 'DELETE'
+            });
+            this.loading.list = false;
         }
     },
     components: {
         None,
+        TablerLoading,
+        TrashIcon,
         BreadCrumb
     }
 }
