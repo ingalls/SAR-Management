@@ -1,9 +1,19 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
-        <div class='ms-auto'>
-            <PlusIcon v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' class='cursor-pointer'/>
+        <div class='col d-flex'>
+            <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
+            <div class='ms-auto'>
+                <div class='btn-list'>
+                    <PlusIcon v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' class='cursor-pointer my-2'/>
+                    <div class="input-icon">
+                        <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
+                            <span class="input-icon-addon">
+                            <SearchIcon width='24'/>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <template v-if='loading.list'>

@@ -14,7 +14,6 @@
                             </span>
                         </div>
 
-
                         <div v-if='!edit' class="btn-group" role="group">
                             <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='list'>
                             <label @click='mode="list"' class="btn btn-icon"><ListIcon/></label>
