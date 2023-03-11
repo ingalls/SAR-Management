@@ -41,4 +41,32 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.delete('/notification/:notificationid', {
+        name: 'Delete Notification',
+        group: 'Notifications',
+        auth: 'user',
+        description: 'Delete all notifications',
+        ':notificationid': 'integer',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req);
+
+            const notification = await Notification.from(config.pool, req.params.notificationid);
+
+            if (req.auth.id !== notification.uid) {
+                throw new Err(400, null, 'Not your notification');
+            }
+
+            await notification.delete();
+
+            return res.json({
+                status: 200,
+                message: 'Notifications Deleted'
+            });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }

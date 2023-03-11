@@ -23,7 +23,7 @@
                                 <div class='col d-flex'>
                                     <h1 class='card-title'>Notifications</h1>
                                     <div class='ms-auto'>
-                                        <TrashIcon click='clearNotifications' class='cursor-pointer'/>
+                                        <TrashIcon @click='clearNotifications' class='cursor-pointer'/>
                                     </div>
                                 </div>
                             </div>
@@ -32,10 +32,10 @@
                                     <None label='Notifications' :create='false'/>
                                 </template>
                                 <template v-else>
-                                    <div key='notify.id' v-for='notify in list.notifications'  class='col my-2 d-flex'>
+                                    <div :key='notify.id' v-for='notify in list.notifications'  class='col my-2 d-flex'>
                                         <CircleDotIcon class='mx-2' /><span v-text='notify.text'/>
                                         <div class='ms-auto'>
-                                            <TrashIcon click='clearNotifications(notify)' class='cursor-pointer'/>
+                                            <TrashIcon @click='clearNotifications(notify)' class='cursor-pointer'/>
                                         </div>
                                     </div>
                                 </template>

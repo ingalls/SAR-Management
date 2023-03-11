@@ -830,6 +830,24 @@
 
 
 /**
+* @api {delete} /notification/:notificationid Delete Notification
+* @apiVersion 1.0.0
+* @apiName DELETE-/notification/:notificationid
+* @apiGroup Notifications
+* @apiPermission user
+*
+* @apidescription
+*   Delete all notifications
+*
+* @apiParam {integer} notificationid param
+*
+*
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /team/:teamid/user List Users
 * @apiVersion 1.0.0
 * @apiName GET-/team/:teamid/user
