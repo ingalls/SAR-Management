@@ -89,8 +89,15 @@ export default {
                     }
 
                     return resolve(events.map((event) => {
-                        event.start = new Date(event.start);
-                        event.end = new Date(event.end);
+                        event.start = (new Date(event.start)).toISOString()
+                            .replace('T', ' ')
+                            .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
+
+                        event.end = (new Date(event.end)).toISOString()
+                            .replace('T', ' ')
+                            .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
+
+
                         return event;
                     }));
                 } catch (err) {
