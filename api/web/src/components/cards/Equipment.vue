@@ -85,10 +85,10 @@ export default {
     },
     watch: {
         'paging.page': async function() {
-            await this.listUsers();
+            await this.fetch();
         },
         'paging.filter': async function() {
-            await this.listUsers();
+            await this.fetch();
         }
     },
     mounted: async function() {
