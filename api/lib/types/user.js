@@ -76,8 +76,8 @@ export default class User extends Generic {
                 FROM
                     users
                 WHERE
-                    username = ${username}
-                    OR email = ${username}
+                    Lower(username) = Lower(${username})
+                    OR Lower(email) = Lower(${username})
             `);
         } catch (err) {
             throw new Err(500, err, 'Internal Login Error');
