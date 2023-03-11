@@ -83,7 +83,7 @@ export default async function router(schema) {
         const uploads = [];
         bb.on('file', async (fieldname, file, blob) => {
             uploads.push(spaces.upload({
-                Key: `documents/${req.query.prefix}/${blob.filename}`,
+                Key: `documents/${req.query.prefix}${blob.filename}`,
                 Body: file
             }));
         }).on('finish', async () => {
