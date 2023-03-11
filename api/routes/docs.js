@@ -17,7 +17,7 @@ export default async function router(schema) {
         try {
             await Auth.is_iam(req, 'User:View');
 
-            req.query.prefix = 'documents/' + req.query.prefix
+            req.query.prefix = 'documents/' + req.query.prefix;
 
             const s3list = await spaces.list({
                 Prefix: req.query.prefix,
@@ -30,7 +30,7 @@ export default async function router(schema) {
                     key: dir.Prefix.replace(req.query.prefix, ''),
                     last_modified: '',
                     size: 0
-                }
+                };
             });
             documents.push(...(s3list.Contents || []).filter((obj) => {
                 return obj.Key !== req.query.prefix;
@@ -40,7 +40,7 @@ export default async function router(schema) {
                     key: obj.Key.replace(req.query.prefix, ''),
                     last_modified: obj.LastModified,
                     size: obj.Size
-                }
+                };
             }));
 
             return res.json({
@@ -60,7 +60,7 @@ export default async function router(schema) {
         query: 'req.query.CreateDoc.json',
         res: 'res.Standard.json'
     }, async (req, res) => {
-            await Auth.is_iam(req, 'Doc:Manage');
+        await Auth.is_iam(req, 'Doc:Manage');
 
         if (req.headers['content-type']) {
             req.headers['content-type'] = req.headers['content-type'].split(',')[0];

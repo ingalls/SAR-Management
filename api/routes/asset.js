@@ -1,6 +1,5 @@
 import Err from '@openaddresses/batch-error';
 import busboy from 'busboy';
-import path from 'path';
 import Auth from '../lib/auth.js';
 import Asset from '../lib/types/asset.js';
 import Spaces from '../lib/aws/spaces.js';
@@ -57,7 +56,7 @@ export default async function router(schema, config) {
             const asset = await Asset.from(config.pool, req.params.assetid);
 
             const raw = await spaces.get({
-                Key: `assets/${asset.id}-${asset.name}`,
+                Key: `assets/${asset.id}-${asset.name}`
             });
 
             res.contentType(asset.name);

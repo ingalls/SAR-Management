@@ -1,9 +1,14 @@
 import Err from '@openaddresses/batch-error';
 import Equipment from '../lib/types/equipment.js';
 import EquipmentAssigned from '../lib/types/equipment-assigned.js';
+import Notify from '../lib/notify.js';
 import Auth from '../lib/auth.js';
+import Email from '../lib/email.js';
 
 export default async function router(schema, config) {
+    const email = new Email(config);
+    const notify = new Notify(config, email);
+
     await schema.get('/equipment', {
         name: 'List Equipment',
         group: 'Equipment',
@@ -57,6 +62,7 @@ export default async function router(schema, config) {
             if (assigned) {
                 for (const uid of assigned) {
                     await EquipmentAssigned.generate(config.pool, { equip_id: equipment.id, uid });
+                    await notify.generate(uid, `Equipment: ${equipment.name} has been assigned to you`);
                 }
             }
 
@@ -87,6 +93,8 @@ export default async function router(schema, config) {
             const assigned = req.body.assigned;
             delete req.body.assigned;
 
+            const old_assigned = equipment.assigned;
+
             await equipment.commit(req.body);
 
             if (Array.isArray(assigned)) {
@@ -98,6 +106,16 @@ export default async function router(schema, config) {
                     await EquipmentAssigned.generate(config.pool, {
                         equip_id: equipment.id, uid
                     });
+
+                    if (!old_assigned.includes(uid)) {
+                        await notify.generate(uid, `Equipment: ${equipment.name} has been assigned to you`);
+                    }
+                }
+
+                for (const uid of old_assigned) {
+                    if (!assigned.includes(uid)) {
+                        await notify.generate(uid, `Equipment: ${equipment.name} has been unassigned to you`);
+                    }
                 }
             }
 
