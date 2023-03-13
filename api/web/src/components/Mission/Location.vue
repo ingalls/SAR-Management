@@ -11,11 +11,24 @@
 <script>
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 export default {
     name: 'LocationCard',
+    props: {
+        modelValue: {
+            type: String,
+            required: true
+        },
+        disabled: {
+            type: Boolean,
+            default: true
+        }
+    },
     data: function() {
         return {
+            geocoder: false,
             map: false,
         }
     },
@@ -33,8 +46,21 @@ export default {
                 projection: 'globe'
             });
             this.map.scrollZoom.disable();
-            this.map.addControl(new mapboxgl.NavigationControl());
-        },
+            this.map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+            this.geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: this.map
+            });
+
+            this.map.addControl(this.geocoder, 'top-left');
+
+            if (!this.disabled) {
+                this.map.on('click', (e) => {
+                    const coord = [e.lngLat.lng, e.lngLat.lat];
+                });
+            }
+        }
     }
 }
 </script>
