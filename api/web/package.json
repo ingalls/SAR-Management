@@ -13,6 +13,7 @@
         "@fullcalendar/daygrid": "^6.0.1",
         "@fullcalendar/interaction": "^6.0.1",
         "@fullcalendar/list": "^6.0.1",
+        "@mapbox/mapbox-gl-geocoder": "^5.0.1",
         "@tabler/core": "^1.0.0-beta16",
         "@tak-ps/vue-tabler": "^2.3.0",
         "core-js": "^3.6.4",
