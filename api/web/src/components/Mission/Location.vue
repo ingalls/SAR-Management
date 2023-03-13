@@ -18,7 +18,7 @@ export default {
     name: 'LocationCard',
     props: {
         modelValue: {
-            type: String,
+            type: [Object, null],
             required: true
         },
         disabled: {
@@ -54,12 +54,61 @@ export default {
             });
 
             this.map.addControl(this.geocoder, 'top-left');
+            this.map.on('load', () => {
+                if (this.modelValue) {
+                    this.map.addSource('point', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: [{
+                                type: 'Feature',
+                                properties: {},
+                                geometry: this.modelValue
+                            }]
+                        }
+                    });
+                } else {
+                    this.map.addSource('point', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: []
+                        }
+                    });
+                }
 
-            if (!this.disabled) {
-                this.map.on('click', (e) => {
-                    const coord = [e.lngLat.lng, e.lngLat.lat];
+                this.map.addLayer({
+                    id: 'point',
+                    type: 'circle',
+                    source: 'point',
+                    paint: {
+                        'circle-radius': 4,
+                        'circle-stroke-width': 2,
+                        'circle-color': 'red',
+                        'circle-stroke-color': 'white'
+                    }
                 });
-            }
+
+                if (!this.disabled) {
+                    this.map.on('click', (e) => {
+                        const geometry = {
+                            type: 'Point',
+                            coordinates: [e.lngLat.lng, e.lngLat.lat]
+                        };
+
+                        this.map.getSource('point').setData({
+                            type: 'FeatureCollection',
+                            features: [{
+                                type: 'Feature',
+                                properties: {},
+                                geometry
+                            }]
+                        });
+
+                        this.$emit('update:modelVaue', geometry);
+                    });
+                }
+            });
         }
     }
 }

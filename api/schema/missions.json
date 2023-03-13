@@ -31,6 +31,9 @@
         },
         "location": {
             "$ref": "./missions/location.json"
+        },
+        "location_geom": {
+            "$ref": "./missions/location_geom.json"
         }
     },
     "required": [
@@ -43,6 +46,7 @@
         "title",
         "body",
         "author",
-        "location"
+        "location",
+        "location_geom"
     ]
 }

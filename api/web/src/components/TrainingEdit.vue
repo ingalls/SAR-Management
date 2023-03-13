@@ -44,7 +44,7 @@
                                         <TablerInput v-model='training.location' label='Training Location'/>
                                     </div>
                                     <div class='col-md-12'>
-                                        <Location/>
+                                        <Location v-model='training.location_geom' :disabled='false'/>
                                     </div>
 
                                     <div class="col-md-12">

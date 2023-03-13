@@ -31,6 +31,9 @@
         },
         "required": {
             "$ref": "./training/required.json"
+        },
+        "location_geom": {
+            "$ref": "./training/location_geom.json"
         }
     },
     "required": [
@@ -43,6 +46,7 @@
         "title",
         "body",
         "location",
-        "required"
+        "required",
+        "location_geom"
     ]
 }
