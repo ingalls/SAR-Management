@@ -5,6 +5,7 @@
         "title",
         "body",
         "location",
+        "location_geom",
         "start_ts",
         "end_ts",
         "required"
@@ -21,6 +22,9 @@
         },
         "location": {
             "type": "string"
+        },
+        "location_geom": {
+            "type": ["object", "null"]
         },
         "start_ts": {
             "type": "string"

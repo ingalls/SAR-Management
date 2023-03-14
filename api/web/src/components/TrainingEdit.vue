@@ -107,6 +107,7 @@ export default {
                 required: false,
                 body: '',
                 location: '',
+                location_geom: null,
                 start_ts: '',
                 end_ts: ''
             }

@@ -26,37 +26,31 @@ export default {
             default: true
         }
     },
-    data: function() {
-        return {
-            geocoder: false,
-            map: false,
-        }
-    },
     mounted: async function() {
         this.$nextTick(() => { this.mountMap(); });
     },
     methods: {
         mountMap: function() {
             mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJsUDF2STRrIn0.S0c3ZNH4HmseIdPXY-CTlA';
-            this.map = new mapboxgl.Map({
+            const map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/satellite-streets-v11',
                 center: [ -105.477959, 39.116007 ],
                 zoom: 5.5,
                 projection: 'globe'
             });
-            this.map.scrollZoom.disable();
-            this.map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+            map.scrollZoom.disable();
+            map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-            this.geocoder = new MapboxGeocoder({
+            const geocoder = new MapboxGeocoder({
                 accessToken: mapboxgl.accessToken,
-                mapboxgl: this.map
+                mapboxgl: map
             });
 
-            this.map.addControl(this.geocoder, 'top-left');
-            this.map.on('load', () => {
+            map.addControl(geocoder, 'top-left');
+            map.on('load', () => {
                 if (this.modelValue) {
-                    this.map.addSource('point', {
+                    map.addSource('point', {
                         type: 'geojson',
                         data: {
                             type: 'FeatureCollection',
@@ -68,7 +62,7 @@ export default {
                         }
                     });
                 } else {
-                    this.map.addSource('point', {
+                    map.addSource('point', {
                         type: 'geojson',
                         data: {
                             type: 'FeatureCollection',
@@ -77,7 +71,7 @@ export default {
                     });
                 }
 
-                this.map.addLayer({
+                map.addLayer({
                     id: 'point',
                     type: 'circle',
                     source: 'point',
@@ -90,13 +84,13 @@ export default {
                 });
 
                 if (!this.disabled) {
-                    this.map.on('click', (e) => {
+                    map.on('click', (e) => {
                         const geometry = {
                             type: 'Point',
                             coordinates: [e.lngLat.lng, e.lngLat.lat]
                         };
 
-                        this.map.getSource('point').setData({
+                        map.getSource('point').setData({
                             type: 'FeatureCollection',
                             features: [{
                                 type: 'Feature',
@@ -105,7 +99,8 @@ export default {
                             }]
                         });
 
-                        this.$emit('update:modelVaue', geometry);
+                        console.error('EMIT', geometry);
+                        this.$emit('update:modelValue', geometry);
                     });
                 }
             });

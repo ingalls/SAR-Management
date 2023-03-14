@@ -14,6 +14,9 @@
         "location": {
             "type": "string"
         },
+        "location_geom": {
+            "type": ["object", "null"]
+        },
         "start_ts": {
             "type": "string"
         },
