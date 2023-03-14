@@ -83,6 +83,18 @@ export default {
                     }
                 });
 
+                if (this.modelValue) {
+                    map.fitBounds(this.modelValue.bounds, {
+                        padding: {
+                            top: 100,
+                            bottom: 100,
+                            left: 100,
+                            right: 100,
+                        },
+                        maxZoom: 16
+                    });
+                }
+
                 if (!this.disabled) {
                     map.on('click', (e) => {
                         const geometry = {
