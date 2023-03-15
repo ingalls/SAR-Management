@@ -27,14 +27,7 @@
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Doc:View")' title='Documents'/>
                     <TablerLoading v-else-if='loading.list'/>
-                    <div v-else-if='file' class="card">
-                        <div class='card-header'>
-                            <h1 class="card-title" v-text='file'></h1>
-                        </div>
-                        <div class="card-body">
-
-                        </div>
-                    </div>
+                    <File v-else-if='file' :file='file'/>
                     <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
@@ -108,6 +101,7 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
 import Upload from './util/Upload.vue';
+import File from './Docs/File.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -187,6 +181,7 @@ export default {
     },
     components: {
         None,
+        File,
         Upload,
         PlusIcon,
         NoAccess,
