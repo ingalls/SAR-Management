@@ -104,4 +104,29 @@ export default async function router(schema) {
         return req.pipe(bb);
     });
 
+    await schema.get('/doc', {
+        name: 'Delete Doc',
+        auth: 'user',
+        group: 'Docs',
+        description: 'Delete Doc',
+        query: 'req.query.DeleteDoc.json',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'User:Manage');
+
+            req.query.file = 'documents/' + req.query.file;
+
+            await spaces.delete({
+                Key: req.query.file
+            });
+
+            return res.json({
+                status: 200,
+                message: 'Document Deleted'
+            });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }

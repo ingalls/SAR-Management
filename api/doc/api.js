@@ -198,6 +198,24 @@
 
 
 /**
+* @api {get} /doc Delete Doc
+* @apiVersion 1.0.0
+* @apiName GET-/doc
+* @apiGroup Docs
+* @apiPermission user
+*
+* @apidescription
+*   Delete Doc
+*
+
+*
+* @apiSchema (Query) {jsonschema=../schema/req.query.DeleteDoc.json} apiParam
+*
+* @apiSchema {jsonschema=../schema/res.Standard.json} apiSuccess
+*/
+
+
+/**
 * @api {get} /equipment/:equipmentid/assigned Get Assigned
 * @apiVersion 1.0.0
 * @apiName GET-/equipment/:equipmentid/assigned
