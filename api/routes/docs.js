@@ -104,7 +104,7 @@ export default async function router(schema) {
         return req.pipe(bb);
     });
 
-    await schema.get('/doc', {
+    await schema.delete('/doc', {
         name: 'Delete Doc',
         auth: 'user',
         group: 'Docs',

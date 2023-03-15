@@ -198,9 +198,9 @@
 
 
 /**
-* @api {get} /doc Delete Doc
+* @api {delete} /doc Delete Doc
 * @apiVersion 1.0.0
-* @apiName GET-/doc
+* @apiName DELETE-/doc
 * @apiGroup Docs
 * @apiPermission user
 *

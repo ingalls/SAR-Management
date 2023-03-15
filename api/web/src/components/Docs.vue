@@ -27,7 +27,12 @@
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Doc:View")' title='Documents'/>
                     <TablerLoading v-else-if='loading.list'/>
-                    <File v-else-if='file' :file='file'/>
+                    <File
+                        v-else-if='file'
+                        :prefix='paging.prefix'
+                        :file='file'
+                        @delete='file = null;'
+                    />
                     <div v-else class="card">
                         <div class="card-body">
                             <div class="d-flex">
@@ -151,6 +156,9 @@ export default {
            await this.listDocs();
        },
        'paging.prefix': async function() {
+           await this.listDocs();
+       },
+       'file': async function() {
            await this.listDocs();
        }
     },

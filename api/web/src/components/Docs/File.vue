@@ -1,26 +1,32 @@
 <template>
 <div class="card">
-    <div class='card-header'>
-        <div class='col d-flex'>
-            <h1 class="card-title" v-text='file'></h1>
-            <div class='ms-auto btn-list'>
-                <TrashIcon @click='deleteFile' class='cursor-pointer'/>
-                <DownloadIcon @click='download' class='cursor-pointer'/>
+    <TablerLoading v-if='loading'/>
+    <template v-else>
+        <div class='card-header'>
+            <div class='col d-flex'>
+                <h1 class="card-title" v-text='file'></h1>
+                <div class='ms-auto btn-list'>
+                    <TrashIcon @click='deleteFile' class='cursor-pointer'/>
+                    <DownloadIcon @click='download' class='cursor-pointer'/>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="card-body">
-        <div v-if='is_img'>
-            IMAGE
+        <div class="card-body">
+            <div v-if='is_img'>
+                IMAGE
+            </div>
+            <div v-else-if='is_pdf'>
+                IMAGE
+            </div>
         </div>
-        <div v-else-if='is_pdf'>
-            IMAGE
-        </div>
-    </div>
+    </template>
 </div>
 </template>
 
 <script>
+import {
+    TablerLoading
+} from '@tak-ps/vue-tabler';
 import {
     TrashIcon,
     DownloadIcon
@@ -29,6 +35,10 @@ import {
 export default {
     name: 'File',
     props: {
+        prefix: {
+            type: String,
+            required: true
+        },
         file: {
             type: String,
             required: true
@@ -42,17 +52,31 @@ export default {
             return this.file.endsWith('.pdf')
         }
     },
+    data: function() {
+        return {
+            loading: false
+        }
+    },
     methods: {
         download: function() {
 
         },
-        deleteFile: function() {
+        deleteFile: async function() {
+            this.loading = true;
+            const url = window.stdurl('/api/doc');
+            url.searchParams.append('file', this.prefix + this.file);
+            await window.std(url, {
+                method: 'DELETE'
+            });
 
+            this.loading = false;
+            this.$emit('delete');
         }
     },
     components: {
         TrashIcon,
-        DownloadIcon
+        DownloadIcon,
+        TablerLoading
     }
 }
 </script>
