@@ -51,7 +51,7 @@
                                     <div class="col-md-12" v-text='training.body'></div>
 
                                     <div class='col-md-12'>
-                                        <Location v-model='training.location_geom'/>
+                                        <Location v-if='training.location_geom' v-model='training.location_geom'/>
                                     </div>
                                 </div>
                             </div>
