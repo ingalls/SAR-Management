@@ -13,7 +13,7 @@
         </div>
         <div class="card-body">
             <div v-if='is_img'>
-                IMAGE
+                <img :src='url(false)'/>
             </div>
             <div v-else-if='is_pdf'>
                 IMAGE
@@ -46,7 +46,10 @@ export default {
     },
     computed: {
         is_img: function() {
-            return this.file.endsWith('.jpg') || this.file.endsWith('.jpeg');
+            for (const format of ['.jpg', '.jpeg', 'png', '.webp']) {
+                if (this.file.endsWith(format)) return true;
+            }
+            return false;
         },
         is_pdf: function() {
             return this.file.endsWith('.pdf')
@@ -58,8 +61,16 @@ export default {
         }
     },
     methods: {
+        url: function(download = true) {
+            const url = window.stdurl('/api/doc/download');
+            url.searchParams.append('prefix', this.prefix);
+            url.searchParams.append('file', this.file);
+            url.searchParams.append('download', download);
+            url.searchParams.append('token', localStorage.token);
+            return String(url);
+        },
         download: function() {
-
+            window.open('/doc/download', '_blank');
         },
         deleteFile: async function() {
             this.loading = true;

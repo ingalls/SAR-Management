@@ -52,6 +52,31 @@ export default async function router(schema) {
         }
     });
 
+    await schema.get('/doc/download', {
+        name: 'Download Doc',
+        auth: 'user',
+        group: 'Docs',
+        description: 'Download Doc',
+        query: 'req.query.DownloadDoc.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req, true);
+            await Auth.is_iam(req, 'Doc:View');
+
+            const file = await spaces.get({
+                Key: `documents/${req.query.prefix ? req.query.prefix + '/' : ''}${req.query.file}`
+            });
+
+            if (!req.query.download) {
+                return file.Body.pipe(res);
+            } else {
+                throw new Err(500, null, 'Not Implemented');
+            }
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    })
+
     await schema.post('/doc', {
         name: 'Create Doc',
         auth: 'user',

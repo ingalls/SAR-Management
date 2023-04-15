@@ -58,7 +58,7 @@ export default class Spaces {
 
         return await this.client.send(new S3.GetObjectCommand(params));
     } catch (err) {
-        throw new Err(400, err, 'Failed to Head Object');
+        throw new Err(400, err, 'Failed to Get Object');
     }
 
     async delete(params) {
