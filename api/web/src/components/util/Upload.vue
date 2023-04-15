@@ -5,6 +5,7 @@
             <div class="modal-body text-center py-4">
                 <UploadDefault
                     :url='url'
+                    :headers='headers'
                     :cancel='false'
                     @done='$emit("done")'
                     @cancel='$emit("cancel")'
