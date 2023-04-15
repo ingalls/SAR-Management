@@ -91,11 +91,10 @@
 
     <Upload
         v-if='upload'
-        url='api/doc'
-        :prefix='paging.prefix'
-        @err='error($event)'
+        :url='url()'
+        :headers='headers'
         @close='upload = null'
-        @upload='upload = null; listDocs($event)'
+        @done='upload = null; listDocs($event)'
     />
 </div>
 </template>
@@ -133,6 +132,9 @@ export default {
         return {
             file: null,
             upload: false,
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
             paging: {
                 filter: '',
                 prefix: '',
@@ -166,6 +168,9 @@ export default {
         if (this.is_iam("Doc:View")) await this.listDocs();
     },
     methods: {
+        url: function() {
+            return window.stdurl(`api/doc?prefix=${this.paging.prefix}`);
+        },
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         human(size) {
             var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));

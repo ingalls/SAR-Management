@@ -5,6 +5,9 @@
             <div class="modal-body text-center py-4">
                 <UploadDefault
                     :url='url'
+                    :cancel='false'
+                    @done='$emit("done")'
+                    @cancel='$emit("cancel")'
                 />
             </div>
     </TablerModal>
@@ -20,6 +23,12 @@ export default {
         url: {
             type: String,
             default: '/api/asset'
+        },
+        headers: {
+            type: Object,
+            default: function() {
+                return {};
+            }
         },
         prefix: {
             type: String,
