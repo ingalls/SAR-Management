@@ -43,10 +43,9 @@
                                     </span>
                                 </div>
                                 <div class='ms-auto'>
-                                    <div class='btn-list'>
-                                        <div v-if='is_iam("Doc:Manage")' class='ms-auto'>
-                                            <PlusIcon @click='upload = true' class='cursor-pointer my-1'/>
-                                        </div>
+                                    <div v-if='is_iam("Doc:Manage")' class='btn-list'>
+                                        <FolderPlusIcon @click='folder = true' class='cursor-pointer my-1'/>
+                                        <PlusIcon @click='upload = true' class='cursor-pointer my-1'/>
                                     </div>
                                 </div>
                             </div>
@@ -111,6 +110,7 @@ import {
 } from '@tak-ps/vue-tabler';
 import {
     PlusIcon,
+    FolderPlusIcon,
     SearchIcon,
     FileFilledIcon,
     FolderFilledIcon
@@ -197,6 +197,7 @@ export default {
         File,
         Upload,
         PlusIcon,
+        FolderPlusIcon,
         NoAccess,
         SearchIcon,
         FileFilledIcon,
