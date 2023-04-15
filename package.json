@@ -16,8 +16,5 @@
     "bugs": {
         "url": "https://github.com/ingalls/SAR-Management/issues"
     },
-    "homepage": "https://github.com/ingalls/SAR-Management#readme",
-    "dependencies": {
-        "@aws-sdk/client-s3": "^3.282.0"
-    }
+    "homepage": "https://github.com/ingalls/SAR-Management#readme"
 }

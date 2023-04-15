@@ -11,6 +11,7 @@ import User from './lib/types/user.js';
 import jwt from 'jsonwebtoken';
 import Err from '@openaddresses/batch-error';
 import { AuthAugment } from './lib/auth.js';
+import SwaggerUI from 'swagger-ui-express'
 
 try {
     const dotfile = new URL('.env', import.meta.url);
@@ -153,7 +154,7 @@ export default async function server(config) {
     schema.not_found();
     schema.error();
 
-    fs.writeFileSync(new URL('./doc/api.js', import.meta.url), schema.docs.join('\n'));
+    app.use('/docs', SwaggerUI.serve, SwaggerUI.setup(schema.docs.base));
 
     app.use(history({
         rewrites: [{
