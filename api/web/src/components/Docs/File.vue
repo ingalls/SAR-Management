@@ -70,7 +70,7 @@ export default {
             return String(url);
         },
         download: function() {
-            window.open('/doc/download', '_blank');
+            window.open(this.url(true), '_blank');
         },
         deleteFile: async function() {
             this.loading = true;

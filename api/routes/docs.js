@@ -70,7 +70,10 @@ export default async function router(schema) {
             if (!req.query.download) {
                 return file.Body.pipe(res);
             } else {
-                throw new Err(500, null, 'Not Implemented');
+                res.writeHead(200, {
+                    'Content-disposition': `attachment; filename="${req.query.file}"`
+                });
+                return file.Body.pipe(res);
             }
         } catch (err) {
             return Err.respond(err, res);
