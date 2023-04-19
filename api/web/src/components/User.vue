@@ -59,7 +59,7 @@
                                             <div class="datagrid-item">
                                                 <div class="datagrid-title">Phone</div>
                                                 <div class="datagrid-content">
-                                                    <a :href='`tel:${user.email}`' v-text='user.phone'></a>
+                                                    <a :href='`tel:${user.phone}`' v-text='user.phone'></a>
                                                 </div>
                                             </div>
                                             <div class="datagrid-item">

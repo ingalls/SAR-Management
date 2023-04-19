@@ -59,7 +59,7 @@
                         <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
                         <td>
                             <div class='d-flex'>
-                                <a :href='`tel:${user.email}`' v-text='user.phone'></a>
+                                <a :href='`tel:${user.phone}`' v-text='user.phone'></a>
                                 <div v-if='edit' class='ms-auto'>
                                     <div v-if='!user._loading' class='btn-list'>
                                         <TrashIcon @click='removeUser(user, user_it)' class='cursor-pointer'/>
