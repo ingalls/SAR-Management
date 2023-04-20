@@ -1,6 +1,6 @@
 <template>
 <div>
-    <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
+    <span class="avatar avatar-xs me-2 avatar-rounded" :style='`background-image: url(${base}/api/user/${user.id}/profile?token=${token}`'></span>
     <span v-if='user.name'>
         <a v-if='link' @click='$router.push(`/user/${user.uid || user.id}`)' class='cursor-pointer' v-text='user.name'></a>
         <span v-else v-text='user.name'/>
@@ -23,6 +23,12 @@ export default {
         link: {
             type: Boolean,
             default: false
+        }
+    },
+    data: function() {
+        return {
+            token: localStorage.token,
+            base: window.stdurl('/').origin,
         }
     }
 }
