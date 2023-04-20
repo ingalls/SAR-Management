@@ -18,6 +18,19 @@
             <div v-else-if='is_pdf'>
                 IMAGE
             </div>
+            <div v-else>
+                <div class='d-flex justify-content-center mt-4 mb-2'>
+                    <EyeOffIcon width='48' height='48'/>
+                </div>
+
+                <div class='text-center mb-4 mt-2'>
+                    <div>Unsupported Preview Format</div>
+                </div>
+
+                <div v-if='manage' class='d-flex justify-content-center my-4'>
+                    <div class='btn btn-secondary'>Generate PDF</div>
+                </div>
+            </div>
         </div>
     </template>
 </div>
@@ -29,6 +42,7 @@ import {
 } from '@tak-ps/vue-tabler';
 import {
     TrashIcon,
+    EyeOffIcon,
     DownloadIcon
 } from 'vue-tabler-icons';
 
@@ -38,6 +52,10 @@ export default {
         prefix: {
             type: String,
             required: true
+        },
+        manage: {
+            type: Boolean,
+            default: false
         },
         file: {
             type: String,
@@ -86,6 +104,7 @@ export default {
     },
     components: {
         TrashIcon,
+        EyeOffIcon,
         DownloadIcon,
         TablerLoading
     }

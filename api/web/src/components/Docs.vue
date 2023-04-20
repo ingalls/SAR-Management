@@ -31,6 +31,7 @@
                         v-else-if='file'
                         :prefix='paging.prefix'
                         :file='file'
+                        :manage='is_iam("Doc:Manage")'
                         @delete='file = null;'
                     />
                     <div v-else class="card">
