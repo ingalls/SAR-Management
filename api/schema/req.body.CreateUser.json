@@ -33,9 +33,6 @@
         "bday": {
             "type": "string"
         },
-        "profile_id": {
-            "type": "integer"
-        },
         "start_year": {
             "type": "integer"
         },

@@ -23,7 +23,7 @@
                         <template v-else>
                             <div class='row'>
                                 <div class='col-3'>
-                                    <UserProfile :user='user'/>
+                                    <UserProfile bgstyle='cover' :userid='user.id' :cache='cache'/>
 
                                     <div class='card-body d-flex justify-content-center'>
                                         <a @click='upload = true' class="cursor-pointer btn btn-secondary">Update Photo</a>
@@ -88,7 +88,7 @@
                                                         <div class="col-md-5">
                                                             <div class='d-flex'>
                                                                 <TablerInput label='Phone' v-model='em.phone'/>
-                                            
+
                                                                 <div class='mx-2' style='padding-top: 32px;'>
                                                                     <TrashIcon @click='user.emergency.splice(em_it, 1)' height='24' width='24' class='cursor-pointer'/>
                                                                 </div>
@@ -117,9 +117,11 @@
 
     <Upload
         v-if='upload'
+        :url='uploadurl()'
+        :headers='headers'
         @err='upload = null; err = $event'
         @close='upload = null'
-        @upload='upload = null; asset($event)'
+        @done='upload = null; cache = +new Date()'
     />
 </div>
 </template>
@@ -129,6 +131,7 @@ import None from './util/None.vue';
 import Upload from './util/Upload.vue';
 import BreadCrumb from './util/BreadCrumb.vue';
 import {
+    TablerLoading,
     TablerInput,
 } from '@tak-ps/vue-tabler'
 import {
@@ -153,9 +156,13 @@ export default {
         return {
             token: localStorage.token,
             base: window.stdurl('/').origin,
+            cache: +new Date(),
             upload: false,
             loading: {
                 user: true
+            },
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
             },
             errors: {
                 username: '',
@@ -190,19 +197,12 @@ export default {
         await this.fetch();
     },
     methods: {
+        uploadurl: function() {
+            return window.stdurl(`api/user/${this.$route.params.userid}/profile`);
+        },
         fetch: async function() {
             this.loading.user = true;
             this.user = await window.std(`/api/user/${this.$route.params.userid}`);
-            this.loading.user = false;
-        },
-        asset: async function(asset) {
-            this.loading.user = true;
-            this.user = await window.std(`/api/user/${this.$route.params.userid}`, {
-                method: 'PATCH',
-                body: {
-                    profile_id: asset.id
-                }
-            });
             this.loading.user = false;
         },
         create: async function() {
@@ -246,6 +246,7 @@ export default {
         PlusIcon,
         TrashIcon,
         UserProfile,
+        TablerLoading,
         TablerInput,
         BreadCrumb
     }

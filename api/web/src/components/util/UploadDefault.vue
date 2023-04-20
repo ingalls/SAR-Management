@@ -37,7 +37,7 @@ export default {
     name: 'UploadFile',
     props: {
         url: {
-            type: URL,
+            type: [String, URL],
             required: true
         },
         cancel: {

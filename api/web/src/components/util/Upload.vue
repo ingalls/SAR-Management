@@ -7,7 +7,7 @@
                     :url='url'
                     :headers='headers'
                     :cancel='false'
-                    @done='$emit("done")'
+                    @done='$emit("done", $event)'
                     @cancel='$emit("cancel")'
                 />
             </div>
@@ -22,7 +22,7 @@ export default {
     name: 'UploadModal',
     props: {
         url: {
-            type: String,
+            type: [String, URL],
             default: '/api/asset'
         },
         headers: {

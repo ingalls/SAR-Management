@@ -74,16 +74,17 @@ export default async function router(schema, config) {
         ':assetid': 'integer',
         res: 'assets.json'
     }, async (req, res) => {
-        await Auth.is_auth(req);
-
-        if (req.headers['content-type']) {
-            req.headers['content-type'] = req.headers['content-type'].split(',')[0];
-        } else {
-            throw new Err(400, null, 'Missing Content-Type Header');
-        }
-
         let bb;
+
         try {
+            await Auth.is_auth(req);
+
+            if (req.headers['content-type']) {
+                req.headers['content-type'] = req.headers['content-type'].split(',')[0];
+            } else {
+                throw new Err(400, null, 'Missing Content-Type Header');
+            }
+
             bb = busboy({
                 headers: req.headers,
                 limits: {

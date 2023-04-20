@@ -41,9 +41,6 @@
         "validated": {
             "$ref": "./users/validated.json"
         },
-        "profile_id": {
-            "$ref": "./users/profile_id.json"
-        },
         "start_year": {
             "$ref": "./users/start_year.json"
         },
@@ -80,7 +77,6 @@
         "phone",
         "bday",
         "validated",
-        "profile_id",
         "start_year",
         "emergency",
         "address_street",

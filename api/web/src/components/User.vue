@@ -41,7 +41,7 @@
                             </div>
                             <div class='row row-0'>
                                 <div class='col-3'>
-                                    <UserProfile :user='user'/>
+                                    <UserProfile :userid='user.id'/>
                                 </div>
                                 <div class='col'>
                                     <div class="card-body">
@@ -203,9 +203,7 @@ export default {
                 user: true,
                 teams: true
             },
-            user: {
-                profile_id: null
-            },
+            user: {},
             teams: {
                 total: 0,
                 teams: []
