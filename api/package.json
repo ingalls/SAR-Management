@@ -43,6 +43,7 @@
         "minimist": "^1.2.7",
         "moment": "^2.29.4",
         "pg": "^8.8.0",
+        "sharp": "^0.32.0",
         "slonik": "^32.0.0",
         "swagger-ui-express": "^4.6.2"
     },
