@@ -15,15 +15,19 @@ export default async function router(schema, config) {
         auth: 'user',
         group: 'UserProfile',
         description: 'Get users profile picture',
+        query: 'req.query.UserProfile.json',
         ':userid': 'integer'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req, true);
 
             try {
-                const raw = await spaces.get({
-                    Key: `users/${req.params.userid}/profile.jpg`
-                });
+                let Key = `users/${req.params.userid}/`
+                if (req.query.size === 'full') Key = Key + 'profile.jpg';
+                else if (req.query.size === 'mini') Key = Key + 'profile-mini.jpg';
+                else Key = Key + 'profile.jpg';
+
+                const raw = await spaces.get({ Key });
 
                 raw.Body.pipe(res);
             } catch (err) {
