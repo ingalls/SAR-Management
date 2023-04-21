@@ -89,7 +89,7 @@ export default async function router(schema, config) {
 
                 spaces.upload({
                     Key: `documents/${req.query.prefix ? req.query.prefix + '/' : ''}${req.query.file}/preview.pdf`,
-                    Body: file.body.getReader()
+                    Body: file.body
                 });
 
                 return res.json({
