@@ -2,9 +2,12 @@ import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import busboy from 'busboy';
+import API2PDF from 'api2pdf';
+import jwt from 'jsonwebtoken';
 
 export default async function router(schema) {
     const spaces = new Spaces();
+    const convert = new API2PDF(process.env.API2PDF);
 
     await schema.get('/doc', {
         name: 'List Docs',
@@ -51,6 +54,52 @@ export default async function router(schema) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.get('/doc/convert', {
+        name: 'Convert Doc',
+        auth: 'user',
+        group: 'Docs',
+        description: 'Convert doc to a preview format',
+        query: 'req.query.ConvertDoc.json'
+    }, async (req, res) => {
+        try {
+            if (req.query.access_token) {
+                const decoded = jwt.verify(authorization[1], config.SigningSecret);
+
+                const res = await spaces.get({
+                    Key: `documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}`
+                });
+
+                res.writeHead(200, {
+                    'Content-disposition': `attachment; filename="${decoded.f}"`
+                });
+
+                return file.Body.pipe(res);
+            } else {
+                await Auth.is_auth(req, true);
+                await Auth.is_iam(req, 'Doc:Manage');
+
+                const token = jwt.sign({
+                    u: req.auth.id,
+                    p: req.query.prefix,
+                    f: req.query.file,
+                }, secret, { expiresIn: '30m' });
+
+                const url = new URL(config.APIURL, '/doc/convert')
+                url.searchParams.append('access_token', token);
+                const res = await a2pClient.libreOfficeAnyToPdf(url);
+
+                console.error(res);
+
+                return res.json({
+                    status: 200,
+                    message: 'Submitted for conversion'
+                });
+            }
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    })
 
     await schema.get('/doc/download', {
         name: 'Download Doc',

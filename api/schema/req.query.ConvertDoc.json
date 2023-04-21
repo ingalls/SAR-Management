@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "access_token": {
+            "type": "string",
+            "description": "Used by the API2PDF service to securely obtain a copy of the documents"
+        },
+        "prefix": {
+            "type": "string",
+            "default": ""
+        },
+        "file": {
+            "type": "string",
+            "default": ""
+        }
+    }
+}
