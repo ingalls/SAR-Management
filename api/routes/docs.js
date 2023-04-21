@@ -70,10 +70,6 @@ export default async function router(schema, config) {
                     Key: `documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}`
                 });
 
-                res.writeHead(200, {
-                    'Content-disposition': `attachment; filename="${decoded.f}"`
-                });
-
                 return file.Body.pipe(res);
             } else {
                 await Auth.is_auth(req, true);
