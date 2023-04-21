@@ -64,7 +64,7 @@ export default async function router(schema, config) {
     }, async (req, res) => {
         try {
             if (req.query.access_token) {
-                const decoded = jwt.verify(authorization[1], config.SigningSecret);
+                const decoded = jwt.verify(req.query.access_token, config.SigningSecret);
 
                 const res = await spaces.get({
                     Key: `documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}`
