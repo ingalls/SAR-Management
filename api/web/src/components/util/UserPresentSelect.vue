@@ -35,7 +35,7 @@
         </template>
         <template v-else>
             <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-2">
-                <Avatar :user='a'/>
+                <Avatar :link='true' :user='a'/>
 
                 <div v-if='!disabled' class='ms-auto'>
                     <div class='btn-list'>
