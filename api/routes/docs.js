@@ -5,7 +5,7 @@ import busboy from 'busboy';
 import API2PDF from 'api2pdf';
 import jwt from 'jsonwebtoken';
 
-export default async function router(schema) {
+export default async function router(schema, config) {
     const spaces = new Spaces();
     const convert = new API2PDF(process.env.API2PDF);
 
@@ -83,13 +83,12 @@ export default async function router(schema) {
                     u: req.auth.id,
                     p: req.query.prefix,
                     f: req.query.file,
-                }, secret, { expiresIn: '30m' });
+                }, config.SigningSecret, { expiresIn: '30m' });
 
-                const url = new URL(config.APIURL, '/doc/convert')
+                console.error(config.APIURL);
+                const url = new URL('/doc/convert', config.APIURL)
                 url.searchParams.append('access_token', token);
-                const res = await a2pClient.libreOfficeAnyToPdf(url);
-
-                console.error(res);
+                const res = await convert.libreOfficeAnyToPdf(url);
 
                 return res.json({
                     status: 200,

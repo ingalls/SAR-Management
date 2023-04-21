@@ -28,7 +28,7 @@
                 </div>
 
                 <div v-if='manage' class='d-flex justify-content-center my-4'>
-                    <div class='btn btn-secondary'>Generate PDF</div>
+                    <div @click='generate' class='btn btn-secondary'>Generate PDF</div>
                 </div>
             </div>
         </div>
@@ -89,6 +89,14 @@ export default {
         },
         download: function() {
             window.open(this.url(true), '_blank');
+        },
+        generate: async function() {
+            this.loading = true;
+            const url = window.stdurl('/api/doc/convert');
+            url.searchParams.append('prefix', this.prefix);
+            url.searchParams.append('file', this.file);
+            await window.std(url);
+            this.loading = false;
         },
         deleteFile: async function() {
             this.loading = true;
