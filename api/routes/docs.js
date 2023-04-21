@@ -88,7 +88,7 @@ export default async function router(schema, config) {
                 const file = await fetch(doc.FileUrl);
 
                 spaces.upload({
-                    Key: `documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}/preview.pdf`,
+                    Key: `documents/${req.query.prefix ? req.query.prefix + '/' : ''}${req.query.file}/preview.pdf`,
                     Body: file.body.getReader()
                 });
 
