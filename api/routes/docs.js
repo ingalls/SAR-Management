@@ -85,10 +85,11 @@ export default async function router(schema, config) {
                     f: req.query.file,
                 }, config.SigningSecret, { expiresIn: '30m' });
 
-                console.error(config.APIURL);
                 const url = new URL('/doc/convert', config.APIURL)
                 url.searchParams.append('access_token', token);
-                const res = await convert.libreOfficeAnyToPdf(url);
+                const doc = await convert.libreOfficeAnyToPdf(url);
+
+                console.log(doc);
 
                 return res.json({
                     status: 200,
