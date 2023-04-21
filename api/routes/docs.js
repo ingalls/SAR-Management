@@ -85,11 +85,6 @@ export default async function router(schema, config) {
                     f: req.query.file,
                 }, config.SigningSecret, { expiresIn: '30m' });
 
-                res.json({
-                    status: 200,
-                    message: 'Submitted for conversion'
-                });
-
                 const url = new URL('/api/doc/convert', config.APIURL)
                 url.searchParams.append('access_token', token);
                 const doc = await convert.libreOfficeAnyToPdf(url);
@@ -99,6 +94,11 @@ export default async function router(schema, config) {
                 spaces.upload({
                     Key: `documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}/preview.pdf`,
                     Body: file.body.getReader()
+                });
+
+                return res.json({
+                    status: 200,
+                    message: 'Conversion Complete'
                 });
             }
         } catch (err) {
