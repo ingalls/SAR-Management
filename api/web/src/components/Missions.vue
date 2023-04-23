@@ -68,6 +68,7 @@ import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
 import BreadCrumb from './util/BreadCrumb.vue';
 import {
+    SearchIcon,
     PlusIcon
 } from 'vue-tabler-icons';
 import {
@@ -133,6 +134,7 @@ export default {
     },
     components: {
         None,
+        SearchIcon,
         PlusIcon,
         NoAccess,
         EpochRange,

@@ -5,6 +5,31 @@
         "limit": {
             "$ref": "./util/limit.json"
         },
+        "order": {
+            "$ref": "./util/order.json"
+        },
+        "sort": {
+            "type": "string",
+            "default": "created",
+            "enum": [
+                "id",
+                "created",
+                "updated",
+                "disabled",
+                "access",
+                "username",
+                "email",
+                "fname",
+                "lname",
+                "phone",
+                "bday",
+                "validated",
+                "start_year",
+                "emergency",
+                "last_login"
+            ],
+            "description": "Field to sort order by"
+        },
         "page": {
             "$ref": "./util/page.json"
         },

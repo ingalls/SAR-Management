@@ -43,7 +43,11 @@
     <template v-else-if='mode === "list"'>
         <div class='table-responsive'>
             <table class="table card-table table-vcenter datatable">
-                <TableHeader :header='["Name", "Email", "Phone", "Last Login"]'/>
+                <TableHeader
+                    v-model:sort='paging.sort'
+                    v-model:order='paging.order'
+                    :header='["Name", "Email", "Phone", "Last Login"]'
+                />
                 <tbody>
                     <tr :key='user.id' v-for='(user, user_it) in list.users'>
                         <td @click='$router.push(`/user/${user.id}`)'>
@@ -141,6 +145,8 @@ export default {
             },
             paging: {
                 filter: '',
+                sort: 'Name',
+                order: 'asc',
                 limit: 10,
                 page: 0
             },
@@ -151,11 +157,11 @@ export default {
         }
     },
     watch: {
-        'paging.page': async function() {
-            await this.listUsers();
-        },
-        'paging.filter': async function() {
-            await this.listUsers();
+        paging: {
+            deep: true,
+            handler: async function() {
+                await this.listUsers();
+            }
         }
     },
     mounted: async function() {
@@ -190,6 +196,10 @@ export default {
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
+
+            if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
+            else url.searchParams.append('sort', this.paging.sort.toLowerCase().replace(' ', '_'));
+            url.searchParams.append('order', this.paging.order);
 
             this.list = await window.std(url);
             this.loading.list = false;
