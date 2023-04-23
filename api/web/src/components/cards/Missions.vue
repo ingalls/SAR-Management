@@ -1,7 +1,7 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title" v-text='label'></h3>
+        <h3 @click='fullpage' class="card-title cursor-pointer" v-text='label'></h3>
     </div>
     <template v-if='!missions.length'>
         <None :create='false' label='Missions'/>
@@ -53,6 +53,11 @@ export default {
         await this.fetch();
     },
     methods: {
+        fullpage: function() {
+            const searchParams = {}
+            if (this.assigned) searchParams.assigned = this.assigned;
+            this.$router.push({ path: '/mission', query: searchParams });
+        },
         fetch: async function() {
             const url = window.stdurl('/api/mission');
             url.searchParams.append('limit', this.limit);

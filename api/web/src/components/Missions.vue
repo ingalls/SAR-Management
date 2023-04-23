@@ -93,6 +93,7 @@ export default {
             },
             paging: {
                 filter: '',
+                assigned: null,
                 limit: 100,
                 page: 0
             },
@@ -103,15 +104,17 @@ export default {
         }
     },
     watch: {
-      'paging.page': async function() {
-           await this.listMissions();
-       },
-       'paging.filter': async function() {
-           await this.listMissions();
-       },
-
+        paging: {
+            deep: true,
+            handler: async function() {
+                this.$route.query = this.paging;
+                await this.listMissions();
+            },
+        }
     },
     mounted: async function() {
+        Object.assign(this.paging, this.$route.query);
+
         if (this.is_iam('Mission:View')) await this.listMissions();
     },
     methods: {
@@ -123,6 +126,7 @@ export default {
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('order', 'asc');
+            if (this.paging.assigned) url.searchParams.append('assigned', this.paging.assigned);
             this.list = await window.std(url)
             this.loading.list = false;
         }
