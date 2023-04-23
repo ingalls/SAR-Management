@@ -54,7 +54,7 @@
                 <tbody>
                     <tr :key='user.id' v-for='(user, user_it) in list.users'>
                         <td @click='$router.push(`/user/${user.id}`)'>
-                            <a class='text-reset cursor-pointer' v-text='user.fname + " " + user.lname'></a>
+                            <Avatar :link='true' :user='user'/>
                         </td>
                         <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
                         <td>
@@ -106,6 +106,7 @@
 </template>
 
 <script>
+import Avatar from '../util/Avatar.vue';
 import {
     ListIcon,
     SearchIcon,
@@ -203,6 +204,7 @@ export default {
     components: {
         None,
         Epoch,
+        Avatar,
         UserDropdownIcon,
         TrashIcon,
         SearchIcon,
