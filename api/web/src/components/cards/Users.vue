@@ -43,14 +43,7 @@
     <template v-else-if='mode === "list"'>
         <div class='table-responsive'>
             <table class="table card-table table-vcenter datatable">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Last Login</th>
-                    </tr>
-                </thead>
+                <TableHeader :header='["Name", "Email", "Phone", "Last Login"]'/>
                 <tbody>
                     <tr :key='user.id' v-for='(user, user_it) in list.users'>
                         <td @click='$router.push(`/user/${user.id}`)'>
@@ -107,6 +100,7 @@
 
 <script>
 import Avatar from '../util/Avatar.vue';
+import TableHeader from '../util/TableHeader.vue';
 import {
     ListIcon,
     SearchIcon,
@@ -212,7 +206,8 @@ export default {
         PolaroidIcon,
         UserProfile,
         TablerLoading,
-        TableFooter
+        TableFooter,
+        TableHeader
     }
 }
 </script>
