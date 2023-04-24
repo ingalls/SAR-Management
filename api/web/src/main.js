@@ -42,8 +42,9 @@ const router = new VueRouter.createRouter({
         { path: '/notification', name: 'notifications', component: () => import('./components/Notifications.vue') },
 
         { path: '/mission', name: 'missions', component: () => import('./components/Missions.vue') },
-        { path: '/mission/new', name: 'missions-new', component: () => import('./components/MissionsNew.vue') },
+        { path: '/mission/new', name: 'missions-new', component: () => import('./components/MissionEdit.vue') },
         { path: '/mission/:missionid', name: 'mission', component: () => import('./components/Mission.vue') },
+        { path: '/mission/:missionid/edit', name: 'mission-edit', component: () => import('./components/MissionEdit.vue') },
 
         { path: '/training', name: 'trainings', component: () => import('./components/Trainings.vue') },
         { path: '/training/new', name: 'trainings-new', component: () => import('./components/TrainingEdit.vue') },

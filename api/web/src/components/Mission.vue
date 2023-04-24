@@ -38,8 +38,9 @@
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='mission.title'/>
 
-                                <div class='ms-auto'>
-                                     <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
+                                <div class='ms-auto btn-list'>
+                                    <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
+                                    <SettingsIcon v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' height='24' width='24' class='cursor-pointer'/>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -47,7 +48,7 @@
                                     <div class="col-md-12" v-text='mission.body'></div>
 
                                     <div class='col-md-12'>
-                                        <Location/>
+                                        <Location v-if='mission.location_geom' v-model='mission.location_geom'/>
                                     </div>
                                 </div>
                             </div>
@@ -80,6 +81,9 @@ import BreadCrumb from './util/BreadCrumb.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import {
+    SettingsIcon
+} from 'vue-tabler-icons';
 
 export default {
     name: 'Mission',
@@ -171,6 +175,7 @@ export default {
     },
     components: {
         EpochRange,
+        SettingsIcon,
         Location,
         UserPresentSelect,
         BreadCrumb,

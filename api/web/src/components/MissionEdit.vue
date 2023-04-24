@@ -16,7 +16,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <NoAccess v-if='!is_iam("Mission:Manage")' title='New Mission'/>
-                <TablerLoading v-if='loading'/>
+                <TablerLoading v-if='mission.loading'/>
                 <template v-else>
                     <div class="col-lg-12">
                         <div class="card">
@@ -36,7 +36,7 @@
                                     </div>
 
                                     <div class='col-md-12'>
-                                        <Location/>
+                                        <Location v-model='mission.location_geom' :disabled='false'/>
                                     </div>
 
                                 </div>
@@ -81,7 +81,7 @@ import {
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'MissionsNew',
+    name: 'MissionEdit',
     props: {
         iam: {
             type: Object,
@@ -94,6 +94,9 @@ export default {
     },
     data: function() {
         return {
+            loading: {
+                mission: true
+            },
             mission: {
                 title: '',
                 body: '',
@@ -101,6 +104,13 @@ export default {
                 end_ts: '',
                 assigned: []
             },
+        }
+    },
+    mounted: async function() {
+        if (this.$route.params.missionid && this.is_iam('Mission:Manage')) {
+            await this.fetch();
+        } else {
+            this.loading.training = false;
         }
     },
     methods: {
@@ -123,7 +133,17 @@ export default {
 
             this.loading = false;
             this.$router.push(`/mission/${create.id}`);
-        }
+        },
+        fetch: async function() {
+            this.loading.mission = true;
+            const mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
+        
+            mission.start_ts = (new Date(mission.start_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
+            mission.end_ts = (new Date(mission.end_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
+
+            this.mission = mission;
+            this.loading.mission = false;
+        },
     },
     components: {
         Location,
