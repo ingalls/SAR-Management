@@ -6,6 +6,11 @@
             <div class='col d-flex'>
                 <h1 class="card-title" v-text='file'></h1>
                 <div class='ms-auto btn-list'>
+                    <template v-if='is_pdf || preview'>
+                        <ArrowBadgeLeftIcon v-if='pages.page !== 1' @click='pages.page--' class='cursor-pointer'/>
+                        <ArrowBadgeRightIcon @click='pages.page++' class='cursor-pointer'/>
+                    </template>
+
                     <TrashIcon @click='deleteFile' class='cursor-pointer'/>
                     <DownloadIcon @click='download' class='cursor-pointer'/>
                 </div>
@@ -16,7 +21,7 @@
                 <img :src='url(false)'/>
             </div>
             <div v-else-if='is_pdf'>
-                <PDF :src="url()" :page='1' :resize='true' :text='false'>
+                <PDF :src="url()" :page='pages.page' :resize='true' :text='false'>
                     <template slot="loading">
                         <TablerLoading/>
                     </template>
@@ -26,7 +31,7 @@
                 <TablerLoading/>
             </div>
             <div v-else-if='preview'>
-                <PDF :src='preview' :page='1' :resize='true' :text='false'>
+                <PDF :src='preview' :page='pages.page' :resize='true' :text='false'>
                     <template slot="loading">
                         <TablerLoading/>
                     </template>
@@ -58,6 +63,8 @@ import {
 import {
     TrashIcon,
     EyeOffIcon,
+    ArrowBadgeLeftIcon,
+    ArrowBadgeRightIcon,
     DownloadIcon
 } from 'vue-tabler-icons';
 
@@ -90,6 +97,10 @@ export default {
     },
     data: function() {
         return {
+            pages: {
+                page: 1,
+                total: 1
+            },
             loading: {
                 main: false,
                 preview: true
@@ -151,6 +162,8 @@ export default {
     components: {
         PDF,
         TrashIcon,
+        ArrowBadgeLeftIcon,
+        ArrowBadgeRightIcon,
         EyeOffIcon,
         DownloadIcon,
         TablerLoading
