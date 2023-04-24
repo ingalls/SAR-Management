@@ -34,7 +34,9 @@
                                     <div class="col-md-12">
                                         <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
                                     </div>
-
+                                    <div class='col-md-12'>
+                                        <TablerInput v-model='mission.location' label='Mission Location'/>
+                                    </div>
                                     <div class='col-md-12'>
                                         <Location v-model='mission.location_geom' :disabled='false'/>
                                     </div>
@@ -132,6 +134,16 @@ export default {
 
             this.loading = false;
             this.$router.push('/mission');
+        },
+        update: async function() {
+            this.loading = true;
+            const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
+                method: 'PATCH',
+                body: this.mission
+            });
+
+            this.loading = false;
+            this.$router.push(`/mission/${update.id}`);
         },
         create: async function() {
             this.loading = true;

@@ -1,14 +1,6 @@
 {
     "type": "object",
     "additionalProperties": false,
-    "required": [
-        "title",
-        "body",
-        "start_ts",
-        "end_ts",
-        "location",
-        "location_geom"
-    ],
     "properties": {
         "title": {
             "type": "string"
@@ -27,13 +19,6 @@
         },
         "location_geom": {
             "type": ["object", "null"]
-        },
-        "assigned": {
-            "type": "array",
-            "default": [],
-            "items": {
-                "type": "object"
-            }
         }
     }
 }

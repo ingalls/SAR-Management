@@ -82,6 +82,32 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.patch('/mission/:missionid', {
+        name: 'Update Mission',
+        group: 'Mission',
+        auth: 'user',
+        description: 'Update an existing mission',
+        body: 'req.body.PatchMission.json',
+        ':missionid': 'integer',
+        res: 'missions.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Mission:Manage');
+
+            if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
+            else delete req.body.start_ts;
+
+            if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
+            else delete req.body.end_ts;
+
+            const mission = await Mission.from(config.pool, req.params.missionid);
+            await mission.commit(req.body);
+            return res.json(mission);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.delete('/mission/:missionid', {
         name: 'Delete Mission',
         group: 'Mission',

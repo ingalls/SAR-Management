@@ -36,7 +36,7 @@
                         <TablerLoading v-if='loading.training'/>
                         <div v-else class="card">
                             <div class='card-header'>
-                                <h3 class='card-title' v-text='`${training.title} @ ${training.location}`'/>
+                                <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
                                 <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
 
                                 <div class='ms-auto btn-list'>
