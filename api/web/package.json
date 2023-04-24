@@ -21,6 +21,8 @@
         "floating-vue": "^2.0.0-beta.17",
         "mapbox-gl": "^2.11.0",
         "moment": "^2.29.3",
+        "pdfjs-dist": "^3.5.141",
+        "pdfvuer": "^2.0.1",
         "sass": "^1.49.7",
         "sass-loader": "^13.0.0",
         "semver-sort": "^1.0.0",

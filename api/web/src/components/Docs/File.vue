@@ -16,7 +16,11 @@
                 <img :src='url(false)'/>
             </div>
             <div v-else-if='is_pdf'>
-                IMAGE
+                <PDF :src="url()" :page='1' :resize='true' :text='false'>
+                    <template slot="loading">
+                        <TablerLoading/>
+                    </template>
+                </PDF>
             </div>
             <div v-else>
                 <div class='d-flex justify-content-center mt-4 mb-2'>
@@ -37,6 +41,7 @@
 </template>
 
 <script>
+import PDF from 'pdfvuer/dist/pdfvuer.common.js';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -111,6 +116,7 @@ export default {
         }
     },
     components: {
+        PDF,
         TrashIcon,
         EyeOffIcon,
         DownloadIcon,
