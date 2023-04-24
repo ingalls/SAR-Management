@@ -1,6 +1,6 @@
 <template>
 <div class="card">
-    <TablerLoading v-if='loading'/>
+    <TablerLoading v-if='loading.main'/>
     <template v-else>
         <div class='card-header'>
             <div class='col d-flex'>
@@ -22,7 +22,17 @@
                     </template>
                 </PDF>
             </div>
-            <div v-else>
+            <div v-else-if='loading.preview'>
+                <TablerLoading/>
+            </div>
+            <div v-else-if='preview'>
+                <PDF :src='preview' :page='1' :resize='true' :text='false'>
+                    <template slot="loading">
+                        <TablerLoading/>
+                    </template>
+                </PDF>
+            </div>
+            <div v-else-if='preview === null'>
                 <div class='d-flex justify-content-center mt-4 mb-2'>
                     <EyeOffIcon width='48' height='48'/>
                 </div>
@@ -80,8 +90,31 @@ export default {
     },
     data: function() {
         return {
-            loading: false
+            loading: {
+                main: false,
+                preview: true
+            },
+            preview: null,
         }
+    },
+    mounted: async function() {
+        const url = window.stdurl('/api/doc');
+        url.searchParams.append('prefix', this.prefix + this.file + '/');
+        const res = await window.std(url)
+
+        for (const doc of res.documents) {
+            if (doc.key === 'preview.pdf') {
+                const url = window.stdurl('/api/doc/download');
+                url.searchParams.append('prefix', this.prefix + this.file + '/');
+                url.searchParams.append('file', 'preview.pdf');
+                url.searchParams.append('download', 'false');
+                url.searchParams.append('token', localStorage.token);
+                this.preview = String(url);
+                break;
+            }
+        }
+
+        this.loading.preview = false;
     },
     methods: {
         url: function(download = true) {
