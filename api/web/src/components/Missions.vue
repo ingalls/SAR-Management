@@ -15,45 +15,58 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Mission:View")' title='Missions'/>
-                    <TablerLoading v-else-if='loading.list'/>
-                    <div v-else class="card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="input-icon w-50">
-                                    <input v-model='paging.filter' type="text" class="form-control" placeholder="Search…">
-                                    <span class="input-icon-addon">
-                                        <SearchIcon width='24'/>
-                                    </span>
-                                </div>
-                                <div class='ms-auto'>
-                                    <PlusIcon v-if='is_iam("Mission:Manage")' @click='$router.push("/mission/new")' class="cursor-pointer my-1"/>
+                <template v-if='!is_iam("Mission:View")'>
+                    <div class="col-lg-12">
+                        <NoAccess title='Missions'/>
+                    </div>
+                </template>
+                <template v-else-if='loading.list'>
+                    <div class="col-lg-12">
+                        <TablerLoading/>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="col-lg-12">
+                        <HeatMap :missions='list'/>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="input-icon w-50">
+                                        <input v-model='paging.filter' type="text" class="form-control" placeholder="Search…">
+                                        <span class="input-icon-addon">
+                                            <SearchIcon width='24'/>
+                                        </span>
+                                    </div>
+                                    <div class='ms-auto'>
+                                        <PlusIcon v-if='is_iam("Mission:Manage")' @click='$router.push("/mission/new")' class="cursor-pointer my-1"/>
+                                    </div>
                                 </div>
                             </div>
+                            <table class="table card-table table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Location</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr :key='mission.id' v-for='mission in list.missions'>
+                                        <td><a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a></td>
+                                        <td v-text='mission.location'></td>
+                                        <td><EpochRange :start='mission.start_ts' :end='mission.end_ts'/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <template v-if='!list.total'>
+                                <None label='Missions' :create='false'/>
+                            </template>
+                            <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                         </div>
-                        <table class="table card-table table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Location</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr :key='mission.id' v-for='mission in list.missions'>
-                                    <td><a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a></td>
-                                    <td v-text='mission.location'></td>
-                                    <td><EpochRange :start='mission.start_ts' :end='mission.end_ts'/></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <template v-if='!list.total'>
-                            <None label='Missions' :create='false'/>
-                        </template>
-                        <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                     </div>
-                </div>
+                </template>
             </div>
         </div>
     </div>
@@ -67,6 +80,7 @@ import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
 import BreadCrumb from './util/BreadCrumb.vue';
+import HeatMap from './Mission/HeatMap.vue';
 import {
     SearchIcon,
     PlusIcon
@@ -140,6 +154,7 @@ export default {
         EpochRange,
         TableFooter,
         TablerLoading,
+        HeatMap,
         BreadCrumb
     }
 }

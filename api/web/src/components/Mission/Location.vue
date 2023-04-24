@@ -111,7 +111,6 @@ export default {
                             }]
                         });
 
-                        console.error('EMIT', geometry);
                         this.$emit('update:modelValue', geometry);
                     });
                 }
