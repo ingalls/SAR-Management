@@ -27,24 +27,39 @@ export default async function router(schema, config) {
                 Delimiter: '/'
             });
 
-            const documents = (s3list.CommonPrefixes || []).map((dir) => {
-                return {
-                    type: 'dir',
-                    key: dir.Prefix.replace(req.query.prefix, ''),
-                    last_modified: '',
-                    size: 0
-                };
-            });
+            const docs = new Set();
+
+            const documents = [];
+
             documents.push(...(s3list.Contents || []).filter((obj) => {
                 return obj.Key !== req.query.prefix;
             }).map((obj) => {
+                const key = obj.Key.replace(req.query.prefix, '');
+                docs.add(key);
+
                 return {
                     type: 'file',
-                    key: obj.Key.replace(req.query.prefix, ''),
+                    key: key,
                     last_modified: obj.LastModified,
                     size: obj.Size
                 };
             }));
+
+            documents.push(...(s3list.CommonPrefixes || [])
+                .filter((dir) => {
+                    const prefix = dir.Prefix
+                        .replace(/\/$/, '')
+                        .replace(req.query.prefix, '');
+
+                    return !docs.has(prefix);
+                }).map((dir) => {
+                    return {
+                        type: 'dir',
+                        key: dir.Prefix.replace(req.query.prefix, ''),
+                        last_modified: '',
+                        size: 0
+                    };
+                }));
 
             return res.json({
                 total: documents.length,
