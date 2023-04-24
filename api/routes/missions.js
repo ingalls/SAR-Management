@@ -81,4 +81,27 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.delete('/mission/:missionid', {
+        name: 'Delete Mission',
+        group: 'Mission',
+        auth: 'user',
+        description: 'Remove an existing mission',
+        ':missionid': 'integer',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Mission:Admin');
+
+            const mission = await Mission.from(config.pool, req.params.missionid);
+            await mission.delete();
+
+            return res.json({
+                status: 200,
+                message: 'Mission Deleted'
+            });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }

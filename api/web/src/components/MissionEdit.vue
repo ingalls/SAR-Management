@@ -43,20 +43,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-12">
+                    <div v-if='!$route.params.missionid' class="col-lg-12">
                         <UserPresentSelect
                             :confirmed='true'
-                            v-model='mission.assigned'
+                            v-model='assigned'
                         />
                     </div>
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class='d-flex'>
-                                    <div class='ms-auto'>
-                                        <a @click='create' class="cursor-pointer btn btn-primary">
-                                            Create Mission
+                                <div class="col-md-12">
+                                    <div class='d-flex'>
+                                        <a v-if='$route.params.missionid && is_iam("Mission:Admin")' @click='deleteMission' class="cursor-pointer btn btn-danger">
+                                            Delete Mission
                                         </a>
+                                        <div class='ms-auto'>
+
+                                            <a v-if='$route.params.missionid' @click='update' class="cursor-pointer btn btn-primary">
+                                                Update Mission
+                                            </a>
+                                            <a v-else @click='create' class="cursor-pointer btn btn-primary">
+                                                Create Mission
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -102,26 +111,35 @@ export default {
                 body: '',
                 start_ts: '',
                 end_ts: '',
-                assigned: []
             },
+            assigned: []
         }
     },
     mounted: async function() {
         if (this.$route.params.missionid && this.is_iam('Mission:Manage')) {
             await this.fetch();
         } else {
-            this.loading.training = false;
+            this.loading.mission = false;
         }
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        deleteMission: async function() {
+            this.loading = true;
+            await window.std(`/api/mission/${this.$route.params.missionid}`, {
+                method: 'DELETE',
+            });
+
+            this.loading = false;
+            this.$router.push('/mission');
+        },
         create: async function() {
             this.loading = true;
             const create = await window.std('/api/mission', {
                 method: 'POST',
                 body: {
                     ...this.mission,
-                    assigned: this.mission.assigned.map((a) => {
+                    assigned: this.assigned.map((a) => {
                         return {
                             uid: a.id,
                             role: a.role || 'General',
@@ -137,7 +155,7 @@ export default {
         fetch: async function() {
             this.loading.mission = true;
             const mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
-        
+
             mission.start_ts = (new Date(mission.start_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
             mission.end_ts = (new Date(mission.end_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
 
