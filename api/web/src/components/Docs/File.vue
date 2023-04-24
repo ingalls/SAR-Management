@@ -105,7 +105,7 @@ export default {
         for (const doc of res.documents) {
             if (doc.key === 'preview.pdf') {
                 const url = window.stdurl('/api/doc/download');
-                url.searchParams.append('prefix', this.prefix + this.file + '/');
+                url.searchParams.append('prefix', this.prefix + this.file);
                 url.searchParams.append('file', 'preview.pdf');
                 url.searchParams.append('download', 'false');
                 url.searchParams.append('token', localStorage.token);
