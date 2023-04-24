@@ -11,7 +11,7 @@
                         <ArrowBadgeRightIcon @click='pages.page++' class='cursor-pointer'/>
                     </template>
 
-                    <TrashIcon @click='deleteFile' class='cursor-pointer'/>
+                    <TrashIcon v-if='manage' @click='deleteFile' class='cursor-pointer'/>
                     <DownloadIcon @click='download' class='cursor-pointer'/>
                 </div>
             </div>
