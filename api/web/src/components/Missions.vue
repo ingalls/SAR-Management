@@ -126,7 +126,7 @@ export default {
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('order', 'asc');
+            url.searchParams.append('order', 'desc');
             if (this.paging.assigned) url.searchParams.append('assigned', this.paging.assigned);
             this.list = await window.std(url)
             this.loading.list = false;
