@@ -4,6 +4,8 @@ import Auth from '../lib/auth.js';
 import bcrypt from 'bcrypt';
 import Email from '../lib/email.js';
 import TeamUser from '../lib/types/team-user.js';
+import VCard from 'vcard-creator';
+import { phone } from 'phone';
 
 export default async function router(schema, config) {
     const email = new Email(config);
@@ -19,7 +21,23 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'User:View');
 
-            res.json(await User.list(config.pool, req.query));
+            if (req.query.format === 'vcard') {
+                res.set('Content-Type', 'text/x-vcard');
+                res.set('Content-Disposition', `attachment; filename="sar-users.vcf"`);
+
+                (await User.stream(config.pool, req.query)).on('data', async (user) => {
+                    const card = new VCard.default();
+                    card.addName(user.lname, user.fname);
+                    card.addCompany('MesaSAR');
+                    card.addEmail(user.email);
+                    card.addPhoneNumber(phone(user.phone).phoneNumber);
+                    res.write(card.toString());
+                }).on('end', () => {
+                    res.end();
+                });
+            } else {
+                res.json(await User.list(config.pool, req.query));
+            }
         } catch (err) {
             return Err.respond(err, res);
         }

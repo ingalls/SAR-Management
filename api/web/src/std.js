@@ -36,6 +36,7 @@ function std() {
             const res = await fetch(url, opts);
 
             let bdy = {};
+
             if ((res.status < 200 || res.status >= 400) && ![401].includes(res.status)) {
                 try {
                     bdy = await res.json();
@@ -51,7 +52,11 @@ function std() {
                 return window.location.reload();
             }
 
-            return await res.json();
+            if (res.headers.get('content-type').split(';')[0] === 'application/json') {
+                return await res.json();
+            } else {
+                return res;
+            }
         } catch (err) {
             throw new Error(err.message);
         }

@@ -2,6 +2,14 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+        "format": {
+            "type": "string",
+            "default": "json",
+            "enum": [
+                "json",
+                "vcard"
+            ]
+        },
         "limit": {
             "$ref": "./util/limit.json"
         },

@@ -136,7 +136,7 @@ export default async function router(schema, config) {
                 return file.Body.pipe(res);
             } else {
                 res.writeHead(200, {
-                    'Content-disposition': `attachment; filename="${req.query.file}"`
+                    'Content-Disposition': `attachment; filename="${req.query.file}"`
                 });
                 return file.Body.pipe(res);
             }

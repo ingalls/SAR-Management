@@ -14,15 +14,21 @@
                             </span>
                         </div>
 
-                        <div v-if='!edit' class="btn-group" role="group">
-                            <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='list'>
-                            <label @click='mode="list"' class="btn btn-icon"><ListIcon/></label>
-                            <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='gallery'>
-                            <label @click='mode="gallery"' class="btn btn-icon"><PolaroidIcon/></label>
-                        </div>
-                        <div v-else class='btn-list'>
-                            <TablerLoading v-if='loading.add' :inline='true'/>
-                            <UserDropdownIcon v-else @selected='addUser($event)'/>
+                        <div class='btn-list'>
+                            <div class="btn-group" role="group">
+                                <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='list'>
+                                <label @click='mode="list"' class="btn btn-icon"><ListIcon/></label>
+                                <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='gallery'>
+                                <label @click='mode="gallery"' class="btn btn-icon"><PolaroidIcon/></label>
+                            </div>
+
+                            <button class='btn px-2'>
+                                <AddressBookIcon @click='downloadVCF' class='cursor-pointer'/>
+                            </button>
+                            <template v-if='edit'>
+                                <TablerLoading v-if='loading.add' :inline='true'/>
+                                <UserDropdownIcon v-else @selected='addUser($event)'/>
+                            </template>
                         </div>
 
                         <button v-if='dropdown && edit' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
@@ -109,6 +115,7 @@ import {
     ListIcon,
     SearchIcon,
     PolaroidIcon,
+    AddressBookIcon,
     TrashIcon
 } from 'vue-tabler-icons'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
@@ -204,11 +211,30 @@ export default {
             this.list = await window.std(url);
             this.loading.list = false;
         },
+        downloadVCF: async function() {
+            const url = window.stdurl(this.url);
+            if (this.team) url.searchParams.append('team', this.team);
+            url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('format', 'vcard');
+            if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
+
+            const res = await window.std(url);
+            const blob = await res.blob()
+
+            const durl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = durl;
+            a.download = 'sar-users.vcf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        },
     },
     components: {
         None,
         Epoch,
         Avatar,
+        AddressBookIcon,
         UserDropdownIcon,
         TrashIcon,
         SearchIcon,
