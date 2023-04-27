@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <TablerBreadCrumb/>
+                        <TablerBreadCrumb :normalize='false'/>
                     </div>
                 </div>
             </div>
