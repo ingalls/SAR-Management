@@ -28,7 +28,7 @@
                 </PDF>
             </div>
             <div v-else-if='loading.preview'>
-                <TablerLoading/>
+                <TablerLoading desc='Loading Preview'/>
             </div>
             <div v-else-if='preview'>
                 <PDF :src='preview' :page='pages.page' :resize='true' :text='false'>
@@ -47,7 +47,7 @@
                 </div>
 
                 <div v-if='manage' class='d-flex justify-content-center my-4'>
-                    <TablerLoading v-if='loading.generate' label='Generating Preview'/>
+                    <TablerLoading v-if='loading.generate' desc='Generating Preview'/>
                     <div v-else @click='generate' class='btn btn-secondary'>Generate PDF</div>
                 </div>
             </div>
