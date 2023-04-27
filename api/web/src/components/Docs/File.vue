@@ -47,7 +47,8 @@
                 </div>
 
                 <div v-if='manage' class='d-flex justify-content-center my-4'>
-                    <div @click='generate' class='btn btn-secondary'>Generate PDF</div>
+                    <TablerLoading v-if='loading.generate' label='Generating Preview'/>
+                    <div v-else @click='generate' class='btn btn-secondary'>Generate PDF</div>
                 </div>
             </div>
         </div>
@@ -103,6 +104,7 @@ export default {
             },
             loading: {
                 main: false,
+                generate: false,
                 preview: true
             },
             preview: null,
@@ -140,22 +142,22 @@ export default {
             window.open(this.url(true), '_blank');
         },
         generate: async function() {
-            this.loading = true;
+            this.loading.generate = true;
             const url = window.stdurl('/api/doc/convert');
             url.searchParams.append('prefix', this.prefix);
             url.searchParams.append('file', this.file);
             await window.std(url);
-            this.loading = false;
+            this.loading.generate = false;
         },
         deleteFile: async function() {
-            this.loading = true;
+            this.loading.main = true;
             const url = window.stdurl('/api/doc');
             url.searchParams.append('file', this.prefix + this.file);
             await window.std(url, {
                 method: 'DELETE'
             });
 
-            this.loading = false;
+            this.loading.main = false;
             this.$emit('delete');
         }
     },

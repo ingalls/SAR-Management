@@ -35,7 +35,7 @@ const router = new VueRouter.createRouter({
         { path: '/equipment/:equipid', name: 'equipment', component: () => import('./components/Equipment.vue') },
         { path: '/equipment/:equipid/edit', name: 'equipment-edit', component: () => import('./components/EquipmentEdit.vue') },
 
-        { path: '/doc', name: 'docs', component: () => import('./components/Docs.vue') },
+        { path: '/doc/:pathMatch(.*)*', name: 'docs', component: () => import('./components/Docs.vue') },
 
         { path: '/calendar', name: 'calendar', component: () => import('./components/Calendar.vue') },
 

@@ -166,6 +166,12 @@ export default {
        }
     },
     mounted: async function() {
+        let path = (this.$route.params.pathMatch ? this.$route.params.pathMatch : []).filter((p) => { return !!p.trim() });
+
+        if (path.length && path[path.length - 1].includes('.')) this.file = path.pop();
+        path = path.join('/') + '/';
+        if (path !== '/') this.paging.prefix = path;
+
         if (this.is_iam("Doc:View")) await this.listDocs();
     },
     methods: {
@@ -182,6 +188,12 @@ export default {
             throw $event;
         },
         listDocs: async function() {
+            if (this.paging.prefix) {
+                this.$router.push(`/doc/${this.paging.prefix}${this.file ? this.file : ''}`);
+            } else {
+                this.$router.push(`/doc/${this.file ? this.file : ''}`);
+            }
+
             this.loading.list = true;
             const url = window.stdurl('/api/doc');
             url.searchParams.append('limit', this.paging.limit);
