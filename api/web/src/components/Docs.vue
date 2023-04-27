@@ -82,6 +82,7 @@
 
     <NewFolder
         v-if='folder'
+        :prefix='paging.prefix'
         @close='folder = null'
         @done='folder = null; listDocs($event)'
     />

@@ -145,6 +145,31 @@ export default async function router(schema, config) {
         }
     })
 
+    await schema.post('/doc/folder', {
+        name: 'Create Folder',
+        auth: 'user',
+        group: 'Docs',
+        description: 'Create a new folder',
+        query: 'req.query.CreateDoc.json',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Doc:Manage');
+
+            await spaces.upload({
+                Key: `documents/${req.query.prefix}`,
+                Body: ''
+            });
+
+            return res.json({
+                status: 200,
+                message: 'Document Uploaded'
+            });
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
+
     await schema.post('/doc', {
         name: 'Create Doc',
         auth: 'user',

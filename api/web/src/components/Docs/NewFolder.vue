@@ -24,6 +24,12 @@ import {
 
 export default {
     name: 'NewFolder',
+    props: {
+        prefix: {
+            type: String,
+            required: true
+        }
+    },
     data: function() {
         return {
             name: ''
@@ -33,7 +39,17 @@ export default {
         close: function() {
             this.$emit('close');
         },
-        createFolder: function() {
+        createFolder: async function() {
+            if (this.name.includes('.')) throw new Error('Name cannot contain "."');
+            if (this.name.includes('/')) throw new Error('Name cannot contain "/"');
+
+            const url = window.stdurl('/api/doc/folder');
+            url.searchParams.append('prefix', this.prefix + this.name + '/');
+
+            await window.std(url, {
+                method: 'POST'
+            });
+
             this.$emit('done');
         }
     },
