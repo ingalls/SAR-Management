@@ -80,6 +80,12 @@
         </div>
     </div>
 
+    <NewFolder
+        v-if='folder'
+        @close='folder = null'
+        @done='folder = null; listDocs($event)'
+    />
+
     <Upload
         v-if='upload'
         :url='url()'
@@ -96,6 +102,7 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
 import Upload from './util/Upload.vue';
+import NewFolder from './Docs/NewFolder.vue';
 import File from './Docs/File.vue';
 import {
     TablerBreadCrumb,
@@ -125,6 +132,7 @@ export default {
         return {
             file: null,
             upload: false,
+            folder: false,
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
@@ -202,6 +210,7 @@ export default {
         File,
         Upload,
         PlusIcon,
+        NewFolder,
         FolderPlusIcon,
         NoAccess,
         SearchIcon,
