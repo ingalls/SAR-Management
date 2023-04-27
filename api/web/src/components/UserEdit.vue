@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -129,8 +129,8 @@
 <script>
 import None from './util/None.vue';
 import Upload from './util/Upload.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import {
+    TablerBreadCrumb,
     TablerLoading,
     TablerInput,
 } from '@tak-ps/vue-tabler'
@@ -248,7 +248,7 @@ export default {
         UserProfile,
         TablerLoading,
         TablerInput,
-        BreadCrumb
+        TablerBreadCrumb
     }
 }
 </script>

@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
 
                         <div class='ms-auto'>
                             <a v-if='is_iam("Issue:Manage")' @click='$router.push("/issue/new")' class="cursor-pointer btn btn-primary">
@@ -74,8 +74,10 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
-import { TablerSelect } from '@tak-ps/vue-tabler';
+import {
+    TablerBreadCrumb,
+    TablerSelect
+} from '@tak-ps/vue-tabler';
 import {
     SearchIcon
 } from 'vue-tabler-icons';
@@ -121,7 +123,7 @@ export default {
     },
     components: {
         None,
-        BreadCrumb,
+        TablerBreadCrumb,
         NoAccess,
         TablerSelect,
         SearchIcon

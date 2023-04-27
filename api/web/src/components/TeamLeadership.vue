@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -102,7 +102,6 @@ import TableFooter from './util/TableFooter.vue';
 import None from './util/None.vue';
 import UserDropdown from './util/UserDropdown.vue';
 import Avatar from './util/Avatar.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import {
     PlusIcon,
     TrashIcon,
@@ -110,6 +109,7 @@ import {
     CheckIcon,
 } from 'vue-tabler-icons'
 import {
+    TablerBreadCrumb,
     TablerLoading,
     TablerInput
 } from '@tak-ps/vue-tabler';
@@ -206,7 +206,7 @@ export default {
         TablerInput,
         UserDropdown,
         TableFooter,
-        BreadCrumb,
+        TablerBreadCrumb,
         NoAccess
     }
 }

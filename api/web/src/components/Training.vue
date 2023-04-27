@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -79,12 +79,12 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import EpochRange from './util/EpochRange.vue';
 import {
     SettingsIcon
 } from 'vue-tabler-icons';
 import {
+    TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
@@ -186,7 +186,7 @@ export default {
         SettingsIcon,
         UserPresentSelect,
         TablerLoading,
-        BreadCrumb,
+        TablerBreadCrumb,
         NoAccess
     }
 }

@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
 
                         <div class='ms-auto'>
                             <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
@@ -42,7 +42,9 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
-import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    TablerBreadCrumb 
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Calendar',
@@ -116,7 +118,7 @@ export default {
         },
     },
     components: {
-        BreadCrumb,
+        TablerBreadCrumb,
         NoAccess,
     },
 }

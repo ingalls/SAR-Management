@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,9 @@
 import CardRoles from './Admin/Roles.vue';
 import CardLabels from './Admin/Labels.vue';
 import CardStandards from './Admin/Standards.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    TablerBreadCrumb 
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Admin',
@@ -50,7 +52,7 @@ export default {
     },
     components: {
         CardRoles,
-        BreadCrumb,
+        TablerBreadCrumb,
         CardLabels,
         CardStandards,
     }

@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -179,8 +179,8 @@ import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
 import CardCerts from './cards/Certs.vue';
 import NoAccess from './util/NoAccess.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import {
+    TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
@@ -237,7 +237,7 @@ export default {
         CardEquipment,
         CardCerts,
         TablerLoading,
-        BreadCrumb,
+        TablerBreadCrumb,
         NoAccess
     }
 }

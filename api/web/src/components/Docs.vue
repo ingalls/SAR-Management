@@ -5,16 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <ol class="breadcrumb" aria-label="breadcrumbs">
-                            <li class="breadcrumb-item"><a @click='$router.push("/")' class='cursor-pointer'>Home</a></li>
-                            <li class="breadcrumb-item" :class='{
-                                active: paging.prefix === ""
-                            }'><a @click='paging.prefix = ""' class='cursor-pointer'>Docs</a></li>
-                            <li :key='fit' v-for='(folder, fit) of paging.prefix.substring(0, paging.prefix.length - 1).split("/")' class="breadcrumb-item" :class='{
-                                active: fit === paging.prefix.substring(0, paging.prefix.length - 1).split("/").length - 1
-                            }'><a @click='paging.prefix = paging.prefix.substring(0, paging.prefix.length - 1).split("/").splice(0, fit).join("/") + "/"' class='cursor-pointer' v-text='folder.replace("/", )'></a></li>
-                        </ol>
-
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -107,6 +98,7 @@ import TableFooter from './util/TableFooter.vue';
 import Upload from './util/Upload.vue';
 import File from './Docs/File.vue';
 import {
+    TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
@@ -216,6 +208,7 @@ export default {
         FileFilledIcon,
         FolderFilledIcon,
         TableFooter,
+        TablerBreadCrumb,
         TablerLoading
     }
 }

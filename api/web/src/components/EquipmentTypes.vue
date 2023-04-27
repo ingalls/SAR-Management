@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -63,7 +63,9 @@
 <script>
 import NoAccess from './util/NoAccess.vue';
 import Epoch from './util/Epoch.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    TablerBreadCrumb 
+} from '@tak-ps/vue-tabler';
 import iam from '../iam.js';
 import None from './util/None.vue';
 import {

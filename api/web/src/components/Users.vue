@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
 
                         <div v-if='is_iam("User:Admin")' class='ms-auto'>
                             <a @click='$router.push("/user/new")' class="cursor-pointer btn btn-primary">
@@ -34,7 +34,9 @@
 <script>
 import CardUsers from './cards/Users.vue';
 import NoAccess from './util/NoAccess.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    TablerBreadCrumb
+} from '@tak-ps/vue-tabler';
 import iam from '../iam.js';
 
 export default {
@@ -55,7 +57,7 @@ export default {
     components: {
         CardUsers,
         NoAccess,
-        BreadCrumb
+        TablerBreadCrumb
     }
 }
 </script>

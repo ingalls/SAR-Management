@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
 
                         <div class='ms-auto'>
                             <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
@@ -76,8 +76,8 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import {
+    TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
@@ -143,7 +143,7 @@ export default {
         SearchIcon,
         NoAccess,
         TablerLoading,
-        BreadCrumb
+        TablerBreadCrumb
     }
 }
 </script>

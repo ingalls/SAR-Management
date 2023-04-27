@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -95,7 +95,8 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import {
-    TablerLoading
+    TablerLoading,
+    TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import {
     SettingsIcon
@@ -103,7 +104,6 @@ import {
 import CardEquipment from './cards/Equipment.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
 import Avatar from './util/Avatar.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 
 export default {
     name: 'Equipment',
@@ -156,7 +156,7 @@ export default {
         CardEquipment,
         TablerLoading,
         EquipmentMeta,
-        BreadCrumb
+        TablerBreadCrumb
     }
 }
 </script>

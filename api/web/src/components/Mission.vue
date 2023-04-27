@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
+import TablerBreadCrumb from './util/TablerBreadCrumb.vue';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -178,7 +178,7 @@ export default {
         SettingsIcon,
         Location,
         UserPresentSelect,
-        BreadCrumb,
+        TablerBreadCrumb,
         TablerLoading,
         NoAccess
     }

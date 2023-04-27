@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -60,8 +60,8 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import CardUsers from './cards/Users.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import {
+    TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
@@ -102,7 +102,7 @@ export default {
     },
     components: {
         NoAccess,
-        BreadCrumb,
+        TablerBreadCrumb,
         TablerLoading,
         CardUsers
     }

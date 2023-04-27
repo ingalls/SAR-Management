@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -79,13 +79,13 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import HeatMap from './Mission/HeatMap.vue';
 import {
     SearchIcon,
     PlusIcon
 } from 'vue-tabler-icons';
 import {
+    TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
@@ -155,7 +155,7 @@ export default {
         TableFooter,
         TablerLoading,
         HeatMap,
-        BreadCrumb
+        TablerBreadCrumb
     }
 }
 </script>

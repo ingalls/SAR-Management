@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -119,11 +119,11 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import {
     PlusIcon
 } from 'vue-tabler-icons';
 import {
+    TablerBreadCrumb,
     TablerLoading,
     TablerSelect
 } from '@tak-ps/vue-tabler';
@@ -237,7 +237,7 @@ export default {
         NoAccess,
         TablerLoading,
         TablerSelect,
-        BreadCrumb
+        TablerBreadCrumb
     }
 }
 </script>

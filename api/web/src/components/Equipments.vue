@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                         <div v-if='is_iam("Equipment:Manage")' class='ms-auto'>
                             <div class='btn-list'>
                                 <a @click='$router.push("/equipment/type")' class="cursor-pointer btn btn-secondary">
@@ -39,7 +39,9 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import CardEquipment from './cards/Equipment.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    TablerBreadCrumb 
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Equipments',
@@ -58,7 +60,7 @@ export default {
     },
     components: {
         NoAccess,
-        BreadCrumb,
+        TablerBreadCrumb,
         CardEquipment
     }
 }

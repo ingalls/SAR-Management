@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,9 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
+import {
+    TablerBreadCrumb 
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'TeamNew',
@@ -102,7 +104,7 @@ export default {
     },
     components: {
         NoAccess,
-        BreadCrumb
+        TablerBreadCrumb
     }
 }
 </script>

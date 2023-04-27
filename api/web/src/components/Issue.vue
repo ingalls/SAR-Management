@@ -5,7 +5,7 @@
             <div class="container-xl">
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
-                        <BreadCrumb/>
+                        <TablerBreadCrumb/>
                     </div>
                 </div>
             </div>
@@ -113,10 +113,10 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import {
+    TablerBreadCrumb,
     TablerLoading,
 } from '@tak-ps/vue-tabler'
 import Avatar from './util/Avatar.vue';
-import BreadCrumb from './util/BreadCrumb.vue';
 import CreateComment from './Issue/CreateComment.vue';
 import UserSelect from './util/UserSelect.vue';
 
@@ -202,7 +202,7 @@ export default {
         Avatar,
         NoAccess,
         TablerLoading,
-        BreadCrumb,
+        TablerBreadCrumb,
         CreateComment,
         UserSelect
     }
