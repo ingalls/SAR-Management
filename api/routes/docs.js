@@ -5,6 +5,14 @@ import busboy from 'busboy';
 import API2PDF from 'api2pdf';
 import jwt from 'jsonwebtoken';
 
+function prefix(req) {
+    if (!req.query.prefix) req.query.prefix = '';
+
+    if (req.query.prefix && !req.query.prefix.endsWith('/')) {
+        req.query.prefix = req.query.prefix + '/';
+    }
+}
+
 export default async function router(schema, config) {
     const spaces = new Spaces();
     const convert = new API2PDF(process.env.API2PDF);
@@ -19,6 +27,8 @@ export default async function router(schema, config) {
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'User:View');
+
+            prefix(req);
 
             req.query.prefix = 'documents/' + req.query.prefix;
 
@@ -78,6 +88,8 @@ export default async function router(schema, config) {
         query: 'req.query.ConvertDoc.json'
     }, async (req, res) => {
         try {
+            prefix(req);
+
             if (req.query.access_token) {
                 const decoded = jwt.verify(req.query.access_token, config.SigningSecret);
 
@@ -103,7 +115,7 @@ export default async function router(schema, config) {
                 const file = await fetch(doc.FileUrl);
 
                 spaces.upload({
-                    Key: `documents/${req.query.prefix ? req.query.prefix + '/' : ''}${req.query.file}/preview.pdf`,
+                    Key: `documents/${req.query.prefix}${req.query.file}/preview.pdf`,
                     Body: file.body
                 });
 
@@ -128,8 +140,10 @@ export default async function router(schema, config) {
             await Auth.is_auth(req, true);
             await Auth.is_iam(req, 'Doc:View');
 
+            prefix(req);
+
             const file = await spaces.get({
-                Key: `documents/${req.query.prefix ? req.query.prefix + '/' : ''}${req.query.file}`
+                Key: `documents/${req.query.prefix}${req.query.file}`
             });
 
             if (!req.query.download) {
@@ -156,6 +170,8 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Doc:Manage');
 
+            prefix(req);
+
             await spaces.upload({
                 Key: `documents/${req.query.prefix}`,
                 Body: ''
@@ -179,6 +195,8 @@ export default async function router(schema, config) {
         res: 'res.Standard.json'
     }, async (req, res) => {
         await Auth.is_iam(req, 'Doc:Manage');
+
+        prefix(req);
 
         if (req.headers['content-type']) {
             req.headers['content-type'] = req.headers['content-type'].split(',')[0];
