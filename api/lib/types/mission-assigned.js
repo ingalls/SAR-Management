@@ -8,7 +8,7 @@ export default class MissionAssigned extends Generic {
     static async list(pool, mission_id, query) {
         mission_id = Params.integer(mission_id);
 
-        query.limit = Params.integer(query.limit, { default: 20 });
+        query.limit = Params.integer(query.limit, { default: 100 });
         query.page = Params.integer(query.page, { default: 0 });
         query.sort = Params.string(query.sort, { default: 'id' });
         query.order = Params.order(query.order);

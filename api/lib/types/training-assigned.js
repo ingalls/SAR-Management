@@ -8,7 +8,7 @@ export default class TrainingAssigned extends Generic {
     static async list(pool, training_id, query) {
         training_id = Params.integer(training_id);
 
-        query.limit = Params.integer(query.limit, { default: 20 });
+        query.limit = Params.integer(query.limit, { default: 100 });
         query.page = Params.integer(query.page, { default: 0 });
         query.sort = Params.string(query.sort, { default: 'id' });
         query.order = Params.order(query.order);
