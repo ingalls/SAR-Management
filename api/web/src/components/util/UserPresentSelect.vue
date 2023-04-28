@@ -17,11 +17,8 @@
                         <div class='m-1'>
                             <TablerInput placeholder='Filter Users' v-model='filter'/>
 
-                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users'>
-                                <div class="d-flex align-items-center my-1 cursor-pointer">
-                                    <span class="avatar avatar-xs me-2 avatar-rounded" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                                    <span v-text='`${user.fname} ${user.lname}`'/>
-                                </div>
+                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users' class='my-2 cursor-pointer'>
+                                <Avatar :user='user'/>
                             </div>
                         </div>
                     </ul>
