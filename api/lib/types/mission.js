@@ -9,7 +9,7 @@ export default class Mission extends Generic {
         query.limit = Params.integer(query.limit, { default: 20 });
         query.page = Params.integer(query.page, { default: 0 });
         query.filter = Params.string(query.filter);
-        query.sort = Params.string(query.sort, { default: 'created' });
+        query.sort = Params.string(query.sort, { default: 'start_ts' });
         query.order = Params.order(query.order);
 
         query.assigned = Params.integer(query.assigned);
