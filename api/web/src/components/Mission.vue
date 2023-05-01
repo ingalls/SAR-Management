@@ -113,6 +113,8 @@ export default {
         }
     },
     mounted: async function() {
+        await window.std('/api/location');
+
         if (this.is_iam("Mission:View")) {
             await this.fetch();
             await this.fetchAssigned();
