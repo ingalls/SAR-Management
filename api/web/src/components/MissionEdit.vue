@@ -35,7 +35,7 @@
                                         <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
                                     </div>
                                     <div class='col-md-12'>
-                                        <TablerInput v-model='mission.location' label='Mission Location'/>
+                                        <LocationDropdown @locGeom='mission.location_geom = $event' v-model='mission.location'/>
                                     </div>
                                     <div class='col-md-12'>
                                         <Location v-model='mission.location_geom' :disabled='false'/>
@@ -85,6 +85,7 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
+import LocationDropdown from './util/LocationDropdown.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -110,6 +111,7 @@ export default {
             },
             mission: {
                 title: '',
+                location: '',
                 body: '',
                 start_ts: '',
                 end_ts: '',
@@ -178,6 +180,7 @@ export default {
     components: {
         Location,
         TablerInput,
+        LocationDropdown,
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
