@@ -3,7 +3,7 @@
     <div type="button" id="dropdownLocation" data-bs-toggle="dropdown" aria-expanded="false">
         <TablerInput :disabled='disabled' placeholder='Location Name' v-model='filter'/>
     </div>
-    <ul class="dropdown-menu" aria-labelledby="dropdownLocation">
+    <ul v-if='list.total' class="dropdown-menu" aria-labelledby="dropdownLocation">
         <div class='m-1'>
             <div @click='select(loc)' :key='loc.id' v-for='loc in list.locations'>
                 <div class="d-flex align-items-center my-1 cursor-pointer">
