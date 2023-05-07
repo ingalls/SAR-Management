@@ -45,7 +45,11 @@ export default {
         }
     },
     watch: {
+        modelValue: function() {
+            this.filter = this.modelValue || '';
+        },
         filter: async function() {
+            this.$emit("update:modelValue", this.filter)
             await this.listLocs();
         }
     },
@@ -56,7 +60,6 @@ export default {
     methods: {
         select: function(loc) {
             this.filter = loc.location;
-            this.$emit("update:modelValue", loc.location)
             this.$emit("locGeom", loc.location_geom)
         },
         listLocs: async function() {
