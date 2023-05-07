@@ -3,17 +3,21 @@
     <div class="card-body">
         <div class="d-flex">
             <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer'>Mission Roles</a></h3>
+
+            <div class='ms-auto btn-list'>
+                <PlusIcon @click='push' class='cursor-pointer'/>
+            </div>
         </div>
     </div>
     <table class="table card-table table-vcenter">
         <thead>
             <tr>
                 <th>Role</th>
-                <th colspan="2">Labels</th>
+                <th colspan="2">Colour</th>
             </tr>
         </thead>
         <tbody>
-            <tr :key='issue.id' v-for='issue in issues'>
+            <tr :key='list.id' v-for='issue in issues'>
                 <td><a @click='$router.push(`/issue/${issue.id}`)' v-text='issue.title' class='cursor-pointer'></a></td>
                 <td v-text='issue.priority'></td>
             </tr>
@@ -23,6 +27,10 @@
 </template>
 
 <script>
+import {
+    PlusIcon
+} from 'vue-tabler-icons';
+
 export default {
     name: 'AdminRoleCard',
     data: function() {
@@ -42,5 +50,8 @@ export default {
             //this.list = await window.std(url);
         }
     },
+    components: {
+        PlusIcon
+    }
 }
 </script>
