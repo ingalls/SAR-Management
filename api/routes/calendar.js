@@ -55,6 +55,8 @@ export default async function router(schema, config) {
                         start: moment(training.start_ts),
                         end: moment(training.end_ts),
                         description: training.body,
+                        summary: training.title,
+                        location: training.location,
                         url: String(new URL(`/training/${training.id}`, config.URL))
                     });
                 }
