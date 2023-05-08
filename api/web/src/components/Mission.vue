@@ -45,7 +45,7 @@
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-12" v-text='mission.body'></div>
+                                    <TablerMarkdown class='col-md-12' :markdown='mission.body'/>
 
                                     <div class='col-md-12'>
                                         <Location v-if='mission.location_geom' v-model='mission.location_geom'/>
@@ -79,6 +79,7 @@ import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
 import {
     TablerBreadCrumb,
+    TablerMarkdown,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
@@ -182,6 +183,7 @@ export default {
         UserPresentSelect,
         TablerBreadCrumb,
         TablerLoading,
+        TablerMarkdown,
         NoAccess
     }
 }
