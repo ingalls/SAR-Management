@@ -48,9 +48,9 @@ export default async function router(schema, config) {
 
             const events = [];
 
-            const calendar = ical({ name: 'Calendar' });
+            const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
-                for (const training of (await Training.list(config.pool, req.query)).training) {
+                (await Training.stream(config.pool, req.query)).on('data', (training) => {
                     calendar.createEvent({
                         start: moment(training.start_ts),
                         end: moment(training.end_ts),
@@ -58,14 +58,14 @@ export default async function router(schema, config) {
                         summary: training.title,
                         location: training.location,
                         url: String(new URL(`/training/${training.id}`, config.URL))
+                    }).on('end', () => {
+                        res.setHeader('Content-Type', 'text/calendar');
+                        res.send(calendar.toString());
                     });
-                }
+                });
             } else {
                 throw new Err(400, null, 'ICal export disabled');
             }
-
-            res.setHeader('Content-Type', 'text/calendar');
-            res.send(calendar.toString());
         } catch (err) {
             return Err.respond(err, res);
         }
