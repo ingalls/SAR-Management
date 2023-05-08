@@ -27,7 +27,7 @@
                             <h1 class='card-title'>Team Calendar</h1>
 
                             <div v-if='is_iam("Calendar:View")' class='ms-auto btn-list'>
-                                <FileExportIcon @click='showExport = !showExport' v-tooltip='"Google Calendar Export"' class='cursor-pointer'/>
+                                <FileExportIcon @click='createExport' v-tooltip='"Google Calendar Export"' class='cursor-pointer'/>
                             </div>
                         </div>
                         <div v-if='is_iam("Calendar:View")' class="card-body">
@@ -88,10 +88,6 @@ export default {
     mounted: async function() {
         if (!this.is_iam("Calendar:View")) return;
 
-        const exportURL = window.stdurl('/api/calendar/training/ical');
-        exportURL.searchParams.append('token', localStorage.token);
-        this.exportURL = exportURL;
-
         this.calendar = new Calendar(document.getElementById('calendar'), {
             plugins: [dayGridPlugin, interactionPlugin, listPlugin],
             selectable: true,
@@ -132,6 +128,16 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        createExport: async function() {
+            const body = await window.std('/api/calendar/training/ical', {
+                method: 'POST'
+            });
+
+            const exportURL = window.stdurl('/api/calendar/training/ical');
+            exportURL.searchParams.append('token', body.token);
+            this.exportURL = exportURL;
+            this.showExport = true;
+        },
         fetchCalendars: async function() {
             this.layers = await window.std('/api/calendar');
         },

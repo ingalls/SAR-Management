@@ -105,6 +105,19 @@ export default class Auth {
         throw new Err(403, null, 'Authentication Level Insufficient');
     }
 
+    // Ensure Scope Of token is respected
+    static async is_scope(req, scopes) {
+        await Auth.is_auth(req);
+
+        for (const scope of scopes) {
+            const { pathname } = new URL(req.url, 'https://fake.com');
+
+            if (pathname === scope) return true;
+        }
+
+        throw new Err(403, null, 'Authentication Level Insufficient');
+    }
+
     static async is_admin(req) {
         if (!req.auth || !req.auth.access || req.auth.access !== 'admin') {
             throw new Err(403, null, 'Admin token required');

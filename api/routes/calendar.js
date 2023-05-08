@@ -3,6 +3,7 @@ import Auth from '../lib/auth.js';
 import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';
 import Training from '../lib/types/training.js';
+import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
 import moment from 'moment';
 
@@ -34,6 +35,28 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.post('/calendar/:calendar/ical', {
+        name: 'Create ICal Events',
+        group: 'Calendar',
+        auth: 'user',
+        description: 'Query Events from a given calendar and return as ICAL',
+        ':calendar': 'string',
+    }, async (req, res) => {
+        try {
+            await Auth.is_auth(req, true);
+            await Auth.is_iam(req, 'Calendar:View');
+
+            const token = jwt.sign({
+                u: req.auth.id,
+                scopes: ['/calendar/training/ical']
+            }, config.SigningSecret);
+
+            res.json({ token });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.get('/calendar/:calendar/ical', {
         name: 'ICal Events',
         group: 'Calendar',
@@ -45,6 +68,8 @@ export default async function router(schema, config) {
         try {
             await Auth.is_auth(req, true);
             await Auth.is_iam(req, 'Calendar:View');
+
+            if (req.token) await Auth.is_scope(req, req.token.scopes);
 
             const events = [];
 
@@ -58,10 +83,10 @@ export default async function router(schema, config) {
                         summary: training.title,
                         location: training.location,
                         url: String(new URL(`/training/${training.id}`, config.URL))
-                    }).on('end', () => {
-                        res.setHeader('Content-Type', 'text/calendar');
-                        res.send(calendar.toString());
-                    });
+                    })
+                }).on('end', () => {
+                    res.setHeader('Content-Type', 'text/calendar');
+                    res.send(calendar.toString());
                 });
             } else {
                 throw new Err(400, null, 'ICal export disabled');

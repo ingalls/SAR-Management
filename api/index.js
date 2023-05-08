@@ -128,6 +128,7 @@ export default async function server(config) {
                 const decoded = jwt.verify(req.query.token, config.SigningSecret);
                 req.token = await User.from(config.pool, decoded.u);
                 req.token.type = 'token';
+                req.token.scopes = decoded.scopes || [];
             } catch (err) {
                 console.error(err);
                 return Err.respond(new Err(401, err, 'Invalid Token'), res);
