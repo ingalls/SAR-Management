@@ -7,7 +7,7 @@
                     <div class="col d-flex">
                         <TablerBreadCrumb/>
 
-                        <div class='ms-auto'>
+                        <div class='ms-auto btn-list'>
                             <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
                                 New Training
                             </a>
@@ -23,7 +23,16 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <div class="card">
+                        <div class="card-header">
+                            <h1 class='card-title'>Team Calendar</h1>
+
+                            <div v-if='is_iam("Calendar:View")' class='ms-auto btn-list'>
+                                <FileExportIcon @click='showExport = !showExport' v-tooltip='"Google Calendar Export"' class='cursor-pointer'/>
+                            </div>
+                        </div>
                         <div v-if='is_iam("Calendar:View")' class="card-body">
+                            <pre v-if='showExport' v-text='exportURL'/>
+
                             <div id='calendar' style='width: 100%; height: 500px;'></div>
                         </div>
                         <NoAccess v-else title='Calendar'/>
@@ -39,11 +48,14 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import { Calendar } from '@fullcalendar/core';
+import {
+    FileExportIcon
+} from 'vue-tabler-icons';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import {
-    TablerBreadCrumb 
+    TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -61,6 +73,8 @@ export default {
     data: function() {
         return {
             calendar: null,
+            showExport: false,
+            exportURL: '',
             layers: {
                 layers: []
             }
@@ -73,6 +87,11 @@ export default {
     },
     mounted: async function() {
         if (!this.is_iam("Calendar:View")) return;
+
+        const exportURL = window.stdurl('/api/calendar/training/ical');
+        exportURL.searchParams.append('token', localStorage.token);
+        this.exportURL = exportURL;
+
         this.calendar = new Calendar(document.getElementById('calendar'), {
             plugins: [dayGridPlugin, interactionPlugin, listPlugin],
             selectable: true,
@@ -119,6 +138,7 @@ export default {
     },
     components: {
         TablerBreadCrumb,
+        FileExportIcon,
         NoAccess,
     },
 }

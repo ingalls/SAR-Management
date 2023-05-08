@@ -3,6 +3,7 @@ import Auth from '../lib/auth.js';
 import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';
 import Training from '../lib/types/training.js';
+import ical from 'ical-generator';
 import moment from 'moment';
 
 export default async function router(schema, config) {
@@ -51,8 +52,8 @@ export default async function router(schema, config) {
             if (req.params.calendar === 'training') {
                 for (const training of (await Training.list(config.pool, req.query)).training) {
                     calendar.createEvent({
-                        start: training.start_ts,
-                        end: training.end_ts,
+                        start: moment(training.start_ts),
+                        end: moment(training.end_ts),
                         description: training.body,
                         url: String(new URL(`/training/${training.id}`, config.URL))
                     });
