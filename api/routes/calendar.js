@@ -42,6 +42,7 @@ export default async function router(schema, config) {
         query: 'req.query.ListEvents.json'
     }, async (req, res) => {
         try {
+            await Auth.is_auth(req, true);
             await Auth.is_iam(req, 'Calendar:View');
 
             const events = [];
