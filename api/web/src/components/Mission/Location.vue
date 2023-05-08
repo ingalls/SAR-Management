@@ -28,9 +28,14 @@ export default {
             default: true
         }
     },
+    data: function() {
+        return {
+            loaded: false
+        }
+    },
     watch: {
         modelValue: function() {
-            if (!map) return;
+            if (!this.loaded) return;
 
             map.getSource('point').setData({
                 type: 'FeatureCollection',
@@ -130,6 +135,8 @@ export default {
                         this.$emit('update:modelValue', geometry);
                     });
                 }
+
+                this.loaded = true;
             });
         }
     }
