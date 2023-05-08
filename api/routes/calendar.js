@@ -33,6 +33,40 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.get('/calendar/:calendar/ical', {
+        name: 'ICal Events',
+        group: 'Calendar',
+        auth: 'user',
+        description: 'Query Events from a given calendar and return as ICAL',
+        ':calendar': 'string',
+        query: 'req.query.ListEvents.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Calendar:View');
+
+            const events = [];
+
+            const calendar = ical({ name: 'Calendar' });
+            if (req.params.calendar === 'training') {
+                for (const training of (await Training.list(config.pool, req.query)).training) {
+                    calendar.createEvent({
+                        start: training.start_ts,
+                        end: training.end_ts,
+                        description: training.body,
+                        url: String(new URL(`/training/${training.id}`, config.URL))
+                    });
+                }
+            } else {
+                throw new Err(400, null, 'ICal export disabled');
+            }
+
+            res.setHeader('Content-Type', 'text/calendar');
+            res.send(calendar.toString());
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.get('/calendar/:calendar/events', {
         name: 'List Events',
         group: 'Calendar',
