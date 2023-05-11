@@ -163,6 +163,7 @@ import {
     PlusIcon,
     TruckIcon,
     UsersIcon,
+    MenuIcon,
     ShovelIcon,
     BugIcon,
     NotebookIcon,
