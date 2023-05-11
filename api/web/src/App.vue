@@ -13,7 +13,7 @@
             <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
                     <button class="btn btn-dark dropdown-toggle d-md-none" type='button' data-bs-toggle="dropdown" aria-expanded="false">
-                        <PlusIcon/>
+                        <Menu2Icon/>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a @click='$router.push("/")' class="dropdown-item">Home</a>
@@ -80,7 +80,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link cursor-pointer" @click='$router.push("/mission")'>
+                            <a class="nav-link cursor-pointer" @click='$router.push("/training")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <TruckIcon/>
                                 </span>
@@ -232,7 +232,7 @@ export default {
     components: {
         BugIcon,
         HomeIcon,
-        PlusIcon,
+        Menu2Icon,
         UsersIcon,
         UserIcon,
         BellIcon,
