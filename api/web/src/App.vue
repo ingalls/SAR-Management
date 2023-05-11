@@ -21,6 +21,7 @@
                         <a @click='$router.push("/equipment")' class="dropdown-item">Equipment</a>
                         <a @click='$router.push("/doc")' class="dropdown-item">Docs</a>
                         <a @click='$router.push("/mission")' class="dropdown-item">Missions</a>
+                        <a @click='$router.push("/training")' class="dropdown-item">Training</a>
                         <a @click='$router.push("/team")' class="dropdown-item">Team</a>
                         <a @click='$router.push("/calendar")' class="dropdown-item">Calendar</a>
                     </div>
@@ -76,6 +77,14 @@
                                     <NotebookIcon/>
                                 </span>
                                 <span class="nav-link-title">Docs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link cursor-pointer" @click='$router.push("/mission")'>
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <TruckIcon/>
+                                </span>
+                                <span class="nav-link-title">Training</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -152,6 +161,7 @@ import {
     BellIcon,
     HomeIcon,
     PlusIcon,
+    TruckIcon,
     UsersIcon,
     ShovelIcon,
     BugIcon,
@@ -229,6 +239,7 @@ export default {
         ShovelIcon,
         NotebookIcon,
         CalendarIcon,
+        TruckIcon,
         AmbulanceIcon,
         AdjustmentsIcon,
         TablerError,
