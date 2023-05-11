@@ -129,8 +129,10 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'User:Admin');
 
-            if (config.email) await email.user_disabled(req.auth);
-            res.json(await User.commit(config.pool, req.params.userid, {
+            const user = await User.from(config.pool, req.params.userid);
+
+            if (config.email) await email.user_disabled(user);
+            res.json(await user.commit({
                 disabled: true
             }));
         } catch (err) {
