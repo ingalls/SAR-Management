@@ -26,9 +26,10 @@
                                 <div class='ms-auto'>
                                     <div class='btn-list'>
                                         <div class='ms-auto'>
-                                            <span v-if='user.access === "admin"' class="badge bg-red">Admin</span>
-                                            <span v-if='user.access === "user"' class="badge bg-blue">User</span>
-                                            <span v-if='user.access === "read"' class="badge bg-gray">Read</span>
+                                            <span v-if='user.disabled' class="badge bg-red">DISABLED</span>
+                                            <span v-else-if='user.access === "admin"' class="badge bg-red">Admin</span>
+                                            <span v-else-if='user.access === "user"' class="badge bg-blue">User</span>
+                                            <span v-else-if='user.access === "read"' class="badge bg-gray">Read</span>
                                         </div>
 
                                         <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>

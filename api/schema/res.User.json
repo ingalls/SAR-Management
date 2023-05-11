@@ -4,6 +4,7 @@
     "required": [
         "id",
         "access",
+        "disabled",
         "username",
         "created",
         "updated",
@@ -28,6 +29,9 @@
         },
         "username": {
             "type": "string"
+        },
+        "disabled": {
+            "$ref": "./users/disabled.json"
         },
         "created": {
             "type": "integer"

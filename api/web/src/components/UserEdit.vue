@@ -223,6 +223,7 @@ export default {
                 if (this.errors[e]) return;
             }
 
+            this.loading.user = true;
             const create = await window.std(`/api/user/${this.$route.params.userid}`, {
                 method: 'PATCH',
                 body: {
@@ -241,14 +242,16 @@ export default {
                 }
             });
 
+            this.loading.user = false;
             this.$router.push(`/user/${create.id}`);
         },
-        delete: async function() {
+        deleteUser: async function() {
+            this.loading.user = true;
             await window.std(`/api/user/${this.$route.params.userid}`, {
                 method: 'DELETE',
             });
-
-            this.$router.push(`/user/${create.id}`);
+            this.loading.user = false;
+            this.$router.push(`/user/${this.$route.params.userid}`);
         }
     },
     components: {
