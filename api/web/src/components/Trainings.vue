@@ -131,6 +131,7 @@ export default {
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('sort', 'start_ts');
             url.searchParams.append('order', 'desc');
             this.list = await window.std(url)
             this.loading.list = false;
