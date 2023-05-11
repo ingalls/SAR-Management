@@ -21,6 +21,9 @@ export default class Login {
         await UserReset.delete_all(pool, reset.uid);
 
         const user = await User.from(pool, reset.uid);
+
+        if (user.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
+
         await user.commit({
             validated: true
         });
@@ -34,6 +37,9 @@ export default class Login {
         await UserReset.delete_all(pool, reset.uid);
 
         const user = await User.from(pool, reset.uid);
+
+        if (user.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
+
         await user.commit({
             validated: true,
             password: await bcrypt.hash(body.password, 10)
@@ -52,6 +58,8 @@ export default class Login {
 
         const u = await User.from_username(pool, username.toLowerCase());
         await UserReset.delete_all(pool, u.id);
+
+        if (u.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
 
         const reset = await UserReset.generate(pool, u.id, action);
 
@@ -77,7 +85,7 @@ export default class Login {
             throw new Err(403, null, 'User has not confirmed email');
         }
 
-        if (user.access === 'disabled') {
+        if (user.disabled) {
             throw new Err(403, null, 'Account Disabled - Please Contact Us');
         }
 

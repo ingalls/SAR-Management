@@ -100,6 +100,8 @@
                                         </div>
                                         <div class="col-md-12 my-4">
                                             <div class='d-flex'>
+                                                <a v-if='is_iam("User:Manage")' @click='deleteUser' class="cursor-pointer btn btn-danger">Deactivate User</a>
+
                                                 <div class='ms-auto'>
                                                     <a @click='create' class="cursor-pointer btn btn-primary">Update User</a>
                                                 </div>
@@ -127,6 +129,7 @@
 </template>
 
 <script>
+import iam from '../iam.js';
 import None from './util/None.vue';
 import Upload from './util/Upload.vue';
 import {
@@ -197,6 +200,7 @@ export default {
         await this.fetch();
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         uploadurl: function() {
             return window.stdurl(`api/user/${this.$route.params.userid}/profile`);
         },
@@ -235,6 +239,13 @@ export default {
                     start_year: this.user.start_year ? parseInt(this.user.start_year) : undefined,
                     emergency: this.user.emergency
                 }
+            });
+
+            this.$router.push(`/user/${create.id}`);
+        },
+        delete: async function() {
+            await window.std(`/api/user/${this.$route.params.userid}`, {
+                method: 'DELETE',
             });
 
             this.$router.push(`/user/${create.id}`);

@@ -72,9 +72,7 @@ export default async function router(schema, config) {
                 }
             }
 
-            if (config.email) {
-                await email.newuser(user);
-            }
+            if (config.email) await email.newuser(user);
 
             return res.json(user);
         } catch (err) {
@@ -131,6 +129,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'User:Admin');
 
+            if (config.email) await email.user_disabled(req.auth);
             res.json(await User.commit(config.pool, req.params.userid, {
                 disabled: true
             }));
