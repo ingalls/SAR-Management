@@ -13,7 +13,7 @@
             <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
                     <button class="btn btn-dark dropdown-toggle d-md-none" type='button' data-bs-toggle="dropdown" aria-expanded="false">
-                        <Menu2Icon/>
+                        <MenuIcon/>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a @click='$router.push("/")' class="dropdown-item">Home</a>
@@ -232,7 +232,7 @@ export default {
     components: {
         BugIcon,
         HomeIcon,
-        Menu2Icon,
+        MenuIcon,
         UsersIcon,
         UserIcon,
         BellIcon,
