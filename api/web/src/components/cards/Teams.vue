@@ -82,7 +82,7 @@ export default {
     },
     watch: {
         'paging.page': async function() {
-            await this.listUsers();
+            await this.listTeams();
         },
     },
     mounted: async function() {
