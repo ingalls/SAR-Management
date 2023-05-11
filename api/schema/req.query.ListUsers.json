@@ -16,6 +16,10 @@
         "order": {
             "$ref": "./util/order.json"
         },
+        "disabled": {
+            "type": "boolean",
+            "default": false
+        },
         "sort": {
             "type": "string",
             "default": "created",

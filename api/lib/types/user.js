@@ -12,6 +12,7 @@ export default class User extends Generic {
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
         query.team = Params.integer(query.team);
+        query.disabled = Params.boolean(query.disabled, { default: false });
 
         try {
             const pgres = await pool.query(sql`
@@ -25,6 +26,7 @@ export default class User extends Generic {
                 WHERE
                     (${query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${query.filter})
                     AND (${query.team}::BIGINT IS NULL OR utt.tid = ${query.team})
+                    AND (${query.disabled}::BOOLEAN IS NULL OR users.disabled = ${query.disabled})
                 GROUP BY
                     users.id
                 ORDER BY
