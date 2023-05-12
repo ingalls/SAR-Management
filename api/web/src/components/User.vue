@@ -41,10 +41,10 @@
 
                             </div>
                             <div class='row row-0'>
-                                <div class='col-3'>
+                                <div class='col-12 col-lg-3'>
                                     <UserProfile :userid='user.id'/>
                                 </div>
-                                <div class='col'>
+                                <div class='col-12 col-lg-9'>
                                     <div class="card-body">
                                         <div class="datagrid">
                                             <div class="datagrid-item">
@@ -221,10 +221,9 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         googleMaps: function() {
             const addr = this.user.address_street.replace(/ /, '+')
-                + ' ' + this.user.address_city.replace(/ /, '+')
-                + ' ' + this.user.address_state.replace(/ /, '+')
-                + ' ' + this.user.address_zip.replace(/ /, '+');
-
+                + '+' + this.user.address_city.replace(/ /, '+')
+                + '+' + this.user.address_state.replace(/ /, '+')
+                + '+' + this.user.address_zip.replace(/ /, '+');
 
             window.open(new URL(`/maps/search/${addr}`, 'https://www.google.com'), '_blank');
         },
