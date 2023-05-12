@@ -110,7 +110,7 @@ export default {
     components: {
         None,
         Epoch,
-        BreadCrumb,
+        TablerBreadCrumb,
         PlusIcon,
         NoAccess,
         SearchIcon
