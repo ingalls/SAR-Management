@@ -81,7 +81,7 @@
                                             <div class="datagrid-item">
                                                 <div class="datagrid-title">Street Address</div>
                                                 <template v-if='user.address_street && user.address_city && user.address_state && user.address_zip'>
-                                                    <div class="datagrid-content" v-html='`${user.address_street}<br>${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
+                                                    <div class="datagrid-content" @click='googleMaps' v-html='`${user.address_street}<br>${user.address_city}, ${user.address_state} ${user.address_zip}`'></div>
                                                 </template>
                                                 <template v-else>
                                                 <div class="datagrid-content">UNKNOWN</div>
@@ -217,6 +217,15 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        googleMaps: function() {
+            const addr = user.address_street.replace(/ /, '+')
+                + ' ' + user.address_city.replace(/ /, '+')
+                + ' ' + user.address_state.replace(/ /, '+')
+                + ' ' + user.address_zip.replace(/ /, '+');
+
+
+            window.open(new URL(`/maps/search/${addr}`, 'https://www.google.com'), '_blank');
+        },
         fetch: async function() {
             this.loading.user = true;
             this.user = await window.std(`/api/user/${this.userid}`);

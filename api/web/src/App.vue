@@ -219,6 +219,7 @@ export default {
                 this.loading.user = false;
             } catch (err) {
                 this.loading.user = false;
+                this.user = null;
 
                 if (err.message === 'Authentication Required') {
                     if (this.$route.path.split('/')[1] !== 'login') return this.$router.push('/login');
