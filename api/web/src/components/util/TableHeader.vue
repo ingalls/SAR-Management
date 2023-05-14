@@ -17,7 +17,7 @@
                         <div class="dropdown-menu">
                             <div :key='h_it' v-for='(h, h_it) of header'>
                                 <label class='form-check subheader mb-0'>
-                                    <input @change='displayHeader(h_it)' class='form-check-input' type="checkbox" :checked='h.display'>
+                                    <input @change='displayHeader(h_it, $event)' class='form-check-input' type="checkbox" :checked='h.display'>
                                     <span class='form-check-label' v-text='h.name'></span>
                                 </label>
                             </div>
@@ -74,9 +74,9 @@ export default {
         }
     },
     methods: {
-        displayHeader: function(h_it, display=true) {
+        displayHeader: function(h_it, $event) {
             const header = JSON.parse(JSON.stringify(this.header));
-            header[h_it].display = display;
+            header[h_it].display = $event.target.checked;
             this.$emit('update:header', header);
         }
     },
