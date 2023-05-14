@@ -10,7 +10,7 @@
                         <div v-if='!edit' class="input-icon">
                             <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
                             <span class="input-icon-addon">
-                                <SearchIcon width='24'/>
+                                <SearchIcon />
                             </span>
                         </div>
 
@@ -52,7 +52,7 @@
                 <TableHeader
                     v-model:sort='paging.sort'
                     v-model:order='paging.order'
-                    :header='["Name", "Email", "Phone", "Last Login"]'
+                    :header='header'
                 />
                 <tbody>
                     <tr :key='user.id' v-for='(user, user_it) in list.users'>
@@ -150,6 +150,7 @@ export default {
             loading: {
                 list: true,
             },
+            header: [],
             paging: {
                 filter: '',
                 sort: 'Name',
@@ -172,6 +173,7 @@ export default {
         }
     },
     mounted: async function() {
+        await this.listUsersSchema();
         await this.listUsers();
     },
     methods: {
@@ -195,6 +197,19 @@ export default {
             this.list.users.splice(0, 0, user);
             this.list.total++;
             this.loading.add = false;
+        },
+        listUsersSchema: async function() {
+            const schema = await window.std('/api/schema?method=GET&url=/user');
+            this.header = ['name', 'email', 'phone', 'last_login'].map((h) => {
+                return { name: h, display: true };
+            });
+
+            this.header.push(...schema.query.properties.sort.enum.map((h) => {
+                return {
+                    name: h,
+                    display: false
+                }
+            }));
         },
         listUsers: async function() {
             this.loading.list = true;
