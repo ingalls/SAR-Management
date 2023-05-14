@@ -56,27 +56,36 @@
                 />
                 <tbody>
                     <tr :key='user.id' v-for='(user, user_it) in list.users'>
-                        <td @click='$router.push(`/user/${user.id}`)'>
-                            <Avatar :link='true' :user='user'/>
-                        </td>
-                        <td><a :href='`mailto:${user.email}`' v-text='user.email'></a></td>
-                        <td>
-                            <div class='d-flex'>
-                                <a :href='`tel:${user.phone}`' v-text='user.phone'></a>
-                                <div v-if='edit' class='ms-auto'>
-                                    <div v-if='!user._loading' class='btn-list'>
-                                        <TrashIcon @click='removeUser(user, user_it)' class='cursor-pointer'/>
+                        <template v-for='h in header'>
+                            <template v-if='h.display'>
+                                <td v-if='h.name === "name"' @click='$router.push(`/user/${user.id}`)'>
+                                    <Avatar :link='true' :user='user'/>
+                                </td>
+                                <td v-else-if='h.name === "email"'>
+                                    <a :href='`mailto:${user.email}`' v-text='user.email'></a>
+                                </td>
+                                <td v-else-if='h-name === "phone"'>
+                                    <div class='d-flex'>
+                                        <a :href='`tel:${user.phone}`' v-text='user.phone'></a>
+                                        <div v-if='edit' class='ms-auto'>
+                                            <div v-if='!user._loading' class='btn-list'>
+                                                <TrashIcon @click='removeUser(user, user_it)' class='cursor-pointer'/>
+                                            </div>
+                                            <div v-else class='btn-list'>
+                                                <TablerLoading :inline='true'/>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div v-else class='btn-list'>
-                                        <TablerLoading :inline='true'/>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <Epoch v-if='user.last_login' :date='user.last_login'/>
-                            <span v-else>Never</span>
-                        </td>
+                                </td>
+                                <td v-else-if='["last_login", "updated", "created"].includes(h.name)'>
+                                    <Epoch v-if='user.last_login' :date='user.last_login'/>
+                                    <span v-else>Never</span>
+                                </td>
+                                <td v-else>
+                                    <span v-text='user[h.name]'></span>
+                                </td>
+                            </template>
+                        </template>
                     </tr>
                 </tbody>
             </table>
