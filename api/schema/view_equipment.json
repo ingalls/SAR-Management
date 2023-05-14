@@ -1,0 +1,64 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./view_equipment/id.json"
+        },
+        "created": {
+            "$ref": "./view_equipment/created.json"
+        },
+        "updated": {
+            "$ref": "./view_equipment/updated.json"
+        },
+        "status": {
+            "$ref": "./view_equipment/status.json"
+        },
+        "name": {
+            "$ref": "./view_equipment/name.json"
+        },
+        "description": {
+            "$ref": "./view_equipment/description.json"
+        },
+        "type_id": {
+            "$ref": "./view_equipment/type_id.json"
+        },
+        "container": {
+            "$ref": "./view_equipment/container.json"
+        },
+        "parent": {
+            "$ref": "./view_equipment/parent.json"
+        },
+        "meta": {
+            "$ref": "./view_equipment/meta.json"
+        },
+        "archived": {
+            "$ref": "./view_equipment/archived.json"
+        },
+        "quantity": {
+            "$ref": "./view_equipment/quantity.json"
+        },
+        "value": {
+            "$ref": "./view_equipment/value.json"
+        },
+        "assigned": {
+            "$ref": "./view_equipment/assigned.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "status",
+        "name",
+        "description",
+        "type_id",
+        "container",
+        "parent",
+        "meta",
+        "archived",
+        "quantity",
+        "value",
+        "assigned"
+    ]
+}

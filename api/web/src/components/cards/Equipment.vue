@@ -27,12 +27,22 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th colspan="2">Status</th>
+                    <th>Assigned</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 <tr :key='equip.id' v-for='equip in list.equipment'>
                     <td><a @click='$router.push(`/equipment/${equip.id}`)' v-text='equip.name' class='cursor-pointer'></a></td>
+                    <td>
+                        <template v-if='equip.assigned.length'>
+                            <Avatar :link='true' :user='equip.assigned[0]'/>
+                            <span v-if='equip.assigned.length > 1' v-text='` + equip.assigned.length - 1`'/>
+                        </template>
+                        <template v-else>
+                            None
+                        </template>
+                    </td>
                     <td v-text='equip.status'></td>
                 </tr>
             </tbody>
@@ -52,6 +62,7 @@ import {
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import Avatar from '../util/Avatar.vue';
 
 export default {
     name: 'EquipmentCard',
@@ -120,6 +131,7 @@ export default {
     },
     components: {
         None,
+        Avatar,
         PlusIcon,
         TableFooter,
         TablerLoading

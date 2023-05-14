@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Equipment from '../lib/types/equipment.js';
+import ViewEquipment from '../lib/views/equipment.js';
 import EquipmentAssigned from '../lib/types/equipment-assigned.js';
 import Notify from '../lib/notify.js';
 import Auth from '../lib/auth.js';
@@ -20,7 +21,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Equipment:View');
 
-            res.json(await Equipment.list(config.pool, req.query));
+            res.json(await ViewEquipment.list(config.pool, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
