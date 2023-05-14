@@ -209,6 +209,11 @@ export default {
                     name: h,
                     display: false
                 }
+            }).filter((h) => {
+                for (const hknown of this.header) {
+                    if (hknown.name === h.name) return false;
+                }
+                return true;
             }));
         },
         listUsers: async function() {

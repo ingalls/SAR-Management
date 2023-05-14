@@ -1,23 +1,32 @@
 <template>
 <thead>
     <tr>
-        <template :key='h' v-for='h in header'>
-            <th v-if='h.display'>
-                <div class='d-flex'>
-                    <span @click='sort = h.name' v-text='h.name' class='cursor-pointer'/>
-                    <span v-if='h.name === sort' class='ms-auto'>
-                        <ChevronDownIcon height='16' @click='order = "desc"' v-if='order === "asc"' class='cursor-pointer'/>
-                        <ChevronUpIcon height='16' @click='order = "asc"' v-else class='cursor-pointer'/>
-                    </span>
+        <th :key='h' v-for='h in shown'>
+            <div class='d-flex'>
+                <span @click='sort = h.name' v-text='h.name' class='cursor-pointer'/>
+                <span v-if='h.name === sort' class='ms-auto'>
+                    <ChevronDownIcon height='16' @click='order = "desc"' v-if='order === "asc"' class='cursor-pointer'/>
+                    <ChevronUpIcon height='16' @click='order = "asc"' v-else class='cursor-pointer'/>
+                </span>
 
-                    <template v-if='header[header.length - 1] === h'>
-                        <span class='ms-auto'>
-                            <SettingsIcon height='16' width='16' class='cursor-pointer'/>
-                        </span>
-                    </template>
-                </div>
-            </th>
-        </template>
+                <template v-if='shown[shown.length - 1] === h'>
+                    <span class='ms-auto'>
+
+                    <div class="dropdown">
+                        <SettingsIcon height='16' width='16' class='dropdown-toggle cursor-pointer' data-bs-toggle="dropdown"/>
+                        <div class="dropdown-menu">
+                            <div :key='h_it' v-for='(h, h_it) of header'>
+                                <label class='form-check subheader mb-0'>
+                                    <input class='form-check-input' type="checkbox" :checked='h.display'>
+                                    <span class='form-check-label' v-text='h.name'></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    </span>
+                </template>
+            </div>
+        </th>
     </tr>
 </thead>
 </template>
@@ -48,6 +57,13 @@ export default {
             required: false,
             description: 'Field to sort by'
         },
+    },
+    computed: {
+        shown: function() {
+           return this.header.filter((h) => {
+                return h.display;
+           });
+        }
     },
     watch: {
         sort: function() {
