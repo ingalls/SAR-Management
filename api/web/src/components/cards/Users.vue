@@ -52,7 +52,7 @@
                 <TableHeader
                     v-model:sort='paging.sort'
                     v-model:order='paging.order'
-                    :header='header'
+                    v-model:header='header'
                 />
                 <tbody>
                     <tr :key='user.id' v-for='(user, user_it) in list.users'>
