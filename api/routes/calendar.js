@@ -79,6 +79,7 @@ export default async function router(schema, config) {
                     calendar.createEvent({
                         start: moment(training.start_ts),
                         end: moment(training.end_ts),
+                        timezone: config.TimeZone,
                         description: training.body,
                         summary: training.title,
                         location: training.location,
