@@ -27,6 +27,7 @@ export default class ViewTeam extends Generic {
                     AND (${query.userid}::BIGINT IS NULL OR utt.uid = ${query.userid})
                 GROUP BY
                     view_teams.id,
+                    view_teams.iam,
                     view_teams.created,
                     view_teams.updated,
                     view_teams.public,

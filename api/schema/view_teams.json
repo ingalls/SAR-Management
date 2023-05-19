@@ -20,6 +20,9 @@
         "body": {
             "$ref": "./view_teams/body.json"
         },
+        "iam": {
+            "$ref": "./view_teams/iam.json"
+        },
         "members": {
             "$ref": "./view_teams/members.json"
         }
@@ -31,6 +34,7 @@
         "public",
         "name",
         "body",
+        "iam",
         "members"
     ]
 }
