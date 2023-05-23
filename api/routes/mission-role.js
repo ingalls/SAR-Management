@@ -26,7 +26,7 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get a single mission role',
         ':roleid': 'integer',
-        res: 'mission_roles.json'
+        res: 'mission_role.json'
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Mission:View');
@@ -43,7 +43,7 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Create a new mission role',
         body: 'req.body.CreateMissionRole.json',
-        res: 'mission-role.json'
+        res: 'mission_role.json'
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Mission:Admin');
@@ -63,7 +63,7 @@ export default async function router(schema, config) {
         description: 'Update an existing mission role',
         body: 'req.body.PatchMissionRole.json',
         ':roleid': 'integer',
-        res: 'mission-role.json'
+        res: 'mission_role.json'
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Mission:Admin');

@@ -5,21 +5,34 @@
             <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer'>Mission Roles</a></h3>
 
             <div class='ms-auto btn-list'>
-                <PlusIcon @click='push' class='cursor-pointer'/>
+                <PlusIcon @click='push()' class='cursor-pointer'/>
             </div>
         </div>
     </div>
-    <table class="table card-table table-vcenter">
+
+    <None v-if='!list.roles.length' :create='false' label='Roles'/>
+    <table v-else class="table card-table table-vcenter">
         <thead>
             <tr>
                 <th>Role</th>
-                <th colspan="2">Colour</th>
+                <th>Created</th>
+                <th>Updated</th>
             </tr>
         </thead>
         <tbody>
-            <tr :key='list.id' v-for='issue in issues'>
-                <td><a @click='$router.push(`/issue/${issue.id}`)' v-text='issue.title' class='cursor-pointer'></a></td>
-                <td v-text='issue.priority'></td>
+            <tr :key='role.id' v-for='role in list.roles'>
+                <td>
+                    <template v-if='role._edit'>
+                        <TablerInput v-model='role.name'/>
+                    </template>
+                    <template v-else>
+                        <span v-text='role.name'/>
+                    </template>
+                </td>
+                <td><TablerEpoch :date='role.created'/></td>
+                <td>
+                    <TablerEpoch :date='role.updated'/>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -30,6 +43,11 @@
 import {
     PlusIcon
 } from 'vue-tabler-icons';
+import {
+    TablerEpoch,
+    TablerInput
+} from '@tak-ps/vue-tabler';
+import None from '../util/None.vue';
 
 export default {
     name: 'AdminRoleCard',
@@ -37,7 +55,7 @@ export default {
         return {
             list: {
                 total: 0,
-                roles: ''
+                roles: []
             }
         }
     },
@@ -46,12 +64,22 @@ export default {
     },
     methods: {
         fetch: async function() {
-            //const url = window.stdurl('/api/meta/roles');
-            //this.list = await window.std(url);
+            this.list = await window.std('/api/mission-role');
+        },
+        push: function() {
+            this.list.roles.splice(0, 0, {
+                _edit: true,
+                name: '',
+                updated: +new Date(),
+                created: +new Date()
+            });
         }
     },
     components: {
-        PlusIcon
+        None,
+        PlusIcon,
+        TablerEpoch,
+        TablerInput
     }
 }
 </script>
