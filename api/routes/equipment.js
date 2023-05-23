@@ -94,7 +94,9 @@ export default async function router(schema, config) {
             const assigned = req.body.assigned;
             delete req.body.assigned;
 
-            const old_assigned = (await EquipmentAssigned.list(config.pool, equipment.id)).assigned;
+            const old_assigned = (await EquipmentAssigned.list(config.pool, equipment.id)).assigned.map((assigned) => {
+                return assigned.uid;
+            });
 
             await equipment.commit(req.body);
 
