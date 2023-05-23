@@ -27,7 +27,7 @@
                             </button>
                             <template v-if='edit'>
                                 <TablerLoading v-if='loading.add' :inline='true'/>
-                                <UserDropdownIcon v-else @selected='addUser($event)'/>
+                                <UserDropdownIcon v-else :button='true' @selected='addUser($event)'/>
                             </template>
                         </div>
 

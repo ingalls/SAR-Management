@@ -1,7 +1,9 @@
 <template>
 
 <div class="dropdown">
-    <div type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+    <div type="button" :class='{
+        "btn px-2": button
+     }' id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
         <PlusIcon height='24' width='24'/>
     </div>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -30,6 +32,11 @@ import {
 export default {
     name: 'UserDropdown',
     props: {
+        button: {
+            type: Boolean,
+            description: 'Style as a standalone icon if false or a button if true',
+            default: false
+        },
         disabled: {
             type: Boolean,
             default: false
