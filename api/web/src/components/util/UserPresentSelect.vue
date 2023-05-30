@@ -31,7 +31,7 @@
             <None label='Users Assigned' :create='false'/>
         </template>
         <template v-else>
-            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-2">
+            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-2 hover">
                 <Avatar :link='true' :user='a'/>
 
                 <div v-if='!disabled' class='ms-auto'>
@@ -39,6 +39,9 @@
                         <div v-if='!a.confirmed' @click='confirm_assigned(a)' class='btn btn--sm'>
                             <CheckIcon height='16'/> Confirm
                         </div>
+
+                        <span v-text='a.role' class='pt-1'/>
+
                         <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer my-2'/>
                     </div>
                 </div>
