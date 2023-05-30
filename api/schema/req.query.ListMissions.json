@@ -24,6 +24,7 @@
                 "title",
                 "body",
                 "author",
+                "externalid",
                 "location",
                 "location_geom"
             ],

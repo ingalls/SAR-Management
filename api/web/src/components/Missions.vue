@@ -49,7 +49,9 @@
                                     <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.missions' class='cursor-pointer'>
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
-                                                <td v-if='h.display === "Date"'><EpochRange :start='mission.start_ts' :end='mission.end_ts'/></td>
+                                                <td v-if='h.name === "date"'>
+                                                    <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
+                                                </td>
                                                 <td v-else>
                                                     <span v-text='mission[h.name]'></span>
                                                 </td>
@@ -110,6 +112,8 @@ export default {
                 filter: '',
                 assigned: null,
                 limit: 100,
+                sort: 'start_ts',
+                order: 'desc',
                 page: 0
             },
             list: {
@@ -141,7 +145,8 @@ export default {
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('order', 'desc');
+            url.searchParams.append('order', this.paging.order);
+            url.searchParams.append('sort', this.paging.sort);
             if (this.paging.assigned) url.searchParams.append('assigned', this.paging.assigned);
             this.list = await window.std(url)
             this.loading.list = false;
