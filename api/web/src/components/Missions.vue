@@ -20,11 +20,6 @@
                         <NoAccess title='Missions'/>
                     </div>
                 </template>
-                <template v-else-if='loading.list'>
-                    <div class="col-lg-12">
-                        <TablerLoading/>
-                    </div>
-                </template>
                 <template v-else>
                     <div class="col-lg-12">
                         <HeatMap :missions='list'/>
@@ -45,20 +40,21 @@
                                 </div>
                             </div>
                             <table class="table table-hover card-table table-vcenter">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Number</th>
-                                        <th>Location</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
+                                <TableHeader
+                                    v-model:sort='paging.sort'
+                                    v-model:order='paging.order'
+                                    v-model:header='header'
+                                />
                                 <tbody>
                                     <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.missions' class='cursor-pointer'>
-                                        <td><a class='cursor-pointer' v-text='mission.title'></a></td>
-                                        <td v-text='mission.externalid'></td>
-                                        <td v-text='mission.location'></td>
-                                        <td><EpochRange :start='mission.start_ts' :end='mission.end_ts'/></td>
+                                        <template v-for='h in header'>
+                                            <template v-if='h.display'>
+                                                <td v-if='h.display === "Date"'><EpochRange :start='mission.start_ts' :end='mission.end_ts'/></td>
+                                                <td v-else>
+                                                    <span v-text='mission[h.name]'></span>
+                                                </td>
+                                            </template>
+                                        </template>
                                     </tr>
                                 </tbody>
                             </table>
@@ -81,6 +77,7 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
+import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
 import {
     SearchIcon,
@@ -108,6 +105,7 @@ export default {
             loading: {
                 list: true
             },
+            header: [],
             paging: {
                 filter: '',
                 assigned: null,
@@ -132,6 +130,7 @@ export default {
     mounted: async function() {
         Object.assign(this.paging, this.$route.query);
 
+        await this.listMissionsSchema();
         if (this.is_iam('Mission:View')) await this.listMissions();
     },
     methods: {
@@ -146,7 +145,26 @@ export default {
             if (this.paging.assigned) url.searchParams.append('assigned', this.paging.assigned);
             this.list = await window.std(url)
             this.loading.list = false;
-        }
+        },
+        listMissionsSchema: async function() {
+            const schema = await window.std('/api/schema?method=GET&url=/mission');
+            this.header = ['title', 'externalid', 'location', 'date'].map((h) => {
+                return { name: h, display: true };
+            });
+
+            this.header.push(...schema.query.properties.sort.enum.map((h) => {
+                return {
+                    name: h,
+                    display: false
+                }
+            }).filter((h) => {
+                for (const hknown of this.header) {
+                    if (hknown.name === h.name) return false;
+                }
+                return true;
+            }));
+        },
+
     },
     components: {
         None,
@@ -156,6 +174,7 @@ export default {
         EpochRange,
         TableFooter,
         TablerLoading,
+        TableHeader,
         HeatMap,
         TablerBreadCrumb
     }
