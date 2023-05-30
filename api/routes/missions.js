@@ -50,6 +50,9 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Mission:Manage');
 
+            const assigned = req.body.assigned;
+            delete req.body.assigned;
+
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
             else delete req.body.start_ts;
@@ -58,15 +61,12 @@ export default async function router(schema, config) {
             else delete req.body.end_ts;
 
             const mission = await Mission.generate(config.pool, {
-                title: req.body.title,
-                body: req.body.body,
-                start_ts: req.body.start_ts,
-                end_ts: req.body.end_ts,
+                ...req.body,
                 author: req.auth.id
             });
 
-            if (req.body.assigned) {
-                for (const a of req.body.assigned) {
+            if (assigned) {
+                for (const a of assigned) {
                     await MissionAssigned.generate(config.pool, {
                         mission_id: mission.id,
                         role: a.role,

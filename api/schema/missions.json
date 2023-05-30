@@ -34,6 +34,9 @@
         },
         "location_geom": {
             "$ref": "./missions/location_geom.json"
+        },
+        "externalid": {
+            "$ref": "./missions/externalid.json"
         }
     },
     "required": [
@@ -47,6 +50,7 @@
         "body",
         "author",
         "location",
-        "location_geom"
+        "location_geom",
+        "externalid"
     ]
 }

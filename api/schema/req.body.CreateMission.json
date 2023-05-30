@@ -3,6 +3,7 @@
     "additionalProperties": false,
     "required": [
         "title",
+        "externalid",
         "body",
         "start_ts",
         "end_ts",
@@ -11,6 +12,9 @@
     ],
     "properties": {
         "title": {
+            "type": "string"
+        },
+        "externalid": {
             "type": "string"
         },
         "body": {

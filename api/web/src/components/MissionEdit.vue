@@ -22,8 +22,11 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-12">
+                                    <div class="col-md-8">
                                         <TablerInput v-model='mission.title' label='Mission Title'/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <TablerInput v-model='mission.externalid' label='Mission Number'/>
                                     </div>
                                     <div class="col-md-6">
                                         <TablerInput type='datetime-local' v-model='mission.start_ts' label='Mission Start'/>
@@ -115,6 +118,7 @@ export default {
                 body: '',
                 start_ts: '',
                 end_ts: '',
+                externalid: ''
             },
             assigned: []
         }

@@ -44,17 +44,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <table class="table card-table table-vcenter">
+                            <table class="table table-hover card-table table-vcenter">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
+                                        <th>Number</th>
                                         <th>Location</th>
                                         <th>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr :key='mission.id' v-for='mission in list.missions'>
-                                        <td><a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a></td>
+                                    <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.missions' class='cursor-pointer'>
+                                        <td><a class='cursor-pointer' v-text='mission.title'></a></td>
+                                        <td v-text='mission.externalid'></td>
                                         <td v-text='mission.location'></td>
                                         <td><EpochRange :start='mission.start_ts' :end='mission.end_ts'/></td>
                                     </tr>

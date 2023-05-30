@@ -35,8 +35,11 @@
 
                     <div class="col-lg-12">
                         <div class="card">
-                            <div class='card-header'>
-                                <h3 class='card-title' v-text='`${mission.title} @ ${mission.location || "Unknown"}`'/>
+                            <div class='card-header d-flex'>
+                                <div>
+                                    <div class='card-title' v-text='`${mission.title}`'></div>
+                                    <div class='subheader' v-text='`${mission.location || "Location Unknown"} - ${mission.externalid || "No Mission Number"}`'></div>
+                                </div>
 
                                 <div class='ms-auto btn-list'>
                                     <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
