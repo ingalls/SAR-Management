@@ -31,12 +31,14 @@
                         <BellIcon/>
                     </a>
 
-                    <button class="btn btn-dark dropdown-toggle" type='button' data-bs-toggle="dropdown" aria-expanded="false">
-                        <UserIcon/>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a @click='$router.push("/profile")' class="dropdown-item">Profile</a>
-                        <a @click='$router.push("/logout")' class="dropdown-item">Logout</a>
+                    <div class='dropdown'>
+                        <div type="button" id="userProfileButton" data-bs-toggle="dropdown" aria-expanded="false" class='btn btn-dark'>
+                            <UserIcon/>
+                        </div>
+                        <ul class="dropdown-menu" aria-labelledby='userProfileButton'>
+                            <a @click='$router.push("/profile")' class="cursor-pointer dropdown-item">Profile</a>
+                            <a @click='$router.push("/logout")' class="curdor-pointer dropdown-item">Logout</a>
+                        </ul>
                     </div>
                 </div>
             </div>
