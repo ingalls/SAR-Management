@@ -21,7 +21,6 @@ export default {
     props: {
         modelValue: {
             type: Object,
-            required: true
         },
         disabled: {
             type: Boolean,
