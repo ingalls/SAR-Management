@@ -56,7 +56,7 @@ export default async function router(schema, config) {
             res.json(await TrainingAssigned.generate(config.pool, {
                 training_id: req.params.trainingid,
                 uid: req.auth.id,
-                role: 'present',
+                role: 'Present',
                 confirmed: false
             }));
         } catch (err) {

@@ -35,7 +35,7 @@
 
                     <div class="col-lg-12">
                         <div class="card">
-                            <div class='card-header d-flex'>
+                            <div class='card-header'>
                                 <div>
                                     <div class='card-title' v-text='`${mission.title}`'></div>
                                     <div class='subheader' v-text='`${mission.location || "Location Unknown"} - ${mission.externalid || "No Mission Number"}`'></div>
