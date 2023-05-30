@@ -20,10 +20,10 @@
             </tr>
         </thead>
         <tbody>
-            <tr :key='role.id' v-for='role in list.roles'>
+            <tr :key='role.id' v-for='(role, roleit) in list.roles'>
                 <td>
                     <template v-if='role._edit'>
-                        <TablerInput v-model='role.name'/>
+                        <TablerInput v-on:keyup.enter='saveRole(role, roleit)' v-model='role.name'/>
                     </template>
                     <template v-else>
                         <span v-text='role.name'/>
@@ -31,7 +31,16 @@
                 </td>
                 <td><TablerEpoch :date='role.created'/></td>
                 <td>
-                    <TablerEpoch :date='role.updated'/>
+                    <div class='d-flex'>
+                        <TablerEpoch :date='role.updated'/>
+                        <div v-if='role._edit' class='ms-auto btn-list'>
+                            <CheckIcon @click='saveRole(role, roleit)' class='cursor-pointer'/>
+                            <TrashIcon @click='deleteRole(role, roleit)' class='cursor-pointer'/>
+                        </div>
+                        <div v-else class='ms-auto btn-list'>
+                            <PencilIcon @click='role._edit = true' class='cursor-pointer'/>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </tbody>
@@ -41,7 +50,10 @@
 
 <script>
 import {
-    PlusIcon
+    PlusIcon,
+    PencilIcon,
+    CheckIcon,
+    TrashIcon
 } from 'vue-tabler-icons';
 import {
     TablerEpoch,
@@ -66,6 +78,30 @@ export default {
         fetch: async function() {
             this.list = await window.std('/api/mission-role');
         },
+        saveRole: async function(role, roleit) {
+            if (role.id) { 
+                const newrole = await window.std(`/api/mission-role/${role.id}`, {
+                    method: 'PATCH',
+                    body: role
+                });
+                this.list.roles.splice(roleit, 1, newrole);
+            } else {
+                const newrole = await window.std('/api/mission-role', {
+                    method: 'POST',
+                    body: role
+                });
+                this.list.roles.splice(roleit, 1, newrole);
+            }
+        },
+        deleteRole: async function(role, roleit) {
+            if (role.id) {
+                const newrole = await window.std(`/api/mission-role/${role.id}`, {
+                    method: 'DELETE',
+                });
+            }
+
+            this.list.roles.splice(roleit, 1);
+        },
         push: function() {
             this.list.roles.splice(0, 0, {
                 _edit: true,
@@ -78,6 +114,9 @@ export default {
     components: {
         None,
         PlusIcon,
+        PencilIcon,
+        CheckIcon,
+        TrashIcon,
         TablerEpoch,
         TablerInput
     }
