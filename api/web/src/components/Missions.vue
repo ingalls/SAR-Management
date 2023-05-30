@@ -21,7 +21,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div class="col-lg-12">
+                    <div v-if='!loading.initial' class="col-lg-12">
                         <HeatMap :missions='list'/>
                     </div>
                     <div class="col-lg-12">
@@ -105,6 +105,7 @@ export default {
     data: function() {
         return {
             loading: {
+                initial: true,
                 list: true
             },
             header: [],
@@ -150,6 +151,7 @@ export default {
             if (this.paging.assigned) url.searchParams.append('assigned', this.paging.assigned);
             this.list = await window.std(url)
             this.loading.list = false;
+            this.loading.initial = false;
         },
         listMissionsSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/mission');
