@@ -11,6 +11,7 @@
     </div>
 
     <None v-if='!list.roles.length' :create='false' label='Roles'/>
+    <TablerLoading v-else-if='loading'/>
     <table v-else class="table card-table table-vcenter">
         <thead>
             <tr>
@@ -57,6 +58,7 @@ import {
 } from 'vue-tabler-icons';
 import {
     TablerEpoch,
+    TablerLoading,
     TablerInput
 } from '@tak-ps/vue-tabler';
 import None from '../util/None.vue';
@@ -65,6 +67,7 @@ export default {
     name: 'AdminRoleCard',
     data: function() {
         return {
+            loading: true,
             list: {
                 total: 0,
                 roles: []
@@ -76,10 +79,12 @@ export default {
     },
     methods: {
         fetch: async function() {
+            this.loading = true;
             this.list = await window.std('/api/mission-role');
+            this.loading = false;
         },
         saveRole: async function(role, roleit) {
-            if (role.id) { 
+            if (role.id) {
                 const newrole = await window.std(`/api/mission-role/${role.id}`, {
                     method: 'PATCH',
                     body: role
@@ -118,6 +123,7 @@ export default {
         CheckIcon,
         TrashIcon,
         TablerEpoch,
+        TablerLoading,
         TablerInput
     }
 }
