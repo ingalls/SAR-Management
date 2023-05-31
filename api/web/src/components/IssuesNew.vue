@@ -22,7 +22,6 @@
                             <div class='row row-cards'>
                                 <div class="col-md-10">
                                     <TablerInput v-model='issue.title' label='Issue Title' :error='errors.title'/>
-
                                     <TablerInput v-model='issue.body' :rows='6' label='Issue Body' :error='errors.body'/>
                                 </div>
                                 <div class="col-md-2">
@@ -33,16 +32,33 @@
 
                                     <label class="form-label">Labels</label>
                                 </div>
-
-                                <div class="col-md-12">
-                                    <div class="col-md-10">
-                                        <div class='d-flex'>
+                                <div v-if='poll.shown' class='col-md-12'>
+                                    <div class='card-header'>
+                                        <h3 class='card-title'>Poll</h3>
+                                        <div class='ms-auto btn-list'>
+                                            <GraphOffIcon v-tooltip='"Remove Poll"' @click='poll.shown = false' class='cursor-pointer'/>
+                                            <PlusIcon v-tooltip='"Add Question"' @click='poll.questions.push({
+                                                "name": ""
+                                            })' class='cursor-pointer'/>
+                                        </div>
+                                    </div>
+                                    <div class='card-body'>
+                                        <div :key='qit' v-for='(question, qit) of poll.questions' class='my-2 d-flex'>
+                                            <TablerInput v-model='question.name' class='w-full mx-2'/>
                                             <div class='ms-auto'>
-                                                <a @click='create' class="cursor-pointer btn btn-primary">
-                                                    Create Issue
-                                                </a>
+                                                <TrashIcon v-tooltip='"Remove Question"' @click='poll.questions.splice(qit, 1)' class='cursor-pointer my-1'/>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 d-flex">
+                                    <button v-if='!poll.shown' v-tooltip='"Add Poll"' @click='poll.shown = true' class='btn'><GraphIcon/></button>
+
+                                    <div class='ms-auto'>
+                                        <a @click='create' class="cursor-pointer btn btn-primary">
+                                            Create Issue
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -63,6 +79,12 @@ import {
     TablerBreadCrumb,
     TablerInput,
 } from '@tak-ps/vue-tabler';
+import {
+    GraphIcon,
+    GraphOffIcon,
+    TrashIcon,
+    PlusIcon,
+} from 'vue-tabler-icons';
 
 export default {
     name: 'IssuesNew',
@@ -78,6 +100,16 @@ export default {
     },
     data: function() {
         return {
+            poll: {
+                shown: false,
+                questions: [{
+                    name: 'Sample Question 1'
+                },{
+                    name: 'Sample Question 2'
+                },{
+                    name: 'Sample Question 3'
+                }]
+            },
             errors: {
                 title: false,
                 body: false
@@ -101,15 +133,21 @@ export default {
                 if (this.errors[e]) return;
             }
 
+            const body = {
+                title: this.issue.title,
+                body: this.issue.body,
+                assigned: this.issue.assigned.map((a) => {
+                    return a.id;
+                })
+            }
+
+            if (this.poll.shown) {
+                body.poll = this.poll.questions;
+            };
+
             const create = await window.std('/api/issue', {
                 method: 'POST',
-                body: {
-                    title: this.issue.title,
-                    body: this.issue.body,
-                    assigned: this.issue.assigned.map((a) => {
-                        return a.id;
-                    })
-                }
+                body
             });
 
             this.$router.push(`/issue/${create.id}`);
@@ -118,8 +156,13 @@ export default {
     components: {
         NoAccess,
         TablerInput,
+        GraphIcon,
+        GraphOffIcon,
         TablerBreadCrumb,
-        UserSelect
+        UserSelect,
+        TrashIcon,
+        PlusIcon
+
     }
 }
 </script>
