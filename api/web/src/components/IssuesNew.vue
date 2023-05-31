@@ -111,8 +111,8 @@ export default {
                 }]
             },
             errors: {
-                title: false,
-                body: false
+                title: '',
+                body: ''
             },
             issue: {
                 title: '',

@@ -25,18 +25,15 @@ export default async function router(schema, config) {
 
             let vote;
             try {
-                vote = await PollVote.from(config.pool, req.auth.id, {
-                    column: 'uid'
-                });
+                vote = await PollVote.from(config.pool, req.auth.id, poll.id);
             } catch (err) {
-                console.error(err);
                 vote = null;
             }
 
             return res.json({
                 ...poll.serialize(),
                 questions: poll.questions,
-                vote: vote.question_id,
+                vote: vote ? vote.question_id : null,
                 votes: poll.votes
             });
         } catch (err) {

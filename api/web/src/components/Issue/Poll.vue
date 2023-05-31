@@ -2,6 +2,7 @@
 <div>
     <TablerLoading v-if='loading.poll' desc='Loading Poll'/>
     <template v-else>
+        <label v-if='!poll.vote' class='mx-3'>Select a vote from the following:</label>
         <div class='border rounded mx-2 my-2 px-2 py-2'>
             <div :key='question.id' v-for='question in poll.questions' class='my-1'>
                 <template v-if='!poll.vote'>
@@ -61,11 +62,13 @@ export default {
     mounted: async function() {
         await this.fetchPoll();
 
-        for (const vote of this.poll.votes) {
-            this.total += vote.votes;
-        }
-        for (const vote of this.poll.votes) {
-            this.votes[vote.question_id] = vote.votes / this.total;
+        if (this.poll.votes) {
+            for (const vote of this.poll.votes) {
+                this.total += vote.votes;
+            }
+            for (const vote of this.poll.votes) {
+                this.votes[vote.question_id] = vote.votes / this.total;
+            }
         }
 
         if (this.poll.vote) {
