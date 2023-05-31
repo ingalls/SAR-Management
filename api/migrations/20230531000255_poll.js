@@ -16,7 +16,7 @@ function up(knex) {
             poll_id         BIGINT NOT NULL REFERENCES poll(id),
             question_id     BIGINT NOT NULL REFERENCES poll_questions(id),
 
-            CONSTRAINT users_vote_unique UNIQUE (uid, poll_id, question_id)
+            CONSTRAINT users_vote_unique UNIQUE (uid, poll_id)
         );
 
     `);

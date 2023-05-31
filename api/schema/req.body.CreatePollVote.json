@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "required": [
+        "question"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "question": {
+            "type": "integer"
+        }
+    }
+}

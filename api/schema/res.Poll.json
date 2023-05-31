@@ -1,0 +1,40 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./poll/id.json"
+        },
+        "questions": {
+            "type": "array",
+            "items": {
+                "$ref": "./poll_questions.json"
+            }
+        },
+        "vote": {
+            "type": ["integer", "null"]
+        },
+        "votes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "question_id",
+                    "votes"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "question_id": {
+                        "type": "integer"
+                    },
+                    "votes": {
+                        "type": "integer"
+                    }
+                }
+            }
+        }
+    },
+    "required": [
+        "id"
+    ]
+}
