@@ -28,6 +28,9 @@
         },
         "author": {
             "$ref": "./issues/author.json"
+        },
+        "poll_id": {
+            "$ref": "./issues/poll_id.json"
         }
     },
     "required": [
@@ -39,6 +42,7 @@
         "end_ts",
         "title",
         "body",
-        "author"
+        "author",
+        "poll_id"
     ]
 }

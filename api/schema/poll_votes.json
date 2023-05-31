@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "uid": {
+            "$ref": "./poll_votes/uid.json"
+        },
+        "poll_id": {
+            "$ref": "./poll_votes/poll_id.json"
+        },
+        "question_id": {
+            "$ref": "./poll_votes/question_id.json"
+        }
+    },
+    "required": [
+        "uid",
+        "poll_id",
+        "question_id"
+    ]
+}

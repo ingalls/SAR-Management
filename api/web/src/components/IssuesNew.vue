@@ -36,7 +36,6 @@
                                     <div class='card-header'>
                                         <h3 class='card-title'>Poll</h3>
                                         <div class='ms-auto btn-list'>
-                                            <GraphOffIcon v-tooltip='"Remove Poll"' @click='poll.shown = false' class='cursor-pointer'/>
                                             <PlusIcon v-tooltip='"Add Question"' @click='poll.questions.push({
                                                 "name": ""
                                             })' class='cursor-pointer'/>
@@ -54,6 +53,7 @@
 
                                 <div class="col-md-12 d-flex">
                                     <button v-if='!poll.shown' v-tooltip='"Add Poll"' @click='poll.shown = true' class='btn'><GraphIcon/></button>
+                                    <button v-else v-tooltip='"Remove Poll"' @click='poll.shown = false' class='btn'><GraphOffIcon/></button>
 
                                     <div class='ms-auto'>
                                         <a @click='create' class="cursor-pointer btn btn-primary">
@@ -142,7 +142,9 @@ export default {
             }
 
             if (this.poll.shown) {
-                body.poll = this.poll.questions;
+                body.poll = {
+                    questions: this.poll.questions
+                }
             };
 
             const create = await window.std('/api/issue', {

@@ -1,5 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import Issue from '../lib/types/issue.js';
+import Poll from '../lib/types/poll.js';
+import PollQuestion from '../lib/types/poll-question.js';
 import ViewIssue from '../lib/views/issue.js';
 import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth from '../lib/auth.js';
@@ -33,11 +35,27 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Issue:Manage');
 
+            const assigned = req.body.assigned;
+            delete req.body.assigned;
+            const poll = req.body.poll;
+            delete req.body.poll;
+
             const issue = await Issue.generate(config.pool, {
-                author: req.auth.id,
-                title: req.body.title,
-                body: req.body.body
+                ...req.body,
+                author: req.auth.id
             });
+
+            if (poll) {
+                const p = await Poll.generate(config.pool, {
+                    expiry: poll.expiry
+                });
+
+                for (const question of poll.questions) {
+                    await PollQuestion.generate(config.pool, { poll_id: p.id, question });
+                }
+
+                await issue.commit({ poll_id: p.id });
+            }
 
             if (req.body.assigned) {
                 for (const uid of req.body.assigned) {

@@ -18,6 +18,33 @@
             "items": {
                 "type": "integer"
             }
+        },
+        "poll": {
+            "type": "object",
+            "required": [
+                "questions"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "expiry": {
+                    "type": "string"
+                },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "name"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
