@@ -14,7 +14,7 @@
                             <a @click='create(true)' class="cursor-pointer btn btn-outline-secondary">
                                 Comment &amp; Close
                             </a>
-                            <a @click='create' class="cursor-pointer btn btn-primary">
+                            <a @click='create(false)' class="cursor-pointer btn btn-primary">
                                 Comment
                             </a>
                         </div>
