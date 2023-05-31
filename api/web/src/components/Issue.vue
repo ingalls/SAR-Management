@@ -50,6 +50,8 @@
                                     </div>
                                 </div>
                                 <div class="card-body" v-text='issue.body'></div>
+
+                                <IssuePoll v-if='issue.poll_id' :issue='issue'/>
                             </template>
                         </div>
                     </div>
@@ -117,6 +119,7 @@ import {
     TablerLoading,
 } from '@tak-ps/vue-tabler'
 import Avatar from './util/Avatar.vue';
+import IssuePoll from './Issue/Poll.vue';
 import CreateComment from './Issue/CreateComment.vue';
 import UserSelect from './util/UserSelect.vue';
 
@@ -204,6 +207,7 @@ export default {
         TablerLoading,
         TablerBreadCrumb,
         CreateComment,
+        IssuePoll,
         UserSelect
     }
 }

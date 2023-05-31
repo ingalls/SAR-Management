@@ -2,9 +2,6 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-        "count": {
-            "$ref": "./view_issues/count.json"
-        },
         "id": {
             "$ref": "./view_issues/id.json"
         },
@@ -32,12 +29,14 @@
         "author": {
             "$ref": "./view_issues/author.json"
         },
+        "poll_id": {
+            "$ref": "./view_issues/poll_id.json"
+        },
         "user": {
             "$ref": "./view_issues/user.json"
         }
     },
     "required": [
-        "count",
         "id",
         "created",
         "updated",
@@ -47,6 +46,7 @@
         "title",
         "body",
         "author",
+        "poll_id",
         "user"
     ]
 }

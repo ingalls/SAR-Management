@@ -2,9 +2,6 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-        "count": {
-            "$ref": "./view_issues_comments/count.json"
-        },
         "id": {
             "$ref": "./view_issues_comments/id.json"
         },
@@ -28,7 +25,6 @@
         }
     },
     "required": [
-        "count",
         "id",
         "issue",
         "created",
