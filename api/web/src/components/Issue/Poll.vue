@@ -62,23 +62,25 @@ export default {
     mounted: async function() {
         await this.fetchPoll();
 
-        if (this.poll.votes) {
-            for (const vote of this.poll.votes) {
-                this.total += vote.votes;
-            }
-            for (const vote of this.poll.votes) {
-                this.votes[vote.question_id] = vote.votes / this.total;
-            }
-        }
-
-        if (this.poll.vote) {
-            this.selected = this.poll.vote;
-        }
     },
     methods: {
         fetchPoll: async function() {
             this.loading.poll = true;
             this.poll = await window.std(`/api/issue/${this.issue.id}/poll`);
+
+            if (this.poll.votes) {
+                for (const vote of this.poll.votes) {
+                    this.total += vote.votes;
+                }
+                for (const vote of this.poll.votes) {
+                    this.votes[vote.question_id] = vote.votes / this.total;
+                }
+            }
+
+            if (this.poll.vote) {
+                this.selected = this.poll.vote;
+            }
+
             this.loading.poll = false;
         },
         vote: async function() {
@@ -91,7 +93,6 @@ export default {
             });
 
             await this.fetchPoll();
-            this.loading.poll = false;
         },
     },
     components: {
