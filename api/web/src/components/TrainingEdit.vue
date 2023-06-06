@@ -41,7 +41,7 @@
                                         <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>
                                     </div>
                                     <div class='col-md-12'>
-                                        <TablerInput v-model='training.location' label='Training Location'/>
+                                        <LocationDropdown @locGeom='training.location_geom = $event' v-model='training.location'/>
                                     </div>
                                     <div class='col-md-12'>
                                         <Location v-model='training.location_geom' :disabled='false'/>
@@ -78,6 +78,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
+import LocationDropdown from './util/LocationDropdown.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -160,6 +161,7 @@ export default {
         TablerInput,
         TablerToggle,
         TablerLoading,
+        LocationDropdown,
         NoAccess,
         TablerBreadCrumb
     }

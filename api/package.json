@@ -41,7 +41,7 @@
         "jsonwebtoken": "^9.0.0",
         "knex": "^2.3.0",
         "mailgen": "^2.0.27",
-        "mailgun.js": "^8.0.6",
+        "mailgun.js": "^9.0.0",
         "minimist": "^1.2.7",
         "moment": "^2.29.4",
         "pg": "^8.8.0",
