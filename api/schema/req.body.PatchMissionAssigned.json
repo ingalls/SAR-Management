@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "confirmed": {
+            "type": "boolean"
+        },
+        "role": {
+            "type": "string"
+        }
+    }
+}

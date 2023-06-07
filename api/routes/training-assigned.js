@@ -79,7 +79,7 @@ export default async function router(schema, config) {
 
             const training = await Training.from(config.pool, req.params.trainingid);
             const assigned = await TrainingAssigned.from(config.pool, req.params.assignedid);
-            if (assigned.training_id !== training.id) throw new Error(400, null, 'Assigned User does not belong to the Training');
+            if (assigned.training_id !== training.id) throw new Err(400, null, 'Assigned User does not belong to the Training');
 
             await assigned.commit(req.body);
 
@@ -103,7 +103,7 @@ export default async function router(schema, config) {
 
             const training = await Training.from(config.pool, req.params.trainingid);
             const assigned = await TrainingAssigned.from(config.pool, req.params.assignedid);
-            if (assigned.training_id !== training.id) throw new Error(400, null, 'Assigned User does not belong to the Training');
+            if (assigned.training_id !== training.id) throw new Err(400, null, 'Assigned User does not belong to the Training');
 
             await assigned.delete();
 

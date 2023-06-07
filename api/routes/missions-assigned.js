@@ -42,6 +42,31 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.patch('/mission/:missionid/assigned/:assignedid', {
+        name: 'Update Assigned',
+        group: 'MissionAssigned',
+        auth: 'user',
+        ':missionid': 'integer',
+        ':assignedid': 'integer',
+        description: 'Update a user in a mission',
+        body: 'req.body.PatchMissionAssigned.json',
+        res: 'missions_assigned.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Mission:Manage');
+
+            const mission = await Mission.from(config.pool, req.params.missionid);
+            const assigned = await MissionAssigned.from(config.pool, req.params.assignedid);
+            if (assigned.mission_id !== mission.id) throw new Err(400, null, 'Assigned User does not belong to the Mission');
+
+            await assigned.commit(req.body);
+
+            return res.json(assigned);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.delete('/mission/:missionid/assigned/:assignedid', {
         name: 'Remove Assigned',
         group: 'MissionAssigned',
@@ -56,7 +81,7 @@ export default async function router(schema, config) {
 
             const mission = await Mission.from(config.pool, req.params.missionid);
             const assigned = await MissionAssigned.from(config.pool, req.params.assignedid);
-            if (assigned.mission_id !== mission.id) throw new Error(400, null, 'Assigned User does not belong to the Mission');
+            if (assigned.mission_id !== mission.id) throw new Err(400, null, 'Assigned User does not belong to the Mission');
 
             await assigned.delete();
 

@@ -40,7 +40,16 @@
                             <CheckIcon height='16'/> Confirm
                         </div>
 
-                        <span v-text='a.role' class='pt-1'/>
+                        <template v-if='disabled'>
+                            <span v-text='a.role' class='pt-1'/>
+                        </template>
+                        <template v-else>
+                            <TablerSelect
+                                v-model='a.role'
+                                v-on:update:modelValue='saveRole(a)'
+                                :options='roles'
+                            />
+                        </template>
 
                         <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer my-2'/>
                     </div>
@@ -59,7 +68,8 @@ import {
 } from 'vue-tabler-icons';
 import {
     TablerInput,
-    TablerLoading
+    TablerLoading,
+    TablerSelect
 } from '@tak-ps/vue-tabler'
 import None from './None.vue';
 import Avatar from './Avatar.vue';
@@ -97,7 +107,8 @@ export default {
             list: {
                 users: []
             },
-            assigned: []
+            assigned: [],
+            roles: []
         }
     },
     watch: {
@@ -114,11 +125,12 @@ export default {
     mounted: async function() {
         this.assigned = this.modelValue;
         await this.listUsers();
+        await this.listRoles();
     },
     methods: {
         push_assigned: async function(user) {
             if (this.confirmed) user.confirmed = true;
-            user.role = 'General';
+            user.role = 'Present';
             this.assigned.push(user);
             this.$emit('push', user);
             this.filter = '';
@@ -131,6 +143,16 @@ export default {
         confirm_assigned: async function(user) {
             user.confirmed = true;
             this.$emit('patch', user);
+        },
+        saveRole: async function(role) {
+            this.$emit('patch', role);
+        },
+        listRoles: async function() {
+            const url = window.stdurl('/api/mission-role');
+            const list = await window.std(url);
+            this.roles = list.roles.map((role) => {
+                return role.name;
+            });
         },
         listUsers: async function() {
             const url = window.stdurl('/api/user');
@@ -151,6 +173,7 @@ export default {
         TrashIcon,
         CheckIcon,
         TablerInput,
+        TablerSelect,
         TablerLoading
     }
 }
