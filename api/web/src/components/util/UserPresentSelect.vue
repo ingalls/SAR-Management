@@ -48,6 +48,7 @@
                                 v-model='a.role'
                                 v-on:update:modelValue='saveRole(a)'
                                 :options='roles'
+                                class='pt-2 mx-3'
                             />
                         </template>
 
