@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./trainings_team/id.json"
+        },
+        "mission_id": {
+            "$ref": "./trainings_team/mission_id.json"
+        },
+        "team_id": {
+            "$ref": "./trainings_team/team_id.json"
+        }
+    },
+    "required": [
+        "id",
+        "mission_id",
+        "team_id"
+    ]
+}
