@@ -33,15 +33,6 @@
                                             <SearchIcon width='24'/>
                                         </span>
                                     </div>
-
-                                    <div class='ms-auto'>
-                                        <div class="btn-list">
-                                            <TablerSelect
-                                                default='Open'
-                                                :values='["Open", "Closed"]'
-                                            />
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <table class="table card-table table-vcenter">
@@ -76,7 +67,6 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import {
     TablerBreadCrumb,
-    TablerSelect
 } from '@tak-ps/vue-tabler';
 import {
     SearchIcon
@@ -125,7 +115,6 @@ export default {
         None,
         TablerBreadCrumb,
         NoAccess,
-        TablerSelect,
         SearchIcon
     }
 }

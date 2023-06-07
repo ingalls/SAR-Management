@@ -96,7 +96,7 @@
                                 <tr :key='group' v-for='group in Object.keys(iamlist)'>
                                     <td v-text='group'></td>
                                     <td>
-                                        <TablerSelect @select='team.iam[group] = $event' :default='team.iam[group] || iamlist[group][iamlist[group].length - 1]' :values='iamlist[group]'/>
+                                        <TablerSelect v-model='team.iam[group]' :default='team.iam[group] || iamlist[group][iamlist[group].length - 1]' :options='iamlist[group]'/>
                                     </td>
                                 </tr>
                             </tbody>
