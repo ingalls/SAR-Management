@@ -146,8 +146,7 @@ export default {
             this.$emit('patch', user);
         },
         saveRole: async function(role) {
-            console.error(JSON.stringify(role));
-            //this.$emit('patch', role);
+            this.$emit('patch', role);
         },
         listRoles: async function() {
             const url = window.stdurl('/api/mission-role');
