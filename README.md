@@ -40,7 +40,20 @@ export POSTGRES=postgres://postgres@localhost:5432/sar
 npx knex migrate:latest
 ```
 
-5. Run the backend server
+5. Run the backend server with optional `.env` file
+
+In the `api/` directory create a file with the name `.env` and the following
+sample contents:
+```json
+{
+    "API2PDF": "<Token>",
+    "MailGun": "<Token>",
+    "SPACES_KEY": "<Token>",
+    "SPACES_SECRET": "<Token>",
+    "SPACES_BUCKET": "<Bucket>"
+}
+
+```
 
 ```sh
 npm run dev
