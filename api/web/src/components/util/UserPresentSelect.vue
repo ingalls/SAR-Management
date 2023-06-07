@@ -76,7 +76,7 @@ import None from './None.vue';
 import Avatar from './Avatar.vue';
 
 export default {
-    name: 'UserPrecenseSelect',
+    name: 'UserPresenceSelect',
     props: {
         modelValue: {
             type: Array,
@@ -146,7 +146,8 @@ export default {
             this.$emit('patch', user);
         },
         saveRole: async function(role) {
-            this.$emit('patch', role);
+            console.error(JSON.stringify(role));
+            //this.$emit('patch', role);
         },
         listRoles: async function() {
             const url = window.stdurl('/api/mission-role');
