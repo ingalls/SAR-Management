@@ -57,7 +57,8 @@
 import None from '../util/None.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
-    PlusIcon
+    PlusIcon,
+    SearchIcon
 } from 'vue-tabler-icons';
 import {
     TablerLoading
@@ -133,6 +134,7 @@ export default {
         None,
         Avatar,
         PlusIcon,
+        SearchIcon,
         TableFooter,
         TablerLoading
     }

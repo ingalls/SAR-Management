@@ -6,15 +6,24 @@
                 <div class='modal-title'>Certificate Upload</div>
             </div>
             <div class="modal-body">
-                <TablerInput label='Certificate Name'/>
+                <template v-if='loading'>
+                    <TablerLoading/>
+                </template>
+                <template v-else>
+                    <TablerEnum label='Certificate Name' v-model='cert.name' :options='known'/>
 
-                <UploadDefault
-                    :url='url'
-                    :headers='headers'
-                    :cancel='false'
-                    @done='$emit("done", $event)'
-                    @cancel='$emit("cancel")'
-                />
+                    <template v-if='cert.name === "Other"'>
+                        <TablerInput label='Custom Name' class='my-3'/>
+                    </template>
+
+                    <UploadDefault
+                        :url='url'
+                        :headers='headers'
+                        :cancel='false'
+                        @done='$emit("done", $event)'
+                        @cancel='$emit("cancel")'
+                    />
+                </template>
             </div>
     </TablerModal>
 </template>
@@ -22,7 +31,9 @@
 <script>
 import {
     TablerModal,
-    TablerInput
+    TablerInput,
+    TablerEnum,
+    TablerLoading
 } from '@tak-ps/vue-tabler';
 import UploadDefault from './UploadDefault.vue';
 
@@ -44,7 +55,26 @@ export default {
             default: ''
         }
     },
+    data: function() {
+        return {
+            loading: true,
+            custom: '',
+            cert: {
+                name: ''
+            },
+            known: []
+        }
+    },
+    mounted: async function() {
+        await this.getKnown();
+    },
     methods: {
+        getKnown: async function() {
+            this.loading = true;
+            const known = await window.std('/api/certs');
+            this.known = known.certs.map((k) => k.name).concat(['Other']);
+            this.loading = false;
+        },
         close: function() {
             this.$emit('close');
         }
@@ -52,6 +82,8 @@ export default {
     components: {
         TablerModal,
         TablerInput,
+        TablerLoading,
+        TablerEnum,
         UploadDefault
     }
 }
