@@ -25,7 +25,7 @@
     </template>
     <template v-else>
         <div class="table-responsive">
-            <table class="table card-table table-vcenter text-nowrap datatable">
+            <table class="table card-table table-vcenter table-hover text-nowrap datatable">
                 <thead>
                     <tr>
                         <th>Name</th>

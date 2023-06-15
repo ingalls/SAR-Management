@@ -12,7 +12,7 @@
         <None :create='false' :label='training'/>
     </template>
     <template v-else>
-        <table class="table card-table table-vcenter">
+        <table class="table card-table table-hover table-vcenter">
             <thead>
                 <tr>
                     <th>Name</th>

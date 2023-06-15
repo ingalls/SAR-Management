@@ -48,7 +48,7 @@
     </template>
     <template v-else-if='mode === "list"'>
         <div class='table-responsive'>
-            <table class="table card-table table-vcenter datatable">
+            <table class="table card-table table-hover table-vcenter datatable">
                 <TableHeader
                     v-model:sort='paging.sort'
                     v-model:order='paging.order'
