@@ -160,12 +160,12 @@ export default {
             token: localStorage.token,
             base: window.stdurl('/').origin,
             cache: +new Date(),
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
             upload: false,
             loading: {
                 user: true
-            },
-            headers: {
-                Authorization: `Bearer ${localStorage.token}`
             },
             errors: {
                 username: '',

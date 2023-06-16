@@ -81,8 +81,6 @@ export default async function router(schema) {
             const Body = await stream2buffer(file);
 
             uploads.push(async () => {
-                console.error(Body);
-
                 await spaces.upload({
                     Key: `equipment/${req.params.equipmentid}/profile-orig-${blob.filename}`,
                     Body
