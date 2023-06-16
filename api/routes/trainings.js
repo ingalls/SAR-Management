@@ -1,6 +1,5 @@
 import Err from '@openaddresses/batch-error';
 import Training from '../lib/types/training.js';
-import ical from 'ical-generator';
 import TrainingAssigned from '../lib/types/training-assigned.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';

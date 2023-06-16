@@ -57,8 +57,8 @@ export default async function router(schema, config) {
                 await issue.commit({ poll_id: p.id });
             }
 
-            if (req.body.assigned) {
-                for (const uid of req.body.assigned) {
+            if (assigned) {
+                for (const uid of assigned) {
                     IssueAssigned.generate(config.pool, {
                         issue_id: issue.id,
                         uid: uid

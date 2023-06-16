@@ -1,7 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Issue from '../lib/types/issue.js';
 import Poll from '../lib/types/poll.js';
-import PollQuestion from '../lib/types/poll-question.js';
 import PollVote from '../lib/types/poll-vote.js';
 import Auth from '../lib/auth.js';
 

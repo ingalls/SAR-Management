@@ -23,7 +23,7 @@ export default async function router(schema, config) {
 
             if (req.query.format === 'vcard') {
                 res.set('Content-Type', 'text/x-vcard');
-                res.set('Content-Disposition', `attachment; filename="sar-users.vcf"`);
+                res.set('Content-Disposition', 'attachment; filename="sar-users.vcf"');
 
                 (await User.stream(config.pool, req.query)).on('data', async (user) => {
                     const card = new VCard.default();

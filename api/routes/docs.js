@@ -105,10 +105,10 @@ export default async function router(schema, config) {
                 const token = jwt.sign({
                     u: req.auth.id,
                     p: req.query.prefix,
-                    f: req.query.file,
+                    f: req.query.file
                 }, config.SigningSecret, { expiresIn: '30m' });
 
-                const url = new URL('/api/doc/convert', config.APIURL)
+                const url = new URL('/api/doc/convert', config.APIURL);
                 url.searchParams.append('access_token', token);
                 const doc = await convert.libreOfficeAnyToPdf(url);
 
@@ -127,7 +127,7 @@ export default async function router(schema, config) {
         } catch (err) {
             return Err.respond(err, res);
         }
-    })
+    });
 
     await schema.get('/doc/download', {
         name: 'Download Doc',
@@ -157,7 +157,7 @@ export default async function router(schema, config) {
         } catch (err) {
             return Err.respond(err, res);
         }
-    })
+    });
 
     await schema.post('/doc/folder', {
         name: 'Create Folder',

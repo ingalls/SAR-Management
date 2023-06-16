@@ -1,6 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import TeamFieldability from '../lib/types/team-fieldability.js';
-import Auth, { Permissions } from '../lib/auth.js';
+import Auth from '../lib/auth.js';
 
 export default async function router(schema, config) {
     await schema.get('/team/:teamid/fieldability', {

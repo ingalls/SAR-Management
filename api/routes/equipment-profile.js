@@ -10,19 +10,19 @@ const generic = fs.readFileSync(new URL('../lib/user.webp', import.meta.url));
 export default async function router(schema) {
     const spaces = new Spaces();
 
-    await schema.get('/user/:userid/profile', {
+    await schema.get('/equipment/:equipmentid/profile', {
         name: 'Profile Pic',
         auth: 'user',
-        group: 'UserProfile',
-        description: 'Get users profile picture',
-        query: 'req.query.UserProfile.json',
-        ':userid': 'integer'
+        group: 'EquipmentProfile',
+        description: 'Get a picture of equipment',
+        query: 'req.query.EquipmentProfile.json',
+        ':equipmentid': 'integer'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req, true);
 
             try {
-                let Key = `users/${req.params.userid}/`;
+                let Key = `equipment/${req.params.equipmentid}/`;
                 if (req.query.size === 'full') Key = Key + 'profile.jpg';
                 else if (req.query.size === 'mini') Key = Key + 'profile-mini.jpg';
                 else Key = Key + 'profile.jpg';
@@ -46,22 +46,18 @@ export default async function router(schema) {
         }
     });
 
-    await schema.post('/user/:userid/profile', {
+    await schema.post('/equipment/:equipmentid/profile', {
         name: 'Create Profile',
         auth: 'user',
-        group: 'Assets',
+        group: 'EquipmentProfile',
         description: 'Create a new profile pic',
-        ':userid': 'integer',
+        ':equipmentid': 'integer',
         res: 'res.Standard.json'
     }, async (req, res) => {
         let bb;
 
         try {
-            await Auth.is_auth(req);
-
-            if (req.auth.access !== 'admin' && req.auth.id !== req.params.userid) {
-                throw new Err(401, null, 'Cannot change anther User\'s profile');
-            }
+            await Auth.is_iam(req, 'Equipment:Manage');
 
             if (req.headers['content-type']) {
                 req.headers['content-type'] = req.headers['content-type'].split(',')[0];
@@ -88,7 +84,7 @@ export default async function router(schema) {
                 console.error(Body);
 
                 await spaces.upload({
-                    Key: `users/${req.params.userid}/profile-orig-${blob.filename}`,
+                    Key: `equipment/${req.params.equipmentid}/profile-orig-${blob.filename}`,
                     Body
                 });
 
@@ -97,7 +93,7 @@ export default async function router(schema) {
                     .toBuffer();
 
                 await spaces.upload({
-                    Key: `users/${req.params.userid}/profile.jpg`,
+                    Key: `equipment/${req.params.equipmentid}/profile.jpg`,
                     Body: jpeg
                 });
 
@@ -107,7 +103,7 @@ export default async function router(schema) {
                     .toBuffer();
 
                 await spaces.upload({
-                    Key: `users/${req.params.userid}/profile-mini.jpg`,
+                    Key: `equipment/${req.params.equipmentid}/profile-mini.jpg`,
                     Body: jpegmini
                 });
             });
