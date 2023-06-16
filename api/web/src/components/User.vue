@@ -41,10 +41,10 @@
 
                             </div>
                             <div class='row row-0'>
-                                <div class='col-12 col-lg-3'>
+                                <div class='col-12 col-md-3'>
                                     <UserProfile :userid='user.id'/>
                                 </div>
-                                <div class='col-12 col-lg-9'>
+                                <div class='col-12 col-md-9'>
                                     <div class="card-body">
                                         <div class="datagrid">
                                             <div class="datagrid-item">
