@@ -26,7 +26,9 @@
                             </div>
 
                             <div class='row row-0'>
-                                <div class='col-12 col-md-9'>
+                                <div class='col-12' :class='{
+                                    "col-md-9": $route.params.equipid
+                                }'>
                                     <div class="card-body">
                                         <div class='row row-cards'>
                                             <div class="col-md-8 pb-2">

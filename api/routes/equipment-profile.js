@@ -76,11 +76,10 @@ export default async function router(schema) {
         }
 
 
-        const uploads = [];
         bb.on('file', async (fieldname, file, blob) => {
-            const Body = await stream2buffer(file);
+            try {
+                const Body = await stream2buffer(file);
 
-            uploads.push(async () => {
                 await spaces.upload({
                     Key: `equipment/${req.params.equipmentid}/profile-orig-${blob.filename}`,
                     Body
@@ -104,12 +103,6 @@ export default async function router(schema) {
                     Key: `equipment/${req.params.equipmentid}/profile-mini.jpg`,
                     Body: jpegmini
                 });
-            });
-        }).on('finish', async () => {
-            try {
-                if (!uploads.length) throw new Err(400, null, 'No Upload Provided');
-
-                await uploads[0]();
 
                 return res.json({
                     status: 200,
