@@ -7,7 +7,9 @@
         "updated",
         "name",
         "body",
-        "iam"
+        "iam",
+        "color_bg",
+        "color_txt"
     ],
     "properties": {
         "id": {
@@ -27,6 +29,12 @@
         },
         "iam": {
             "type": "object"
+        },
+        "color_bg": {
+            "type": "string"
+        },
+        "color_txt": {
+            "type": "string"
         }
     }
 }
