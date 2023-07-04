@@ -17,9 +17,9 @@
                         <div class='m-1'>
                             <TablerInput placeholder='Filter Teams' v-model='filter'/>
 
-                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users'>
+                            <div @click='push_teams(team)' :key='team.id' v-for='team in list.teams'>
                                 <div class="d-flex align-items-center my-1 cursor-pointer">
-                                    <Avatar :user='user'/>
+                                    <TeamBadge :team='team'/>
                                 </div>
                             </div>
                         </div>
@@ -28,13 +28,13 @@
             </div>
         </div>
 
-        <template v-if='!assigned.length'>
+        <template v-if='!teams.length'>
             <None label='Teams Assigned' :create='false' :compact='true'/>
         </template>
         <template v-else>
-            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
+            <div :key='a.id' v-for='(a, a_idx) in teams' class="d-flex align-items-center my-1">
                 <div class='ms-auto'>
-                    <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer'/>
+                    <TrashIcon @click='delete_teams(a_idx, a)' height='16' class='cursor-pointer'/>
                 </div>
             </div>
         </template>
@@ -44,7 +44,7 @@
 
 <script>
 import None from './None.vue';
-import Avatar from './Avatar.vue';
+import TeamBadge from './TeamBadge.vue';
 import {
     SettingsIcon,
     TrashIcon
@@ -75,49 +75,49 @@ export default {
             list: {
                 teams: []
             },
-            assigned: []
+            teams: []
         }
     },
     watch: {
         modelValue: function() {
-            this.assigned = this.modelValue;
+            this.teams = this.modelValue;
         },
         filter: async function() {
             await this.listTeams();
         },
-        assigned: function() {
-            this.$emit('update:modelValue', this.assigned);
+        teams: function() {
+            this.$emit('update:modelValue', this.teams);
         }
     },
     mounted: async function() {
-        this.assigned = this.modelValue;
+        this.teams = this.modelValue;
         await this.listTeams();
     },
     methods: {
-        push_assigned: async function(user) {
-            this.assigned.push(user);
-            this.$emit('push', user);
+        push_teams: async function(team) {
+            this.teams.push(team);
+            this.$emit('push', team);
         },
-        delete_assigned: async function(idx, user) {
-            this.assigned.splice(idx, 1);
-            this.$emit('delete', user);
+        delete_teams: async function(idx, team) {
+            this.teams.splice(idx, 1);
+            this.$emit('delete', team);
             await this.listTeams();
         },
         listTeams: async function() {
-            const url = window.stdurl('/api/user');
+            const url = window.stdurl('/api/team');
             url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit + this.assigned.length);
+            url.searchParams.append('limit', this.limit + this.teams.length);
             const list = await window.std(url);
 
-            const ids = this.assigned.map((a) => a.uid);
-            this.list.users = list.users.filter((user) => {
-                return !ids.includes(user.id);
+            const ids = this.teams.map((a) => a.uid);
+            this.list.teams = list.teams.filter((team) => {
+                return !ids.includes(team.id);
             }).splice(0, this.limit);
         }
     },
     components: {
         None,
-        Avatar,
+        TeamBadge,
         SettingsIcon,
         TrashIcon,
         TablerInput

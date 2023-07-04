@@ -35,7 +35,7 @@
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <TeamSelect
-                                            v-model='issue.assigned'
+                                            v-model='training.teams'
                                             label='Assigned'
                                         />
                                     </div>
@@ -113,7 +113,8 @@ export default {
                 location: '',
                 location_geom: null,
                 start_ts: '',
-                end_ts: ''
+                end_ts: '',
+                teams: []
             }
         }
     },

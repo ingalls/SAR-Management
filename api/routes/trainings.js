@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Training from '../lib/types/training.js';
+import TrainingView from '../lib/views/training.js';
 import TrainingAssigned from '../lib/types/training-assigned.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
@@ -16,7 +17,10 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Training:View');
 
-            res.json(await Training.list(config.pool, req.query));
+            const list = await TrainingView.list(config.pool, req.query);
+            console.error(list);
+
+            return res.json(list);
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -28,12 +32,12 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get a single Training',
         ':trainingid': 'integer',
-        res: 'training.json'
+        res: 'res.Training.json'
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Training:View');
 
-            res.json(await Training.from(config.pool, req.params.trainingid));
+            res.json(await TrainingView.from(config.pool, req.params.trainingid));
         } catch (err) {
             return Err.respond(err, res);
         }

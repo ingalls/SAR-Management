@@ -1,0 +1,60 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "count": {
+            "$ref": "./view_training/count.json"
+        },
+        "id": {
+            "$ref": "./view_training/id.json"
+        },
+        "created": {
+            "$ref": "./view_training/created.json"
+        },
+        "updated": {
+            "$ref": "./view_training/updated.json"
+        },
+        "author": {
+            "$ref": "./view_training/author.json"
+        },
+        "start_ts": {
+            "$ref": "./view_training/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./view_training/end_ts.json"
+        },
+        "title": {
+            "$ref": "./view_training/title.json"
+        },
+        "body": {
+            "$ref": "./view_training/body.json"
+        },
+        "location": {
+            "$ref": "./view_training/location.json"
+        },
+        "required": {
+            "$ref": "./view_training/required.json"
+        },
+        "location_geom": {
+            "$ref": "./view_training/location_geom.json"
+        },
+        "teams": {
+            "$ref": "./view_training/teams.json"
+        }
+    },
+    "required": [
+        "count",
+        "id",
+        "created",
+        "updated",
+        "author",
+        "start_ts",
+        "end_ts",
+        "title",
+        "body",
+        "location",
+        "required",
+        "location_geom",
+        "teams"
+    ]
+}
