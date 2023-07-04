@@ -8,8 +8,8 @@
         "name",
         "body",
         "iam",
-        "color_bg",
-        "color_txt"
+        "colour_bg",
+        "colour_txt"
     ],
     "properties": {
         "id": {
@@ -30,10 +30,10 @@
         "iam": {
             "type": "object"
         },
-        "color_bg": {
+        "colour_bg": {
             "type": "string"
         },
-        "color_txt": {
+        "colour_txt": {
             "type": "string"
         }
     }

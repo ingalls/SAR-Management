@@ -28,6 +28,8 @@
 
                                     <div class='ms-auto'>
                                         <div class='btn-list'>
+                                            <TeamBadge :team='team'/>
+
                                             <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
                                                 <a @click='$router.push(`/team/${$route.params.teamid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
@@ -58,6 +60,7 @@
 
 <script>
 import NoAccess from './util/NoAccess.vue';
+import TeamBadge from './util/TeamBadge.vue';
 import iam from '../iam.js';
 import CardUsers from './cards/Users.vue';
 import {
@@ -102,6 +105,7 @@ export default {
     },
     components: {
         NoAccess,
+        TeamBadge,
         TablerBreadCrumb,
         TablerLoading,
         CardUsers

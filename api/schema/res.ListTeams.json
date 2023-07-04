@@ -18,6 +18,8 @@
                     "id",
                     "created",
                     "updated",
+                    "colour_bg",
+                    "colour_txt",
                     "name",
                     "body"
                 ],  
@@ -39,7 +41,13 @@
                     },
                     "body": {
                         "type": "string"
-                    }   
+                    }   ,
+                    "colour_bg": {
+                        "type": "string"
+                    },
+                    "colour_txt": {
+                        "type": "string"
+                    }
                 }   
             }
         }

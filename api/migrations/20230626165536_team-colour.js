@@ -3,7 +3,7 @@ function up(knex) {
         ALTER TABLE teams
             ADD COLUMN colour_bg TEXT NOT NULL DEFAULT '#808080';
         ALTER TABLE teams
-            ADD COLUMN colour_txt TEXT NOT NULL DEFAULT '#00000t';
+            ADD COLUMN colour_txt TEXT NOT NULL DEFAULT '#000000';
     `);
 }
 

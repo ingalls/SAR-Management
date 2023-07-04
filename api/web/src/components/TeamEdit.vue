@@ -33,7 +33,7 @@
                                     }' class="form-control" placeholder="Team Name">
                                     <div v-if='errors.name' v-text='errors.name' class="invalid-feedback"></div>
                                 </div>
-                                <div class="col-12 col-md-2 row mt-2">
+                                <div class="col-12 col-md-2 row mt-3">
                                     <div class='col-auto'>
                                         <label class="form-label">Back</label>
                                         <input type="color" v-model='team.colour_bg' class="form-control form-control-color" title="Background Colour">

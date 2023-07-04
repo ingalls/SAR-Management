@@ -15,10 +15,10 @@
         "public": {
             "type": "boolean"
         },
-        "color_bg": {
+        "colour_bg": {
             "type": "string"
         },
-        "color_txt": {
+        "colour_txt": {
             "type": "string"
         }
     }
