@@ -2,8 +2,8 @@ function up(knex) {
     return knex.schema.raw(`
         CREATE VIEW view_training AS
             SELECT
-                count(*) OVER() AS count,
                 training.*,
+                ta.users,
                 COALESCE(tt.teams, '[]'::JSON) AS teams
             FROM
                 training

@@ -2,9 +2,6 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-        "count": {
-            "$ref": "./view_training/count.json"
-        },
         "id": {
             "$ref": "./view_training/id.json"
         },
@@ -38,12 +35,14 @@
         "location_geom": {
             "$ref": "./view_training/location_geom.json"
         },
+        "users": {
+            "$ref": "./view_training/users.json"
+        },
         "teams": {
             "$ref": "./view_training/teams.json"
         }
     },
     "required": [
-        "count",
         "id",
         "created",
         "updated",
@@ -55,6 +54,7 @@
         "location",
         "required",
         "location_geom",
+        "users",
         "teams"
     ]
 }

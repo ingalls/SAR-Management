@@ -138,9 +138,11 @@ export default {
             this.loading.training = false;
         },
         create: async function() {
+            const body = JSON.parse(JSON.stringify(this.training));
+            body.teams = body.teams.map((team) => { return team.id });
+
             const create = await window.std('/api/training', {
-                method: 'POST',
-                body: this.training
+                method: 'POST', body
             });
 
             this.$router.push(`/training/${create.id}`);

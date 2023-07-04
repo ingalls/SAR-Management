@@ -48,8 +48,11 @@
                                     <td>
                                         <div class='d-flex'>
                                             <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
-                                            <div class='ms-auto'>
+                                            <div class='ms-auto btn-list'>
                                                 <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
+                                                <template v-for='team in training.teams'>
+                                                    <TeamBadge :team='team'/>
+                                                </template>
                                             </div>
                                         </div>
                                     </td>
@@ -76,6 +79,7 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
+import TeamBadge from './util/TeamBadge.vue';
 import {
     TablerBreadCrumb,
     TablerLoading
@@ -141,6 +145,7 @@ export default {
         None,
         TableFooter,
         EpochRange,
+        TeamBadge,
         SearchIcon,
         NoAccess,
         TablerLoading,

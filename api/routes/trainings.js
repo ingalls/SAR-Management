@@ -2,6 +2,7 @@ import Err from '@openaddresses/batch-error';
 import Training from '../lib/types/training.js';
 import TrainingView from '../lib/views/training.js';
 import TrainingAssigned from '../lib/types/training-assigned.js';
+import TrainingTeam from '../lib/types/training-team.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
 
@@ -18,7 +19,6 @@ export default async function router(schema, config) {
             await Auth.is_iam(req, 'Training:View');
 
             const list = await TrainingView.list(config.pool, req.query);
-            console.error(list);
 
             return res.json(list);
         } catch (err) {
@@ -61,18 +61,32 @@ export default async function router(schema, config) {
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
             else delete req.body.end_ts;
 
+            const assigned = req.body.assigned;
+            delete req.body.assigned;
+            const teams = req.body.teams;
+            delete req.body.teams;
+
             const training = await Training.generate(config.pool, {
                 ...req.body,
                 author: req.auth.id
             });
 
-            if (req.body.assigned) {
-                for (const a of req.body.assigned) {
+            if (assigned) {
+                for (const a of assigned) {
                     await TrainingAssigned.generate(config.pool, {
                         training_id: training.id,
                         role: a.role,
                         confirmed: a.confirmed,
                         uid: a.uid
+                    });
+                }
+            }
+
+            if (teams) {
+                for (const a of teams) {
+                    await TrainingTeam.generate(config.pool, {
+                        training_id: training.id,
+                        team_id: a,
                     });
                 }
             }

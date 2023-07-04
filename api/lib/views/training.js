@@ -21,25 +21,24 @@ export default class ViewTraining extends Generic {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    training.*,
-                    COALESCE(tt.teams, '[]'::JSON) AS teams
+                    view_training.*
                 FROM
                     view_training
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
-                    AND (${query.assigned}::BIGINT IS NULL OR ta.users @> ARRAY[${query.assigned}::BIGINT])
-                    AND (${query.required}::BOOLEAN IS NULL OR training.required = ${query.required}::BOOLEAN)
-                    AND (${query.start}::TIMESTAMP IS NULL OR training.start_ts >= ${query.start}::TIMESTAMP)
-                    AND (${query.end}::TIMESTAMP IS NULL OR training.end_ts <= ${query.end}::TIMESTAMP)
+                    AND (${query.assigned}::BIGINT IS NULL OR users @> ARRAY[${query.assigned}::BIGINT])
+                    AND (${query.required}::BOOLEAN IS NULL OR required = ${query.required}::BOOLEAN)
+                    AND (${query.start}::TIMESTAMP IS NULL OR start_ts >= ${query.start}::TIMESTAMP)
+                    AND (${query.end}::TIMESTAMP IS NULL OR end_ts <= ${query.end}::TIMESTAMP)
                 ORDER BY
-                    ${sql.identifier([this._table, query.sort])} ${query.order}
+                    ${sql.identifier([this._view, query.sort])} ${query.order}
                 LIMIT
                     ${query.limit}
                 OFFSET
                     ${query.limit * query.page}
             `);
 
-            return this.deserialize_list(pgres);
+            return this.deserialize_list(pgres, 'training');
         } catch (err) {
             throw new Err(500, err, 'Failed to list Trainings');
         }
