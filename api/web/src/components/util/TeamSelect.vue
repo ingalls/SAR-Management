@@ -33,6 +33,7 @@
         </template>
         <template v-else>
             <div :key='a.id' v-for='(a, a_idx) in teams' class="d-flex align-items-center my-1">
+                <TeamBadge :team='a'/>
                 <div class='ms-auto'>
                     <TrashIcon @click='delete_teams(a_idx, a)' height='16' class='cursor-pointer'/>
                 </div>
