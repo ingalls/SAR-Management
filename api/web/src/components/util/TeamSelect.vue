@@ -98,6 +98,7 @@ export default {
         push_teams: async function(team) {
             this.teams.push(team);
             this.$emit('push', team);
+            await this.listTeams();
         },
         delete_teams: async function(idx, team) {
             this.teams.splice(idx, 1);
@@ -110,7 +111,8 @@ export default {
             url.searchParams.append('limit', this.limit + this.teams.length);
             const list = await window.std(url);
 
-            const ids = this.teams.map((a) => a.uid);
+            const ids = this.teams.map((a) => a.id);
+
             this.list.teams = list.teams.filter((team) => {
                 return !ids.includes(team.id);
             }).splice(0, this.limit);
