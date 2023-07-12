@@ -50,14 +50,12 @@
                                             <div class='d-flex'>
                                                 <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
                                                 <div class='ms-auto btn-list'>
-                                                    <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
+                                                    <template v-for='team in training.teams'>
+                                                        <TeamBadge :team='team'/>
+                                                    </template>
+                                                    <span v-if='training.required' class="badge bg-red">Required</span>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div v-if='training.teams.length' class='btn-list mt-2'>
-                                            <template v-for='team in training.teams'>
-                                                <TeamBadge :team='team'/>
-                                            </template>
                                         </div>
                                     </td>
                                     <td v-text='training.location'></td>
