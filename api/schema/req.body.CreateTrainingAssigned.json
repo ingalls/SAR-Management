@@ -16,7 +16,7 @@
         },
         "role": {
             "type": "string",
-            "default": "present"
+            "default": "Present"
         }
     }
 }
