@@ -1,6 +1,6 @@
 <template>
     <span
-        class="mx-2 badge"
+        class="badge"
         v-text='team.name'
         :style='{
             backgroundColor: team.colour_bg,

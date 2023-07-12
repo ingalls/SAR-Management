@@ -35,13 +35,20 @@
                     <div class="col-lg-12">
                         <TablerLoading v-if='loading.training'/>
                         <div v-else class="card">
-                            <div class='card-header'>
-                                <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
-                                <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
+                            <div class='mx-3 mt-3 mb-2 row'>
+                                <div class='col-12 d-flex'>
+                                    <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
+                                    <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
 
-                                <div class='ms-auto btn-list'>
-                                    <EpochRange :start='training.start_ts' :end='training.end_ts'/>
-                                    <SettingsIcon v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                    <div class='ms-auto btn-list'>
+                                        <EpochRange :start='training.start_ts' :end='training.end_ts'/>
+                                        <SettingsIcon v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                    </div>
+                                </div>
+                                <div v-if='training.teams.length' class='btn-list'>
+                                    <template v-for='team in training.teams'>
+                                        <TeamBadge :team='team'/>
+                                    </template>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -80,6 +87,7 @@ import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
+import TeamBadge from './util/TeamBadge.vue';
 import {
     SettingsIcon
 } from 'vue-tabler-icons';
@@ -182,6 +190,7 @@ export default {
     },
     components: {
         EpochRange,
+        TeamBadge,
         Location,
         SettingsIcon,
         UserPresentSelect,
