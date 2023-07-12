@@ -34,10 +34,10 @@
                                 </div>
                                 <div class='card-body row'>
                                     <div class='col-12 col-md-6'>
-                                        <TablerInput label='Start Date' type='date' v-model='filter.start'/>
+                                        <TablerInput label='Start Date' :disabled='loading.attendance' :error='errors.start' type='date' v-model='filter.start'/>
                                     </div>
                                     <div class='col-12 col-md-6'>
-                                        <TablerInput label='End Date' type='date' v-model='filter.end'/>
+                                        <TablerInput label='End Date' :disabled='loading.attendance' :error='errors.end' type='date' v-model='filter.end'/>
                                     </div>
                                 </div>
 
@@ -49,20 +49,24 @@
                                                 <th></th>
                                                 <template v-for='training in trainings'>
                                                     <th class="rotate">
-                                                        <div><span v-text='training.title'></span></div>
+                                                        <div @click='$router.push(`/training/${training.id}`)' class='cursor-pointer'>
+                                                            <span v-text='training.title' :class='{
+                                                                "text-red": training.required
+                                                            }'></span>
+                                                        </div>
                                                     </th>
                                                 </template>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <template v-for='user in users'>
-                                                <tr>
+                                                <tr :class='{
+                                                    "bg-red": totals[user.id] < (total * filter.percent)
+                                                }'>
                                                     <th class="row-header" v-text='user.fname + " " + user.lname'></th>
                                                     <template v-for='training in trainings'>
                                                         <th>
-                                                            <div>
-                                                                <CheckIcon/>
-                                                            </div>
+                                                            <CheckIcon v-if='training.users.has(user.id)'/>
                                                         </th>
                                                     </template>
                                                 </tr>
@@ -110,6 +114,16 @@ export default {
         filter: {
             deep: true,
             handler: async function() {
+                for (const field of ['start', 'end']) {
+                    if (!this.filter[field]) this.errors[field] = 'Cannot be empty';
+                    else this.errors[field] = '';
+                }
+
+                for (const e in this.errors) {
+                    if (this.errors[e]) return;
+                }
+
+                this.loading.attendance = true;
                 await this.fetchTrainings();
                 await this.fetchUsers();
                 this.loading.attendance = false;
@@ -122,10 +136,17 @@ export default {
                 team: true,
                 attendance: true
             },
+            errors: {
+                start: '',
+                end: ''
+            },
             filter: {
+                percent: 0.3,
                 start: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().slice(0, 10),
                 end: new Date().toISOString().slice(0, 10)
             },
+            total: 0, // Only Required
+            totals: {},
             trainings: [],
             users: [],
             team: {
@@ -138,8 +159,8 @@ export default {
     mounted: async function() {
         if (this.is_iam("Team:View")) {
             await this.fetch();
-            await this.fetchTrainings();
             await this.fetchUsers();
+            await this.fetchTrainings();
             this.loading.attendance = false;
         }
     },
@@ -153,6 +174,7 @@ export default {
         fetchUsers: async function() {
             const list = await window.std(`/api/user?team=${this.team.id}`);
             this.users = list.users;
+
         },
         fetchTrainings: async function() {
             const url = await window.stdurl(`/api/training`);
@@ -161,6 +183,27 @@ export default {
             url.searchParams.append('team', this.team.id);
             const list = await window.std(url);
             this.trainings = list.training;
+
+            this.total = 0;
+
+            this.totals = {};
+            for (const user of this.users) {
+                this.totals[user.id] = 0;
+            }
+
+            for (const training of this.trainings) {
+                training.users = new Set();
+                const users = await window.std(`/api/training/${training.id}/assigned`);
+
+                if (training.required) this.total++;
+
+                for (const user of users.assigned) {
+                    training.users.add(user.uid);
+
+                    console.error(JSON.stringify(this.totals))
+                    if (this.totals[user.uid] !== undefined) this.totals[user.uid] = this.totals[user.uid] + 1;
+                }
+            }
         }
     },
     components: {
