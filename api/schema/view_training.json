@@ -40,6 +40,9 @@
         },
         "teams": {
             "$ref": "./view_training/teams.json"
+        },
+        "teams_id": {
+            "$ref": "./view_training/teams_id.json"
         }
     },
     "required": [
@@ -55,6 +58,7 @@
         "required",
         "location_geom",
         "users",
-        "teams"
+        "teams",
+        "teams_id"
     ]
 }

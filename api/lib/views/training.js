@@ -12,6 +12,7 @@ export default class ViewTraining extends Generic {
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
 
+        query.team = Params.integer(query.team);
         query.assigned = Params.integer(query.assigned);
         query.required = Params.boolean(query.required);
         query.start = Params.timestamp(query.start);
@@ -27,6 +28,7 @@ export default class ViewTraining extends Generic {
                 WHERE
                     (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
                     AND (${query.assigned}::BIGINT IS NULL OR users @> ARRAY[${query.assigned}::BIGINT])
+                    AND (${query.team}::BIGINT IS NULL OR teams_id @> ARRAY[${query.team}::BIGINT])
                     AND (${query.required}::BOOLEAN IS NULL OR required = ${query.required}::BOOLEAN)
                     AND (${query.start}::TIMESTAMP IS NULL OR start_ts >= ${query.start}::TIMESTAMP)
                     AND (${query.end}::TIMESTAMP IS NULL OR end_ts <= ${query.end}::TIMESTAMP)

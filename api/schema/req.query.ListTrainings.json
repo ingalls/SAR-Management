@@ -32,6 +32,9 @@
         "assigned": {
             "type": "integer"
         },
+        "team": {
+            "type": "integer"
+        },
         "start": {
             "type": "integer"
         },
