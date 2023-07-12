@@ -154,9 +154,11 @@ export default {
             this.$router.push(`/training`);
         },
         update: async function() {
+            const body = JSON.parse(JSON.stringify(this.training));
+            body.teams = body.teams.map((team) => { return team.id });
+
             const create = await window.std(`/api/training/${this.training.id}`, {
-                method: 'PATCH',
-                body: this.training
+                method: 'PATCH', body
             });
 
             this.$router.push(`/training/${create.id}`);

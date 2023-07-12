@@ -116,9 +116,25 @@ export default async function router(schema, config) {
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
             else delete req.body.end_ts;
 
+            const teams = req.body.teams;
+            delete req.body.teams;
+
             const training = await Training.from(config.pool, req.params.trainingid);
 
             await training.commit(req.body);
+
+            if (teams) {
+                await TrainingTeam.delete(config.pool, training.id, {
+                    column: 'training_id'
+                });
+
+                for (const a of teams) {
+                    await TrainingTeam.generate(config.pool, {
+                        training_id: training.id,
+                        team_id: a,
+                    });
+                }
+            }
 
             return res.json(training);
         } catch (err) {
