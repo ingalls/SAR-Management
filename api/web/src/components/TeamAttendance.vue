@@ -33,11 +33,20 @@
                                     </div>
                                 </div>
                                 <div class='card-body row'>
-                                    <div class='col-12 col-md-6'>
+                                    <div class='col-12 col-md-5'>
                                         <TablerInput label='Start Date' :disabled='loading.attendance' :error='errors.start' type='date' v-model='filter.start'/>
                                     </div>
-                                    <div class='col-12 col-md-6'>
+                                    <div class='col-12 col-md-5'>
                                         <TablerInput label='End Date' :disabled='loading.attendance' :error='errors.end' type='date' v-model='filter.end'/>
+                                    </div>
+                                    <div class='col-12 col-md-2'>
+                                        <TablerInput label='Percent' :disabled='loading.attendance' :error='errors.end' v-model='filter.percent'/>
+                                    </div>
+                                    <div class='col-12 d-flex mt-2'>
+                                        <span v-text='Math.ceil(total * (this.filter.percent / 100)) + " Required Trainings"'/><span class='mx-1' v-text='`(${this.filter.percent}%)`'/> out of <span class='mx-1' v-text='trainings.length'/> Training Opportunities
+                                        <div class='ms-auto'>
+                                            <button @click='refresh' class='btn btn-primary'>Filter</button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -61,9 +70,9 @@
                                         <tbody>
                                             <template v-for='user in users'>
                                                 <tr :class='{
-                                                    "bg-red": totals[user.id] < (total * filter.percent)
+                                                    "bg-red": totals[user.id] < (total * (filter.percent / 100))
                                                 }'>
-                                                    <th class="row-header" v-text='user.fname + " " + user.lname'></th>
+                                                    <th @click='$router.push(`/user/${user.id}`)' class="row-header cursor-pointer" v-text='user.fname + " " + user.lname'></th>
                                                     <template v-for='training in trainings'>
                                                         <th>
                                                             <CheckIcon v-if='training.users.has(user.id)'/>
@@ -110,26 +119,6 @@ export default {
             required: true
         }
     },
-    watch: {
-        filter: {
-            deep: true,
-            handler: async function() {
-                for (const field of ['start', 'end']) {
-                    if (!this.filter[field]) this.errors[field] = 'Cannot be empty';
-                    else this.errors[field] = '';
-                }
-
-                for (const e in this.errors) {
-                    if (this.errors[e]) return;
-                }
-
-                this.loading.attendance = true;
-                await this.fetchTrainings();
-                await this.fetchUsers();
-                this.loading.attendance = false;
-            }
-        }
-    },
     data: function() {
         return {
             loading: {
@@ -141,7 +130,7 @@ export default {
                 end: ''
             },
             filter: {
-                percent: 0.3,
+                percent: 33,
                 start: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().slice(0, 10),
                 end: new Date().toISOString().slice(0, 10)
             },
@@ -166,6 +155,21 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        refresh: async function() {
+            for (const field of ['start', 'end']) {
+                if (!this.filter[field]) this.errors[field] = 'Cannot be empty';
+                else this.errors[field] = '';
+            }
+
+            for (const e in this.errors) {
+                if (this.errors[e]) return;
+            }
+
+            this.loading.attendance = true;
+            await this.fetchTrainings();
+            await this.fetchUsers();
+            this.loading.attendance = false;
+        },
         fetch: async function() {
             this.loading.team = true;
             this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
@@ -198,9 +202,9 @@ export default {
                 if (training.required) this.total++;
 
                 for (const user of users.assigned) {
+                    if (!user.confirmed) continue;
                     training.users.add(user.uid);
 
-                    console.error(JSON.stringify(this.totals))
                     if (this.totals[user.uid] !== undefined) this.totals[user.uid] = this.totals[user.uid] + 1;
                 }
             }
