@@ -24,7 +24,7 @@
                     <td>
                         <div class='d-flex'>
                             <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
-                            <div class='ms-auto btn-list'>
+                            <div class='ms-auto btn-list h-25'>
                                 <template v-for='team in training.teams'>
                                     <TeamBadge :team='team'/>
                                 </template>
