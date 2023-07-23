@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';
-import Training from '../lib/types/training.js';
+import Training from '../lib/views/training.js';
 import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
 import moment from 'moment';
