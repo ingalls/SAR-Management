@@ -2,22 +2,42 @@
     admin off
 }
 
-mesacountysar.com
+mesacountysar.com {
+    log {
+        output stdout
+    }
 
-log {
-    output stdout
+    route /api* {
+        reverse_proxy localhost:4999
+    }
+
+    route /docs* {
+        reverse_proxy localhost:4999
+    }
+
+    route * {
+        root * /home/eiger/SAR-Management/api/web/dist
+        try_files {path} {path}/ /index.html?{query}
+        file_server
+    }
 }
 
-route /api* {
-    reverse_proxy localhost:4999
-}
+team.mesacountysar.com {
+    log {
+        output stdout
+    }
 
-route /docs* {
-    reverse_proxy localhost:4999
-}
+    route /api* {
+        reverse_proxy localhost:4999
+    }
 
-route * {
-    root * /home/eiger/SAR-Management/api/web/dist
-    try_files {path} {path}/ /index.html?{query}
-    file_server
+    route /docs* {
+        reverse_proxy localhost:4999
+    }
+
+    route * {
+        root * /home/eiger/SAR-Management/api/web/dist
+        try_files {path} {path}/ /index.html?{query}
+        file_server
+    }
 }
