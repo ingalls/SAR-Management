@@ -12,7 +12,7 @@
         "url": "git+https://github.com/ingalls/SAR-Management.git"
     },
     "author": "Nick Ingalls <nick@ingalls.ca>",
-    "license": "ISC",
+    "license": "GPL-3.0",
     "bugs": {
         "url": "https://github.com/ingalls/SAR-Management/issues"
     },
