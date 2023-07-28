@@ -11,6 +11,12 @@ function up(knex) {
             '"Default Team"'::JSON,
             True
         );
+
+        INSERT INTO server (key, value, public) VALUES (
+            'frontend',
+            '"https://team.mesacountysar.com"'::JSON,
+            True
+        );
     `);
 }
 
