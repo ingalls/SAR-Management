@@ -64,7 +64,7 @@ export default async function server(config) {
 
     config.URL = (await Server.from(config.pool, 'frontend')).value;
     config.APIURL = new URL((await Server.from(config.pool, 'frontend')).value);
-    config.OrgName = new URL((await Server.from(config.pool, 'name')).value);
+    config.OrgName = (await Server.from(config.pool, 'name')).value;
 
     const app = express();
 
