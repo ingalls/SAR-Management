@@ -32,8 +32,6 @@ export default class Config {
                 config.MailGun = process.env.MailGun;
                 config.StackName = process.env.StackName;
                 config.SigningSecret = process.env.SigningSecret;
-                config.URL = 'https://mesacountysar.com';
-                config.APIURL = new URL('https://mesacountysar.com');
             }
         } catch (err) {
             throw new Error(err);

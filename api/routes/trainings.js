@@ -86,7 +86,7 @@ export default async function router(schema, config) {
                 for (const a of teams) {
                     await TrainingTeam.generate(config.pool, {
                         training_id: training.id,
-                        team_id: a,
+                        team_id: a
                     });
                 }
             }
@@ -131,7 +131,7 @@ export default async function router(schema, config) {
                 for (const a of teams) {
                     await TrainingTeam.generate(config.pool, {
                         training_id: training.id,
-                        team_id: a,
+                        team_id: a
                     });
                 }
             }

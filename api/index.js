@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import Err from '@openaddresses/batch-error';
 import { AuthAugment } from './lib/auth.js';
 import SwaggerUI from 'swagger-ui-express';
+import Server from './lib/types/server.js';
 
 try {
     const dotfile = new URL('.env', import.meta.url);
@@ -60,6 +61,10 @@ export default async function server(config) {
             geometry: true
         }
     });
+
+    config.URL = (await Server.from(config.pool, 'frontend')).value;
+    config.APIURL = new URL((await Server.from(config.pool, 'frontend')).value);
+    config.OrgName = new URL((await Server.from(config.pool, 'name')).value);
 
     const app = express();
 

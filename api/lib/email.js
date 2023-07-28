@@ -22,7 +22,7 @@ export default class Email {
         this.mailGenerator = new Mailgen({
             theme: 'default',
             product: {
-                name: 'Mesa County Search & Rescue',
+                name: this.config.OrgName,
                 link: this.config.URL
             }
         });
@@ -88,7 +88,7 @@ export default class Email {
         const email = {
             body: {
                 name: user.email,
-                intro: 'Welcome to Mesa SAR',
+                intro: `Welcome to ${this.config.OrgName}`,
                 action: {
                     instructions: `Hello ${user.fname}, a SAR account has been set up for you. Please reset the password to log in.`,
                     button: {
@@ -102,7 +102,7 @@ export default class Email {
         };
 
         try {
-            return await this.send(user.email, 'Welcome to Mesa SAR', this.mailGenerator.generate(email));
+            return await this.send(user.email, `Welcome to ${this.config.OrgName}`, this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Forgot Error');
         }
@@ -112,7 +112,7 @@ export default class Email {
         if (!to) throw Error(400, null, 'send - to field required');
         if (!subject) throw new Err(400, null, 'send - subject field required');
 
-        const from = 'MesaSAR No Reply <robot@mesacountysar.com>';
+        const from = `${this.config.OrgName} No Reply <robot@mesacountysar.com>`;
 
         try {
             await this.mg.messages.create('robot.mesacountysar.com', {
@@ -129,13 +129,13 @@ export default class Email {
         const email = {
             body: {
                 name: user.email,
-                intro: 'Mesa SAR - Account Disabled',
+                intro: `${this.config.OrgName} - Account Disabled`,
                 outro: 'Your account has been disabled - please notify us if this has been done in error'
             }
         };
 
         try {
-            return await this.send(user.email, 'Mesa SAR - Account Disabled', this.mailGenerator.generate(email));
+            return await this.send(user.email, `${this.config.OrgName} - Account Disabled`, this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Notification');
         }
@@ -145,7 +145,7 @@ export default class Email {
         const email = {
             body: {
                 name: user.email,
-                intro: 'Mesa SAR - Notification',
+                intro: `${this.config.OrgName} - Notification`,
                 action: {
                     instructions: notify.text,
                     button: {
@@ -159,7 +159,7 @@ export default class Email {
         };
 
         try {
-            return await this.send(user.email, 'Mesa SAR - New Notification', this.mailGenerator.generate(email));
+            return await this.send(user.email, `${this.config.OrgName} - New Notification`, this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Notification');
         }
