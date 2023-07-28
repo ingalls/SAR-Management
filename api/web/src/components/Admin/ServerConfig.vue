@@ -7,10 +7,10 @@
         <TablerLoading v-if='loading'/>
         <template v-else>
             <div class='col-12 pb-3'>
-                <TablerInput label='Organisation Name' v-model='keys.name.key' :disabled='auth.access !== "admin"'/>
+                <TablerInput label='Organisation Name (Public)' v-model='keys.name.value' :disabled='auth.access !== "admin"'/>
             </div>
             <div class='col-12 pb-3'>
-                <TablerInput label='Frontend URL' v-model='keys.frontend.key' :disabled='auth.access !== "admin"'/>
+                <TablerInput label='Frontend URL (Public)' v-model='keys.frontend.value' :disabled='auth.access !== "admin"'/>
             </div>
             <div v-if='auth.access === "admin"' class='col-12 pb-3 d-flex'>
                 <div class='ms-auto'>

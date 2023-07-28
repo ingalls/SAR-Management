@@ -49,6 +49,7 @@ export default async function router(schema, config) {
         auth: 'admin',
         description: 'Patch Server Metadata by key',
         ':key': 'string',
+        body: 'req.body.PatchServer.json',
         res: 'server.json'
     }, async (req, res) => {
         try {
