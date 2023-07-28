@@ -15,6 +15,9 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
+                <div class="col-lg-12">
+                    <ServerConfig/>
+                </div>
                 <div class="col-lg-4">
                     <CardRoles/>
                 </div>
@@ -33,6 +36,7 @@
 <script>
 import CardRoles from './Admin/Roles.vue';
 import CardLabels from './Admin/Labels.vue';
+import ServerConfig from './Admin/ServerConfig.vue';
 import CardStandards from './Admin/Standards.vue';
 import {
     TablerBreadCrumb 
@@ -55,6 +59,7 @@ export default {
         TablerBreadCrumb,
         CardLabels,
         CardStandards,
+        ServerConfig,
     }
 }
 </script>
