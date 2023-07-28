@@ -7,10 +7,14 @@
         },
         "value": {
             "$ref": "./server/value.json"
+        },
+        "public": {
+            "$ref": "./server/public.json"
         }
     },
     "required": [
         "key",
-        "value"
+        "value",
+        "public"
     ]
 }
