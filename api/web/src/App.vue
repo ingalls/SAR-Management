@@ -6,7 +6,7 @@
                 <img @click='$router.push("/")' class='cursor-pointer' height='50' width='50' src='/logo.png'>
             </div>
             <div class="col mx-2">
-                <div class="page-pretitle text-white">Mesa County Search &amp; Rescue</div>
+                <div class="page-pretitle text-white" v-text='name'></div>
                 <h2 class="page-title">Team Management</h2>
             </div>
 
@@ -181,6 +181,7 @@ export default {
             loading: {
                 user: false
             },
+            name: 'Search & Rescue',
             iam: {},
             user: null,
             err: false,
@@ -208,9 +209,13 @@ export default {
     },
     mounted: async function() {
         await this.getIAM();
+        await this.fetchName();
         if (localStorage.token) return await this.getUser();
     },
     methods: {
+        fetchName: async function() {
+            this.name = (await window.std('/api/server/name')).value;
+        },
         getIAM: async function() {
             this.iam = await window.std('/api/iam');
         },
