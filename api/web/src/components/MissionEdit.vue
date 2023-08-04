@@ -184,7 +184,7 @@ export default {
             this.$router.push('/mission');
         },
         validate: function() {
-            for (const field of ['title', 'location', 'body', 'location', 'location_geom']) {
+            for (const field of ['title', 'location', 'body', 'location']) {
                 if (!this.mission[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = '';
             }
@@ -203,15 +203,11 @@ export default {
                 }
             }
 
-            if (this.mission.start_year && isNaN(parseInt(this.mission.start_year))) {
-                this.errors.start_year = 'Invalid Year'
-            }
-
             for (const e in this.errors) {
                 if (this.errors[e]) return;
             }
 
-            if (!this.location_geom) throw new Error('A Location Geometry must be selected');
+            if (!this.mission.location_geom) throw new Error('A Location Geometry must be selected');
 
             return true;
         },
