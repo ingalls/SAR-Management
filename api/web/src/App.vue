@@ -117,7 +117,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/oncall")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <CalendarIcon/>
+                                    <CalendarTimeIcon/>
                                 </span>
                                 <span class="nav-link-title">OnCall</span>
                             </a>
@@ -180,6 +180,7 @@ import {
     NotebookIcon,
     AmbulanceIcon,
     CalendarIcon,
+    CalendarTimeIcon,
     AdjustmentsIcon
 } from 'vue-tabler-icons';
 
@@ -257,6 +258,7 @@ export default {
         ShovelIcon,
         NotebookIcon,
         CalendarIcon,
+        CalendarTimeIcon,
         TruckIcon,
         AmbulanceIcon,
         AdjustmentsIcon,
