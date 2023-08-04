@@ -38,6 +38,7 @@ const router = new VueRouter.createRouter({
         { path: '/doc/:pathMatch(.*)*', name: 'docs', component: () => import('./components/Docs.vue') },
 
         { path: '/calendar', name: 'calendar', component: () => import('./components/Calendar.vue') },
+        { path: '/oncall', name: 'oncall', component: () => import('./components/OnCall.vue') },
 
         { path: '/notification', name: 'notifications', component: () => import('./components/Notifications.vue') },
 

@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "schedules"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "total": {
+            "type": "integer"
+        },
+        "schedules": {
+            "type": "array",
+            "items":  {
+                "$ref": "./schedule.json"
+            }
+        }
+    }
+}

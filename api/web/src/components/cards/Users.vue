@@ -119,7 +119,6 @@
 
 <script>
 import Avatar from '../util/Avatar.vue';
-import TableHeader from '../util/TableHeader.vue';
 import {
     ListIcon,
     SearchIcon,
@@ -128,6 +127,7 @@ import {
     TrashIcon
 } from 'vue-tabler-icons'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
+import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import Epoch from '../util/Epoch.vue';
 import {
