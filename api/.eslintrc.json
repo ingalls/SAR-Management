@@ -6,6 +6,7 @@
     },
     "globals": {
         "Map": true,
+        "Set": true,
         "Promise": true,
         "FormData": true,
         "Blob": true

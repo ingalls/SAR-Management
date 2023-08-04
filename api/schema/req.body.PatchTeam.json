@@ -13,6 +13,12 @@
         },
         "iam": {
             "type": "object"
+        },
+        "colour_bg": {
+            "type": "string"
+        },
+        "colour_txt": {
+            "type": "string"
         }
     }
 }

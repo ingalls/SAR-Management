@@ -18,6 +18,9 @@
                                 <div class='d-flex justify-content-center'>
                                     <div>Password Reset Email Sent</div>
                                 </div>
+                                <div class="form-footer">
+                                  <button @click='$router.push("/")' type="submit" class="btn btn-primary w-100">Return Home</button>
+                                </div>
                             </template>
                             <template v-else>
                                 <div class="mb-3">
@@ -25,7 +28,7 @@
                                     <input v-model='username' v-on:keyup.enter='reset' type="text" class="form-control" placeholder="your@email.com" autocomplete="off">
                                 </div>
                                 <div class="form-footer">
-                                  <button @click='reset' type="submit" class="btn btn-primary w-100">Sign In</button>
+                                  <button @click='reset' type="submit" class="btn btn-primary w-100">Send Reset</button>
                                 </div>
                             </template>
                         </div>

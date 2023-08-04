@@ -15,15 +15,20 @@
     <div class='page-body'>
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
-                <div class="col-lg-4">
-                    <CardRoles/>
+                <div class="col-lg-12">
+                    <ServerConfig :auth='auth'/>
                 </div>
-                <div class="col-lg-4">
-                    <CardLabels/>
-                </div>
-                <div class="col-lg-4">
-                    <CardStandards/>
-                </div>
+                <template v-if='auth.admin'>
+                    <div class="col-lg-4">
+                        <CardRoles/>
+                    </div>
+                    <div class="col-lg-4">
+                        <CardLabels/>
+                    </div>
+                    <div class="col-lg-4">
+                        <CardStandards/>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -33,9 +38,10 @@
 <script>
 import CardRoles from './Admin/Roles.vue';
 import CardLabels from './Admin/Labels.vue';
+import ServerConfig from './Admin/ServerConfig.vue';
 import CardStandards from './Admin/Standards.vue';
 import {
-    TablerBreadCrumb 
+    TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -55,6 +61,7 @@ export default {
         TablerBreadCrumb,
         CardLabels,
         CardStandards,
+        ServerConfig,
     }
 }
 </script>

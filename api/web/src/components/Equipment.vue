@@ -24,56 +24,61 @@
                                 <h3 class='card-title' v-text='equipment.name'/>
                                 <div class='ms-auto'>
                                     <div class='btn-list'>
-                                        <span v-if='equipment.container' class="badge bg-blue">Container</span>
-                                        <span v-if='equipment.archived' class="badge bg-red">Archived</span>
+                                        <span v-if='equipment.container' class="badge bg-blue" style="height: 20px;">Container</span>
+                                        <span v-if='equipment.archived' class="badge bg-red" style="height: 20px;">Archived</span>
 
                                         <SettingsIcon v-if='is_iam("Equipment:Manage") && !equipment.archived' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <div class='row row-cards'>
-                                    <div class="col-md-12 pb-4" v-text='equipment.description'></div>
-                                    <div class="col-md-12">
-                                        <div class="datagrid">
-                                            <div class="datagrid-item">
-                                                <div class="datagrid-title">Parent Container</div>
-                                                <div class="datagrid-content">
-                                                    <a v-if='parent.id' @click='$router.push(`/equipment/${parent.id}`)' class='cursor-pointer' v-text='parent.name'></a>
-                                                    <span v-else>None</span>
+                            <div class='row row-0'>
+                                <div class='col-12 col-md-9'>
+                                    <div class='card-body'>
+                                        <div class="col-md-12 pb-4" v-text='equipment.description'></div>
+                                        <div class="col-md-8">
+                                            <div class="datagrid">
+                                                <div class="datagrid-item">
+                                                    <div class="datagrid-title">Parent Container</div>
+                                                    <div class="datagrid-content">
+                                                        <a v-if='parent.id' @click='$router.push(`/equipment/${parent.id}`)' class='cursor-pointer' v-text='parent.name'></a>
+                                                        <span v-else>None</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="datagrid-item">
-                                                <div class="datagrid-title">Equipment Type</div>
-                                                <div class="datagrid-content">
-                                                    <a v-if='type.id' @click='$router.push(`/equipment/type/${type.id}`)' class='cursor-pointer' v-text='type.type'></a>
-                                                    <span v-else>None</span>
+                                                <div class="datagrid-item">
+                                                    <div class="datagrid-title">Equipment Type</div>
+                                                    <div class="datagrid-content">
+                                                        <a v-if='type.id' @click='$router.push(`/equipment/type/${type.id}`)' class='cursor-pointer' v-text='type.type'></a>
+                                                        <span v-else>None</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="datagrid-item">
-                                                <div class="datagrid-title">Quantity</div>
-                                                <div class="datagrid-content">
-                                                    <span v-text='equipment.quantity'/>
+                                                <div class="datagrid-item">
+                                                    <div class="datagrid-title">Quantity</div>
+                                                    <div class="datagrid-content">
+                                                        <span v-text='equipment.quantity'/>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="datagrid-item">
-                                                <div class="datagrid-title">Item Value</div>
-                                                <div class="datagrid-content">
-                                                    <span v-if='equipment.value' v-text='equipment.value'/>
-                                                    <span v-else>Unknown</span>
+                                                <div class="datagrid-item">
+                                                    <div class="datagrid-title">Item Value</div>
+                                                    <div class="datagrid-content">
+                                                        <span v-if='equipment.value' v-text='equipment.value'/>
+                                                        <span v-else>Unknown</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="datagrid-item">
-                                                <div class="datagrid-title">Assigned</div>
-                                                <div class="datagrid-content">
-                                                    <template v-if='assigned.length'>
-                                                        <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1' :link='true'/>
-                                                    </template>
-                                                    <span v-else>None</span>
+                                                <div class="datagrid-item">
+                                                    <div class="datagrid-title">Assigned</div>
+                                                    <div class="datagrid-content">
+                                                        <template v-if='assigned.length'>
+                                                            <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1' :link='true'/>
+                                                        </template>
+                                                        <span v-else>None</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class='col-12 col-md-3'>
+                                    <EquipmentProfile :equipmentid='equipment.id'/>
                                 </div>
                             </div>
                             <div v-if='type.schema && type.schema.properties' class="col-md-12">
@@ -103,6 +108,7 @@ import {
 } from 'vue-tabler-icons';
 import CardEquipment from './cards/Equipment.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
+import EquipmentProfile from './Equipment/Profile.vue';
 import Avatar from './util/Avatar.vue';
 
 export default {
@@ -156,6 +162,7 @@ export default {
         CardEquipment,
         TablerLoading,
         EquipmentMeta,
+        EquipmentProfile,
         TablerBreadCrumb
     }
 }

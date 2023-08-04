@@ -16,34 +16,69 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <NoAccess v-if='!is_iam("Mission:Manage")' title='New Mission'/>
-                <TablerLoading v-if='mission.loading'/>
+                <TablerLoading v-if='loading.mission'/>
                 <template v-else>
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
                                 <div class='row row-cards'>
                                     <div class="col-md-8">
-                                        <TablerInput v-model='mission.title' label='Mission Title'/>
+                                        <TablerInput
+                                            v-model='mission.title'
+                                            :error='errors.title'
+                                            :required='true'
+                                            label='Mission Title'
+                                            description='A Human Readable name for the mission'
+                                        />
                                     </div>
                                     <div class="col-md-4">
-                                        <TablerInput v-model='mission.externalid' label='Mission Number'/>
+                                        <TablerInput
+                                            v-model='mission.externalid'
+                                            label='Mission Number'
+                                            description='A CAD number or similiar External ID'
+                                        />
                                     </div>
                                     <div class="col-md-6">
-                                        <TablerInput type='datetime-local' v-model='mission.start_ts' label='Mission Start'/>
+                                        <TablerInput
+                                            type='datetime-local'
+                                            :required='true'
+                                            :error='errors.start_ts'
+                                            v-model='mission.start_ts'
+                                            label='Mission Start'
+                                        />
                                     </div>
                                     <div class="col-md-6">
-                                        <TablerInput type='datetime-local' v-model='mission.end_ts' label='Mission End'/>
+                                        <TablerInput
+                                            type='datetime-local'
+                                            :required='true'
+                                            :error='errors.end_ts'
+                                            v-model='mission.end_ts'
+                                            label='Mission End'
+                                        />
                                     </div>
                                     <div class="col-md-12">
-                                        <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
+                                        <TablerInput
+                                            v-model='mission.body'
+                                            :required='true'
+                                            :error='errors.body'
+                                            :rows='6'
+                                            label='Mission Report'
+                                        />
                                     </div>
                                     <div class='col-md-12'>
-                                        <LocationDropdown @locGeom='mission.location_geom = $event' v-model='mission.location'/>
+                                        <LocationDropdown
+                                            @locGeom='mission.location_geom = $event'
+                                            :error='errors.location'
+                                            :required='true'
+                                            v-model='mission.location'
+                                        />
                                     </div>
                                     <div class='col-md-12'>
-                                        <Location v-model='mission.location_geom' :disabled='false'/>
+                                        <Location
+                                            v-model='mission.location_geom'
+                                            :disabled='false'
+                                        />
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -112,13 +147,22 @@ export default {
             loading: {
                 mission: true
             },
+            errors: {
+                title: '',
+                body: '',
+                start_ts: '',
+                end_ts: '',
+                location_geom: '',
+                location: ''
+            },
             mission: {
                 title: '',
                 location: '',
                 body: '',
                 start_ts: '',
                 end_ts: '',
-                externalid: ''
+                externalid: '',
+                location_geom: null
             },
             assigned: []
         }
@@ -141,7 +185,37 @@ export default {
             this.loading = false;
             this.$router.push('/mission');
         },
+        validate: function() {
+            for (const field of ['title', 'location', 'body', 'location']) {
+                if (!this.mission[field]) this.errors[field] = 'Cannot be empty';
+                else this.errors[field] = '';
+            }
+
+            for (const field of ['start_ts', 'end_ts']) {
+                if (!this.mission[field]) {
+                    this.errors[field] = 'Cannot be empty';
+                    continue;
+                }
+
+                try {
+                    new Date(this.mission[field]);
+                    this.errors[field] = '';
+                } catch (err) {
+                    this.errors[field] = 'Invalid Date';
+                }
+            }
+
+            for (const e in this.errors) {
+                if (this.errors[e]) return;
+            }
+
+            if (!this.mission.location_geom) throw new Error('A Location Geometry must be selected');
+
+            return true;
+        },
         update: async function() {
+            if (!this.validate()) return;
+
             this.loading = true;
             const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
                 method: 'PATCH',
@@ -152,6 +226,8 @@ export default {
             this.$router.push(`/mission/${update.id}`);
         },
         create: async function() {
+            if (!this.validate()) return;
+
             this.loading = true;
             const create = await window.std('/api/mission', {
                 method: 'POST',

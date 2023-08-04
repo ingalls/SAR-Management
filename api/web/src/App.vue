@@ -6,7 +6,7 @@
                 <img @click='$router.push("/")' class='cursor-pointer' height='50' width='50' src='/logo.png'>
             </div>
             <div class="col mx-2">
-                <div class="page-pretitle text-white">Mesa County Search &amp; Rescue</div>
+                <div class="page-pretitle text-white" v-text='name'></div>
                 <h2 class="page-title">Team Management</h2>
             </div>
 
@@ -24,6 +24,7 @@
                         <a @click='$router.push("/training")' class="dropdown-item">Training</a>
                         <a @click='$router.push("/team")' class="dropdown-item">Team</a>
                         <a @click='$router.push("/calendar")' class="dropdown-item">Calendar</a>
+                        <a @click='$router.push("/schedule")' class="dropdown-item">On-Call</a>
                     </div>
 
 
@@ -113,6 +114,14 @@
                                 <span class="nav-link-title">Calendar</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link cursor-pointer" @click='$router.push("/schedule")'>
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <CalendarTimeIcon/>
+                                </span>
+                                <span class="nav-link-title">On-Call</span>
+                            </a>
+                        </li>
                     </ul>
                     <div v-if='user && user.access === "admin"' class='ms-auto'>
                         <ul class="navbar-nav">
@@ -171,6 +180,7 @@ import {
     NotebookIcon,
     AmbulanceIcon,
     CalendarIcon,
+    CalendarTimeIcon,
     AdjustmentsIcon
 } from 'vue-tabler-icons';
 
@@ -181,6 +191,7 @@ export default {
             loading: {
                 user: false
             },
+            name: 'Search & Rescue',
             iam: {},
             user: null,
             err: false,
@@ -208,9 +219,13 @@ export default {
     },
     mounted: async function() {
         await this.getIAM();
+        await this.fetchName();
         if (localStorage.token) return await this.getUser();
     },
     methods: {
+        fetchName: async function() {
+            this.name = (await window.std('/api/server/name')).value;
+        },
         getIAM: async function() {
             this.iam = await window.std('/api/iam');
         },
@@ -243,6 +258,7 @@ export default {
         ShovelIcon,
         NotebookIcon,
         CalendarIcon,
+        CalendarTimeIcon,
         TruckIcon,
         AmbulanceIcon,
         AdjustmentsIcon,

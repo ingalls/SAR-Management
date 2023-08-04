@@ -31,6 +31,12 @@
         },
         "end_ts": {
             "type": "string"
+        },
+        "teams": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            }
         }
     }
 }

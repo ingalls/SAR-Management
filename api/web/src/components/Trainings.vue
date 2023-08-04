@@ -35,7 +35,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table card-table table-vcenter">
+                        <table class="table table-hover card-table table-vcenter">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -46,10 +46,15 @@
                             <tbody>
                                 <tr :key='training.id' v-for='training in list.training'>
                                     <td>
-                                        <div class='d-flex'>
-                                            <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
-                                            <div class='ms-auto'>
-                                                <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
+                                        <div class='row'>
+                                            <div class='d-flex'>
+                                                <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
+                                                <div class='ms-auto btn-list'>
+                                                    <template v-for='team in training.teams'>
+                                                        <TeamBadge :team='team'/>
+                                                    </template>
+                                                    <span v-if='training.required' class="badge bg-red" style="height: 20px;">Required</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -76,6 +81,7 @@ import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
 import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
+import TeamBadge from './util/TeamBadge.vue';
 import {
     TablerBreadCrumb,
     TablerLoading
@@ -141,6 +147,7 @@ export default {
         None,
         TableFooter,
         EpochRange,
+        TeamBadge,
         SearchIcon,
         NoAccess,
         TablerLoading,

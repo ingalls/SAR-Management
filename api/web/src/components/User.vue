@@ -26,10 +26,10 @@
                                 <div class='ms-auto'>
                                     <div class='btn-list'>
                                         <div class='ms-auto'>
-                                            <span v-if='user.disabled' class="badge bg-red">DISABLED</span>
-                                            <span v-else-if='user.access === "admin"' class="badge bg-red">Admin</span>
-                                            <span v-else-if='user.access === "user"' class="badge bg-blue">User</span>
-                                            <span v-else-if='user.access === "read"' class="badge bg-gray">Read</span>
+                                            <span v-if='user.disabled' class="badge bg-red" style="height: 20px;">DISABLED</span>
+                                            <span v-else-if='user.access === "admin"' class="badge bg-red" style="height: 20px;">Admin</span>
+                                            <span v-else-if='user.access === "user"' class="badge bg-blue" style="height: 20px;">User</span>
+                                            <span v-else-if='user.access === "read"' class="badge bg-gray" style="height: 20px;">Read</span>
                                         </div>
 
                                         <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
@@ -41,10 +41,10 @@
 
                             </div>
                             <div class='row row-0'>
-                                <div class='col-12 col-lg-3'>
+                                <div class='col-12 col-md-3'>
                                     <UserProfile :userid='user.id'/>
                                 </div>
-                                <div class='col-12 col-lg-9'>
+                                <div class='col-12 col-md-9'>
                                     <div class="card-body">
                                         <div class="datagrid">
                                             <div class="datagrid-item">

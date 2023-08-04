@@ -35,7 +35,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <table class="table card-table table-vcenter">
+                            <table class="table table-hover card-table table-vcenter">
                                 <thead>
                                     <tr>
                                         <th>Name</th>

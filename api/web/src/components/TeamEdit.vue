@@ -21,12 +21,27 @@
                     <div v-else class="card">
                         <div class="card-body">
                             <div class='row row-cards'>
-                                <div class="col-md-12">
-                                    <label class="form-label">Team Name</label>
+                                <div class="col-12 col-md-10">
+                                    <div class='d-flex'>
+                                        <label class="form-label">Team Name</label>
+                                        <div class='ms-auto'>
+                                            <TeamBadge :team='team'/>
+                                        </div>
+                                    </div>
                                     <input v-model='team.name' type="text" :class='{
                                         "is-invalid": errors.name
                                     }' class="form-control" placeholder="Team Name">
                                     <div v-if='errors.name' v-text='errors.name' class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-12 col-md-2 row mt-3">
+                                    <div class='col-auto'>
+                                        <label class="form-label">Back</label>
+                                        <input type="color" v-model='team.colour_bg' class="form-control form-control-color" title="Background Colour">
+                                    </div>
+                                    <div class='col-auto'>
+                                        <label class="form-label">Text</label>
+                                        <input type="color" v-model='team.colour_txt' class="form-control form-control-color" title="Text Colour">
+                                    </div>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Charter</label>
@@ -123,6 +138,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import TeamBadge from './util/TeamBadge.vue';
 import {
     PlusIcon
 } from 'vue-tabler-icons';
@@ -160,6 +176,8 @@ export default {
             team: {
                 name: '',
                 body: '',
+                colour_bg: '#9aa0a6',
+                colour_txt: '#000000',
                 iam: {}
             }
         }
@@ -210,6 +228,8 @@ export default {
                 body: {
                     name: this.team.name,
                     body: this.team.body,
+                    colour_bg: this.team.colour_bg,
+                    colour_txt: this.team.colour_txt
                 }
             });
 
@@ -241,7 +261,8 @@ export default {
         NoAccess,
         TablerLoading,
         TablerSelect,
-        TablerBreadCrumb
+        TablerBreadCrumb,
+        TeamBadge
     }
 }
 </script>

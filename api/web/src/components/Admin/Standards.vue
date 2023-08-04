@@ -13,10 +13,6 @@
             </tr>
         </thead>
         <tbody>
-            <tr :key='issue.id' v-for='issue in issues'>
-                <td><a @click='$router.push(`/issue/${issue.id}`)' v-text='issue.title' class='cursor-pointer'></a></td>
-                <td v-text='issue.priority'></td>
-            </tr>
         </tbody>
     </table>
 </div>

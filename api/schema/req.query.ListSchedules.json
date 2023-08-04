@@ -1,0 +1,35 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "limit": {
+            "$ref": "./util/limit.json"
+        },
+        "order": {
+            "$ref": "./util/order.json"
+        },
+        "disabled": {
+            "type": "boolean",
+            "default": false
+        },
+        "sort": {
+            "type": "string",
+            "default": "created",
+            "enum": [
+                "id",
+                "created",
+                "updated",
+                "name"
+            ],
+            "description": "Field to sort order by"
+        },
+        "page": {
+            "$ref": "./util/page.json"
+        },
+        "filter": {
+            "type": "string",
+            "default": "",
+            "description": "Filter a complete or partial name"
+        }
+    }
+}

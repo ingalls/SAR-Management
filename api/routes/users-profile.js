@@ -7,7 +7,7 @@ import sharp from 'sharp';
 
 const generic = fs.readFileSync(new URL('../lib/user.webp', import.meta.url));
 
-export default async function router(schema, config) {
+export default async function router(schema) {
     const spaces = new Spaces();
 
     await schema.get('/user/:userid/profile', {
@@ -22,7 +22,7 @@ export default async function router(schema, config) {
             await Auth.is_auth(req, true);
 
             try {
-                let Key = `users/${req.params.userid}/`
+                let Key = `users/${req.params.userid}/`;
                 if (req.query.size === 'full') Key = Key + 'profile.jpg';
                 else if (req.query.size === 'mini') Key = Key + 'profile-mini.jpg';
                 else Key = Key + 'profile.jpg';
@@ -80,13 +80,10 @@ export default async function router(schema, config) {
         }
 
 
-        const uploads = [];
         bb.on('file', async (fieldname, file, blob) => {
             const Body = await stream2buffer(file);
 
-            uploads.push(async () => {
-                console.error(Body)
-
+            try {
                 await spaces.upload({
                     Key: `users/${req.params.userid}/profile-orig-${blob.filename}`,
                     Body
@@ -94,7 +91,7 @@ export default async function router(schema, config) {
 
                 const jpeg = await sharp(Body)
                     .jpeg({ mozjpeg: true })
-                    .toBuffer()
+                    .toBuffer();
 
                 await spaces.upload({
                     Key: `users/${req.params.userid}/profile.jpg`,
@@ -104,23 +101,17 @@ export default async function router(schema, config) {
                 const jpegmini = await sharp(Body)
                     .resize(100)
                     .jpeg({ mozjpeg: true })
-                    .toBuffer()
+                    .toBuffer();
 
                 await spaces.upload({
                     Key: `users/${req.params.userid}/profile-mini.jpg`,
                     Body: jpegmini
                 });
-            })
-        }).on('finish', async () => {
-            try {
-                if (!uploads.length) throw new Err(400, null, 'No Upload Provided');
-
-                await uploads[0]();
 
                 return res.json({
                     status: 200,
                     message: 'Profile Updated'
-                })
+                });
             } catch (err) {
                 Err.respond(err, res);
             }
@@ -133,8 +124,8 @@ export default async function router(schema, config) {
 function stream2buffer(stream) {
     return new Promise((resolve, reject) => {
         const _buf = [];
-        stream.on("data", (chunk) => _buf.push(chunk));
-        stream.on("end", () => resolve(Buffer.concat(_buf)));
-        stream.on("error", (err) => reject(err));
+        stream.on('data', (chunk) => _buf.push(chunk));
+        stream.on('end', () => resolve(Buffer.concat(_buf)));
+        stream.on('error', (err) => reject(err));
     });
 }

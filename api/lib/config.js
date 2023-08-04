@@ -23,15 +23,15 @@ export default class Config {
                 config.SigningSecret = 'mesa-sar-test-token';
                 config.URL = 'http://localhost:8080/';
                 config.APIURL = new URL('http://localhost:5000/');
+                config.MailGun = process.env.MailGun || '';
             } else {
                 if (!process.env.StackName) throw new Error('StackName env must be set');
                 if (!process.env.SigningSecret) throw new Error('SigningSecret env must be set');
+                if (!process.env.MailGun) throw new Error('MailGun env must be set');
 
                 config.MailGun = process.env.MailGun;
                 config.StackName = process.env.StackName;
                 config.SigningSecret = process.env.SigningSecret;
-                config.URL = 'https://mesacountysar.com';
-                config.APIURL = new URL('https://mesacountysar.com');
             }
         } catch (err) {
             throw new Error(err);

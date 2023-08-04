@@ -48,7 +48,7 @@
     </template>
     <template v-else-if='mode === "list"'>
         <div class='table-responsive'>
-            <table class="table card-table table-vcenter datatable">
+            <table class="table card-table table-hover table-vcenter datatable">
                 <TableHeader
                     v-model:sort='paging.sort'
                     v-model:order='paging.order'
@@ -119,7 +119,6 @@
 
 <script>
 import Avatar from '../util/Avatar.vue';
-import TableHeader from '../util/TableHeader.vue';
 import {
     ListIcon,
     SearchIcon,
@@ -128,6 +127,7 @@ import {
     TrashIcon
 } from 'vue-tabler-icons'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
+import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import Epoch from '../util/Epoch.vue';
 import {

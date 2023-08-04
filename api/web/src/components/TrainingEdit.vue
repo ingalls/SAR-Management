@@ -28,14 +28,16 @@
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-12">
+                                    <div class="col-12 col-md-8">
                                         <TablerInput v-model='training.title' label='Training Title'/>
-                                    </div>
-                                    <div class="col-md-6">
                                         <TablerInput type='datetime-local' v-model='training.start_ts' label='Training Start'/>
-                                    </div>
-                                    <div class="col-md-6">
                                         <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <TeamSelect
+                                            v-model='training.teams'
+                                            label='Assigned'
+                                        />
                                     </div>
                                     <div class="col-md-12">
                                         <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>
@@ -77,6 +79,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import TeamSelect from './util/TeamSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import {
@@ -110,7 +113,8 @@ export default {
                 location: '',
                 location_geom: null,
                 start_ts: '',
-                end_ts: ''
+                end_ts: '',
+                teams: []
             }
         }
     },
@@ -134,9 +138,11 @@ export default {
             this.loading.training = false;
         },
         create: async function() {
+            const body = JSON.parse(JSON.stringify(this.training));
+            body.teams = body.teams.map((team) => { return team.id });
+
             const create = await window.std('/api/training', {
-                method: 'POST',
-                body: this.training
+                method: 'POST', body
             });
 
             this.$router.push(`/training/${create.id}`);
@@ -148,9 +154,11 @@ export default {
             this.$router.push(`/training`);
         },
         update: async function() {
+            const body = JSON.parse(JSON.stringify(this.training));
+            body.teams = body.teams.map((team) => { return team.id });
+
             const create = await window.std(`/api/training/${this.training.id}`, {
-                method: 'PATCH',
-                body: this.training
+                method: 'PATCH', body
             });
 
             this.$router.push(`/training/${create.id}`);
@@ -161,6 +169,7 @@ export default {
         TablerInput,
         TablerToggle,
         TablerLoading,
+        TeamSelect,
         LocationDropdown,
         NoAccess,
         TablerBreadCrumb

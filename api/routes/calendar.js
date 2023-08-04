@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';
-import Training from '../lib/types/training.js';
+import Training from '../lib/views/training.js';
 import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
 import moment from 'moment';
@@ -40,7 +40,7 @@ export default async function router(schema, config) {
         group: 'Calendar',
         auth: 'user',
         description: 'Query Events from a given calendar and return as ICAL',
-        ':calendar': 'string',
+        ':calendar': 'string'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req, true);
@@ -71,8 +71,6 @@ export default async function router(schema, config) {
 
             if (req.token) await Auth.is_scope(req, req.token.scopes);
 
-            const events = [];
-
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
                 (await Training.stream(config.pool, req.query)).on('data', (training) => {
@@ -84,7 +82,7 @@ export default async function router(schema, config) {
                         summary: training.title,
                         location: training.location,
                         url: String(new URL(`/training/${training.id}`, config.URL))
-                    })
+                    });
                 }).on('end', () => {
                     res.setHeader('Content-Type', 'text/calendar');
                     res.send(calendar.toString());

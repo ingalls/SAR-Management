@@ -1,7 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Location from '../lib/views/location.js';
 import Auth from '../lib/auth.js';
-import moment from 'moment';
 
 export default async function router(schema, config) {
     await schema.get('/location', {

@@ -10,7 +10,8 @@ const Permissions = {
     Mission: ['Admin', 'Manage', 'View', 'None'],
     Team: ['Admin', 'Manage', 'View', 'None'],
     Training: ['Admin', 'Manage', 'View', 'None'],
-    User: ['Admin', 'View', 'None']
+    User: ['Admin', 'View', 'None'],
+    OnCall: ['Admin', 'View', 'None']
 };
 
 class AuthAugment {

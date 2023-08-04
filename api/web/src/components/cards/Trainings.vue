@@ -12,7 +12,7 @@
         <None :create='false' :label='training'/>
     </template>
     <template v-else>
-        <table class="table card-table table-vcenter">
+        <table class="table card-table table-hover table-vcenter">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -24,8 +24,11 @@
                     <td>
                         <div class='d-flex'>
                             <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
-                            <div class='ms-auto'>
-                                <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
+                            <div class='ms-auto btn-list h-25'>
+                                <template v-for='team in training.teams'>
+                                    <TeamBadge :team='team'/>
+                                </template>
+                                <span v-if='training.required' class="badge bg-red" style="height: 20px;">Required</span>
                             </div>
                         </div>
                     </td>
@@ -40,6 +43,7 @@
 <script>
 import None from '../util/None.vue';
 import EpochRange from '../util/EpochRange.vue';
+import TeamBadge from '../util/TeamBadge.vue'
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -81,6 +85,7 @@ export default {
     components: {
         TablerLoading,
         EpochRange,
+        TeamBadge,
         None
     }
 }
