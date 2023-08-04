@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./schedule/id.json"
+        },
+        "created": {
+            "$ref": "./schedule/created.json"
+        },
+        "updated": {
+            "$ref": "./schedule/updated.json"
+        },
+        "name": {
+            "$ref": "./schedule/name.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "name"
+    ]
+}
