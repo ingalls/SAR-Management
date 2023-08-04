@@ -19,6 +19,10 @@
                     <div class="card">
                         <div class="card-header">
                             <h1 class='card-title'>On Call Schedules</h1>
+
+                            <div class='ms-auto btn-list'>
+                                <PlusIcon @click='$route.push("/schedule/new")' class='cursor-pointer'/>
+                            </div>
                         </div>
                         <template v-if='loading.schema'>
                             <TablerLoading desc='Loading Schedules'/>

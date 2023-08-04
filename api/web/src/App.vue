@@ -24,7 +24,7 @@
                         <a @click='$router.push("/training")' class="dropdown-item">Training</a>
                         <a @click='$router.push("/team")' class="dropdown-item">Team</a>
                         <a @click='$router.push("/calendar")' class="dropdown-item">Calendar</a>
-                        <a @click='$router.push("/oncall")' class="dropdown-item">OnCall</a>
+                        <a @click='$router.push("/schedule")' class="dropdown-item">On-Call</a>
                     </div>
 
 
@@ -115,11 +115,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link cursor-pointer" @click='$router.push("/oncall")'>
+                            <a class="nav-link cursor-pointer" @click='$router.push("/schedule")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <CalendarTimeIcon/>
                                 </span>
-                                <span class="nav-link-title">OnCall</span>
+                                <span class="nav-link-title">On-Call</span>
                             </a>
                         </li>
                     </ul>
