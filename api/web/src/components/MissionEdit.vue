@@ -39,6 +39,7 @@
                                     <div class="col-md-6">
                                         <TablerInput
                                             type='datetime-local'
+                                            :required='true'
                                             :error='errors.start_ts'
                                             v-model='mission.start_ts'
                                             label='Mission Start'
@@ -47,6 +48,7 @@
                                     <div class="col-md-6">
                                         <TablerInput
                                             type='datetime-local'
+                                            :required='true'
                                             :error='errors.end_ts'
                                             v-model='mission.end_ts'
                                             label='Mission End'
@@ -55,6 +57,7 @@
                                     <div class="col-md-12">
                                         <TablerInput
                                             v-model='mission.body'
+                                            :required='true'
                                             :error='errors.body'
                                             :rows='6'
                                             label='Mission Report'
@@ -156,7 +159,8 @@ export default {
                 body: '',
                 start_ts: '',
                 end_ts: '',
-                externalid: ''
+                externalid: '',
+                location_geom: null
             },
             assigned: []
         }
@@ -182,7 +186,7 @@ export default {
         validate: function() {
             for (const field of ['title', 'location', 'body', 'location', 'location_geom']) {
                 if (!this.mission[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
+                else this.errors[field] = '';
             }
 
             for (const field of ['start_ts', 'end_ts']) {
@@ -193,7 +197,7 @@ export default {
 
                 try {
                     new Date(this.mission[field]);
-                    this.errors[field] = false;
+                    this.errors[field] = '';
                 } catch (err) {
                     this.errors[field] = 'Invalid Date';
                 }
@@ -206,6 +210,8 @@ export default {
             for (const e in this.errors) {
                 if (this.errors[e]) return;
             }
+
+            if (!this.location_geom) throw new Error('A Location Geometry must be selected');
 
             return true;
         },
