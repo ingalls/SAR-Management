@@ -22,6 +22,12 @@
         },
         "iam": {
             "$ref": "./teams/iam.json"
+        },
+        "colour_bg": {
+            "$ref": "./teams/colour_bg.json"
+        },
+        "colour_txt": {
+            "$ref": "./teams/colour_txt.json"
         }
     },
     "required": [
@@ -31,6 +37,8 @@
         "public",
         "name",
         "body",
-        "iam"
+        "iam",
+        "colour_bg",
+        "colour_txt"
     ]
 }
