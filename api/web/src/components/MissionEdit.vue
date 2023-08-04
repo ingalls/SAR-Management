@@ -28,12 +28,14 @@
                                             :error='errors.title'
                                             :required='true'
                                             label='Mission Title'
+                                            description='A Human Readable name for the mission'
                                         />
                                     </div>
                                     <div class="col-md-4">
                                         <TablerInput
                                             v-model='mission.externalid'
                                             label='Mission Number'
+                                            description='A CAD number or similiar External ID'
                                         />
                                     </div>
                                     <div class="col-md-6">
