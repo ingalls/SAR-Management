@@ -1,4 +1,4 @@
-import Generic from '@openaddresses/batch-generic';
+import Generic, { Params } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { sql } from 'slonik';
 
@@ -23,7 +23,7 @@ export default class Schedule extends Generic {
                 FROM
                     schedule
                 WHERE
-                    (${query.filter}::TEXT IS NULL OR title ~* ${query.filter})
+                    (${query.filter}::TEXT IS NULL OR name ~* ${query.filter})
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT

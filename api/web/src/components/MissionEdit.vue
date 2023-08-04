@@ -23,27 +23,57 @@
                             <div class="card-body">
                                 <div class='row row-cards'>
                                     <div class="col-md-8">
-                                        <TablerInput v-model='mission.title' label='Mission Title'/>
+                                        <TablerInput
+                                            v-model='mission.title'
+                                            :error='errors.title'
+                                            :required='true'
+                                            label='Mission Title'
+                                        />
                                     </div>
                                     <div class="col-md-4">
-                                        <TablerInput v-model='mission.externalid' label='Mission Number'/>
+                                        <TablerInput
+                                            v-model='mission.externalid'
+                                            label='Mission Number'
+                                        />
                                     </div>
                                     <div class="col-md-6">
-                                        <TablerInput type='datetime-local' v-model='mission.start_ts' label='Mission Start'/>
+                                        <TablerInput
+                                            type='datetime-local'
+                                            :error='errors.start_ts'
+                                            v-model='mission.start_ts'
+                                            label='Mission Start'
+                                        />
                                     </div>
                                     <div class="col-md-6">
-                                        <TablerInput type='datetime-local' v-model='mission.end_ts' label='Mission End'/>
+                                        <TablerInput
+                                            type='datetime-local'
+                                            :error='errors.end_ts'
+                                            v-model='mission.end_ts'
+                                            label='Mission End'
+                                        />
                                     </div>
                                     <div class="col-md-12">
-                                        <TablerInput v-model='mission.body' :rows='6' label='Mission Report'/>
+                                        <TablerInput
+                                            v-model='mission.body'
+                                            :error='errors.body'
+                                            :rows='6'
+                                            label='Mission Report'
+                                        />
                                     </div>
                                     <div class='col-md-12'>
-                                        <LocationDropdown @locGeom='mission.location_geom = $event' v-model='mission.location'/>
+                                        <LocationDropdown
+                                            @locGeom='mission.location_geom = $event'
+                                            :error='errors.location'
+                                            :required='true'
+                                            v-model='mission.location'
+                                        />
                                     </div>
                                     <div class='col-md-12'>
-                                        <Location v-model='mission.location_geom' :disabled='false'/>
+                                        <Location
+                                            v-model='mission.location_geom'
+                                            :disabled='false'
+                                        />
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -112,6 +142,14 @@ export default {
             loading: {
                 mission: true
             },
+            errors: {
+                title: '',
+                body: '',
+                start_ts: '',
+                end_ts: '',
+                location_geom: '',
+                location: ''
+            },
             mission: {
                 title: '',
                 location: '',
@@ -141,7 +179,39 @@ export default {
             this.loading = false;
             this.$router.push('/mission');
         },
+        validate: function() {
+            for (const field of ['title', 'location', 'body', 'location', 'location_geom']) {
+                if (!this.mission[field]) this.errors[field] = 'Cannot be empty';
+                else this.errors[field] = false;
+            }
+
+            for (const field of ['start_ts', 'end_ts']) {
+                if (!this.mission[field]) {
+                    this.errors[field] = 'Cannot be empty';
+                    continue;
+                }
+
+                try {
+                    new Date(this.mission[field]);
+                    this.errors[field] = false;
+                } catch (err) {
+                    this.errors[field] = 'Invalid Date';
+                }
+            }
+
+            if (this.mission.start_year && isNaN(parseInt(this.mission.start_year))) {
+                this.errors.start_year = 'Invalid Year'
+            }
+
+            for (const e in this.errors) {
+                if (this.errors[e]) return;
+            }
+
+            return true;
+        },
         update: async function() {
+            if (!this.validate()) return;
+
             this.loading = true;
             const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
                 method: 'PATCH',
@@ -152,6 +222,8 @@ export default {
             this.$router.push(`/mission/${update.id}`);
         },
         create: async function() {
+            if (!this.validate()) return;
+
             this.loading = true;
             const create = await window.std('/api/mission', {
                 method: 'POST',

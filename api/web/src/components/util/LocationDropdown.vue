@@ -1,7 +1,14 @@
 <template>
 <div class="dropdown">
     <div type="button" id="dropdownLocation" data-bs-toggle="dropdown" aria-expanded="false">
-        <TablerInput :disabled='disabled' placeholder='Location Name' v-model='filter'/>
+        <TablerInput
+            :required='required'
+            :disabled='disabled'
+            :error='error'
+            label='Location Name'
+            placeholder='Location Name'
+            v-model='filter'
+        />
     </div>
     <ul v-if='list.total' class="dropdown-menu" aria-labelledby="dropdownLocation">
         <div class='m-1'>
@@ -30,6 +37,14 @@ export default {
         disabled: {
             type: Boolean,
             default: false
+        },
+        required: {
+            type: Boolean,
+            default: false
+        },
+        error: {
+            type: String,
+            default: ''
         },
         limit: {
             type: Number,
