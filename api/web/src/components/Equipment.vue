@@ -24,8 +24,8 @@
                                 <h3 class='card-title' v-text='equipment.name'/>
                                 <div class='ms-auto'>
                                     <div class='btn-list'>
-                                        <span v-if='equipment.container' class="badge bg-blue">Container</span>
-                                        <span v-if='equipment.archived' class="badge bg-red">Archived</span>
+                                        <span v-if='equipment.container' class="badge bg-blue" style="height: 20px;">Container</span>
+                                        <span v-if='equipment.archived' class="badge bg-red" style="height: 20px;">Archived</span>
 
                                         <SettingsIcon v-if='is_iam("Equipment:Manage") && !equipment.archived' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
                                     </div>

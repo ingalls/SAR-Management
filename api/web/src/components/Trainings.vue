@@ -53,7 +53,7 @@
                                                     <template v-for='team in training.teams'>
                                                         <TeamBadge :team='team'/>
                                                     </template>
-                                                    <span v-if='training.required' class="badge bg-red">Required</span>
+                                                    <span v-if='training.required' class="badge bg-red" style="height: 20px;">Required</span>
                                                 </div>
                                             </div>
                                         </div>

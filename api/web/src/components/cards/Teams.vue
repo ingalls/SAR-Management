@@ -36,7 +36,7 @@
                     <tr :key='team.id' v-for='team in teams.teams'>
                         <td>
                             <a @click='click(team)' class='cursor-pointer' v-text='team.name'></a>
-                            <span v-if='selected.includes(team.id)' class="badge bg-blue mx-2">Selected</span>
+                            <span v-if='selected.includes(team.id)' class="badge bg-blue mx-2" style="height: 20px;">Selected</span>
                         </td>
                         <td v-text='team.members  || "None"'></td>
                     </tr>
