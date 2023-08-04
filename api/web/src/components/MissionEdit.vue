@@ -16,7 +16,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <NoAccess v-if='!is_iam("Mission:Manage")' title='New Mission'/>
-                <TablerLoading v-if='mission.loading'/>
+                <TablerLoading v-if='loading.mission'/>
                 <template v-else>
                     <div class="col-lg-12">
                         <div class="card">
