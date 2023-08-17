@@ -96,10 +96,10 @@ export default {
                 schedule: true
             },
             errors: {
-                title: '',
+                name: '',
             },
             schedule: {
-                title: '',
+                name: '',
             },
             assigned: []
         }
@@ -123,7 +123,7 @@ export default {
             this.$router.push('/schedule');
         },
         validate: function() {
-            for (const field of ['title']) {
+            for (const field of ['name']) {
                 if (!this.schedule[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = '';
             }
@@ -157,6 +157,7 @@ export default {
                     assigned: this.assigned.map((a) => {
                         return {
                             uid: a.id,
+                            role: a.role
                         }
                     })
                 }

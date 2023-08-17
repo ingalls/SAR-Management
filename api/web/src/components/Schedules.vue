@@ -41,7 +41,7 @@
                                     <tr :key='schedule.id' v-for='schedule in list.schedules'>
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
-                                                <span v-text='schedule[h.name]'/>
+                                                <td><span v-text='schedule[h.name]'/></td>
                                             </template>
                                         </template>
                                     </tr>
@@ -116,7 +116,7 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listSchedules: async function() {
             this.loading.list = true;
-            this.schedules = await window.std('/api/schedule');
+            this.list = await window.std('/api/schedule');
             this.loading.list = false;
         },
         listSchedulesSchema: async function() {

@@ -1,0 +1,24 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./schedules_assigned/id.json"
+        },
+        "schedule_id": {
+            "$ref": "./schedules_assigned/schedule_id.json"
+        },
+        "role": {
+            "$ref": "./schedules_assigned/role.json"
+        },
+        "uid": {
+            "$ref": "./schedules_assigned/uid.json"
+        }
+    },
+    "required": [
+        "id",
+        "schedule_id",
+        "role",
+        "uid"
+    ]
+}
