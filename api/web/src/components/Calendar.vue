@@ -28,6 +28,31 @@
 
                             <div v-if='is_iam("Calendar:View")' class='ms-auto btn-list'>
                                 <FileExportIcon @click='createExport' v-tooltip='"Google Calendar Export"' class='cursor-pointer'/>
+                                <div class="dropdown">
+                                    <div type="button" id="dropdownLocation" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <Menu2Icon v-tooltip='"Options"' class='cursor-pointer'/>
+                                    </div>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownLocation">
+                                        <div class='m-1'>
+                                            <div class='d-flex'>
+                                                <AmbulanceIcon class='my-1 mx-1'/>
+                                                <TablerToggle v-model='calendars.mission' label='Missions' class='w-full'/>
+                                            </div>
+                                            <div class='d-flex'>
+                                                <TruckIcon class='my-1 mx-1'/>
+                                                <TablerToggle v-model='calendars.training' label='Trainings' class='w-full'/>
+                                            </div>
+                                            <div class='d-flex'>
+                                                <BalloonIcon class='my-1 mx-1'/>
+                                                <TablerToggle v-model='calendars.birthday' label='Birthdays' class='w-full'/>
+                                            </div>
+                                            <div class='d-flex'>
+                                                <CalendarTimeIcon class='my-1 mx-1'/>
+                                                <TablerToggle v-model='calendars.schedule' label='Schedules' class='w-full'/>
+                                            </div>
+                                        </div>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div v-if='is_iam("Calendar:View")' class="card-body">
@@ -49,12 +74,18 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import { Calendar } from '@fullcalendar/core';
 import {
-    FileExportIcon
+    Menu2Icon,
+    FileExportIcon,
+    BalloonIcon,
+    AmbulanceIcon,
+    CalendarTimeIcon,
+    TruckIcon,
 } from 'vue-tabler-icons';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import {
+    TablerToggle,
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 
@@ -75,12 +106,24 @@ export default {
             calendar: null,
             showExport: false,
             exportURL: '',
+            calendars: {
+                mission: true,
+                training: true,
+                birthday: true,
+                schedule: true
+            },
             layers: {
                 layers: []
             }
         }
     },
     watch: {
+        calendars: {
+            deep: true,
+            handler: async function() {
+                this.calendar.refetchEvents();
+            }
+        },
         layers: async function() {
             this.calendar.refetchEvents();
         }
@@ -99,6 +142,8 @@ export default {
                 try {
                     let events = [];
                     for (const layer of this.layers.layers) {
+                        if (this.calendars[layer.id] === false) continue;
+
                         const url = window.stdurl(`/api/calendar/${layer.id}/events`)
                         url.searchParams.append('start', fetchInfo.startStr);
                         url.searchParams.append('end', fetchInfo.endStr);
@@ -122,6 +167,7 @@ export default {
                 }
             }
         });
+
         this.calendar.render();
 
         await this.fetchCalendars();
@@ -143,8 +189,14 @@ export default {
         },
     },
     components: {
+        TruckIcon,
+        AmbulanceIcon,
+        CalendarTimeIcon,
         TablerBreadCrumb,
         FileExportIcon,
+        TablerToggle,
+        BalloonIcon,
+        Menu2Icon,
         NoAccess,
     },
 }
