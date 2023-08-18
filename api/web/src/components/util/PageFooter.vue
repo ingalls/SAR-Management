@@ -12,7 +12,7 @@
                 <ul class="list-inline list-inline-dots mb-0">
                     <li class="list-inline-item">
                         Copyright © 2023
-                        <a href="." class="link-secondary">Nick Ingalls - Mesa County SAR</a>
+                        <a href="https://ingalls.ca" class="link-secondary">Nick Ingalls - Mesa County SAR</a>
                     </li>
                 </ul>
             </div>
