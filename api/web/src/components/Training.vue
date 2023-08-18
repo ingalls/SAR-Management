@@ -38,7 +38,7 @@
                             <div class='mx-3 mt-3 mb-2 row'>
                                 <div class='col-12 d-flex'>
                                     <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
-                                    <span v-if='training.required' class="mx-2 badge bg-red">Required</span>
+                                    <span v-if='training.required' class="mx-2 badge bg-red" style="height: 20px;">Required</span>
 
                                     <div class='ms-auto btn-list'>
                                         <EpochRange :start='training.start_ts' :end='training.end_ts'/>
