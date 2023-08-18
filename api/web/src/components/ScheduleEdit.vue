@@ -35,12 +35,12 @@
                             </div>
 
                             <div class='mx-4'>
-                            <UserPresentSelect
-                                label='Scheduled Users'
-                                v-if='!$route.params.scheduleid'
-                                :confirmed='true'
-                                v-model='assigned'
-                            />
+                                <UserPresentSelect
+                                    label='Scheduled Users'
+                                    v-if='!$route.params.scheduleid'
+                                    :confirmed='true'
+                                    v-model='assigned'
+                                />
                             </div>
 
                             <div class='col-12 py-4 px-4'>
