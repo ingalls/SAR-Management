@@ -4,6 +4,7 @@ import Auth from '../lib/auth.js';
 import bcrypt from 'bcrypt';
 import Email from '../lib/email.js';
 import TeamUser from '../lib/types/team-user.js';
+import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import VCard from 'vcard-creator';
 import { phone } from 'phone';
 
@@ -21,17 +22,31 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'User:View');
 
-            if (req.query.format === 'vcard') {
-                res.set('Content-Type', 'text/x-vcard');
-                res.set('Content-Disposition', 'attachment; filename="sar-users.vcf"');
+            if (['vcard', 'csv'].includes(req.query.format)) {
+                if (req.query.format === 'vcard') {
+                    res.set('Content-Type', 'text/x-vcard');
+                    res.set('Content-Disposition', 'attachment; filename="sar-users.vcf"');
+                } else if (req.query.format === 'csv') {
+                    res.set('Content-Type', 'text/csv');
+                    res.set('Content-Disposition', 'attachment; filename="sar-users.csv"');
+                    res.write(stringify([req.query.fields]));
+                }
 
                 (await User.stream(config.pool, req.query)).on('data', async (user) => {
-                    const card = new VCard.default();
-                    card.addName(user.lname, user.fname);
-                    card.addCompany('MesaSAR');
-                    card.addEmail(user.email);
-                    card.addPhoneNumber(phone(user.phone).phoneNumber);
-                    res.write(card.toString());
+                    if (req.query.format === 'vcard') {
+                        const card = new VCard.default();
+                        card.addName(user.lname, user.fname);
+                        card.addCompany('MesaSAR');
+                        card.addEmail(user.email);
+                        card.addPhoneNumber(phone(user.phone).phoneNumber);
+                        res.write(card.toString());
+                    } else if (req.query.format === 'csv') {
+                        const res = [];
+                        for (const field of req.query.fields) {
+                            res.push(user[field] === undefined ? '' || user[field]);
+                        }
+                        res.write(stringify([res]));
+                    }
                 }).on('end', () => {
                     res.end();
                 });

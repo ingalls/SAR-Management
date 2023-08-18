@@ -6,9 +6,39 @@
             "type": "string",
             "default": "json",
             "enum": [
+                "csv",
                 "json",
                 "vcard"
             ]
+        },
+        "fields": {
+            "type": "array",
+            "description": "Output Fields (and order) when using CSV format",
+            "default": [],
+            "items": {
+                "type": "string",
+                "enum": [
+                    "id",
+                    "created",
+                    "updated",
+                    "disabled",
+                    "access",
+                    "username",
+                    "email",
+                    "fname",
+                    "lname",
+                    "phone",
+                    "bday",
+                    "validated",
+                    "start_year",
+                    "emergency",
+                    "address_street",
+                    "address_city",
+                    "address_state",
+                    "address_zip",
+                    "last_login"
+                ]
+            }
         },
         "limit": {
             "$ref": "./util/limit.json"
@@ -38,6 +68,10 @@
                 "validated",
                 "start_year",
                 "emergency",
+                "address_street",
+                "address_city",
+                "address_state",
+                "address_zip",
                 "last_login"
             ],
             "description": "Field to sort order by"

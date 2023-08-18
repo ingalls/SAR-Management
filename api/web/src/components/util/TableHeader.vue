@@ -20,6 +20,9 @@
                                         <span class='form-check-label' v-text='h.name'></span>
                                     </label>
                                 </div>
+                                <div v-if='export' class='px-2 py-1'>
+                                    <div @click='$emit("export")' class='btn w-full'>Export</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -55,6 +58,12 @@ export default {
             type: String,
             required: false,
             description: 'Field to sort by'
+        },
+        export: {
+            type: Boolean,
+            required: false,
+            description: 'Export Events',
+            default: false,
         },
     },
     computed: {

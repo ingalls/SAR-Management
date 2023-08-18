@@ -23,7 +23,7 @@
                             </div>
 
                             <button class='btn px-2'>
-                                <AddressBookIcon @click='downloadVCF' class='cursor-pointer'/>
+                                <AddressBookIcon @click='exportUsers("vcard")' class='cursor-pointer'/>
                             </button>
                             <template v-if='edit'>
                                 <TablerLoading v-if='loading.add' :inline='true'/>
@@ -53,6 +53,8 @@
                     v-model:sort='paging.sort'
                     v-model:order='paging.order'
                     v-model:header='header'
+                    :export='true'
+                    @export='exportUsers("csv")'
                 />
                 <tbody>
                     <tr :key='user.id' v-for='(user, user_it) in list.users'>
@@ -186,7 +188,12 @@ export default {
         await this.listUsers();
     },
     methods: {
-        removeUser: async function(user, user_it) {
+        exportUsers: async function() {
+            await window.std(`${this.url}`, {
+                method: 'GET',
+            });
+        },
+        removeuser: async function(user, user_it) {
             user._loading = true;
             await window.std(`${this.url}/${user.id}`, {
                 method: 'DELETE',
@@ -240,11 +247,11 @@ export default {
             this.list = await window.std(url);
             this.loading.list = false;
         },
-        downloadVCF: async function() {
+        exportUsers: async function(format='vcard') {
             const url = window.stdurl(this.url);
             if (this.team) url.searchParams.append('team', this.team);
             url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('format', 'vcard');
+            url.searchParams.append('format', format);
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
 
             const res = await window.std(url);

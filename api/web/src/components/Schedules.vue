@@ -38,7 +38,7 @@
                                     v-model:header='header'
                                 />
                                 <tbody>
-                                    <tr :key='schedule.id' v-for='schedule in list.schedules'>
+                                    <tr @click='$router.push(`/schedule/${schedule.id}`)' :key='schedule.id' v-for='schedule in list.schedules' class='cursor-pointer'>
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
                                                 <td><span v-text='schedule[h.name]'/></td>
