@@ -41,11 +41,11 @@ export default async function router(schema, config) {
                         card.addPhoneNumber(phone(user.phone).phoneNumber);
                         res.write(card.toString());
                     } else if (req.query.format === 'csv') {
-                        const res = [];
+                        const line = [];
                         for (const field of req.query.fields) {
-                            res.push(user[field] === undefined ? '' || user[field]);
+                            line.push(user[field] === undefined ? '' : user[field]);
                         }
-                        res.write(stringify([res]));
+                        res.write(stringify([line]));
                     }
                 }).on('end', () => {
                     res.end();

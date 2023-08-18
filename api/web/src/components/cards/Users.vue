@@ -188,12 +188,7 @@ export default {
         await this.listUsers();
     },
     methods: {
-        exportUsers: async function() {
-            await window.std(`${this.url}`, {
-                method: 'GET',
-            });
-        },
-        removeuser: async function(user, user_it) {
+        removeUser: async function(user, user_it) {
             user._loading = true;
             await window.std(`${this.url}/${user.id}`, {
                 method: 'DELETE',
@@ -254,13 +249,22 @@ export default {
             url.searchParams.append('format', format);
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
 
+            if (format === 'csv') {
+                url.searchParams.append('fields', this.header.filter((h) => {
+                    return h.display;
+                }).map((h) => {
+                    if (h.name === 'name') return 'fname,lname';
+                    return h.name;
+                }));
+            }
+
             const res = await window.std(url);
             const blob = await res.blob()
 
             const durl = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = durl;
-            a.download = 'sar-users.vcf';
+            a.download = `sar-users.${format === 'vcard' ? 'vcf' : format}`;
             document.body.appendChild(a);
             a.click();
             a.remove();
