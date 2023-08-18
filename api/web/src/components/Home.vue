@@ -4,7 +4,12 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-6">
-                    <IssuesCard v-if='is_iam("Issue:View")' :limit='5'/>
+                    <IssuesCard
+                        v-if='is_iam("Issue:View")'
+                        :limit='5'
+                        :iam='iam'
+                        :auth='auth'
+                    />
                     <NoAccess title='Recent Issues' v-else/>
                 </div>
 

@@ -150,6 +150,8 @@
                     <CardIssues v-else
                         label='Assigned Issues'
                         :assigned='userid'
+                        :iam='iam'
+                        :auth='auth'
                     />
                 </div>
                 <div class="col-lg-6">

@@ -80,7 +80,7 @@
                                     </div>
                                 </td>
                                 <td v-else-if='["last_login", "updated", "created"].includes(h.name)'>
-                                    <Epoch v-if='user.last_login' :date='user.last_login'/>
+                                    <Epoch v-if='user[h.name]' :date='user[h.name]'/>
                                     <span v-else>Never</span>
                                 </td>
                                 <td v-else>
