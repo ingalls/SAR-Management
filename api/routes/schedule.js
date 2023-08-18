@@ -52,4 +52,21 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.get('/schedule/:scheduleid', {
+        name: 'Get Schedule',
+        auth: 'user',
+        group: 'Schedules',
+        description: 'Get Schedule',
+        ':scheduleid': 'integer',
+        res: 'schedule.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Oncall:View');
+
+            return res.json(await Schedule.from(config.pool, req.params.scheduleid));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }
