@@ -1,5 +1,5 @@
 <template>
-<div class="card-footer row">
+<div class="card-footer">
     <div class='col-sm-12 col-md-6'>
         <p v-if='total === 0' class='m-0 text-muted'>Showing 0 of 0 entries</p>
         <p v-else class="m-0 text-muted">Showing <span v-text='limit * page + 1'/> to <span v-text='total < limit ? total : (page * limit + limit > total ? total : page * limit + limit)'/> of <span v-text='total'/> entries</p>

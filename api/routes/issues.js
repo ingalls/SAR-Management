@@ -5,6 +5,7 @@ import PollQuestion from '../lib/types/poll-question.js';
 import ViewIssue from '../lib/views/issue.js';
 import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth from '../lib/auth.js';
+import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 
 export default async function router(schema, config) {
     await schema.get('/issue', {
@@ -18,7 +19,27 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Issue:View');
 
-            res.json(await ViewIssue.list(config.pool, req.query));
+            if (['csv'].includes(req.query.format)) {
+                if (req.query.format === 'csv') {
+                    res.set('Content-Type', 'text/csv');
+                    res.set('Content-Disposition', 'attachment; filename="sar-issues.csv"');
+                    res.write(stringify([req.query.fields]));
+                }
+
+                (await ViewIssue.stream(config.pool, req.query)).on('data', async (issue) => {
+                    if (req.query.format === 'csv') {
+                        const line = [];
+                        for (const field of req.query.fields) {
+                            line.push(issue[field] === undefined ? '' : issue[field]);
+                        }
+                        res.write(stringify([line]));
+                    }
+                }).on('end', () => {
+                    res.end();
+                });
+            } else {
+                res.json(await ViewIssue.list(config.pool, req.query));
+            }
         } catch (err) {
             return Err.respond(err, res);
         }

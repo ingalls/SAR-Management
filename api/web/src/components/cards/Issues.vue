@@ -1,12 +1,10 @@
 <template>
-<div class="card">
-    <div class="card-header row">
-        <div class="d-flex">
-            <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
+<div class='card'>
+    <div class="card-header">
+        <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
-            <div class='btn-list ms-auto'>
-                <PlusIcon v-if='!is_iam("Issue:Manage")' @click='$router.push(`/issue/${$route.params.issueid}/edit`)'/>
-            </div>
+        <div class='btn-list ms-auto'>
+            <PlusIcon v-if='is_iam("Issue:Manage")' @click='$router.push(`/issue/new`)' class='cursor-pointer'/>
         </div>
     </div>
 
@@ -25,7 +23,7 @@
                     v-model:order='paging.order'
                     v-model:header='header'
                     :export='true'
-                    @export='exportUsers("csv")'
+                    @export='exportIssues("csv")'
                 />
                 <tbody>
                     <tr @click='$router.push(`/issue/${issue.id}`)' :key='issue.id' v-for='(issue, issue_it) in list.issues' class='cursor-pointer'>
@@ -43,9 +41,9 @@
                     </tr>
                 </tbody>
             </table>
+            <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
         </div>
     </template>
-    <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
 </div>
 </template>
 
@@ -139,11 +137,37 @@ export default {
         fetch: async function() {
             this.loading = true;
             const url = window.stdurl('/api/issue');
-            url.searchParams.append('limit', this.limit);
+            url.searchParams.append('limit', this.paging.limit);
+            url.searchParams.append('page', this.paging.page);
+            url.searchParams.append('filter', this.paging.filter);
             if (this.assigned) url.searchParams.append('assigned', this.assigned);
             this.list = await window.std(url);
             this.loading = false;
-        }
+        },
+        exportIssues: async function(format) {
+            const url = window.stdurl('/api/issue');
+            url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('format', format);
+
+            if (format === 'csv') {
+                url.searchParams.append('fields', this.header.filter((h) => {
+                    return h.display;
+                }).map((h) => {
+                    return h.name;
+                }));
+            }
+
+            const res = await window.std(url);
+            const blob = await res.blob()
+
+            const durl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = durl;
+            a.download = `sar-issues.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        },
     },
     components: {
         None,

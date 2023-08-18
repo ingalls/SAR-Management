@@ -2,6 +2,15 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+        "format": {
+            "type": "string",
+            "default": "json",
+            "enum": [
+                "csv",
+                "json",
+                "vcard"
+            ]
+        },
         "limit": {
             "$ref": "./util/limit.json"
         },
@@ -14,6 +23,22 @@
         "assigned": {
             "type": "integer",
             "description": "Filter users by a specific user assigned"
+        },
+        "fields": {
+            "type": "array",
+            "description": "Output Fields (and order) when using CSV format",
+            "default": [],
+            "items": {
+                "type": "string",
+                "enum": [
+                    "title",
+                    "id",
+                    "created",
+                    "updated",
+                    "author",
+                    "body"
+                ]
+            }
         },
         "sort": {
             "type": "string",
