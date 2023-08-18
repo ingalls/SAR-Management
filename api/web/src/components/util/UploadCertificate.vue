@@ -13,8 +13,10 @@
                     <TablerEnum label='Certificate Name' v-model='cert.name' :options='known'/>
 
                     <template v-if='cert.name === "Other"'>
-                        <TablerInput label='Custom Name' class='my-3'/>
+                        <TablerInput label='Custom Name' v-model='cert.custom' class='my-3'/>
                     </template>
+
+                    <TablerInput label='Expiration' type='date' v-model='cert.expiry' class='my-3'/>
 
                     <UploadDefault
                         :url='url'
@@ -60,7 +62,9 @@ export default {
             loading: true,
             custom: '',
             cert: {
-                name: ''
+                name: '',
+                custom: '',
+                expiry: ''
             },
             known: []
         }
