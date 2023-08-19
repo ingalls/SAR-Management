@@ -41,7 +41,7 @@
                     </tr>
                 </tbody>
             </table>
-            <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
+            <TableFooter v-if='!limit' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
         </div>
     </template>
 </div>
