@@ -1,6 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import Mission from '../lib/types/mission.js';
 import MissionView from '../lib/views/mission.js';
+import MissionTeam from '../lib/types/mission-team.js';
 import MissionAssigned from '../lib/types/mission-assigned.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
@@ -53,6 +54,8 @@ export default async function router(schema, config) {
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
+            const teams = req.body.teams;
+            delete req.body.teams;
 
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
@@ -73,6 +76,15 @@ export default async function router(schema, config) {
                         role: a.role,
                         confirmed: a.confirmed,
                         uid: a.uid
+                    });
+                }
+            }
+
+            if (teams) {
+                for (const a of teams) {
+                    await MissionTeam.generate(config.pool, {
+                        mission_id: mission.id,
+                        team_id: a
                     });
                 }
             }
@@ -101,8 +113,25 @@ export default async function router(schema, config) {
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
             else delete req.body.end_ts;
 
+            const teams = req.body.teams;
+            delete req.body.teams;
+
             const mission = await Mission.from(config.pool, req.params.missionid);
             await mission.commit(req.body);
+
+            if (teams) {
+                await MissionTeam.delete(config.pool, mission.id, {
+                    column: 'mission_id'
+                });
+
+                for (const a of teams) {
+                    await MissionTeam.generate(config.pool, {
+                        mission_id: mission.id,
+                        team_id: a
+                    });
+                }
+            }
+
             return res.json(mission);
         } catch (err) {
             return Err.respond(err, res);

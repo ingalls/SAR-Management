@@ -47,7 +47,7 @@ export default async function router(schema, config) {
                 }
             }
 
-            return res.json(mission);
+            return res.json(schedule);
         } catch (err) {
             return Err.respond(err, res);
         }
