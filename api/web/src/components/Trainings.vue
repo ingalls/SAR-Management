@@ -6,12 +6,6 @@
                 <div class="row g-2 align-items-center">
                     <div class="col d-flex">
                         <TablerBreadCrumb/>
-
-                        <div class='ms-auto'>
-                            <a v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer btn btn-primary">
-                                New Training
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -33,6 +27,10 @@
                                         <SearchIcon width='24'/>
                                     </span>
                                 </div>
+
+                        <div class='ms-auto'>
+                            <PlusIcon v-if='is_iam("Training:Manage")' @click='$router.push("/training/new")' class="cursor-pointer"/>
+                        </div>
                             </div>
                         </div>
                         <table class="table table-hover card-table table-vcenter">
@@ -87,6 +85,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
+    PlusIcon,
     SearchIcon
 } from 'vue-tabler-icons';
 
@@ -148,6 +147,7 @@ export default {
         TableFooter,
         EpochRange,
         TeamBadge,
+        PlusIcon,
         SearchIcon,
         NoAccess,
         TablerLoading,

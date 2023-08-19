@@ -22,7 +22,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-8">
+                                    <div class="col-12 col-md-8">
                                         <TablerInput
                                             v-model='mission.title'
                                             :error='errors.title'
@@ -31,14 +31,14 @@
                                             description='A Human Readable name for the mission'
                                         />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-md-4">
                                         <TablerInput
                                             v-model='mission.externalid'
                                             label='Mission Number'
                                             description='A CAD number or similiar External ID'
                                         />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-12 col-md-6">
                                         <TablerInput
                                             type='datetime-local'
                                             :required='true'
@@ -47,7 +47,7 @@
                                             label='Mission Start'
                                         />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-12 col-md-6">
                                         <TablerInput
                                             type='datetime-local'
                                             :required='true'
@@ -56,7 +56,13 @@
                                             label='Mission End'
                                         />
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-12 col-md-4">
+                                        <TeamSelect
+                                            v-model='mission.teams'
+                                            label='Assigned'
+                                        />
+                                    </div>
+                                    <div class="col-12 col-md-12">
                                         <TablerInput
                                             v-model='mission.body'
                                             :required='true'
@@ -124,6 +130,7 @@ import NoAccess from './util/NoAccess.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
+import TeamSelect from './util/TeamSelect.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -162,7 +169,8 @@ export default {
                 start_ts: '',
                 end_ts: '',
                 externalid: '',
-                location_geom: null
+                location_geom: null,
+                teams: [],
             },
             assigned: []
         }
@@ -264,6 +272,7 @@ export default {
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
+        TeamSelect,
         NoAccess
     }
 }
