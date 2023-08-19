@@ -22,6 +22,12 @@
         },
         "location_geom": {
             "type": ["object", "null"]
+        },
+        "teams": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            }
         }
     }
 }

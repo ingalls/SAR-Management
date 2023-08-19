@@ -234,7 +234,7 @@ export default {
                 method: 'PATCH',
                 body: {
                     ...this.mission,
-                    teams: this.missions.teams.map((team) => { return team.id }),
+                    teams: this.mission.teams.map((team) => { return team.id }),
                 }
             });
 
@@ -250,7 +250,7 @@ export default {
                 method: 'POST',
                 body: {
                     ...this.mission,
-                    teams: this.missions.teams.map((team) => { return team.id }),
+                    teams: this.mission.teams.map((team) => { return team.id }),
                     assigned: this.assigned.map((a) => {
                         return {
                             uid: a.id,

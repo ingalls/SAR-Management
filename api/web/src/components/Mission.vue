@@ -45,6 +45,12 @@
                                     <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
                                     <SettingsIcon v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' height='24' width='24' class='cursor-pointer'/>
                                 </div>
+                                <div v-if='mission.teams.length' class='btn-list'>
+                                    <template v-for='team in mission.teams'>
+                                        <TeamBadge :team='team'/>
+                                    </template>
+                                </div>
+
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
@@ -80,6 +86,7 @@ import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import EpochRange from './util/EpochRange.vue';
+import TeamBadge from './util/TeamBadge.vue';
 import {
     TablerBreadCrumb,
     TablerMarkdown,
@@ -111,7 +118,8 @@ export default {
                 title: '',
                 body: '',
                 start_ts: '',
-                end_ts: ''
+                end_ts: '',
+                teams: []
             },
             assigned: []
         }
@@ -187,6 +195,7 @@ export default {
         TablerBreadCrumb,
         TablerLoading,
         TablerMarkdown,
+        TeamBadge,
         NoAccess
     }
 }
