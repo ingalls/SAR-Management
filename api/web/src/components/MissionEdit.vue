@@ -227,7 +227,10 @@ export default {
             this.loading = true;
             const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
                 method: 'PATCH',
-                body: this.mission
+                body: {
+                    ...this.mission,
+                    teams: this.missions.teams.map((team) => { return team.id }),
+                }
             });
 
             this.loading = false;
@@ -237,10 +240,12 @@ export default {
             if (!this.validate()) return;
 
             this.loading = true;
+
             const create = await window.std('/api/mission', {
                 method: 'POST',
                 body: {
                     ...this.mission,
+                    teams: this.missions.teams.map((team) => { return team.id }),
                     assigned: this.assigned.map((a) => {
                         return {
                             uid: a.id,
