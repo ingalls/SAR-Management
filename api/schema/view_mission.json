@@ -1,0 +1,68 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./view_mission/id.json"
+        },
+        "created": {
+            "$ref": "./view_mission/created.json"
+        },
+        "updated": {
+            "$ref": "./view_mission/updated.json"
+        },
+        "start_ts": {
+            "$ref": "./view_mission/start_ts.json"
+        },
+        "end_ts": {
+            "$ref": "./view_mission/end_ts.json"
+        },
+        "status": {
+            "$ref": "./view_mission/status.json"
+        },
+        "title": {
+            "$ref": "./view_mission/title.json"
+        },
+        "body": {
+            "$ref": "./view_mission/body.json"
+        },
+        "author": {
+            "$ref": "./view_mission/author.json"
+        },
+        "location": {
+            "$ref": "./view_mission/location.json"
+        },
+        "location_geom": {
+            "$ref": "./view_mission/location_geom.json"
+        },
+        "externalid": {
+            "$ref": "./view_mission/externalid.json"
+        },
+        "users": {
+            "$ref": "./view_mission/users.json"
+        },
+        "teams": {
+            "$ref": "./view_mission/teams.json"
+        },
+        "teams_id": {
+            "$ref": "./view_mission/teams_id.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "start_ts",
+        "end_ts",
+        "status",
+        "title",
+        "body",
+        "author",
+        "location",
+        "location_geom",
+        "externalid",
+        "users",
+        "teams",
+        "teams_id"
+    ]
+}
