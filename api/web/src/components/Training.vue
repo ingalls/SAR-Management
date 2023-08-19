@@ -35,20 +35,22 @@
                     <div class="col-lg-12">
                         <TablerLoading v-if='loading.training'/>
                         <div v-else class="card">
-                            <div class='mx-3 mt-3 mb-2 row'>
-                                <div class='col-12 d-flex'>
-                                    <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
-                                    <span v-if='training.required' class="mx-2 badge bg-red" style="height: 20px;">Required</span>
+                            <div class='card-header'>
+                                <div class='row col-12'>
+                                    <div class='col-12 d-flex'>
+                                        <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
+                                        <span v-if='training.required' class="mx-2 badge bg-red" style="height: 20px;">Required</span>
 
-                                    <div class='ms-auto btn-list'>
-                                        <EpochRange :start='training.start_ts' :end='training.end_ts'/>
-                                        <SettingsIcon v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                        <div class='ms-auto btn-list'>
+                                            <EpochRange :start='training.start_ts' :end='training.end_ts'/>
+                                            <SettingsIcon v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div v-if='training.teams.length' class='btn-list'>
-                                    <template v-for='team in training.teams'>
-                                        <TeamBadge :team='team'/>
-                                    </template>
+                                    <div v-if='training.teams.length' class='mt-2'>
+                                        <template v-for='team in training.teams'>
+                                            <TeamBadge :team='team'/>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -133,7 +135,7 @@ export default {
     computed: {
         is_roster: function() {
             if (this.training.start_ts > +new Date()) return false;
-            if (this.training.start_ts < +new Date() - 604800000) return false; //Only request in last week
+            if (this.training.start_ts < +new Date() - (604800000 * 2)) return false; //Only request in last 2 weeks
 
             return this.assigned.every((a) => {
                 return a.uid != this.auth.id;

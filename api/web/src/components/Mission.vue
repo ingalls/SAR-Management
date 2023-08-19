@@ -36,21 +36,24 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class='card-header'>
-                                <div>
-                                    <div class='card-title' v-text='`${mission.title}`'></div>
-                                    <div class='subheader' v-text='`${mission.location || "Location Unknown"} - ${mission.externalid || "No Mission Number"}`'></div>
-                                </div>
+                                <div class='row col-12'>
+                                    <div class='col-12 d-flex'>
+                                        <div>
+                                            <div class='card-title' v-text='`${mission.title}`'></div>
+                                            <div class='subheader' v-text='`${mission.location || "Location Unknown"} - ${mission.externalid || "No Mission Number"}`'></div>
+                                        </div>
 
-                                <div class='ms-auto btn-list'>
-                                    <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
-                                    <SettingsIcon v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                        <div class='ms-auto btn-list'>
+                                            <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
+                                            <SettingsIcon v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                        </div>
+                                    </div>
+                                    <div v-if='mission.teams.length' class='col-12 mt-2'>
+                                        <template v-for='team in mission.teams'>
+                                            <TeamBadge :team='team'/>
+                                        </template>
+                                    </div>
                                 </div>
-                                <div v-if='mission.teams.length' class='btn-list'>
-                                    <template v-for='team in mission.teams'>
-                                        <TeamBadge :team='team'/>
-                                    </template>
-                                </div>
-
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
