@@ -20,41 +20,46 @@
                 <template v-else>
                     <div class="col-lg-12">
                         <div class="card">
+                            <div class='card-header'>
+                                <h1 class='card-title' v-text='mission.title || "Mission Editor"'></h1>
+                            </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-12 col-md-8">
-                                        <TablerInput
-                                            v-model='mission.title'
-                                            :error='errors.title'
-                                            :required='true'
-                                            label='Mission Title'
-                                            description='A Human Readable name for the mission'
-                                        />
-                                    </div>
-                                    <div class="col-12 col-md-4">
-                                        <TablerInput
-                                            v-model='mission.externalid'
-                                            label='Mission Number'
-                                            description='A CAD number or similiar External ID'
-                                        />
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <TablerInput
-                                            type='datetime-local'
-                                            :required='true'
-                                            :error='errors.start_ts'
-                                            v-model='mission.start_ts'
-                                            label='Mission Start'
-                                        />
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <TablerInput
-                                            type='datetime-local'
-                                            :required='true'
-                                            :error='errors.end_ts'
-                                            v-model='mission.end_ts'
-                                            label='Mission End'
-                                        />
+                                    <div class='col-12 col-md-8 row'>
+                                        <div class="col-12 col-md-8">
+                                            <TablerInput
+                                                v-model='mission.title'
+                                                :error='errors.title'
+                                                :required='true'
+                                                label='Mission Title'
+                                                description='A Human Readable name for the mission'
+                                            />
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <TablerInput
+                                                v-model='mission.externalid'
+                                                label='Mission Number'
+                                                description='A CAD number or similiar External ID'
+                                            />
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <TablerInput
+                                                type='datetime-local'
+                                                :required='true'
+                                                :error='errors.start_ts'
+                                                v-model='mission.start_ts'
+                                                label='Mission Start'
+                                            />
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <TablerInput
+                                                type='datetime-local'
+                                                :required='true'
+                                                :error='errors.end_ts'
+                                                v-model='mission.end_ts'
+                                                label='Mission End'
+                                            />
+                                        </div>
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <TeamSelect

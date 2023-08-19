@@ -21,7 +21,7 @@
                         <TablerLoading v-if='loading.training'/>
                         <template v-else>
                             <div class='card-header'>
-                                <h1 class='card-title' v-text='training.title'></h1>
+                                <h1 class='card-title' v-text='training.title || "Training Editor"'></h1>
                                 <div class='ms-auto'>
                                     <TablerToggle label='Required Training' v-model='training.required'/>
                                 </div>
