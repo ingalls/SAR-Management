@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Mission from '../lib/types/mission.js';
+import MissionView from '../lib/views/mission.js';
 import MissionAssigned from '../lib/types/mission-assigned.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
@@ -16,7 +17,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Mission:View');
 
-            res.json(await Mission.list(config.pool, req.query));
+            res.json(await MissionView.list(config.pool, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -28,12 +29,12 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get a single mission',
         ':missionid': 'integer',
-        res: 'missions.json'
+        res: 'view_mission.json'
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Mission:View');
 
-            res.json(await Mission.from(config.pool, req.params.missionid));
+            res.json(await MissionView.from(config.pool, req.params.missionid));
         } catch (err) {
             return Err.respond(err, res);
         }
