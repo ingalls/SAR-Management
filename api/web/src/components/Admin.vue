@@ -18,7 +18,7 @@
                 <div class="col-lg-12">
                     <ServerConfig :auth='auth'/>
                 </div>
-                <template v-if='auth.admin'>
+                <template v-if='auth.access === "admin"'>
                     <div class="col-lg-4">
                         <CardRoles/>
                     </div>
