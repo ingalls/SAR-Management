@@ -14,7 +14,7 @@
         "@fullcalendar/list": "^6.0.1",
         "@mapbox/mapbox-gl-geocoder": "^5.0.1",
         "@tabler/core": "^1.0.0-beta16",
-        "@tak-ps/vue-tabler": "^3.2.0",
+        "@tak-ps/vue-tabler": "^3.3.0",
         "@turf/bbox": "^6.5.0",
         "core-js": "^3.6.4",
         "dropzone": "^6.0.0-beta.2",
