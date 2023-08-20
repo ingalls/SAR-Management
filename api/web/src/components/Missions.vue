@@ -49,7 +49,19 @@
                                     <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.missions' class='cursor-pointer'>
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
-                                                <td v-if='h.name === "date"'>
+                                                <td v-if='h.name === "title"'>
+                                                    <div class='row'>
+                                                        <div class='d-flex'>
+                                                            <a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a>
+                                                            <div class='ms-auto btn-list'>
+                                                                <template v-for='team in mission.teams'>
+                                                                    <TeamBadge :team='team'/>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td v-else-if='h.name === "date"'>
                                                     <TablerEpochRange :start='mission.start_ts' :end='mission.end_ts'/>
                                                 </td>
                                                 <td v-else>
@@ -80,6 +92,7 @@ import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
 import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
+import TeamBadge from './util/TeamBadge.vue';
 import {
     SearchIcon,
     PlusIcon
@@ -183,6 +196,7 @@ export default {
         TablerLoading,
         TableHeader,
         HeatMap,
+        TeamBadge,
         TablerBreadCrumb
     }
 }

@@ -48,7 +48,7 @@
                                             <SettingsIcon v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' height='24' width='24' class='cursor-pointer'/>
                                         </div>
                                     </div>
-                                    <div v-if='mission.teams.length' class='col-12 mt-2'>
+                                    <div v-if='mission.teams.length' class='col-12 mt-2 btn-list'>
                                         <template v-for='team in mission.teams'>
                                             <TeamBadge :team='team'/>
                                         </template>
