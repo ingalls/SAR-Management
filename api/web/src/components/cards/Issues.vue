@@ -30,7 +30,7 @@
                         <template v-for='h in header'>
                             <template v-if='h.display'>
                                 <td v-if='["updated", "created"].includes(h.name)'>
-                                    <Epoch v-if='issue[h.name]' :date='issue[h.name]'/>
+                                    <TablerEpoch v-if='issue[h.name]' :date='issue[h.name]'/>
                                     <span v-else>Never</span>
                                 </td>
                                 <td v-else>
@@ -48,13 +48,13 @@
 </template>
 
 <script>
-import Epoch from '../util/Epoch.vue';
 import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import None from '../util/None.vue';
 import {
+    TablerEpoch,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
@@ -171,7 +171,7 @@ export default {
     },
     components: {
         None,
-        Epoch,
+        TablerEpoch,
         PlusIcon,
         NoAccess,
         TableHeader,

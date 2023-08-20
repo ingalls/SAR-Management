@@ -57,7 +57,7 @@
                                         </div>
                                     </td>
                                     <td v-text='training.location'></td>
-                                    <td><EpochRange :start='training.start_ts' :end='training.end_ts'/></td>
+                                    <td><TablerEpochRange :start='training.start_ts' :end='training.end_ts'/></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -77,10 +77,10 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
-import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
+    TablerEpochRange,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -145,7 +145,7 @@ export default {
     components: {
         None,
         TableFooter,
-        EpochRange,
+        TablerEpochRange,
         TeamBadge,
         PlusIcon,
         SearchIcon,

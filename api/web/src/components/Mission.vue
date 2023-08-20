@@ -44,7 +44,7 @@
                                         </div>
 
                                         <div class='ms-auto btn-list'>
-                                            <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
+                                            <TablerEpochRange :start='mission.start_ts' :end='mission.end_ts'/>
                                             <SettingsIcon v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' height='24' width='24' class='cursor-pointer'/>
                                         </div>
                                     </div>
@@ -88,9 +88,9 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
-import EpochRange from './util/EpochRange.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
+    TablerEpochRange,
     TablerBreadCrumb,
     TablerMarkdown,
     TablerLoading
@@ -191,7 +191,7 @@ export default {
         },
     },
     components: {
-        EpochRange,
+        TablerEpochRange,
         SettingsIcon,
         Location,
         UserPresentSelect,

@@ -42,7 +42,7 @@
                                         <span v-if='training.required' class="mx-2 badge bg-red" style="height: 20px;">Required</span>
 
                                         <div class='ms-auto btn-list'>
-                                            <EpochRange :start='training.start_ts' :end='training.end_ts'/>
+                                            <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
                                             <SettingsIcon v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
                                         </div>
                                     </div>
@@ -88,12 +88,12 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
-import EpochRange from './util/EpochRange.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
     SettingsIcon
 } from 'vue-tabler-icons';
 import {
+    TablerEpochRange,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -191,7 +191,7 @@ export default {
         },
     },
     components: {
-        EpochRange,
+        TablerEpochRange,
         TeamBadge,
         Location,
         SettingsIcon,

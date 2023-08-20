@@ -50,7 +50,7 @@
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
                                                 <td v-if='h.name === "date"'>
-                                                    <EpochRange :start='mission.start_ts' :end='mission.end_ts'/>
+                                                    <TablerEpochRange :start='mission.start_ts' :end='mission.end_ts'/>
                                                 </td>
                                                 <td v-else>
                                                     <span v-text='mission[h.name]'></span>
@@ -77,7 +77,6 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import None from './util/None.vue';
-import EpochRange from './util/EpochRange.vue';
 import TableFooter from './util/TableFooter.vue';
 import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
@@ -86,6 +85,7 @@ import {
     PlusIcon
 } from 'vue-tabler-icons';
 import {
+    TablerEpochRange,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -178,7 +178,7 @@ export default {
         SearchIcon,
         PlusIcon,
         NoAccess,
-        EpochRange,
+        TablerEpochRange,
         TableFooter,
         TablerLoading,
         TableHeader,

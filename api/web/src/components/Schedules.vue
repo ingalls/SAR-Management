@@ -24,7 +24,7 @@
                                 <PlusIcon @click='$router.push("/schedule/new")' class='cursor-pointer'/>
                             </div>
                         </div>
-                        <template v-if='loading.schema'>
+                        <template v-if='loading.list'>
                             <TablerLoading desc='Loading Schedules'/>
                         </template>
                         <template v-else-if='!list.schedules.length'>

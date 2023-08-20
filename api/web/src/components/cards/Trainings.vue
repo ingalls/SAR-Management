@@ -32,7 +32,7 @@
                             </div>
                         </div>
                     </td>
-                    <td><EpochRange :start='training.start_ts' :end='training.end_ts'/></td>
+                    <td><TablerEpochRange :start='training.start_ts' :end='training.end_ts'/></td>
                 </tr>
             </tbody>
         </table>
@@ -42,9 +42,9 @@
 
 <script>
 import None from '../util/None.vue';
-import EpochRange from '../util/EpochRange.vue';
 import TeamBadge from '../util/TeamBadge.vue'
 import {
+    TablerEpochRange,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
@@ -84,7 +84,7 @@ export default {
     },
     components: {
         TablerLoading,
-        EpochRange,
+        TablerEpochRange,
         TeamBadge,
         None
     }

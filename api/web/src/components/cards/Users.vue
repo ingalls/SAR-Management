@@ -80,7 +80,7 @@
                                     </div>
                                 </td>
                                 <td v-else-if='["last_login", "updated", "created"].includes(h.name)'>
-                                    <Epoch v-if='user[h.name]' :date='user[h.name]'/>
+                                    <TablerEpoch v-if='user[h.name]' :date='user[h.name]'/>
                                     <span v-else>Never</span>
                                 </td>
                                 <td v-else>
@@ -131,8 +131,8 @@ import {
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
-import Epoch from '../util/Epoch.vue';
 import {
+    TablerEpoch,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import UserProfile from '../User/Profile.vue';
@@ -272,7 +272,7 @@ export default {
     },
     components: {
         None,
-        Epoch,
+        TablerEpoch,
         Avatar,
         AddressBookIcon,
         UserDropdownIcon,

@@ -44,8 +44,8 @@
                                     <td>
                                         <a @click='$router.push(`/equipment/type/${type.id}`)' class='cursor-pointer' v-text='type.type'></a>
                                     </td>
-                                    <td><Epoch :date='type.created'/></td>
-                                    <td><Epoch :date='type.updated'/></td>
+                                    <td><TablerEpoch :date='type.created'/></td>
+                                    <td><TablerEpoch :date='type.updated'/></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -62,9 +62,9 @@
 
 <script>
 import NoAccess from './util/NoAccess.vue';
-import Epoch from './util/Epoch.vue';
 import {
-    TablerBreadCrumb 
+    TablerEpoch,
+    TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import iam from '../iam.js';
 import None from './util/None.vue';

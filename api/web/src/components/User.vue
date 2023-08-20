@@ -75,7 +75,7 @@
                                                 <div class="datagrid-title">Last Login</div>
                                                 <div class="datagrid-content">
                                                     <span v-if='!user.last_login'>Never</span>
-                                                    <Epoch v-else :date='user.last_login'/>
+                                                    <TablerEpoch v-else :date='user.last_login'/>
                                                 </div>
                                             </div>
                                             <div class="datagrid-item">
@@ -175,7 +175,6 @@
 
 <script>
 import iam from '../iam.js';
-import Epoch from './util/Epoch.vue';
 import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
 import CardEquipment from './cards/Equipment.vue';
@@ -185,6 +184,7 @@ import CardTrainingMini from './cards/TrainingMini.vue';
 import CardCerts from './cards/Certs.vue';
 import NoAccess from './util/NoAccess.vue';
 import {
+    TablerEpoch,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -241,7 +241,7 @@ export default {
         }
     },
     components: {
-        Epoch,
+        TablerEpoch,
         UserProfile,
         CardIssues,
         CardMission,
