@@ -23,6 +23,12 @@
         "iam": {
             "$ref": "./view_teams/iam.json"
         },
+        "colour_bg": {
+            "$ref": "./view_teams/colour_bg.json"
+        },
+        "colour_txt": {
+            "$ref": "./view_teams/colour_txt.json"
+        },
         "members": {
             "$ref": "./view_teams/members.json"
         }
@@ -35,6 +41,8 @@
         "name",
         "body",
         "iam",
+        "colour_bg",
+        "colour_txt",
         "members"
     ]
 }

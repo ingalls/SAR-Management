@@ -33,7 +33,9 @@ export default class ViewTeam extends Generic {
                     view_teams.public,
                     view_teams.members,
                     view_teams.name,
-                    view_teams.body
+                    view_teams.body,
+                    view_teams.colour_bg,
+                    view_teams.colour_txt
                 ORDER BY
                     ${sql.identifier([this._view, query.sort])} ${query.order}
                 LIMIT
