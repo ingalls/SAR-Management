@@ -69,7 +69,7 @@ import {
     PlusIcon
 } from 'vue-tabler-icons';
 import {
-    TablerNone
+    TablerNone,
     TablerLoading,
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';

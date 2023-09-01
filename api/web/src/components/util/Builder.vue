@@ -45,41 +45,46 @@
     </div>
     <div class="card-body">
         <template v-if='!preview'>
-            <div class='col-12 row border rounded my-2 py-2 px-2' :key='prop_it' v-for='(prop, prop_it) in schema'>
-                <div class='col-12 d-flex'>
-                    <template v-if='prop.type === "string"'>
-                        <AlphabetLatinIcon/>
-                    </template>
-                    <template v-else-if='prop.type === "number"'>
-                        <DecimalIcon/>
-                    </template>
-                    <template v-else-if='prop.type === "integer"'>
-                        <Sort09Icon/>
-                    </template>
-                    <template v-else>
-                        <BinaryIcon/>
-                    </template>
+            <template v-if='!schema.length'>
+                <TablerNone label='Properties' :create='false' :compact='true'/>
+            </template>
+            <template v-else>
+                <div class='col-12 row border rounded my-2 py-2 px-2' :key='prop_it' v-for='(prop, prop_it) in schema'>
+                    <div class='col-12 d-flex'>
+                        <template v-if='prop.type === "string"'>
+                            <AlphabetLatinIcon/>
+                        </template>
+                        <template v-else-if='prop.type === "number"'>
+                            <DecimalIcon/>
+                        </template>
+                        <template v-else-if='prop.type === "integer"'>
+                            <Sort09Icon/>
+                        </template>
+                        <template v-else>
+                            <BinaryIcon/>
+                        </template>
 
-                    <span v-text='prop.type' class='my-1 mx-2 strong'/>
+                        <span v-text='prop.type' class='my-1 mx-2 strong'/>
 
-                    <div class='ms-auto btn-list'>
-                        <TrashIcon @click='schema.splice(prop_it, 1)' class='cursor-pointer'/>
+                        <div class='ms-auto btn-list'>
+                            <TrashIcon @click='schema.splice(prop_it, 1)' class='cursor-pointer'/>
+                        </div>
+                    </div>
+                    <div class='col-12 row d-flex'>
+                        <TablerInput label='Field Name' v-model='prop.name' class='col-12 py-1'/>
+                        <TablerToggle label='Required' v-model='prop.required' class='col-12 py-1'/>
+                        <TablerInput :rows='3' label='Description' v-model='prop.description' class='col-12 py-1'/>
+                        <template v-if='prop.type === "string" && prop.enum === undefined'>
+                        </template>
+                        <template v-else-if='prop.type === "string" && Array.isArray(prop.enum)'>
+                        </template>
+                        <template v-else-if='prop.type === "number"'>
+                        </template>
+                        <template v-else-if='prop.type === "integer"'>
+                        </template>
                     </div>
                 </div>
-                <div class='col-12 row d-flex'>
-                    <TablerInput label='Field Name' v-model='prop.name' class='col-12 py-1'/>
-                    <TablerToggle label='Required' v-model='prop.required' class='col-12 py-1'/>
-                    <TablerInput :rows='3' label='Description' v-model='prop.description' class='col-12 py-1'/>
-                    <template v-if='prop.type === "string" && prop.enum === undefined'>
-                    </template>
-                    <template v-else-if='prop.type === "string" && Array.isArray(prop.enum)'>
-                    </template>
-                    <template v-else-if='prop.type === "number"'>
-                    </template>
-                    <template v-else-if='prop.type === "integer"'>
-                    </template>
-                </div>
-            </div>
+            </template>
         </template>
         <template v-else>
             <TablerSchema :schema='computedSchema' v-model='previewModel'/>
@@ -101,6 +106,7 @@ import {
     BinaryIcon,
 } from 'vue-tabler-icons';
 import {
+    TablerNone,
     TablerInput,
     TablerSchema,
     TablerToggle,
@@ -157,7 +163,8 @@ export default {
         BinaryIcon,
         TablerInput,
         TablerToggle,
-        TablerSchema
+        TablerSchema,
+        TablerNone
     }
 }
 </script>
