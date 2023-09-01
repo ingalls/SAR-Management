@@ -22,12 +22,6 @@
                     <div class="col-lg-4">
                         <CardRoles/>
                     </div>
-                    <div class="col-lg-4">
-                        <CardLabels/>
-                    </div>
-                    <div class="col-lg-4">
-                        <CardStandards/>
-                    </div>
                 </template>
             </div>
         </div>
@@ -37,9 +31,7 @@
 
 <script>
 import CardRoles from './Admin/Roles.vue';
-import CardLabels from './Admin/Labels.vue';
 import ServerConfig from './Admin/ServerConfig.vue';
-import CardStandards from './Admin/Standards.vue';
 import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
@@ -59,8 +51,6 @@ export default {
     components: {
         CardRoles,
         TablerBreadCrumb,
-        CardLabels,
-        CardStandards,
         ServerConfig,
     }
 }
