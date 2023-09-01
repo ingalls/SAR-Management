@@ -109,7 +109,7 @@ export default {
     },
     components: {
         None,
-        Epoch,
+        TablerEpoch,
         TablerBreadCrumb,
         PlusIcon,
         NoAccess,
