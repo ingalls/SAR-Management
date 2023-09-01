@@ -132,10 +132,8 @@ export default {
             for (const prop of JSON.parse(JSON.stringify(this.schema))) {
                 const name = prop.name;
                 delete prop.name;
-                const required = prop.required;
-                delete prop.required;
 
-                if (required) res.required.push(name);
+                if (prop.required) res.required.push(name);
                 res.properties[name] = prop;
             }
 
