@@ -34,7 +34,7 @@
                             <TablerLoading desc='Loading Leadership'/>
                         </template>
                         <template v-else-if='!list.leadership.length'>
-                            <None :create='false' label='Leaders'/>
+                            <TablerNone :create='false' label='Leaders'/>
                         </template>
                         <template v-else>
                             <table class="table card-table table-vcenter">
@@ -99,7 +99,6 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import TableFooter from './util/TableFooter.vue';
-import None from './util/None.vue';
 import UserDropdown from './util/UserDropdown.vue';
 import Avatar from './util/Avatar.vue';
 import {
@@ -109,6 +108,7 @@ import {
     CheckIcon,
 } from 'vue-tabler-icons'
 import {
+    TablerNone,
     TablerBreadCrumb,
     TablerLoading,
     TablerInput
@@ -196,7 +196,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         Avatar,
         PlusIcon,
         TrashIcon,

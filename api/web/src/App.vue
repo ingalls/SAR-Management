@@ -38,7 +38,7 @@
                         </div>
                         <ul class="dropdown-menu" aria-labelledby='userProfileButton'>
                             <a @click='$router.push("/profile")' class="cursor-pointer dropdown-item">Profile</a>
-                            <a @click='$router.push("/logout")' class="curdor-pointer dropdown-item">Logout</a>
+                            <a @click='$router.push("/logout")' class="cursor-pointer dropdown-item">Logout</a>
                         </ul>
                     </div>
                 </div>

@@ -71,7 +71,7 @@
                             </tbody>
                         </table>
                         <template v-if='!list.total'>
-                            <None label='Documents' :create='false'/>
+                            <TablerNone label='Documents' :create='false'/>
                         </template>
                         <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                     </div>
@@ -100,12 +100,12 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
 import Upload from './util/Upload.vue';
 import NewFolder from './Docs/NewFolder.vue';
 import File from './Docs/File.vue';
 import {
+    TablerNone,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -207,7 +207,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         File,
         Upload,
         PlusIcon,

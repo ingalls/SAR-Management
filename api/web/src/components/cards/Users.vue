@@ -44,7 +44,7 @@
         <TablerLoading desc='Loading Users'/>
     </template>
     <template v-else-if='!list.users.length'>
-        <None label='Users' :create='false'/>
+        <TablerNone label='Users' :create='false'/>
     </template>
     <template v-else-if='mode === "list"'>
         <div class='table-responsive'>
@@ -132,11 +132,11 @@ import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    TablerNone,
     TablerEpoch,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import UserProfile from '../User/Profile.vue';
-import None from '../util/None.vue';
 
 export default {
     name: 'CardUsers',
@@ -271,7 +271,7 @@ export default {
         },
     },
     components: {
-        None,
+        TablerNone,
         TablerEpoch,
         Avatar,
         AddressBookIcon,

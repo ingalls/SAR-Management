@@ -16,6 +16,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
+                    <Builder/>
                 </div>
             </div>
         </div>
@@ -24,6 +25,7 @@
 </template>
 
 <script>
+import Builder from './util/Builder.vue';
 import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler';
@@ -41,6 +43,7 @@ export default {
         }
     },
     components: {
+        Builder,
         TablerBreadCrumb,
     }
 }

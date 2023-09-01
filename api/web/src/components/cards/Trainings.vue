@@ -9,7 +9,7 @@
         <TablerLoading desc='Loading Trainings'/>
     </template>
     <template v-else-if='!list.training.length'>
-        <None :create='false' :label='training'/>
+        <TablerNone :create='false' :label='training'/>
     </template>
     <template v-else>
         <table class="table card-table table-hover table-vcenter">
@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import None from '../util/None.vue';
 import TeamBadge from '../util/TeamBadge.vue'
 import {
+    TablerNone,
     TablerEpochRange,
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -86,7 +86,7 @@ export default {
         TablerLoading,
         TablerEpochRange,
         TeamBadge,
-        None
+        TablerNone
     }
 }
 </script>

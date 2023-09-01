@@ -20,7 +20,7 @@
         <TablerLoading/>
     </template>
     <template v-else-if='!list.equipment.length'>
-        <None :create='false' label='Equipment' :compact='true'/>
+        <TablerNone :create='false' label='Equipment' :compact='true'/>
     </template>
     <template v-else>
         <table class="table card-table table-hover table-vcenter">
@@ -54,14 +54,14 @@
 </template>
 
 <script>
-import None from '../util/None.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     PlusIcon,
     SearchIcon
 } from 'vue-tabler-icons';
 import {
-    TablerLoading
+    TablerLoading,
+    TablerNone
 } from '@tak-ps/vue-tabler';
 import Avatar from '../util/Avatar.vue';
 
@@ -131,7 +131,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         Avatar,
         PlusIcon,
         SearchIcon,

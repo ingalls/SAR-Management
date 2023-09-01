@@ -73,7 +73,7 @@
                                 </tbody>
                             </table>
                             <template v-if='!list.total'>
-                                <None label='Missions' :create='false'/>
+                                <TablerNone label='Missions' :create='false'/>
                             </template>
                             <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                         </div>
@@ -88,7 +88,6 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
 import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
@@ -98,6 +97,7 @@ import {
     PlusIcon
 } from 'vue-tabler-icons';
 import {
+    TablerNone,
     TablerEpochRange,
     TablerBreadCrumb,
     TablerLoading
@@ -187,7 +187,7 @@ export default {
 
     },
     components: {
-        None,
+        TablerNone,
         SearchIcon,
         PlusIcon,
         NoAccess,

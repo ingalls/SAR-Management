@@ -4,7 +4,7 @@
         <h3 @click='fullpage' class="card-title cursor-pointer" v-text='label'></h3>
     </div>
     <template v-if='!missions.length'>
-        <None :create='false' label='Missions'/>
+        <TablerNone :create='false' label='Missions'/>
     </template>
     <template v-else>
         <table class="table card-table table-hover table-vcenter">
@@ -26,7 +26,9 @@
 </template>
 
 <script>
-import None from '../util/None.vue';
+import {
+    TablerNone 
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'MissionCard',
@@ -67,7 +69,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
     }
 }
 </script>

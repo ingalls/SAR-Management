@@ -13,7 +13,7 @@
         <TablerLoading desc='Loading Issues'/>
     </template>
     <template v-else-if='!list.issues.length'>
-        <None :create='false' label='Assigned Issues'/>
+        <TablerNone :create='false' label='Assigned Issues'/>
     </template>
     <template v-else>
         <div class='table-responsive'>
@@ -52,8 +52,8 @@ import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
-import None from '../util/None.vue';
 import {
+    TablerNone,
     TablerEpoch,
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -170,7 +170,7 @@ export default {
         },
     },
     components: {
-        None,
+        TablerNone,
         TablerEpoch,
         PlusIcon,
         NoAccess,

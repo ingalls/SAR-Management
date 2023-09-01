@@ -75,7 +75,7 @@
                                                     </div>
                                                 </div>
                                                 <template v-if='!user.emergency.length'>
-                                                    <None label='Emergency Contacts' :create='false'/>
+                                                    <TablerNone label='Emergency Contacts' :create='false'/>
                                                 </template>
                                                 <template v-else>
                                                     <div :key='em_it' v-for='(em, em_it) of user.emergency' class='row my-1'>
@@ -130,9 +130,9 @@
 
 <script>
 import iam from '../iam.js';
-import None from './util/None.vue';
 import Upload from './util/Upload.vue';
 import {
+    TablerNone,
     TablerBreadCrumb,
     TablerLoading,
     TablerInput,
@@ -255,7 +255,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         Upload,
         PlusIcon,
         TrashIcon,

@@ -28,7 +28,7 @@
                             <TablerLoading desc='Loading Schedules'/>
                         </template>
                         <template v-else-if='!list.schedules.length'>
-                            <None label='Schedules' :create='false'/>
+                            <TablerNone label='Schedules' :create='false'/>
                         </template>
                         <div v-else class='table-responsive'>
                             <table class="table card-table table-hover table-vcenter datatable">
@@ -63,13 +63,13 @@ ading
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import None from './util/None.vue';
 import TableHeader from './util/TableHeader.vue';
 import TableFooter from './util/TableFooter.vue';
 import {
     PlusIcon
 } from 'vue-tabler-icons';
 import {
+    TablerNone
     TablerLoading,
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
@@ -141,7 +141,7 @@ export default {
         },
     },
     components: {
-        None,
+        TablerNone,
         PlusIcon,
         TablerLoading,
         TablerBreadCrumb,

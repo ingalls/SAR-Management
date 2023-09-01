@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    <None v-if='!list.roles.length' :create='false' label='Roles'/>
+    <TablerNone v-if='!list.roles.length' :create='false' label='Roles'/>
     <TablerLoading v-else-if='loading'/>
     <table v-else class="table card-table table-vcenter">
         <thead>
@@ -59,9 +59,9 @@ import {
 import {
     TablerEpoch,
     TablerLoading,
-    TablerInput
+    TablerInput,
+    TablerNone
 } from '@tak-ps/vue-tabler';
-import None from '../util/None.vue';
 
 export default {
     name: 'AdminRoleCard',
@@ -117,7 +117,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         PlusIcon,
         PencilIcon,
         CheckIcon,

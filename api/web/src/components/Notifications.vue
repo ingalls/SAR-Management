@@ -29,7 +29,7 @@
                             </div>
                             <div class="card-body">
                                 <template v-if='!list.total'>
-                                    <None label='Notifications' :create='false'/>
+                                    <TablerNone label='Notifications' :create='false'/>
                                 </template>
                                 <template v-else>
                                     <div :key='notify.id' v-for='notify in list.notifications'  class='col my-2 d-flex'>
@@ -50,8 +50,8 @@
 </template>
 
 <script>
-import None from './util/None.vue';
 import {
+    TablerNone,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -97,7 +97,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         CircleDotIcon,
         TablerLoading,
         TrashIcon,

@@ -29,7 +29,7 @@
         </div>
 
         <template v-if='!assigned.length'>
-            <None label='Users Assigned' :create='false' :compact='true'/>
+            <TablerNone label='Users Assigned' :create='false' :compact='true'/>
         </template>
         <template v-else>
             <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
@@ -45,13 +45,13 @@
 </template>
 
 <script>
-import None from './None.vue';
 import Avatar from './Avatar.vue';
 import {
     SettingsIcon,
     TrashIcon
 } from 'vue-tabler-icons';
 import {
+    TablerNone,
     TablerInput
 } from '@tak-ps/vue-tabler'
 
@@ -118,7 +118,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         Avatar,
         SettingsIcon,
         TrashIcon,

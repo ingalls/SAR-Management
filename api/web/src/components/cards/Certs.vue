@@ -12,7 +12,7 @@
         </div>
     </div>
     <template v-if='!list.certs.length'>
-        <None :create='false' label='Certificates'/>
+        <TablerNone :create='false' label='Certificates'/>
     </template>
     <template v-else>
         <table class="table table-hover card-table table-vcenter">
@@ -40,7 +40,9 @@
 </template>
 
 <script>
-import None from '../util/None.vue';
+import {
+    TablerNone 
+} from '@tak-ps/vue-tabler';
 import UploadCertificate from '../util/UploadCertificate.vue';
 import {
     PlusIcon
@@ -81,7 +83,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         UploadCertificate,
         PlusIcon
     }

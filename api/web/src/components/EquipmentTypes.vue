@@ -50,7 +50,7 @@
                             </tbody>
                         </table>
                         <template v-if='!list.total'>
-                            <None label='Equipment Types' :create='false'/>
+                            <TablerNone label='Equipment Types' :create='false'/>
                         </template>
                     </div>
                 </div>
@@ -63,11 +63,11 @@
 <script>
 import NoAccess from './util/NoAccess.vue';
 import {
+    TablerNone,
     TablerEpoch,
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import iam from '../iam.js';
-import None from './util/None.vue';
 import {
     PlusIcon,
     SearchIcon
@@ -108,7 +108,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         TablerEpoch,
         TablerBreadCrumb,
         PlusIcon,

@@ -21,7 +21,7 @@
         <TablerLoading desc='Loading Teams'/>
     </template>
     <template v-else-if='teams.total == 0'>
-        <None label='Teams' @create='$router.push("/team/new")'/>
+        <TablerNone label='Teams' @create='$router.push("/team/new")'/>
     </template>
     <template v-else>
         <div class="table-responsive">
@@ -51,9 +51,9 @@
 
 <script>
 import {
+    TablerNone,
     TablerLoading
 } from '@tak-ps/vue-tabler';
-import None from '../util/None.vue';
 import TableFooter from '../util/TableFooter.vue';
 
 export default {
@@ -113,7 +113,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         TablerLoading,
         TableFooter
     }

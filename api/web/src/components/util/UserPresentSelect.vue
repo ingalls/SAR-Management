@@ -28,7 +28,7 @@
 
         <TablerLoading v-if='loading'/>
         <template v-else-if='!assigned.length'>
-            <None label='Users Assigned' :create='false'/>
+            <TablerNone label='Users Assigned' :create='false'/>
         </template>
         <template v-else>
             <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-2 hover">
@@ -68,11 +68,11 @@ import {
     CheckIcon
 } from 'vue-tabler-icons';
 import {
+    TablerNone,
     TablerInput,
     TablerLoading,
     TablerSelect
 } from '@tak-ps/vue-tabler'
-import None from './None.vue';
 import Avatar from './Avatar.vue';
 
 export default {
@@ -168,7 +168,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         Avatar,
         SettingsIcon,
         TrashIcon,

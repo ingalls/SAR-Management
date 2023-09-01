@@ -62,7 +62,7 @@
                             </tbody>
                         </table>
                         <template v-if='!list.total'>
-                            <None label='Trainings' :create='false'/>
+                            <TablerNone label='Trainings' :create='false'/>
                         </template>
                         <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                     </div>
@@ -76,10 +76,10 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import None from './util/None.vue';
 import TableFooter from './util/TableFooter.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
+    TablerNone,
     TablerEpochRange,
     TablerBreadCrumb,
     TablerLoading
@@ -143,7 +143,7 @@ export default {
         }
     },
     components: {
-        None,
+        TablerNone,
         TableFooter,
         TablerEpochRange,
         TeamBadge,
