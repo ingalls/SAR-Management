@@ -129,8 +129,8 @@ export default {
                 const required = prop.required;
                 delete prop.required;
 
-                if (required) res.required.push(prop.name);
-                res.properties[prop.name] = prop;
+                if (required) res.required.push(name);
+                res.properties[name] = prop;
             }
 
             return res;
