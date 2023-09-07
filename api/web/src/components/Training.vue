@@ -39,7 +39,7 @@
                                 <div class='row col-12'>
                                     <div class='col-12 d-flex'>
                                         <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
-                                        <span v-if='training.required' class="mx-2 badge bg-red" style="height: 20px;">Required</span>
+                                        <span v-if='training.required' class="mx-2 badge bg-red text-white" style="height: 20px;">Required</span>
 
                                         <div class='ms-auto btn-list'>
                                             <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
