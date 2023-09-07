@@ -3,8 +3,8 @@ import Server from '../lib/types/server.js';
 import Auth from '../lib/auth.js';
 
 export default async function router(schema, config) {
-    await schema.post('/server', {
-        name: 'Create Meta',
+    await schema.put('/server', {
+        name: 'Put Meta',
         group: 'Server',
         auth: 'admin',
         description: 'Create a new Server Metadata Record',
@@ -12,9 +12,15 @@ export default async function router(schema, config) {
         res: 'server.json'
     }, async (req, res) => {
         try {
-            await Auth.is_admin(res);
+            await Auth.is_admin(req);
 
-            const server = await Server.generate(config.pool, req.body);
+            let server;
+            try {
+                server = await Server.from(config.pool, req.body.key);
+                await server.commit(req.body);
+            } catch (err) {
+                server = await Server.generate(config.pool, req.body);
+            }
 
             return res.json(server);
         } catch (err) {
@@ -43,27 +49,6 @@ export default async function router(schema, config) {
         }
     });
 
-    await schema.patch('/server/:key', {
-        name: 'Patch Meta',
-        group: 'Server',
-        auth: 'admin',
-        description: 'Patch Server Metadata by key',
-        ':key': 'string',
-        body: 'req.body.PatchServer.json',
-        res: 'server.json'
-    }, async (req, res) => {
-        try {
-            await Auth.is_admin(req);
-
-            const server = await Server.from(config.pool, req.params.key);
-
-            await server.commit(req.body);
-
-            return res.json(server);
-        } catch (err) {
-            return Err.respond(err, res);
-        }
-    });
     await schema.delete('/server/:key', {
         name: 'Delete Meta',
         group: 'Server',

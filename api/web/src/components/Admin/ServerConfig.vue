@@ -12,6 +12,9 @@
             <div class='col-12 pb-3'>
                 <TablerInput label='Frontend URL (Public)' v-model='keys.frontend.value' :disabled='auth.access !== "admin"'/>
             </div>
+            <div class='col-12 pb-3'>
+                <TimeZone label='Default Timezone' v-model='keys.timezone.value' :disabled='auth.access !== "admin"'/>
+            </div>
             <div v-if='auth.access === "admin"' class='col-12 pb-3 d-flex'>
                 <div class='ms-auto'>
                     <button @click='save' class='btn btn-primary'>Update</button>
@@ -27,6 +30,7 @@ import {
     TablerLoading,
     TablerInput,
 } from '@tak-ps/vue-tabler';
+import TimeZone from '../util/TimeZone.vue';
 
 export default {
     name: 'AdminServerConfig',
@@ -41,7 +45,11 @@ export default {
             loading: true,
             keys: {}
         };
-        for (const key of ['name', 'frontend']) {
+        for (const key of [
+            'name',
+            'frontend',
+            'timezone'
+        ]) {
             res.keys[key] = {
                 key: '',
                 value: '',
@@ -58,20 +66,37 @@ export default {
     },
     methods: {
         fetch: async function(key) {
-            this.keys[key] = await window.std(`/api/server/${key}`);
+            try {
+                this.keys[key] = await window.std(`/api/server/${key}`);
+            } catch (err) {
+                if (err.message === 'server not found') {
+                    this.keys[key] = {
+                        key: '',
+                        value: '',
+                        public: false
+                    }
+                } else {
+                    throw err;
+                }
+            }
         },
         save: async function() {
             this.loading = true;
             for (const key in this.keys) {
-                await window.std(`/api/server/${key}`, {
-                    method: 'PATCH',
-                    body: this.keys[key]
+                await window.std(`/api/server`, {
+                    method: 'PUT',
+                    body: {
+                        key,
+                        public: this.keys[key].public,
+                        value: this.keys[key].value,
+                    }
                 });
             }
             this.loading = false;
         }
     },
     components: {
+        TimeZone,
         TablerLoading,
         TablerInput
     }
