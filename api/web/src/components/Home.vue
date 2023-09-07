@@ -4,7 +4,7 @@
         <div class='container-xl'>
             <Draggable v-model="cards" itemKey='id' class='row row-cards'>
                 <template #item="{element}">
-                    <div class='col-lg-6' v-if='element.name === "Issues"'>
+                    <div :class='`col-12 col-lg-${element.size}`' v-if='element.name === "Issues"'>
                         <IssuesCard
                             v-if='is_iam("Issue:View")'
                             :limit='5'
@@ -14,9 +14,16 @@
                         />
                         <NoAccess title='Recent Issues' v-else/>
                     </div>
-                    <div class="col-lg-6" v-else-if='element.name === "Trainings"'>
+                    <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Trainings"'>
                         <TrainingsCard v-if='is_iam("Training:View")' :limit='5'/>
                         <NoAccess title='Upcoming Trainings' v-else/>
+                    </div>
+                    <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Calendar"'>
+                        <CalendarCard
+                            v-if='is_iam("Training:View")' :limit='5'
+                            :iam='iam'
+                            :auth='auth'
+                        />
                     </div>
                 </template>
             </Draggable>
@@ -29,6 +36,7 @@
 import iam from '../iam.js';
 import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
+import CalendarCard from './cards/Calendar.vue';
 import NoAccess from './util/NoAccess.vue';
 import Draggable from 'vuedraggable';
 
@@ -48,10 +56,16 @@ export default {
         return {
             cards: [{
                 id: 1,
+                size: 6,
                 name: 'Issues'
             },{
                 id: 2,
+                size: 6,
                 name: 'Trainings'
+            },{
+                id: 2,
+                size: 12,
+                name: 'Calendar'
             }]
         }
     },
@@ -61,6 +75,7 @@ export default {
     components: {
         Draggable,
         IssuesCard,
+        CalendarCard,
         TrainingsCard,
         NoAccess
     }

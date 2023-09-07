@@ -25,8 +25,8 @@
                                     <div class="col">
                                         <div class="d-flex">
                                             <div class='btn-list'>
-                                                <span v-if='issue.status === "closed"' class="badge bg-red" style="height: 20px;">Closed</span>
-                                                <span v-if='issue.status === "open"' class="badge bg-green" style="height: 20px;">Open</span>
+                                                <span v-if='issue.status === "closed"' class="badge bg-red text-white" style="height: 20px;">Closed</span>
+                                                <span v-if='issue.status === "open"' class="badge bg-green text-white" style="height: 20px;">Open</span>
 
                                                 <h3 class='card-title' v-text='issue.title'></h3>
                                             </div>
