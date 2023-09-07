@@ -17,7 +17,7 @@ export default {
     name: 'TimeZone',
     props: {
         modelValue: {
-            type: Array,
+            type: String,
             required: true
         },
         disabled: {

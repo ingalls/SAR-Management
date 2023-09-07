@@ -38,6 +38,9 @@
                                         <div class='col-12 col-md-6'>
                                             <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
                                         </div>
+                                        <div class='col-12 col-md-12'>
+                                            <TimeZone label='Default Timezone' v-model='timezone'/>
+                                        </div>
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <TeamSelect
@@ -88,6 +91,7 @@ import NoAccess from './util/NoAccess.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
+import TimeZone from './util/TimeZone.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -109,6 +113,7 @@ export default {
     },
     data: function() {
         return {
+            timezone: '',
             loading: {
                 training: true
             },
@@ -125,6 +130,8 @@ export default {
         }
     },
     mounted: async function() {
+        await this.fetchTimeZone();
+
         if (this.$route.params.trainingid && this.is_iam('Training:Manage')) {
             await this.fetch();
         } else {
@@ -133,6 +140,10 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        fetchTimeZone: async function() {
+            const timezone = await window.std(`/api/server/timezone`);
+            this.timezone = timezone.value;
+        },
         fetch: async function() {
             this.loading.training = true;
             const training = await window.std(`/api/training/${this.$route.params.trainingid}`);
@@ -178,7 +189,8 @@ export default {
         TeamSelect,
         LocationDropdown,
         NoAccess,
-        TablerBreadCrumb
+        TablerBreadCrumb,
+        TimeZone,
     }
 }
 </script>
