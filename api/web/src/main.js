@@ -42,6 +42,7 @@ const router = new VueRouter.createRouter({
         { path: '/schedule', name: 'schedules', component: () => import('./components/Schedules.vue') },
         { path: '/schedule/new', name: 'schedule-new', component: () => import('./components/ScheduleEdit.vue') },
         { path: '/schedule/:scheduleid', name: 'schedule', component: () => import('./components/Schedule.vue') },
+        { path: '/schedule/:scheduleid/edit', name: 'schedule-edit', component: () => import('./components/ScheduleEdit.vue') },
 
         { path: '/notification', name: 'notifications', component: () => import('./components/Notifications.vue') },
 

@@ -31,31 +31,35 @@
             <TablerNone label='Users Assigned' :create='false'/>
         </template>
         <template v-else>
-            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-2 hover">
-                <Avatar :link='true' :user='a'/>
+            <Draggable v-model="assigned" itemKey='id'>
+                <template #item="{element}">
+                    <div class="d-flex align-items-center my-2 hover">
+                        <Avatar :link='true' :user='element'/>
 
-                <div v-if='!disabled' class='ms-auto'>
-                    <div class='btn-list'>
-                        <div v-if='!a.confirmed' @click='confirm_assigned(a)' class='btn btn--sm'>
-                            <CheckIcon height='16'/> Confirm
+                        <div v-if='!disabled' class='ms-auto'>
+                            <div class='btn-list'>
+                                <div v-if='!element.confirmed' @click='confirm_assigned(element)' class='btn btn--sm'>
+                                    <CheckIcon height='16'/> Confirm
+                                </div>
+
+                                <template v-if='disabled'>
+                                    <span v-text='element.role' class='pt-1'/>
+                                </template>
+                                <template v-else>
+                                    <TablerSelect
+                                        v-model='element.role'
+                                        v-on:update:modelValue='saveRole(element)'
+                                        :options='roles'
+                                        class='pt-2 mx-3'
+                                    />
+                                </template>
+
+                                <TrashIcon @click='delete_assigned(a_idx, element)' height='16' class='cursor-pointer my-2'/>
+                            </div>
                         </div>
-
-                        <template v-if='disabled'>
-                            <span v-text='a.role' class='pt-1'/>
-                        </template>
-                        <template v-else>
-                            <TablerSelect
-                                v-model='a.role'
-                                v-on:update:modelValue='saveRole(a)'
-                                :options='roles'
-                                class='pt-2 mx-3'
-                            />
-                        </template>
-
-                        <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer my-2'/>
                     </div>
-                </div>
-            </div>
+                </template>
+            </Draggable>
         </template>
     </div>
 </div>
@@ -74,6 +78,7 @@ import {
     TablerSelect
 } from '@tak-ps/vue-tabler'
 import Avatar from './Avatar.vue';
+import Draggable from 'vuedraggable';
 
 export default {
     name: 'UserPresenceSelect',
@@ -175,7 +180,8 @@ export default {
         CheckIcon,
         TablerInput,
         TablerSelect,
-        TablerLoading
+        TablerLoading,
+        Draggable,
     }
 }
 </script>
