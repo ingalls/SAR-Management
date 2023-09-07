@@ -28,10 +28,16 @@
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-12 col-md-8">
-                                        <TablerInput v-model='training.title' label='Training Title'/>
-                                        <TablerInput type='datetime-local' v-model='training.start_ts' label='Training Start'/>
-                                        <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
+                                    <div class="col-12 col-md-8 row">
+                                        <div class='col-12'>
+                                            <TablerInput v-model='training.title' label='Training Title'/>
+                                        </div>
+                                        <div class='col-12 col-md-6'>
+                                            <TablerInput type='datetime-local' v-model='training.start_ts' label='Training Start'/>
+                                        </div>
+                                        <div class='col-12 col-md-6'>
+                                            <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
+                                        </div>
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <TeamSelect
