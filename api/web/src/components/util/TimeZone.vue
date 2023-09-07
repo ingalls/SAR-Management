@@ -2,7 +2,7 @@
 <TablerEnum
     :label='label'
     :options='Array.from(timezones)'
-    :value='modelValue'
+    :default='modelValue'
     v-on:change='$emit("update:modelValue", $event.target.value)'
 />
 </template>
