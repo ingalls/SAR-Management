@@ -58,12 +58,9 @@
                             <div class="card-body">
                                 <div class='row row-cards'>
                                     <TablerMarkdown class='col-md-12' :markdown='mission.body'/>
-
-                                    <div class='col-md-12'>
-                                        <Location v-if='mission.location_geom' v-model='mission.location_geom'/>
-                                    </div>
                                 </div>
                             </div>
+                            <Location v-if='mission.location_geom' v-model='mission.location_geom' :search='false'/>
                         </div>
                     </div>
 

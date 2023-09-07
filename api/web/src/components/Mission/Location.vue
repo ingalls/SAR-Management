@@ -1,7 +1,5 @@
 <template>
-<div class="card rounded">
     <div id="map" style='height: 350px;'></div>
-</div>
 </template>
 
 <script>
@@ -17,6 +15,10 @@ export default {
     props: {
         modelValue: {
             type: Object,
+        },
+        search: {
+            type: Boolean,
+            default: true
         },
         disabled: {
             type: Boolean,
@@ -58,12 +60,15 @@ export default {
             map.scrollZoom.disable();
             map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-            const geocoder = new MapboxGeocoder({
-                accessToken: mapboxgl.accessToken,
-                mapboxgl: map
-            });
+            if (this.search) {
+                const geocoder = new MapboxGeocoder({
+                    accessToken: mapboxgl.accessToken,
+                    mapboxgl: map
+                });
 
-            map.addControl(geocoder, 'top-left');
+                map.addControl(geocoder, 'top-left');
+            }
+
             map.on('load', () => {
                 if (this.modelValue) {
                     map.addSource('point', {
