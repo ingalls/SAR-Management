@@ -98,6 +98,7 @@ import {
     TablerToggle,
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import moment from 'moment-timezone';
 
 export default {
     name: 'TrainingsEdit',
@@ -158,6 +159,9 @@ export default {
             const body = JSON.parse(JSON.stringify(this.training));
             body.teams = body.teams.map((team) => { return team.id });
 
+            body.start_ts = moment.tz(body.start_ts, this.timezone.replace(/\(.*\)\s+/, '')).format();
+            body.end_ts = moment.tz(body.end_ts, this.timezone.replace(/\(.*\)\s+/, '')).format();
+
             const create = await window.std('/api/training', {
                 method: 'POST', body
             });
@@ -173,6 +177,9 @@ export default {
         update: async function() {
             const body = JSON.parse(JSON.stringify(this.training));
             body.teams = body.teams.map((team) => { return team.id });
+
+            body.start_ts = moment.tz(body.start_ts, this.timezone.replace(/\(.*\)\s+/, '')).format();
+            body.end_ts = moment.tz(body.end_ts, this.timezone.replace(/\(.*\)\s+/, '')).format();
 
             const create = await window.std(`/api/training/${this.training.id}`, {
                 method: 'PATCH', body
