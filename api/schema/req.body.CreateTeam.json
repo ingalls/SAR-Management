@@ -18,6 +18,9 @@
         "colour_bg": {
             "type": "string"
         },
+        "fieldable": {
+            "type": "boolean"
+        },
         "colour_txt": {
             "type": "string"
         }

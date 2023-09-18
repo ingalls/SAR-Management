@@ -19,6 +19,9 @@
         },
         "colour_txt": {
             "type": "string"
+        },
+        "fieldable": {
+            "type": "boolean"
         }
     }
 }
