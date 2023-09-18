@@ -52,6 +52,7 @@
                     </template>
                 </tr>
             </tbody>
+            <TableFooter v-if='footer' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
         </table>
     </template>
 </div>
@@ -89,6 +90,10 @@ export default {
         limit: {
             type: Number,
             default: 10
+        },
+        footer: {
+            type: Boolean,
+            default: true
         },
         auth: {
             type: Object,
