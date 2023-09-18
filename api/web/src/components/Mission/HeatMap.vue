@@ -78,7 +78,7 @@ export default {
                 opts.bounds = bbox(this.fc)
             }
 
-            mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJsUDF2STRrIn0.S0c3ZNH4HmseIdPXY-CTlA';
+            mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJjbGt3eWx3bDUxNWY3M2NwZnJ5d3hjdXljIn0.J6HGVg8chm6rMsBQLRRxGw';
             map = new mapboxgl.Map(opts);
             map.scrollZoom.disable();
             map.addControl(new mapboxgl.NavigationControl(), 'top-right');
