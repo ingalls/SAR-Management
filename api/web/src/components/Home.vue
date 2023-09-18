@@ -6,21 +6,22 @@
                 <template #item="{element}">
                     <div :class='`col-12 col-lg-${element.size}`' v-if='element.name === "Issues"'>
                         <IssuesCard
-                            v-if='is_iam("Issue:View")'
                             :limit='5'
                             :iam='iam'
                             :auth='auth'
                             :drag='true'
                         />
-                        <NoAccess title='Recent Issues' v-else/>
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Trainings"'>
-                        <TrainingsCard v-if='is_iam("Training:View")' :limit='5'/>
-                        <NoAccess title='Upcoming Trainings' v-else/>
+                        <TrainingsCard
+                            :iam='iam'
+                            :auth='auth'
+                        />
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Calendar"'>
                         <CalendarCard
-                            v-if='is_iam("Training:View")' :limit='5'
+                            v-if='is_iam("Training:View")'
+                            :limit='5'
                             :iam='iam'
                             :auth='auth'
                         />
