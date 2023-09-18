@@ -27,6 +27,9 @@
                                     }' class="form-control" placeholder="Team Name">
                                     <div v-if='errors.name' v-text='errors.name' class="invalid-feedback"></div>
                                 </div>
+                                <div class='col-md-12'>
+                                    <TablerToggle label='Fieldable Team' v-model='team.fieldable'/>
+                                </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Charter</label>
                                     <textarea rows=5 v-model='team.body' type="text" :class='{
@@ -55,7 +58,8 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import {
-    TablerBreadCrumb 
+    TablerBreadCrumb,
+    TablerToggle,
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -78,6 +82,7 @@ export default {
             },
             team: {
                 name: '',
+                fieldable: true,
                 body: ''
             }
         }
@@ -104,6 +109,7 @@ export default {
     },
     components: {
         NoAccess,
+        TablerToggle,
         TablerBreadCrumb
     }
 }

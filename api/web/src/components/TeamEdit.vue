@@ -24,7 +24,7 @@
                                 <div class="col-12 col-md-10">
                                     <div class='d-flex'>
                                         <label class="form-label">Team Name</label>
-                                        <div class='ms-auto'>
+                                        <div class='ms-auto btn-list'>
                                             <TeamBadge :team='team'/>
                                         </div>
                                     </div>
@@ -33,15 +33,18 @@
                                     }' class="form-control" placeholder="Team Name">
                                     <div v-if='errors.name' v-text='errors.name' class="invalid-feedback"></div>
                                 </div>
-                                <div class="col-12 col-md-2 row mt-3">
-                                    <div class='col-auto'>
+                                <div class="col-12 col-md-2 row mt-2">
+                                    <div class='col-auto w-50'>
                                         <label class="form-label">Back</label>
-                                        <input type="color" v-model='team.colour_bg' class="form-control form-control-color" title="Background Colour">
+                                        <input type="color" v-model='team.colour_bg' class="w-100 form-control form-control-color" title="Background Colour">
                                     </div>
-                                    <div class='col-auto'>
+                                    <div class='col-auto w-50'>
                                         <label class="form-label">Text</label>
-                                        <input type="color" v-model='team.colour_txt' class="form-control form-control-color" title="Text Colour">
+                                        <input type="color" v-model='team.colour_txt' class="w-100 form-control form-control-color" title="Text Colour">
                                     </div>
+                                </div>
+                                <div class='col-md-12'>
+                                    <TablerToggle label='Fieldable Team' v-model='team.fieldable'/>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Charter</label>
@@ -66,7 +69,7 @@
 
                 <div v-if='is_iam("Team:Admin")' class="col-lg-12">
                     <TablerLoading v-if='loading.iam || loading.team || loading.fieldability'/>
-                    <div v-else class="card">
+                    <div v-else-if='team.fieldable' class="card">
                         <div class='card-header'>
                             <h2 class='card-title'>Team Fieldability Requirements</h2>
                             <div class='ms-auto'>
@@ -145,6 +148,7 @@ import {
 import {
     TablerBreadCrumb,
     TablerLoading,
+    TablerToggle,
     TablerSelect
 } from '@tak-ps/vue-tabler';
 
@@ -178,6 +182,7 @@ export default {
                 body: '',
                 colour_bg: '#9aa0a6',
                 colour_txt: '#000000',
+                fieldable: true,
                 iam: {}
             }
         }
@@ -228,6 +233,7 @@ export default {
                 body: {
                     name: this.team.name,
                     body: this.team.body,
+                    fieldable: this.team.fieldable,
                     colour_bg: this.team.colour_bg,
                     colour_txt: this.team.colour_txt
                 }
@@ -260,6 +266,7 @@ export default {
         PlusIcon,
         NoAccess,
         TablerLoading,
+        TablerToggle,
         TablerSelect,
         TablerBreadCrumb,
         TeamBadge

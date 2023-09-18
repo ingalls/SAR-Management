@@ -28,6 +28,7 @@
 
                                     <div class='ms-auto'>
                                         <div class='btn-list'>
+                                            <span v-if='team.fieldable' class="ms-auto badge bg-green text-white" style="height: 20px;">Fieldable</span>
                                             <TeamBadge :team='team'/>
 
                                             <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>

@@ -5,6 +5,7 @@
         "id",
         "created",
         "updated",
+        "fieldable",
         "name",
         "body",
         "iam",
@@ -23,6 +24,9 @@
         },
         "name": {
             "type": "string"
+        },
+        "fieldable": {
+            "type": "boolean"
         },
         "body": {
             "type": "string"

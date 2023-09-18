@@ -23,7 +23,8 @@ export default class ViewTeam extends Generic {
                         LEFT JOIN users_to_teams utt
                             ON view_teams.id = utt.tid
                 WHERE
-                    (${query.filter}::TEXT IS NULL OR name ~* ${query.filter})
+                    (${query.fieldable}::BOOLEAN IS NULL OR fieldable = ${query.fieldable})
+                    AND (${query.filter}::TEXT IS NULL OR name ~* ${query.filter})
                     AND (${query.userid}::BIGINT IS NULL OR utt.uid = ${query.userid})
                 GROUP BY
                     view_teams.id,
