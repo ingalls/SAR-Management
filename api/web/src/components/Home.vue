@@ -15,6 +15,7 @@
                             :iam='iam'
                             :auth='auth'
                             :dragHandle='true'
+                            :create='false'
                         />
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Trainings"'>
@@ -22,6 +23,7 @@
                             :iam='iam'
                             :auth='auth'
                             :dragHandle='true'
+                            :create='false'
                         />
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Calendar"'>
