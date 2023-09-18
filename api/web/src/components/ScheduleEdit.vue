@@ -31,6 +31,16 @@
                                             description='A Human Readable name for the schedule'
                                         />
                                     </div>
+                                    <div class="col-md-12">
+                                        <TablerInput
+                                            :rows='5'
+                                            v-model='schedule.body'
+                                            :error='errors.body'
+                                            :required='true'
+                                            label='Schedule Body'
+                                            description='A Human Readable description for the schedule'
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -43,7 +53,7 @@
                                 />
                             </div>
 
-                            <div class='col-12 py-4 px-4'>
+                            <div class='col-12 py-1 pb-4 px-4'>
                                 <div class='d-flex'>
                                     <a v-if='$route.params.scheduleid && is_iam("Schedule:Admin")' @click='deleteSchedule' class="cursor-pointer btn btn-danger">
                                         Delete Schedule
@@ -97,9 +107,11 @@ export default {
             },
             errors: {
                 name: '',
+                body: '',
             },
             schedule: {
                 name: '',
+                body: ''
             },
             assigned: []
         }
@@ -123,7 +135,7 @@ export default {
             this.$router.push('/schedule');
         },
         validate: function() {
-            for (const field of ['name']) {
+            for (const field of ['name', 'body']) {
                 if (!this.schedule[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = '';
             }
