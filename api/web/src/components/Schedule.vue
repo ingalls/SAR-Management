@@ -27,6 +27,7 @@
                                 </div>
                             </div>
                         </template>
+                        <div class="card-body" v-text='schedule.body'></div>
                     </div>
                 </div>
             </div>
