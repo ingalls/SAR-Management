@@ -91,7 +91,7 @@ export default {
             required: true
         },
         create: {
-            type: String,
+            type: Boolean,
             default: true
         },
         limit: {
@@ -152,8 +152,10 @@ export default {
         fetch: async function() {
             this.loading = true;
             const url = window.stdurl('/api/training');
-            url.searchParams.append('limit', this.limit);
-            url.searchParams.append('start', +new Date());
+            url.searchParams.append('limit', this.paging.limit);
+            url.searchParams.append('page', this.paging.page);
+            url.searchParams.append('filter', this.paging.filter);
+            if (this.assigned) url.searchParams.append('assigned', this.assigned);
             this.list = await window.std(url);
             this.loading = false;
         }
@@ -166,7 +168,8 @@ export default {
         TablerEpoch,
         TablerEpochRange,
         TeamBadge,
-        TablerNone
+        TablerNone,
+        NoAccess,
     }
 }
 </script>

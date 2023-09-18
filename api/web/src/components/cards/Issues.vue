@@ -69,7 +69,7 @@ export default {
             default: 'Recent Issues'
         },
         create: {
-            type: String,
+            type: Boolean,
             default: true,
         },
         footer: {
