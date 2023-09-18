@@ -1,7 +1,7 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-pointer'/>
+        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
         <h3 class="card-title"><a @click='$router.push("/training")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>

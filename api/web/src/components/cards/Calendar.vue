@@ -1,7 +1,7 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-pointer'/>
+        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
         <h1 class='card-title'>Team Calendar</h1>
 
         <div v-if='is_iam("Calendar:View")' class='ms-auto btn-list'>
