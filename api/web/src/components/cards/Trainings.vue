@@ -155,6 +155,8 @@ export default {
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('sort', this.paging.sort);
+            url.searchParams.append('order', this.paging.order);
             if (this.assigned) url.searchParams.append('assigned', this.assigned);
             this.list = await window.std(url);
             this.loading = false;

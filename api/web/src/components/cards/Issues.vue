@@ -95,8 +95,8 @@ export default {
             header: [],
             paging: {
                 filter: '',
-                sort: 'Name',
-                order: 'asc',
+                sort: 'id',
+                order: 'desc',
                 limit: 10,
                 page: 0
             },
@@ -143,6 +143,8 @@ export default {
             const url = window.stdurl('/api/issue');
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
+            url.searchParams.append('order', this.paging.order);
+            url.searchParams.append('sort', this.paging.sort);
             url.searchParams.append('filter', this.paging.filter);
             if (this.assigned) url.searchParams.append('assigned', this.assigned);
             this.list = await window.std(url);
