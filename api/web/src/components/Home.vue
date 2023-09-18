@@ -16,14 +16,17 @@
                             :auth='auth'
                             :dragHandle='true'
                             :create='false'
+                            :footer='false'
                         />
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Trainings"'>
                         <TrainingsCard
                             :iam='iam'
                             :auth='auth'
+                            :limit='5'
                             :dragHandle='true'
                             :create='false'
+                            :footer='false'
                         />
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Calendar"'>
