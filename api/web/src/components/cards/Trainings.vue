@@ -86,7 +86,7 @@ export default {
             type: Object,
             required: true
         },
-                auth: {
+        auth: {
             type: Object,
             required: true
         },
@@ -97,6 +97,9 @@ export default {
         limit: {
             type: Number,
             default: 10
+        },
+        assigned: {
+            type: Number
         }
     },
     data: function() {
