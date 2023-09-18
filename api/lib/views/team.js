@@ -11,6 +11,7 @@ export default class ViewTeam extends Generic {
         query.filter = Params.string(query.filter);
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
+        query.fieldable = Params.boolean(query.fieldable);
         query.userid = Params.integer(query.userid);
 
         try {
