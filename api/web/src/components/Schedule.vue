@@ -30,6 +30,11 @@
                         <div class="card-body" v-text='schedule.body'></div>
                     </div>
                 </div>
+                <div class="col-lg-12">
+                    <CardScheduleAssigned
+
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -39,6 +44,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import CardScheduleAssigned from './cards/ScheduleAssigned.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
     TablerBreadCrumb,
@@ -90,6 +96,7 @@ export default {
         },
     },
     components: {
+        CardScheduleAssigned,
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
