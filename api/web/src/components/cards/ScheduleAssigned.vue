@@ -105,7 +105,7 @@ export default {
             header: [],
             paging: {
                 filter: '',
-                sort: 'Name',
+                sort: 'id',
                 order: 'asc',
                 limit: 10,
                 page: 0

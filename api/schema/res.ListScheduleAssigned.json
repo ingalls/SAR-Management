@@ -9,7 +9,7 @@
         "total": {
             "type": "integer"
         },
-        "users": {
+        "assigned": {
             "type": "array",
             "items":  {
                 "type": "object",

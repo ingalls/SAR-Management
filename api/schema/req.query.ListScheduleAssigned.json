@@ -10,12 +10,10 @@
         },
         "sort": {
             "type": "string",
-            "default": "created",
+            "default": "id",
             "enum": [
                 "id",
                 "schedule_id",
-                "fname",
-                "lname",
                 "role",
                 "uid"
             ],

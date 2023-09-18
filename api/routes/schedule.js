@@ -102,7 +102,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Oncall:View');
 
-            return res.json(await ScheduleAssigned.list(config.pool, req.query));
+            return res.json(await ScheduleAssigned.list(config.pool, req.params.scheduleid, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
