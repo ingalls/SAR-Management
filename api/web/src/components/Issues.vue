@@ -20,6 +20,7 @@
                         label='Issues'
                         :iam='iam'
                         :auth='auth'
+                        :limit='20'
                     />
                 </div>
             </div>

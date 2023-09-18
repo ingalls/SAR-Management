@@ -31,7 +31,7 @@
                                 <TablerEpoch v-if='training[h.name]' :date='training[h.name]'/>
                                 <span v-else>Never</span>
                             </td>
-                            <td v-else-if='h.name === "range"'>
+                            <td v-else-if='h.name === "dates"'>
                                 <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
                             </td>
                             <td v-else-if='h.name === "title"'>
@@ -86,6 +86,10 @@ export default {
             type: Object,
             required: true
         },
+        limit: {
+            type: Number,
+            default: 10
+        },
         auth: {
             type: Object,
             required: true
@@ -110,7 +114,7 @@ export default {
                 filter: '',
                 sort: 'id',
                 order: 'desc',
-                limit: 10,
+                limit: this.limit,
                 page: 0
 
             },
@@ -136,7 +140,7 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
        listSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/training');
-            this.header = ['title', 'range'].map((h) => {
+            this.header = ['title', 'dates'].map((h) => {
                 return { name: h, display: true };
             });
 

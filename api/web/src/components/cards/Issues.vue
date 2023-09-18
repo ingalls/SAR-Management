@@ -72,6 +72,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        limit: {
+            type: Number,
+            default: 10,
+        },
         footer: {
             type: Boolean,
             default: true,
@@ -97,7 +101,7 @@ export default {
                 filter: '',
                 sort: 'id',
                 order: 'desc',
-                limit: 10,
+                limit: this.limit,
                 page: 0
             },
             list: {
