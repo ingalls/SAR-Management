@@ -53,6 +53,26 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.patch('/schedule/:scheduleid', {
+        name: 'Update Schedule',
+        auth: 'user',
+        group: 'Schedules',
+        description: 'Update Schedule',
+        ':scheduleid': 'integer',
+        body: 'req.body.PatchSchedule.json',
+        res: 'schedule.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Oncall:Manage');
+
+            const schedule = await Schedule.from(config.pool, req.params.scheduleid);
+            await schedule.commit(req.body);
+            return res.json(schedule);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.get('/schedule/:scheduleid', {
         name: 'Get Schedule',
         auth: 'user',

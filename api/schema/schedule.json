@@ -13,12 +13,16 @@
         },
         "name": {
             "$ref": "./schedule/name.json"
+        },
+        "body": {
+            "$ref": "./schedule/body.json"
         }
     },
     "required": [
         "id",
         "created",
         "updated",
-        "name"
+        "name",
+        "body"
     ]
 }
