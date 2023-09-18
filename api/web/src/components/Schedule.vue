@@ -44,7 +44,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import CardScheduleAssigned from './cards/ScheduleAssigned.vue';
+import CardScheduleAssigned from './Schedule/ScheduleAssigned.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
     TablerBreadCrumb,
