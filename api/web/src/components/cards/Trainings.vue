@@ -26,9 +26,9 @@
                             <a @click='$router.push(`/training/${training.id}`)' class='cursor-pointer' v-text='training.title'></a>
                             <div class='ms-auto btn-list h-25'>
                                 <template v-for='team in training.teams'>
-                                    <TeamBadge :team='team'/>
+                                    <TeamBadge :team='team' class='ms-auto'/>
                                 </template>
-                                <span v-if='training.required' class="badge bg-red text-white" style="height: 20px;">Required</span>
+                                <span v-if='training.required' class="ms-auto badge bg-red text-white" style="height: 20px;">Required</span>
                             </div>
                         </div>
                     </td>

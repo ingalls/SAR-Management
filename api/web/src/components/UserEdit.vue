@@ -212,7 +212,7 @@ export default {
         create: async function() {
             for (const field of ['username', 'email', 'fname', 'lname']) {
                 if (!this.user[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
+                else this.errors[field] = '';
             }
 
             if (this.user.start_year && isNaN(parseInt(this.user.start_year))) {

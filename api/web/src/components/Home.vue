@@ -62,10 +62,6 @@ export default {
                 id: 2,
                 size: 6,
                 name: 'Trainings'
-            },{
-                id: 2,
-                size: 12,
-                name: 'Calendar'
             }]
         }
     },
