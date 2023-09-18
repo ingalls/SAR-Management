@@ -1,6 +1,7 @@
 <template>
 <div class='card'>
     <div class="card-header">
+        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-pointer'/>
         <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
@@ -58,6 +59,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
+    GripVerticalIcon,
     PlusIcon
 } from 'vue-tabler-icons';
 
@@ -67,6 +69,10 @@ export default {
         label: {
             type: String,
             default: 'Recent Issues'
+        },
+        dragHandle: {
+            type: Boolean,
+            default: false,
         },
         create: {
             type: Boolean,
@@ -180,6 +186,7 @@ export default {
         },
     },
     components: {
+        GripVerticalIcon,
         TablerNone,
         TablerEpoch,
         PlusIcon,

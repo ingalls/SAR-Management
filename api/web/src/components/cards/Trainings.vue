@@ -1,6 +1,7 @@
 <template>
 <div class="card">
     <div class="card-header">
+        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-pointer'/>
         <h3 class="card-title"><a @click='$router.push("/training")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
@@ -72,6 +73,7 @@ import {
 } from '@tak-ps/vue-tabler'
 
 import {
+    GripVerticalIcon,
     PlusIcon
 } from 'vue-tabler-icons';
 
@@ -86,6 +88,10 @@ export default {
         iam: {
             type: Object,
             required: true
+        },
+        dragHandle: {
+            type: Boolean,
+            default: false
         },
         limit: {
             type: Number,
@@ -184,6 +190,7 @@ export default {
         TeamBadge,
         TablerNone,
         NoAccess,
+        GripVerticalIcon,
     }
 }
 </script>

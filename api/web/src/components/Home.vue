@@ -2,20 +2,26 @@
 <div>
     <div class='page-body'>
         <div class='container-xl'>
-            <Draggable v-model="cards" itemKey='id' class='row row-cards'>
+            <Draggable
+                v-model="cards"
+                itemKey='id'
+                handle='.drag-handle'
+                class='row row-cards'
+            >
                 <template #item="{element}">
                     <div :class='`col-12 col-lg-${element.size}`' v-if='element.name === "Issues"'>
                         <IssuesCard
                             :limit='5'
                             :iam='iam'
                             :auth='auth'
-                            :drag='true'
+                            :dragHandle='true'
                         />
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Trainings"'>
                         <TrainingsCard
                             :iam='iam'
                             :auth='auth'
+                            :dragHandle='true'
                         />
                     </div>
                     <div :class='`col-12 col-lg-${element.size}`' v-else-if='element.name === "Calendar"'>
@@ -24,6 +30,7 @@
                             :limit='5'
                             :iam='iam'
                             :auth='auth'
+                            :dragHandle='true'
                         />
                     </div>
                 </template>

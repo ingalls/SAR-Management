@@ -1,6 +1,7 @@
 <template>
 <div class="card">
     <div class="card-header">
+        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-pointer'/>
         <h1 class='card-title'>Team Calendar</h1>
 
         <div v-if='is_iam("Calendar:View")' class='ms-auto btn-list'>
@@ -46,6 +47,7 @@ import iam from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
 import { Calendar } from '@fullcalendar/core';
 import {
+    GripVerticalIcon,
     Menu2Icon,
     FileExportIcon,
     BalloonIcon,
@@ -70,7 +72,11 @@ export default {
         auth: {
             type: Object,
             required: true
-        }
+        },
+        dragHandle: {
+            type: Boolean,
+            default: false 
+        },
     },
     data: function() {
         return {
@@ -168,6 +174,7 @@ export default {
         BalloonIcon,
         Menu2Icon,
         NoAccess,
+        GripVerticalIcon,
     },
 }
 </script>
