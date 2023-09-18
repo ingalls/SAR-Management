@@ -28,6 +28,9 @@
         },
         "colour_txt": {
             "$ref": "./teams/colour_txt.json"
+        },
+        "fieldable": {
+            "$ref": "./teams/fieldable.json"
         }
     },
     "required": [
@@ -39,6 +42,7 @@
         "body",
         "iam",
         "colour_bg",
-        "colour_txt"
+        "colour_txt",
+        "fieldable"
     ]
 }

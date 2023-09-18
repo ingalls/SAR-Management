@@ -29,6 +29,9 @@
         "colour_txt": {
             "$ref": "./view_teams/colour_txt.json"
         },
+        "fieldable": {
+            "$ref": "./view_teams/fieldable.json"
+        },
         "members": {
             "$ref": "./view_teams/members.json"
         }
@@ -43,6 +46,7 @@
         "iam",
         "colour_bg",
         "colour_txt",
+        "fieldable",
         "members"
     ]
 }

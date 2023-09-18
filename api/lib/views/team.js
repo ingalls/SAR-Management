@@ -28,6 +28,7 @@ export default class ViewTeam extends Generic {
                 GROUP BY
                     view_teams.id,
                     view_teams.iam,
+                    view_teams.fieldable,
                     view_teams.created,
                     view_teams.updated,
                     view_teams.public,
