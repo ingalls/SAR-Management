@@ -4,7 +4,7 @@
         <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <PlusIcon v-if='is_iam("Issue:Manage")' @click='$router.push(`/issue/new`)' class='cursor-pointer'/>
+            <PlusIcon v-if='create && is_iam("Issue:Manage")' @click='$router.push(`/issue/new`)' class='cursor-pointer'/>
         </div>
     </div>
 
@@ -41,7 +41,7 @@
                     </tr>
                 </tbody>
             </table>
-            <TableFooter v-if='!limit' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
+            <TableFooter v-if='footer' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
         </div>
     </template>
 </div>
@@ -68,6 +68,14 @@ export default {
             type: String,
             default: 'Recent Issues'
         },
+        create: {
+            type: String,
+            default: true,
+        },
+        footer: {
+            type: Boolean,
+            default: true,
+        },
         iam: {
             type: Object,
             required: true
@@ -75,10 +83,6 @@ export default {
         auth: {
             type: Object,
             required: true
-        },
-        limit: {
-            type: Number,
-            default: 10
         },
         assigned: {
             type: Number,

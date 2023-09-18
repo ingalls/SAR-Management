@@ -140,30 +140,43 @@
                     <NoAccess v-if='!is_iam("Equipment:View")' title='Assigned Equipment'/>
                     <CardEquipment v-else
                         label='Assigned Equipment'
+                        :search='false'
                         :footer='false'
                         :parent='null'
                         :assigned='userid'
                     />
                 </div>
                 <div class="col-lg-6">
-                    <NoAccess v-if='!is_iam("Issue:View")' title='Assigned Issues'/>
-                    <CardIssues v-else
+                    <CardIssues
                         label='Assigned Issues'
+                        :create='false'
+                        :footer='false'
                         :assigned='userid'
                         :iam='iam'
                         :auth='auth'
                     />
                 </div>
                 <div class="col-lg-6">
-                    <NoAccess v-if='!is_iam("User:View")' title='Certificates'/>
-                    <CardCerts v-else
+                    <CardTraining
+                        label='Training Log'
+                        :create='false'
                         :assigned='userid'
+                        :search='false'
+                        :footer='false'
+                        :iam='iam'
+                        :auth='auth'
                     />
                 </div>
                 <div class="col-lg-6">
                     <NoAccess v-if='!is_iam("Mission:View")' title='Mission Log'/>
                     <CardMission v-else
                         label='Mission Log'
+                        :assigned='userid'
+                    />
+                </div>
+                <div class="col-lg-12">
+                    <NoAccess v-if='!is_iam("User:View")' title='Certificates'/>
+                    <CardCerts v-else
                         :assigned='userid'
                     />
                 </div>
@@ -179,6 +192,7 @@ import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
 import CardEquipment from './cards/Equipment.vue';
 import CardMission from './cards/Missions.vue';
+import CardTraining from './cards/Trainings.vue';
 import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
 import CardCerts from './cards/Certs.vue';
@@ -245,6 +259,7 @@ export default {
         UserProfile,
         CardIssues,
         CardMission,
+        CardTraining,
         CardMissionMini,
         CardTrainingMini,
         CardEquipment,

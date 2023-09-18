@@ -6,7 +6,7 @@
             <div class='ms-auto'>
                 <div class='btn-list'>
                     <PlusIcon v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' class='cursor-pointer my-2'/>
-                    <div class="input-icon">
+                    <div v-if='search' class="input-icon">
                         <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
                             <span class="input-icon-addon">
                             <SearchIcon width='24'/>
@@ -79,6 +79,10 @@ export default {
         parent: {
             type: [Number, null],
             default: 0
+        },
+        search: {
+            type: Boolean,
+            default: true
         },
         create: {
             type: Boolean,

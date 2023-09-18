@@ -14,7 +14,7 @@
                         <div class="dropdown">
                             <SettingsIcon height='16' width='16' class='mx-2 dropdown-toggle cursor-pointer' data-bs-toggle="dropdown"/>
                             <div class="dropdown-menu">
-                                <div :key='h_it' v-for='(h, h_it) of header'>
+                                <div :key='h_it' v-for='(h, h_it) of header' class='mx-1 my-1'>
                                     <label class='form-check subheader mb-0'>
                                         <input @change='displayHeader(h_it, $event)' class='form-check-input' type="checkbox" :checked='h.display'>
                                         <span class='form-check-label' v-text='h.name'></span>
