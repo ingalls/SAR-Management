@@ -55,7 +55,7 @@
                                                             <a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a>
                                                             <div class='ms-auto btn-list'>
                                                                 <template v-for='team in mission.teams'>
-                                                                    <TeamBadge :team='team'/>
+                                                                    <TeamBadge :team='team' class='ms-auto'/>
                                                                 </template>
                                                             </div>
                                                         </div>
