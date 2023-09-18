@@ -1,0 +1,52 @@
+{
+    "type": "object",
+    "required": [
+        "total",
+        "assigned"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "total": {
+            "type": "integer"
+        },
+        "users": {
+            "type": "array",
+            "items":  {
+                "type": "object",
+                "required": [
+                    "id",
+                    "schedule_id",
+                    "role",
+                    "uid",
+                    "fname",
+                    "lname",
+                    "username"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "schedule_id": {
+                        "type": "integer"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "uid": {
+                        "type": "integer"
+                    },
+                    "fname": {
+                        "type": "string"
+                    },
+                    "lname": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

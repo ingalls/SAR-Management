@@ -65,6 +65,7 @@
                                         <TeamSelect
                                             v-model='mission.teams'
                                             label='Assigned'
+                                            :fieldable='true'
                                         />
                                     </div>
                                     <div class="col-12 col-md-12">

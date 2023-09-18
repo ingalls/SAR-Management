@@ -69,6 +69,10 @@ export default {
             type: Number,
             default: 10
         },
+        fieldable: {
+            type: Boolean,
+            default: false
+        },
     },
     data: function() {
         return {
@@ -109,6 +113,9 @@ export default {
             const url = window.stdurl('/api/team');
             url.searchParams.append('filter', this.filter);
             url.searchParams.append('limit', this.limit + this.teams.length);
+
+
+            if (this.fieldable !== undefined) url.searchParams.append('fieldable', String(this.fieldable));
             const list = await window.std(url);
 
             const ids = this.teams.map((a) => a.id);

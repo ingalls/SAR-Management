@@ -26,9 +26,6 @@
                                     <SettingsIcon v-if='is_iam("Oncall:Admin")' @click='$router.push(`/schedule/${$route.params.scheduleid}/edit`)' class='cursor-pointer'/>
                                 </div>
                             </div>
-                            <div class='card-body'>
-                                List Users Here
-                            </div>
                         </template>
                     </div>
                 </div>
@@ -41,6 +38,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
     TablerBreadCrumb,
     TablerLoading
@@ -65,8 +63,13 @@ export default {
         return {
             loading: {
                 schedule: true,
+                assigned: true,
             },
             schedule: {},
+            assigned: {
+                total: 0,
+                assigned: []
+            }
         }
     },
     mounted: async function() {
@@ -79,8 +82,14 @@ export default {
             this.schedule = await window.std(`/api/schedule/${this.$route.params.scheduleid}`);
             this.loading.schedule = false;
         },
+        fetchAssigned: async function() {
+            this.loading.assigned = true;
+            this.assigned = await window.std(`/api/schedule/${this.$route.params.scheduleid}/assigned`);
+            this.loading.assigned = false;
+        },
     },
     components: {
+        UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
         SettingsIcon,

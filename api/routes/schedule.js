@@ -69,4 +69,22 @@ export default async function router(schema, config) {
             return Err.respond(err, res);
         }
     });
+
+    await schema.get('/schedule/:scheduleid/assigned', {
+        name: 'Get Assigned',
+        auth: 'user',
+        group: 'Schedules',
+        description: 'Get Assigned',
+        ':scheduleid': 'integer',
+        query: 'req.query.ListScheduleAssigned.json',
+        res: 'res.ListScheduleAssigned.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Oncall:View');
+
+            return res.json(await ScheduleAssigned.list(config.pool, req.query));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
 }

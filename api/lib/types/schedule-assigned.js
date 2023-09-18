@@ -12,6 +12,7 @@ export default class ScheduleAssigned extends Generic {
         query.page = Params.integer(query.page, { default: 0 });
         query.sort = Params.string(query.sort, { default: 'id' });
         query.order = Params.order(query.order);
+        query.filter = Params.string(query.filter, { default: '' });
 
         try {
             const pgres = await pool.query(sql`
@@ -27,6 +28,7 @@ export default class ScheduleAssigned extends Generic {
                             ON schedules_assigned.uid = users.id
                 WHERE
                     schedule_id = ${schedule_id}
+                    AND (${query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${query.filter})
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
