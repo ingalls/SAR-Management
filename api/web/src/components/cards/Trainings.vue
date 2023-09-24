@@ -183,6 +183,7 @@ export default {
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('sort', this.paging.sort);
             url.searchParams.append('order', this.paging.order);
+
             if (this.paging.start) url.searchParams.append('start', this.paging.start);
             if (this.paging.end) url.searchParams.append('end', this.paging.end);
             if (this.assigned) url.searchParams.append('assigned', this.assigned);
