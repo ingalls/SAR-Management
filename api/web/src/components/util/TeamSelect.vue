@@ -71,7 +71,7 @@ export default {
         },
         fieldable: {
             type: Boolean,
-            default: false
+            default: undefined
         },
     },
     data: function() {
