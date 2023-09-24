@@ -89,6 +89,12 @@ export default {
             type: Object,
             required: true
         },
+        start: {
+            type: String
+        },
+        end: {
+            type: String
+        },
         dragHandle: {
             type: Boolean,
             default: false
@@ -123,9 +129,11 @@ export default {
             header: [],
             paging: {
                 filter: '',
-                sort: 'id',
+                sort: 'start_ts',
                 order: 'desc',
                 limit: this.limit,
+                start: this.start,
+                end: this.end,
                 page: 0
 
             },
@@ -175,6 +183,8 @@ export default {
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('sort', this.paging.sort);
             url.searchParams.append('order', this.paging.order);
+            if (this.paging.start) url.searchParams.append('start', this.paging.start);
+            if (this.paging.end) url.searchParams.append('end', this.paging.end);
             if (this.assigned) url.searchParams.append('assigned', this.assigned);
             this.list = await window.std(url);
             this.loading = false;

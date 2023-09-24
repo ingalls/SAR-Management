@@ -24,6 +24,8 @@
                             :iam='iam'
                             :auth='auth'
                             :limit='5'
+                            :start='moment().subtract(1, "month").format()'
+                            :end='moment().subtract().format()'
                             :dragHandle='true'
                             :create='false'
                             :footer='false'
@@ -52,6 +54,7 @@ import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
 import NoAccess from './util/NoAccess.vue';
 import Draggable from 'vuedraggable';
+import moment from 'moment';
 
 export default {
     name: 'Home',
@@ -79,7 +82,10 @@ export default {
         }
     },
     methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        moment: function() {
+            return moment();
+        }
     },
     components: {
         Draggable,
