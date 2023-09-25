@@ -90,10 +90,10 @@ export default {
             required: true
         },
         start: {
-            type: String
+            type: Number
         },
         end: {
-            type: String
+            type: Number
         },
         dragHandle: {
             type: Boolean,
