@@ -2,6 +2,8 @@ import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Schedule from '../lib/types/schedule.js';
 import ScheduleAssigned from '../lib/types/schedule-assigned.js';
+import ScheduleEvent from '../lib/types/schedule-event.js';
+import moment from 'moment';
 
 export default async function router(schema, config) {
     await schema.get('/schedule', {
@@ -68,6 +70,47 @@ export default async function router(schema, config) {
             const schedule = await Schedule.from(config.pool, req.params.scheduleid);
             await schedule.commit(req.body);
             return res.json(schedule);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+    await schema.get('/schedule/:scheduleid/events', {
+        name: 'List Events',
+        group: 'Schedules',
+        auth: 'user',
+        description: 'Query Events from a given schedule',
+        ':scheduleid': 'integer',
+        query: 'req.query.ListEvents.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Schedule:View');
+
+            const events = [];
+
+            const queries = [];
+
+            if (moment(req.query.start).year() !== moment(req.query.end).year()) {
+                queries.push({ start: req.query.start, end: moment(moment(req.query.end).format('YYYY') + '-12-31') });
+                queries.push({ start: moment(moment(req.query.end).format('YYYY')), end: req.query.end });
+            } else {
+                queries.push(req.query);
+            }
+
+            for (const query of queries) {
+                for (const event of (await ScheduleEvent.list(config.pool, req.params.scheduleid, {
+                    start_ts: query.start,
+                    end_ts: query.end
+                })).events) {
+                    events.push({
+                        title: `DEMO`,
+                        start: moment(event.start_ts),
+                        end: moment(event.end_ts)
+                    });
+                }
+            }
+
+            res.json(events);
         } catch (err) {
             return Err.respond(err, res);
         }

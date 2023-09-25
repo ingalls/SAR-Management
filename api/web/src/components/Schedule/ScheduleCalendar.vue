@@ -40,14 +40,10 @@ export default {
             eventSources: async (fetchInfo, resolve, reject) => {
                 try {
                     let events = [];
-                    for (const layer of this.layers.layers) {
-                        if (this.calendars[layer.id] === false) continue;
-
-                        const url = window.stdurl(`/api/schedule/${layer.id}/events`)
-                        url.searchParams.append('start', fetchInfo.startStr);
-                        url.searchParams.append('end', fetchInfo.endStr);
-                        events = events.concat(await window.std(url));
-                    }
+                    const url = window.stdurl(`/api/schedule/${this.scheduleid}/events`)
+                    url.searchParams.append('start', fetchInfo.startStr);
+                    url.searchParams.append('end', fetchInfo.endStr);
+                    events = events.concat(await window.std(url));
 
                     return resolve(events.map((event) => {
                         event.start = (new Date(event.start)).toISOString()
@@ -68,6 +64,10 @@ export default {
         });
 
         this.calendar.render();
+
+        this.calendar.on('select', (event) => {
+            console.error(event);
+        });
     },
 }
 </script>

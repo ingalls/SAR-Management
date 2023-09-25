@@ -32,7 +32,9 @@
                 </div>
                 <template v-if='!loading.schedule && is_iam("Oncall:View")'>
                     <div class="col-lg-12">
-                        <CardScheduleCalendar/>
+                        <CardScheduleCalendar
+                            :scheduleid='parseInt($route.params.scheduleid)'
+                        />
                     </div>
                     <div class="col-lg-12">
                         <CardScheduleAssigned/>
