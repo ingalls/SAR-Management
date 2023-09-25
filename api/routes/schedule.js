@@ -103,7 +103,7 @@ export default async function router(schema, config) {
                     end_ts: query.end
                 })).events) {
                     events.push({
-                        title: `DEMO`,
+                        title: 'DEMO',
                         start: moment(event.start_ts),
                         end: moment(event.end_ts)
                     });
