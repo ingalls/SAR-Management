@@ -30,11 +30,14 @@
                         <div class="card-body" v-text='schedule.body'></div>
                     </div>
                 </div>
-                <div class="col-lg-12">
-                    <CardScheduleAssigned
-
-                    />
-                </div>
+                <template v-if='!loading.schedule && is_iam("Oncall:View")'>
+                    <div class="col-lg-12">
+                        <CardScheduleCalendar/>
+                    </div>
+                    <div class="col-lg-12">
+                        <CardScheduleAssigned/>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -45,6 +48,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardScheduleAssigned from './Schedule/ScheduleAssigned.vue';
+import CardScheduleCalendar from './Schedule/ScheduleCalendar.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
     TablerBreadCrumb,
@@ -97,6 +101,7 @@ export default {
     },
     components: {
         CardScheduleAssigned,
+        CardScheduleCalendar,
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
