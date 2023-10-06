@@ -58,6 +58,7 @@ export default class User extends Generic {
                     users
                 WHERE
                     indexable_month_day(bday) >= indexable_month_day(${query.start_bday}::DATE)
+                    AND disabled IS False
                 ORDER BY
                     ${sql.identifier([this._table, 'bday'])} ASC
             `);
