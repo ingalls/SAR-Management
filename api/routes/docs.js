@@ -26,7 +26,7 @@ export default async function router(schema, config) {
         res: 'res.ListDocs.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:View');
+            await Auth.is_iam(req, 'Doc:View');
 
             prefix(req);
 
@@ -249,7 +249,7 @@ export default async function router(schema, config) {
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:Manage');
+            await Auth.is_iam(req, 'Doc:Manage');
 
             req.query.file = 'documents/' + req.query.file;
 
