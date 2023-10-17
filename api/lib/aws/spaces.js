@@ -30,43 +30,80 @@ export default class Spaces {
     async upload(params) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
-        const upload = new Upload({ client: this.client, params });
-
-        return await upload.done();
-    } catch (err) {
-        throw new Err(400, err, 'Failed to Put Object');
+        try {
+            const upload = new Upload({ client: this.client, params });
+            return await upload.done();
+        } catch (err) {
+            throw new Err(400, err, 'Failed to Put Object');
+        }
     }
 
     async put(params) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
-
-        return await this.client.send(new S3.PutObjectCommand(params));
-    } catch (err) {
-        throw new Err(400, err, 'Failed to Put Object');
+        try {
+            return await this.client.send(new S3.PutObjectCommand(params));
+        } catch (err) {
+            throw new Err(400, err, 'Failed to Put Object');
+        }
     }
 
     async head(params) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
-
-        return await this.client.send(new S3.HeadObjectCommand(params));
-    } catch (err) {
-        throw new Err(400, err, 'Failed to Head Object');
+        try {
+            return await this.client.send(new S3.HeadObjectCommand(params));
+        } catch (err) {
+            throw new Err(400, err, 'Failed to Head Object');
+        }
     }
 
     async get(params) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
-
-        return await this.client.send(new S3.GetObjectCommand(params));
-    } catch (err) {
-        throw new Err(400, err, 'Failed to Get Object');
+        try {
+            return await this.client.send(new S3.GetObjectCommand(params));
+        } catch (err) {
+            throw new Err(400, err, 'Failed to Get Object');
+        }
     }
 
     async delete(params) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
+        try {
+            return await this.client.send(new S3.DeleteObjectCommand(params));
+        } catch (err) {
+            throw new Err(400, err, 'Failed to Head Object');
+        }
+    }
 
-        return await this.client.send(new S3.DeleteObjectCommand(params));
-    } catch (err) {
-        throw new Err(400, err, 'Failed to Head Object');
+    async deleteRecurse(params) {
+        if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
+
+        try {
+            let ContinuationToken ;
+
+            do {
+                const list = await s3.send(new S3.ListObjectsV2Command({
+                    Bucket: bucket,
+                    Prefix: location,
+                    ContinuationToken: token
+                }));
+
+                if (list.KeyCount) {
+                    const deleteCommand = s3.send(new S3.DeleteObjectsCommand({
+                        Bucket: bucket,
+                        Delete: {
+                            Objects: list.Contents.map((item) => ({ Key: item.Key })),
+                            Quiet: false,
+                        },
+                    }));
+
+                    if (deleted.Errors) deleted.Errors.map((error) => console.log(`${error.Key} could not be deleted - ${error.Code}`));
+                }
+
+                ContinuationToken = list.NextContinuationToken;
+            } while (ContinuationToken);
+        } catch (err) {
+            throw new Err(400, err, 'Failed to Head Object');
+        }
     }
 }
 

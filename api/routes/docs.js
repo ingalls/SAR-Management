@@ -93,6 +93,7 @@ export default async function router(schema, config) {
             if (req.query.access_token) {
                 const decoded = jwt.verify(req.query.access_token, config.SigningSecret);
 
+                console.error(`documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}`)
                 const file = await spaces.get({
                     Key: `documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}`
                 });
@@ -253,9 +254,9 @@ export default async function router(schema, config) {
 
             req.query.file = 'documents/' + req.query.file;
 
-            await spaces.delete({
-                Key: req.query.file
-            });
+            await spaces.delete({ Key: req.query.file });
+
+            await spaces.deleteRecursive({ Prefix: req.query.file });
 
             return res.json({
                 status: 200,
