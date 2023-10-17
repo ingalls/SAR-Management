@@ -7,8 +7,8 @@
                 <h1 class="card-title" v-text='file'></h1>
                 <div class='ms-auto btn-list'>
                     <template v-if='is_pdf || preview'>
-                        <ArrowBadgeLeftIcon v-if='pages.page !== 1' @click='pages.page--' class='cursor-pointer'/>
-                        <ArrowBadgeRightIcon @click='pages.page++' class='cursor-pointer'/>
+                        <ArrowBadgeLeftIcon v-if='pages.page !== 1' v-tooltip='"Preview Page"' @click='pages.page--' class='cursor-pointer'/>
+                        <ArrowBadgeRightIcon @click='pages.page++' v-tooltip='"Next Page"' class='cursor-pointer'/>
                     </template>
 
                     <TablerDelete displaytype='icon' v-tooltip='"Delete File"' v-if='manage' @delete='deleteFile'/>
@@ -63,7 +63,6 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    TrashIcon,
     EyeOffIcon,
     ArrowBadgeLeftIcon,
     ArrowBadgeRightIcon,
@@ -112,25 +111,29 @@ export default {
         }
     },
     mounted: async function() {
-        const url = window.stdurl('/api/doc');
-        url.searchParams.append('prefix', this.prefix + this.file + '/');
-        const res = await window.std(url)
-
-        for (const doc of res.documents) {
-            if (doc.key === 'preview.pdf') {
-                const url = window.stdurl('/api/doc/download');
-                url.searchParams.append('prefix', this.prefix + this.file);
-                url.searchParams.append('file', 'preview.pdf');
-                url.searchParams.append('download', 'false');
-                url.searchParams.append('token', localStorage.token);
-                this.preview = String(url);
-                break;
-            }
-        }
-
-        this.loading.preview = false;
+        await this.loadPreview();
     },
     methods: {
+        loadPreview: async function() {
+            this.loading.preview = true;
+            const url = window.stdurl('/api/doc');
+            url.searchParams.append('prefix', this.prefix + this.file + '/');
+            const res = await window.std(url)
+
+            for (const doc of res.documents) {
+                if (doc.key === 'preview.pdf') {
+                    const url = window.stdurl('/api/doc/download');
+                    url.searchParams.append('prefix', this.prefix + this.file);
+                    url.searchParams.append('file', 'preview.pdf');
+                    url.searchParams.append('download', 'false');
+                    url.searchParams.append('token', localStorage.token);
+                    this.preview = String(url);
+                    break;
+                }
+            }
+
+            this.loading.preview = false;
+        },
         url: function(download = true) {
             const url = window.stdurl('/api/doc/download');
             url.searchParams.append('prefix', this.prefix);
@@ -149,6 +152,8 @@ export default {
             url.searchParams.append('file', this.file);
             await window.std(url);
             this.loading.generate = false;
+
+            await this.loadPreview();
         },
         deleteFile: async function() {
             this.loading.main = true;
@@ -165,7 +170,6 @@ export default {
     components: {
         PDF,
         TablerDelete,
-        TrashIcon,
         ArrowBadgeLeftIcon,
         ArrowBadgeRightIcon,
         EyeOffIcon,

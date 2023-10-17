@@ -255,7 +255,7 @@ export default async function router(schema, config) {
 
             await spaces.delete({ Key: req.query.file });
 
-            await spaces.deleteRecursive({ Prefix: req.query.file });
+            await spaces.deleteRecursive({ Prefix: req.query.file + '/' });
 
             return res.json({
                 status: 200,

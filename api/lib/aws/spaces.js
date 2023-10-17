@@ -81,15 +81,17 @@ export default class Spaces {
             let ContinuationToken ;
 
             do {
-                const list = await s3.send(new S3.ListObjectsV2Command({
-                    Bucket: bucket,
-                    Prefix: location,
-                    ContinuationToken: token
+                const list = await this.client.send(new S3.ListObjectsV2Command({
+                    Bucket: params.Bucket,
+                    Prefix: params.Prefix,
+                    ContinuationToken
                 }));
 
+                console.error(list.KeyCount, list.Cntents)
+
                 if (list.KeyCount) {
-                    const deleteCommand = s3.send(new S3.DeleteObjectsCommand({
-                        Bucket: bucket,
+                    const deleteCommand = this.client.send(new S3.DeleteObjectsCommand({
+                        Bucket: params.Bucket,
                         Delete: {
                             Objects: list.Contents.map((item) => ({ Key: item.Key })),
                             Quiet: false,
@@ -102,7 +104,8 @@ export default class Spaces {
                 ContinuationToken = list.NextContinuationToken;
             } while (ContinuationToken);
         } catch (err) {
-            throw new Err(400, err, 'Failed to Head Object');
+            console.error(err);
+            throw new Err(400, err, 'Failed to Recursive Delete');
         }
     }
 }
