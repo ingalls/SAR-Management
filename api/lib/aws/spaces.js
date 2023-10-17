@@ -74,7 +74,7 @@ export default class Spaces {
         }
     }
 
-    async deleteRecurse(params) {
+    async deleteRecursive(params) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         try {
