@@ -11,8 +11,8 @@
                         <ArrowBadgeRightIcon @click='pages.page++' class='cursor-pointer'/>
                     </template>
 
-                    <TrashIcon v-if='manage' @click='deleteFile' class='cursor-pointer'/>
-                    <DownloadIcon @click='download' class='cursor-pointer'/>
+                    <TablerDelete displaytype='icon' v-tooltip='"Delete File"' v-if='manage' @delete='deleteFile'/>
+                    <DownloadIcon @click='download' v-tooltip='"Download File"' class='cursor-pointer'/>
                 </div>
             </div>
         </div>
@@ -59,6 +59,7 @@
 <script>
 import PDF from 'pdfvuer/dist/pdfvuer.common.js';
 import {
+    TablerDelete,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
@@ -163,6 +164,7 @@ export default {
     },
     components: {
         PDF,
+        TablerDelete,
         TrashIcon,
         ArrowBadgeLeftIcon,
         ArrowBadgeRightIcon,
