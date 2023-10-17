@@ -87,10 +87,8 @@ export default class Spaces {
                     ContinuationToken
                 }));
 
-                console.error(list.KeyCount, list.Cntents)
-
                 if (list.KeyCount) {
-                    const deleteCommand = this.client.send(new S3.DeleteObjectsCommand({
+                    const deleted = this.client.send(new S3.DeleteObjectsCommand({
                         Bucket: params.Bucket,
                         Delete: {
                             Objects: list.Contents.map((item) => ({ Key: item.Key })),

@@ -23,7 +23,7 @@
                         :prefix='paging.prefix'
                         :file='file'
                         :manage='is_iam("Doc:Manage")'
-                        @delete='file = null;'
+                        @delete='deleteFile'
                     />
                     <div v-else class="card">
                         <div class="card-body">
@@ -156,18 +156,12 @@ export default {
         }
     },
     watch: {
-       'paging.page': async function() {
-           await this.listDocs();
+       paging: {
+           deep: true,
+           handler: async function() {
+              await this.listDocs();
+           }
        },
-       'paging.filter': async function() {
-           await this.listDocs();
-       },
-       'paging.prefix': async function() {
-           await this.listDocs();
-       },
-       'file': async function() {
-           await this.listDocs();
-       }
     },
     mounted: async function() {
         let path = (this.$route.params.pathMatch ? this.$route.params.pathMatch : []).filter((p) => { return !!p.trim() });
@@ -186,6 +180,15 @@ export default {
         human(size) {
             var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
             return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+        },
+        deleteFile: async function() {
+            this.loading.list = true;
+            this.file = null;
+            await this.sleep();
+            await this.listDocs();
+        },
+        sleep: function() {
+            return new Promise(resolve => setTimeout(resolve, 1000));
         },
         deleteFolder: async function() {
 
