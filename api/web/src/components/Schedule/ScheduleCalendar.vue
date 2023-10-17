@@ -7,6 +7,23 @@
     <div class="card-body">
         <div id='calendar' style='width: 100%; height: 500px;'></div>
     </div>
+
+    <TablerModal v-if='modal.shown'>
+        <button type="button" class="btn-close" @click='close' aria-label="Close"></button>
+        <div class="modal-status bg-yellow"></div>
+        <div class='modal-header'>
+            <div class='modal-title'>Create Shift</div>
+        </div>
+        <div class="modal-body">
+            <div class='col-12'>
+                <TablerInput label='Shift Start' v-model='modal.start'/>
+                <TablerInput label='Shift End' v-model='modal.end'/>
+            </div>
+            <div class='col-12 d-flex'>
+                <button @click='createFolder' class='btn btn-primary mt-2 ms-auto'>Submit</button>
+            </div>
+        </div>
+    </TablerModal>
 </div>
 </template>
 
@@ -15,6 +32,11 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
+import {
+    TablerModal,
+    TablerInput,
+    TablerLoading,
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Calendar',
@@ -27,6 +49,11 @@ export default {
     data: function() {
         return {
             calendar: null,
+            modal: {
+                shown: false,
+                start: '',
+                end: ''
+            }
         }
     },
     mounted: async function() {
@@ -67,8 +94,16 @@ export default {
 
         this.calendar.on('select', (event) => {
             console.error(event);
+            this.modal.start = String(event.startStr);
+            this.modal.end = String(event.endStr);
+            this.modal.shown = true;
         });
     },
+    components: {
+        TablerModal,
+        TablerInput,
+        TablerLoading,
+    }
 }
 </script>
 
