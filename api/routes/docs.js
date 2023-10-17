@@ -88,20 +88,20 @@ export default async function router(schema, config) {
         query: 'req.query.ConvertDoc.json'
     }, async (req, res) => {
         try {
-            prefix(req);
-
             if (req.query.access_token) {
                 const decoded = jwt.verify(req.query.access_token, config.SigningSecret);
 
-                console.error(`documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}`)
+                console.error(`documents/${decoded.p ? decoded.p : ''}${decoded.f}`)
                 const file = await spaces.get({
-                    Key: `documents/${decoded.p ? decoded.p + '/' : ''}${decoded.f}`
+                    Key: `documents/${decoded.p ? decoded.p : ''}${decoded.f}`
                 });
 
                 return file.Body.pipe(res);
             } else {
                 await Auth.is_auth(req, true);
                 await Auth.is_iam(req, 'Doc:Manage');
+
+                prefix(req);
 
                 const token = jwt.sign({
                     u: req.auth.id,
