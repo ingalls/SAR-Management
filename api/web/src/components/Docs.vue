@@ -37,6 +37,7 @@
                                 <div class='ms-auto'>
                                     <div v-if='is_iam("Doc:Manage")' class='btn-list'>
                                         <FolderPlusIcon @click='folder = true' class='cursor-pointer my-1'/>
+                                        <TablerDelete v-if='paging.prefix' displaytype='icon' class='my-1' @delete='deleteFolder'/>
                                         <PlusIcon @click='upload = true' class='cursor-pointer my-1'/>
                                     </div>
                                 </div>
@@ -66,7 +67,7 @@
                                         <span v-if='doc.type === "dir"'>-</span>
                                         <span v-else v-text='human(doc.size)'/>
                                     </td>
-                                    <td v-text='doc.last_modified'></td>
+                                    <td v-text='doc.last_modified'/>
                                 </tr>
                             </tbody>
                         </table>
@@ -106,10 +107,12 @@ import NewFolder from './Docs/NewFolder.vue';
 import File from './Docs/File.vue';
 import {
     TablerNone,
+    TablerDelete,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
+    DotsVerticalIcon,
     PlusIcon,
     FolderPlusIcon,
     SearchIcon,
@@ -184,6 +187,9 @@ export default {
             var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
             return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
         },
+        deleteFolder: async function() {
+
+        },
         error: function($event) {
             this.upload = null;
             throw $event;
@@ -211,6 +217,7 @@ export default {
         File,
         Upload,
         PlusIcon,
+        DotsVerticalIcon,
         NewFolder,
         FolderPlusIcon,
         NoAccess,
@@ -218,6 +225,7 @@ export default {
         FileFilledIcon,
         FolderFilledIcon,
         TableFooter,
+        TablerDelete,
         TablerBreadCrumb,
         TablerLoading
     }
