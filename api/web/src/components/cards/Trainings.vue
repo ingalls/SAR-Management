@@ -92,6 +92,10 @@ export default {
         start: {
             type: Number
         },
+        order: {
+            type: String,
+            default: 'desc'
+        },
         end: {
             type: Number
         },
@@ -130,7 +134,7 @@ export default {
             paging: {
                 filter: '',
                 sort: 'start_ts',
-                order: 'desc',
+                order: this.order,
                 limit: this.limit,
                 start: this.start,
                 end: this.end,
