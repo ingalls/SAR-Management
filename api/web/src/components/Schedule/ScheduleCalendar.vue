@@ -9,7 +9,7 @@
     </div>
 
     <TablerModal v-if='modal.shown'>
-        <button type="button" class="btn-close" @click='close' aria-label="Close"></button>
+        <button type="button" class="btn-close" @click='modal.shown = false' aria-label="Close"></button>
         <div class="modal-status bg-yellow"></div>
         <div class='modal-header'>
             <div class='modal-title'>Create Shift</div>
