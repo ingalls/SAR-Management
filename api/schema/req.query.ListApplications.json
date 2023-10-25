@@ -1,0 +1,55 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "fields": {
+            "type": "array",
+            "description": "Output Fields (and order) when using CSV format",
+            "default": [],
+            "items": {
+                "type": "string",
+                "enum": [
+                    "id",
+                    "created",
+                    "updated",
+                    "name",
+                    "phone",
+                    "email",
+                    "meta"
+                ]
+            }
+        },
+        "limit": {
+            "$ref": "./util/limit.json"
+        },
+        "order": {
+            "$ref": "./util/order.json"
+        },
+        "disabled": {
+            "type": "boolean",
+            "default": false
+        },
+        "sort": {
+            "type": "string",
+            "default": "created",
+            "enum": [
+                "id",
+                "created",
+                "updated",
+                "name",
+                "email",
+                "phone",
+                "meta"
+            ],
+            "description": "Field to sort order by"
+        },
+        "page": {
+            "$ref": "./util/page.json"
+        },
+        "filter": {
+            "type": "string",
+            "default": "",
+            "description": "Filter a complete or partial name"
+        }
+    }
+}

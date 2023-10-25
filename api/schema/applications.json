@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./applications/id.json"
+        },
+        "created": {
+            "$ref": "./applications/created.json"
+        },
+        "updated": {
+            "$ref": "./applications/updated.json"
+        },
+        "name": {
+            "$ref": "./applications/name.json"
+        },
+        "phone": {
+            "$ref": "./applications/phone.json"
+        },
+        "email": {
+            "$ref": "./applications/email.json"
+        },
+        "meta": {
+            "$ref": "./applications/meta.json"
+        }
+    },
+    "required": [
+        "id",
+        "created",
+        "updated",
+        "name",
+        "phone",
+        "email",
+        "meta"
+    ]
+}
