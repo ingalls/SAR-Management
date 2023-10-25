@@ -5,7 +5,8 @@
         <h3 class="card-title"><a @click='$router.push("/training")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <PlusIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/training/new`)' class='cursor-pointer'/>
+            <PlusIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer'/>
+            <SettingsIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer'/>
         </div>
     </div>
 
@@ -58,7 +59,8 @@ import {
 
 import {
     GripVerticalIcon,
-    PlusIcon
+    PlusIcon,
+    SettingsIcon
 } from 'vue-tabler-icons';
 
 
@@ -180,6 +182,7 @@ export default {
     },
     components: {
         PlusIcon,
+        SettingsIcon,
         TableHeader,
         TableFooter,
         TablerLoading,
