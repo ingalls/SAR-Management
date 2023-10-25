@@ -16,11 +16,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <CardApplications
-                        :auth='auth'
-                        :iam='iam'
-                        :limit='20'
-                    />
+                    <Builder/>
                 </div>
             </div>
         </div>
@@ -29,10 +25,11 @@
 </template>
 
 <script>
-import CardApplications from './cards/Applications.vue';
+import Builder from './util/Builder.vue';
 import {
+    TablerInput,
     TablerBreadCrumb,
-} from '@tak-ps/vue-tabler'
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'Applications',
@@ -47,8 +44,9 @@ export default {
         }
     },
     components: {
-        CardApplications,
-        TablerBreadCrumb
+        Builder,
+        TablerInput,
+        TablerBreadCrumb,
     }
 }
 </script>
