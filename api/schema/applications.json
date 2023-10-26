@@ -22,6 +22,9 @@
         },
         "meta": {
             "$ref": "./applications/meta.json"
+        },
+        "schema": {
+            "$ref": "./applications/schema.json"
         }
     },
     "required": [
@@ -31,6 +34,7 @@
         "name",
         "phone",
         "email",
-        "meta"
+        "meta",
+        "schema"
     ]
 }

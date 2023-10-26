@@ -2,6 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { sql } from 'slonik';
 
 const Permissions = {
+    Application: ['Admin', 'Manage', 'View', 'None'],
     Calendar: ['View', 'None'],
     Doc: ['Admin', 'Manage', 'View', 'None'],
     Equipment: ['Admin', 'Manage', 'View', 'None'],
@@ -40,6 +41,10 @@ class AuthAugment {
                         iam[group] = i[group];
                     }
                 }
+            }
+
+            for (const group in Permissions) {
+                if (!iam[group]) iam[group] = Permissions[group][Permissions[group].length - 1];
             }
 
             return iam;
