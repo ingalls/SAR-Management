@@ -1,6 +1,9 @@
 import Err from '@openaddresses/batch-error';
 import Application from '../lib/types/application.js';
 import Auth, { Permissions } from '../lib/auth.js';
+import Server from '../lib/types/server.js';
+import Ajv from 'ajv';
+const ajv = new Ajv({ allErrors: true });
 
 export default async function router(schema, config) {
     await schema.get('/application', {
@@ -47,8 +50,10 @@ export default async function router(schema, config) {
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
-            // TODO: Verify against Application schema
             const schema = JSON.parse((await Server.from(config.pool, req.params.key)).value);
+
+            const isValid = ajv.validate(schema, req.body);
+            if (!isValid) throw new Err(400, null, 'Invalid Application Format');
 
             const input = { meta: {} }
             for (prop in req.body) {
