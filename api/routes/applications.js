@@ -50,7 +50,7 @@ export default async function router(schema, config) {
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
-            const schema = JSON.parse((await Server.from(config.pool, req.params.key)).value);
+            const schema = JSON.parse((await Server.from(config.pool, 'application')).value);
 
             const isValid = ajv.validate(schema, req.body);
             if (!isValid) throw new Err(400, null, 'Invalid Application Format');
