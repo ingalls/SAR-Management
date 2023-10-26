@@ -50,54 +50,11 @@
             </template>
             <template v-else>
                 <div class='row g-2'>
-                    <div class='col-12' :key='prop_it' v-for='(prop, prop_it) in schema'>
-                        <template v-if='prop.type === "string" && prop.enum === undefined'>
-                            <TablerInput
-                                :label='prop.name || "No Name"'
-                                :disabled='true'
-                                :description='prop.description'
-                                :required='prop.required'
-                            />
-                        </template>
-                        <template v-else-if='prop.type === "string" && Array.isArray(prop.enum)'>
-                            <TablerEnum
-                                :label='prop.name || "No Name"'
-                                :options='prop.enum'
-                                :disabled='true'
-                                :description='prop.description'
-                                :required='prop.required'
-                            />
-                        </template>
-                        <template v-else-if='prop.type === "number"'>
-                            <TablerInput
-                                :label='prop.name || "No Name"'
-                                :disabled='true'
-                                :description='prop.description'
-                                :required='prop.required'
-                            />
-                        </template>
-                        <template v-else-if='prop.type === "boolean"'>
-                            <TablerToggle
-                                :label='prop.name || "No Name"'
-                                :disabled='true'
-                                :description='prop.description'
-                                :required='prop.required'
-                            />
-                        </template>
-                        <template v-else-if='prop.type === "integer"'>
-                            <TablerInput
-                                :label='prop.name || "No Name"'
-                                :disabled='true'
-                                :description='prop.description'
-                                :required='prop.required'
-                            />
-                        </template>
-                    </div>
+                    <TablerSchema :schema='computedSchema' v-model='previewModel'/>
                 </div>
             </template>
         </template>
         <template v-else>
-            <TablerSchema :schema='computedSchema' v-model='previewModel'/>
         </template>
     </div>
 </div>
@@ -110,17 +67,9 @@ import {
     TrashIcon,
     EyeIcon,
     EyeOffIcon,
-    AlphabetLatinIcon,
-    DecimalIcon,
-    Sort09Icon,
-    BinaryIcon,
 } from 'vue-tabler-icons';
 import {
     TablerNone,
-    TablerInput,
-    TablerSchema,
-    TablerEnum,
-    TablerToggle,
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -178,15 +127,7 @@ export default {
         EyeIcon,
         EyeOffIcon,
         TrashIcon,
-        AlphabetLatinIcon,
-        DecimalIcon,
-        Sort09Icon,
-        BinaryIcon,
-        TablerInput,
-        TablerToggle,
-        TablerSchema,
-        TablerEnum,
-        TablerNone
+        TablerNone,
     }
 }
 </script>
