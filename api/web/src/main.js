@@ -19,6 +19,7 @@ const router = new VueRouter.createRouter({
         { path: '/login', name: 'login', component: () => import('./components/Login.vue') },
         { path: '/login/forgot', name: 'login-forgot', component: () => import('./components/Forgot.vue') },
         { path: '/login/reset', name: 'login-reset', component: () => import('./components/Reset.vue') },
+        { path: '/login/application', name: 'login-application', component: () => import('./components/PublicApplication.vue') },
 
         { path: '/profile', name: 'profile', component: () => import('./components/User.vue') },
 
