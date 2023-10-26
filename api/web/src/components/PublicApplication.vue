@@ -13,6 +13,18 @@
 
                             <TablerLoading v-if='loading.schema' desc='Loading Application'/>
                             <TablerLoading v-else-if='loading.submit' desc='Submitting Application'/>
+                            <template v-else-if='success'>
+                                <div class='d-flex justify-content-center mb-4'>
+                                    <CheckIcon class='text-green' width='70' height='70' />
+                                </div>
+
+                                <div class='d-flex justify-content-center py-3'>
+                                    <div>We've Recieved your application</div>
+                                </div>
+                                <div class='d-flex justify-content-center py-3'>
+                                    <div>Give us a couple days to review it and we'll get back to you!</div>
+                                </div>
+                            </template>
                             <template v-else>
                                 <TablerSchema :schema='schema' v-model='data'/>
                                 <div class='row d-flex mx-2 my-4'>
@@ -33,11 +45,15 @@ import {
     TablerSchema,
     TablerLoading
 } from '@tak-ps/vue-tabler'
+import {
+    CheckIcon
+} from 'vue-tabler-icons';
 
 export default {
     name: 'PublicApplication',
     data: function() {
         return {
+            success: false,
             loading: {
                 schema: true,
                 submit: false
@@ -57,14 +73,21 @@ export default {
         },
         submit: async function() {
             this.loading.submit = true;
-            await window.std('/api/application', {
-                method: 'POST',
-                body: this.data
-            });
+            try {
+                await window.std('/api/application', {
+                    method: 'POST',
+                    body: this.data
+                });
+            } catch (err) {
+                this.loading.submit = false;
+                throw err;
+            }
             this.loading.submit = false;
+            this.success = true;
         }
     },
     components: {
+        CheckIcon,
         TablerSchema,
         TablerLoading
     }

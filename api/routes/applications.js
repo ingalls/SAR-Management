@@ -47,16 +47,17 @@ export default async function router(schema, config) {
         group: 'Applications',
         auth: 'user',
         description: 'Submit a new application for consideration',
+        body: { type: "object" },
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
             const schema = JSON.parse((await Server.from(config.pool, 'application')).value);
 
             const isValid = ajv.validate(schema, req.body);
-            if (!isValid) throw new Err(400, null, 'Invalid Application Format');
+            if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
 
             const input = { meta: {} }
-            for (prop in req.body) {
+            for (const prop in req.body) {
                 if (['name', 'phone', 'email'].includes(prop)) {
                     input[prop] = req.body[prop];
                 } else {
