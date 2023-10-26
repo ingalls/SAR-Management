@@ -39,6 +39,38 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.post('/application', {
+        name: 'Submit Application',
+        group: 'Applications',
+        auth: 'user',
+        description: 'Submit a new application for consideration',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            // TODO: Verify against Application schema
+            const schema = JSON.parse((await Server.from(config.pool, req.params.key)).value);
+
+            const input = { meta: {} }
+            for (prop in req.body) {
+                if (['name', 'phone', 'email'].includes(prop)) {
+                    input[prop] = req.body[prop];
+                } else {
+                    input.meta[prop] = req.body[prop];
+                }
+            }
+
+            const app = await Application.generate(config.pool, input);
+
+            return res.json({
+                status: 200,
+                message: 'Your application has been recieved'
+            });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+
 /*
     await schema.get('/team', {
         name: 'Get Teams',
