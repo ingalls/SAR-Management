@@ -6,21 +6,19 @@ function up(knex) {
                 '${JSON.stringify({
                     type: "object",
                     additionalProperties: false,
+                    required: ["name", "phone", "email"],
                     properties: {
                         name: {
                             type: "string",
                             description: 'The applicants legal name',
-                            required: true
                         },
                         phone: {
                             type: "string",
                             description: 'The applicants phone',
-                            required: true
                         },
                         email: {
                             type: "string",
                             description: 'The applicants email',
-                            required: true
                         }
                     }
                 })}',
