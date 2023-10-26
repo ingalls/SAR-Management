@@ -21,12 +21,6 @@ function up(knex) {
                             type: "string",
                             description: 'The applicants email',
                             required: true
-                        },
-                        meta: {
-                            type: "object",
-                            description: 'Any additional information about the applicant',
-                            required: true,
-                            properties: {}
                         }
                     }
                 })}',

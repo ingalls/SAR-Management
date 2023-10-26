@@ -1,6 +1,6 @@
 <template>
 <TablerModal>
-    <button type="button" class="btn-close" @click='close' aria-label="Close"></button>
+    <button type="button" class="btn-close" @click='$emit("close")' aria-label="Close"></button>
     <div class="modal-status bg-yellow"></div>
     <div class="modal-body text-center py-4">
         <div class='d-flex my-2'>
