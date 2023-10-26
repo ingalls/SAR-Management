@@ -2,7 +2,7 @@
 <div class="card">
     <div class="card-header">
         <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
-        <h3 class="card-title"><a @click='$router.push("/training")' class='cursor-pointer' v-text='label'></a></h3>
+        <h3 class="card-title"><a @click='$router.push("/application")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
             <PlusIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer'/>
@@ -34,7 +34,7 @@
                                 <span v-else>Never</span>
                             </td>
                             <td v-else>
-                                <span v-text='training[h.name]'></span>
+                                <span v-text='application[h.name]'></span>
                             </td>
                         </template>
                     </template>
