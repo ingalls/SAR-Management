@@ -1,174 +1,78 @@
 <template>
-<div class='card'>
-    <div class="card-header">
-        <h3 class="card-title" v-text='title'></h3>
-
-        <div class='ms-auto btn-list'>
-            <EyeIcon v-if='!preview' @click='preview = true' class='cursor-pointer'/>
-            <EyeOffIcon v-else @click='preview = false' class='cursor-pointer'/>
-            <div v-if='!preview' class="dropdown">
-                <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <PlusIcon class='cursor-pointer'/>
-                </div>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <div class='m-1 text-center'>
-                        <div @click='schema.push({
-                            "name": "",
-                            "type": "string",
-                            "required": false,
-                        })' class='opt cursor-pointer py-1'>String</div>
-                        <div @click='schema.push({
-                            "name": "",
-                            "type": "string",
-                            "enum": [],
-                            "required": false,
-                        })' class='opt cursor-pointer py-1'>Enum</div>
-                        <div @click='schema.push({
-                            "name": "",
-                            "type": "boolean",
-                            "required": false,
-                        })' class='opt cursor-pointer py-1'>Boolean</div>
-                        <div @click='schema.push({
-                            "name": "",
-                            "type": "number",
-                            "required": false,
-                        })' class='opt cursor-pointer py-1'>Number</div>
-                        <div @click='schema.push({
-                            "name": "",
-                            "type": "integer",
-                            "required": false,
-                        })' class='opt cursor-pointer py-1'>Integer</div>
-                    </div>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="card-body">
-        <template v-if='!preview'>
-            <template v-if='!schema.length'>
-                <TablerNone label='Properties' :create='false' :compact='true'/>
+<TablerModal>
+    <button type="button" class="btn-close" @click='close' aria-label="Close"></button>
+    <div class="modal-status bg-yellow"></div>
+    <div class="modal-body text-center py-4">
+        <div class='d-flex my-2'>
+            <template v-if='edit.type === "string"'>
+                <AlphabetLatinIcon/>
+            </template>
+            <template v-else-if='edit.type === "number"'>
+                <DecimalIcon/>
+            </template>
+            <template v-else-if='edit.type === "integer"'>
+                <Sort09Icon/>
             </template>
             <template v-else>
-                <div class='col-12 row border rounded my-2 py-2 px-2' :key='prop_it' v-for='(prop, prop_it) in schema'>
-                    <div class='col-12 d-flex'>
-                        <template v-if='prop.type === "string"'>
-                            <AlphabetLatinIcon/>
-                        </template>
-                        <template v-else-if='prop.type === "number"'>
-                            <DecimalIcon/>
-                        </template>
-                        <template v-else-if='prop.type === "integer"'>
-                            <Sort09Icon/>
-                        </template>
-                        <template v-else>
-                            <BinaryIcon/>
-                        </template>
-
-                        <span v-text='prop.type' class='my-1 mx-2 strong'/>
-
-                        <div class='ms-auto btn-list'>
-                            <TrashIcon @click='schema.splice(prop_it, 1)' class='cursor-pointer'/>
-                        </div>
-                    </div>
-                    <div class='col-12 row d-flex'>
-                        <TablerInput label='Field Name' v-model='prop.name' class='col-12 py-1'/>
-                        <TablerToggle label='Required' v-model='prop.required' class='col-12 py-1'/>
-                        <TablerInput :rows='3' label='Description' v-model='prop.description' class='col-12 py-1'/>
-                        <template v-if='prop.type === "string" && prop.enum === undefined'>
-                        </template>
-                        <template v-else-if='prop.type === "string" && Array.isArray(prop.enum)'>
-                        </template>
-                        <template v-else-if='prop.type === "number"'>
-                        </template>
-                        <template v-else-if='prop.type === "integer"'>
-                        </template>
-                    </div>
-                </div>
+                <BinaryIcon/>
             </template>
-        </template>
-        <template v-else>
-            <TablerSchema :schema='computedSchema' v-model='previewModel'/>
-        </template>
-    </div>
-</div>
+            <span v-text='edit.type' class='my-1 mx-2 strong'/>
+        </div>
+        <div class='row g-2 d-flex'>
+            <TablerInput label='Field Name' v-model='edit.name'/>
+            <TablerToggle label='Required' v-model='edit.required'/>
+            <TablerInput :rows='3' label='Description' v-model='edit.description'/>
 
+            <template v-if='edit.type === "string" && edit.enum === undefined'>
+            </template>
+            <template v-else-if='edit.type === "string" && Array.isArray(edit.enum)'>
+            </template>
+            <template v-else-if='edit.type === "number"'>
+            </template>
+            <template v-else-if='edit.type === "integer"'>
+            </template>
+        </div>
+    </div>
+    <div class='modal-footer'>
+        <button @click='$emit("done", edit)' class='btn btn-primary'>Save</button>
+    </div>
+</TablerModal>
 </template>
 
 <script>
 import {
-    PlusIcon,
-    TrashIcon,
-    EyeIcon,
-    EyeOffIcon,
     AlphabetLatinIcon,
     DecimalIcon,
     Sort09Icon,
     BinaryIcon,
 } from 'vue-tabler-icons';
 import {
-    TablerNone,
+    TablerModal,
     TablerInput,
-    TablerSchema,
-    TablerToggle,
+    TablerToggle
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'builder',
+    name: 'BuilderEdit',
     props: {
-        title: {
-            type: String,
-            default: 'JSON Schema Builder'
-        }
-    },
-    computed: {
-        computedSchema: function() {
-            const res = {
-                type: 'object',
-                required: [],
-                additionalProperties: false,
-                properties: {}
-            }
-
-            for (const prop of JSON.parse(JSON.stringify(this.schema))) {
-                const name = prop.name;
-                delete prop.name;
-
-                if (prop.required) res.required.push(name);
-                res.properties[name] = prop;
-            }
-
-            return res;
+        prop: {
+            type: Object,
+            required: true
         }
     },
     data: function() {
         return {
-            preview: false,
-            previewModel: {},
-            schema: [],
-            display: {
-
-            }
+            edit: JSON.parse(JSON.stringify(this.prop))
         }
     },
     components: {
-        PlusIcon,
-        EyeIcon,
-        EyeOffIcon,
-        TrashIcon,
         AlphabetLatinIcon,
         DecimalIcon,
         Sort09Icon,
         BinaryIcon,
+        TablerModal,
         TablerInput,
-        TablerToggle,
-        TablerSchema,
-        TablerNone
+        TablerToggle
     }
 }
 </script>
-
-<style>
-.opt:hover {
-  font-weight: 900;
-}
-</style>

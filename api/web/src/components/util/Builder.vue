@@ -4,59 +4,60 @@
         <h3 class="card-title" v-text='title'></h3>
 
         <div class='ms-auto btn-list'>
-            <EyeIcon v-if='!preview' @click='preview = true' class='cursor-pointer'/>
-            <EyeOffIcon v-else @click='preview = false' class='cursor-pointer'/>
-            <div v-if='!preview' class="dropdown">
+            <div class="dropdown">
                 <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     <PlusIcon class='cursor-pointer'/>
                 </div>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <div class='m-1 text-center'>
-                        <div @click='schema.push({
+                        <div @click='modal = {
                             "name": "",
                             "type": "string",
                             "required": false,
-                        })' class='opt cursor-pointer py-1'>String</div>
-                        <div @click='schema.push({
+                        }' class='opt cursor-pointer py-1'>String</div>
+                        <div @click='modal = {
                             "name": "",
                             "type": "string",
                             "enum": [],
                             "required": false,
-                        })' class='opt cursor-pointer py-1'>Enum</div>
-                        <div @click='schema.push({
+                        }' class='opt cursor-pointer py-1'>Enum</div>
+                        <div @click='modal = {
                             "name": "",
                             "type": "boolean",
                             "required": false,
-                        })' class='opt cursor-pointer py-1'>Boolean</div>
-                        <div @click='schema.push({
+                        }' class='opt cursor-pointer py-1'>Boolean</div>
+                        <div @click='modal = {
                             "name": "",
                             "type": "number",
                             "required": false,
-                        })' class='opt cursor-pointer py-1'>Number</div>
-                        <div @click='schema.push({
+                        }' class='opt cursor-pointer py-1'>Number</div>
+                        <div @click='modal = {
                             "name": "",
                             "type": "integer",
                             "required": false,
-                        })' class='opt cursor-pointer py-1'>Integer</div>
+                        }' class='opt cursor-pointer py-1'>Integer</div>
                     </div>
                 </ul>
             </div>
         </div>
     </div>
     <div class="card-body">
-        <template v-if='!preview'>
-            <template v-if='!schema.length'>
-                <TablerNone label='Properties' :create='false' :compact='true'/>
-            </template>
-            <template v-else>
-                <div class='row g-2'>
-                    <TablerSchema :schema='computedSchema' v-model='previewModel'/>
-                </div>
-            </template>
+        <template v-if='!schema.length'>
+            <TablerNone label='Properties' :create='false' :compact='true'/>
         </template>
         <template v-else>
+            <div class='row g-2'>
+                <TablerSchema :schema='computedSchema' v-model='input' :disabled='true'/>
+            </div>
         </template>
     </div>
+
+    <BuilderEdit
+        v-if='modal'
+        @close='modal = null'
+        @done='push($event)'
+        :prop='modal'
+    />
 </div>
 
 </template>
@@ -65,15 +66,15 @@
 import {
     PlusIcon,
     TrashIcon,
-    EyeIcon,
-    EyeOffIcon,
 } from 'vue-tabler-icons';
+import BuilderEdit from './BuilderEdit.vue';
 import {
     TablerNone,
+    TablerSchema
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'builder',
+    name: 'Builder',
     props: {
         title: {
             type: String,
@@ -82,6 +83,13 @@ export default {
         modelValue: {
             type: Object,
             required: true
+        }
+    },
+    data: function() {
+        return {
+            modal: null,
+            input: {},
+            schema: [],
         }
     },
     computed: {
@@ -104,16 +112,6 @@ export default {
             return res;
         }
     },
-    data: function() {
-        return {
-            preview: false,
-            previewModel: {},
-            schema: [],
-            display: {
-
-            }
-        }
-    },
     mounted: function() {
         for (const prop in this.modelValue.properties) {
             this.schema.push({
@@ -122,12 +120,18 @@ export default {
             });
         }
     },
+    methods: {
+        push: function(prop) {
+            this.schema.push(prop);
+            this.modal = null;
+        }
+    },
     components: {
         PlusIcon,
-        EyeIcon,
-        EyeOffIcon,
         TrashIcon,
         TablerNone,
+        TablerSchema,
+        BuilderEdit,
     }
 }
 </script>
