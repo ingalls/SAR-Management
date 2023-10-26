@@ -7,11 +7,25 @@ function up(knex) {
                     type: "object",
                     additionalProperties: false,
                     properties: {
-                        name: { type: "string" },
-                        phone: { type: "string" },
-                        email: { type: "string" },
+                        name: {
+                            type: "string",
+                            description: 'The applicants legal name',
+                            required: true
+                        },
+                        phone: {
+                            type: "string",
+                            description: 'The applicants phone',
+                            required: true
+                        },
+                        email: {
+                            type: "string",
+                            description: 'The applicants email',
+                            required: true
+                        },
                         meta: {
                             type: "object",
+                            description: 'Any additional information about the applicant',
+                            required: true,
                             properties: {}
                         }
                     }

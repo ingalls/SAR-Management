@@ -52,19 +52,45 @@
                 <div class='row g-2'>
                     <div class='col-12' :key='prop_it' v-for='(prop, prop_it) in schema'>
                         <template v-if='prop.type === "string" && prop.enum === undefined'>
-                            <TablerInput :label='prop.name || "No Name"' :disabled='true'/>
+                            <TablerInput
+                                :label='prop.name || "No Name"'
+                                :disabled='true'
+                                :description='prop.description'
+                                :required='prop.required'
+                            />
                         </template>
                         <template v-else-if='prop.type === "string" && Array.isArray(prop.enum)'>
-                            <TablerEnum :label='prop.name || "No Name"' :options='prop.enum' :disabled='true'/>
+                            <TablerEnum
+                                :label='prop.name || "No Name"'
+                                :options='prop.enum'
+                                :disabled='true'
+                                :description='prop.description'
+                                :required='prop.required'
+                            />
                         </template>
                         <template v-else-if='prop.type === "number"'>
-                            <TablerInput :label='prop.name || "No Name"' :disabled='true'/>
+                            <TablerInput
+                                :label='prop.name || "No Name"'
+                                :disabled='true'
+                                :description='prop.description'
+                                :required='prop.required'
+                            />
                         </template>
                         <template v-else-if='prop.type === "boolean"'>
-                            <TablerToggle :label='prop.name || "No Name"' :disabled='true'/>
+                            <TablerToggle
+                                :label='prop.name || "No Name"'
+                                :disabled='true'
+                                :description='prop.description'
+                                :required='prop.required'
+                            />
                         </template>
                         <template v-else-if='prop.type === "integer"'>
-                            <TablerInput :label='prop.name || "No Name"' :disabled='true'/>
+                            <TablerInput
+                                :label='prop.name || "No Name"'
+                                :disabled='true'
+                                :description='prop.description'
+                                :required='prop.required'
+                            />
                         </template>
                     </div>
                 </div>
