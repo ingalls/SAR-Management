@@ -103,6 +103,10 @@ export default {
         title: {
             type: String,
             default: 'JSON Schema Builder'
+        },
+        modelValue: {
+            type: Object,
+            required: true
         }
     },
     computed: {
@@ -133,6 +137,14 @@ export default {
             display: {
 
             }
+        }
+    },
+    mounted: function() {
+        for (const prop in this.modelValue.properties) {
+            this.schema.push({
+                name: prop,
+                ...this.modelValue.properties[prop]
+            });
         }
     },
     components: {
