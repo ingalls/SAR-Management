@@ -54,10 +54,30 @@ export default {
     mounted: async function() {
         await this.fetch();
     },
+    watch: {
+        schema: {
+            deep: true,
+            handler: async function() {
+                await this.saveSchema();
+            }
+        }
+    },
     methods: {
         fetch: async function() {
             this.loading = true;
             this.schema = JSON.parse((await window.std('/api/server/application')).value);
+            this.loading = false;
+        },
+        saveSchema: async function() {
+            this.loading = true;
+            await window.std('/api/server', {
+                method: 'PUT',
+                body: {
+                    key: 'application',
+                    value: JSON.stringify(this.schema),
+                    public: true
+                }
+            });
             this.loading = false;
         }
     },

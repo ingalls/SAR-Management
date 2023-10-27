@@ -42,12 +42,17 @@
         </div>
     </div>
     <div class="card-body">
-        <template v-if='!schema.length'>
-            <TablerNone label='Properties' :create='false' :compact='true'/>
-        </template>
+        <TablerNone v-if='!schema.length' label='Properties' :create='false' :compact='true'/>
         <template v-else>
             <div class='row g-2'>
                 <TablerSchema :schema='computedSchema' v-model='input' :disabled='true'/>
+            </div>
+            <div class='row'>
+                <div class='d-flex'>
+                    <div class='ms-auto'>
+                        <button @click='$emit("update:modelValue", computedSchema)' class='btn btn-primary'>Update Application</button>
+                    </div>
+                </div>
             </div>
         </template>
     </div>
@@ -88,6 +93,7 @@ export default {
     data: function() {
         return {
             modal: null,
+            loading: true,
             input: {},
             schema: [],
         }
@@ -106,6 +112,7 @@ export default {
                 delete prop.name;
 
                 if (prop.required) res.required.push(name);
+                delete prop.required;
                 res.properties[name] = prop;
             }
 
@@ -116,6 +123,7 @@ export default {
         for (const prop in this.modelValue.properties) {
             this.schema.push({
                 name: prop,
+                required: (this.modelValue.required || []).includes(prop),
                 ...this.modelValue.properties[prop]
             });
         }
