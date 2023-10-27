@@ -29,7 +29,7 @@ export default async function router(schema, config) {
         group: 'Applications',
         auth: 'user',
         description: 'Submit a new application for consideration',
-        body: { type: "object" },
+        body: { type: 'object' },
         res: 'applications.json'
     }, async (req, res) => {
         try {
@@ -64,12 +64,16 @@ export default async function router(schema, config) {
         auth: 'user',
         ':applicationid': 'integer',
         description: 'Return an application',
-        res: 'applications.json'
+        res: { type: 'object' }
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Application:View');
 
-            res.json(await Application.from(config.pool, req.params.applicationid));
+            const app = (await Application.from(config.pool, req.params.applicationid)).serialize();
+            Object.assign(app, app.meta);
+            delete app.meta;
+
+            return res.json(app);
         } catch (err) {
             return Err.respond(err, res);
         }
