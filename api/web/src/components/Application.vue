@@ -113,7 +113,7 @@ export default {
             this.loading.save = true;
 
             const body = JSON.parse(JSON.stringify(this.application));
-            for (const prop of ['schema', 'created', 'updated']) delete body[prop];
+            for (const prop of ['id', 'schema', 'created', 'updated']) delete body[prop];
             if (this.$route.params.applicationid) {
                 this.application = await window.std(`/api/application/${this.$route.params.applicationid}`, {
                     method: 'PATCH', body
