@@ -34,7 +34,7 @@ import {
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'Applications',
+    name: 'ApplicationBuilder',
     props: {
         iam: {
             type: Object,
