@@ -116,49 +116,25 @@ export default async function router(schema, config) {
         }
     });
 
-/*
-    await schema.patch('/team/:teamid', {
-        name: 'Update Team',
-        group: 'Teams',
-        auth: 'admin',
-        ':teamid': 'integer',
-        description: 'Update a team',
-        body: 'req.body.PatchTeam.json',
-        res: 'res.Team.json'
-    }, async (req, res) => {
-        try {
-            await Auth.is_iam(req, 'Team:Manage');
-
-            if (req.auth.access !== 'admin') {
-                delete req.body.iam;
-            }
-
-            res.json(await Team.commit(config.pool, req.params.teamid, req.body));
-        } catch (err) {
-            return Err.respond(err, res);
-        }
-    });
-
-    await schema.delete('/team/:teamid', {
-        name: 'Delete Team',
-        group: 'Teams',
-        auth: 'admin',
-        ':teamid': 'integer',
-        description: 'Delete a team',
+    await schema.delete('/application/:applicationid', {
+        name: 'Delete Application',
+        group: 'Applications',
+        auth: 'user',
+        ':applicationid': 'integer',
+        description: 'Delete an application',
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Team:Admin');
+            await Auth.is_iam(req, 'Application:Admin');
 
-            await Team.delete(config.pool, req.params.teamid);
+            await Application.delete(config.pool, req.params.applicationid);
 
             return res.json({
                 status: 200,
-                message: 'Team Deleted'
-            });
+                message: 'Application Deleted'
+            })
         } catch (err) {
             return Err.respond(err, res);
         }
     });
-    */
 }
