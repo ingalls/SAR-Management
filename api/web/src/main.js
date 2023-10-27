@@ -59,7 +59,9 @@ const router = new VueRouter.createRouter({
 
         { path: '/application', name: 'applications', component: () => import('./components/Applications.vue') },
         { path: '/application/edit', name: 'application-edit', component: () => import('./components/ApplicationBuilder.vue') },
+        { path: '/application/new', name: 'application-new', component: () => import('./components/Application.vue') },
         { path: '/application/:applicationid', name: 'application', component: () => import('./components/Application.vue') },
+        { path: '/application/:applicationid/edit', name: 'application-edit', component: () => import('./components/Application.vue') },
 
         { path: '/team', name: 'teams', component: () => import('./components/Teams.vue') },
         { path: '/team/new', name: 'teams-new', component: () => import('./components/TeamsNew.vue') },
