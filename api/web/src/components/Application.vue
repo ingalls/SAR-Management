@@ -17,7 +17,8 @@
             <div class='row row-deck row-cards'>
                 <NoAccess v-if='$route.params.applicationid && !is_iam("Application:View")' title='Application'/>
                 <NoAccess v-else-if='!$route.params.applicationid && !is_iam("Application:Manage")' title='Application'/>
-                <TablerLoading v-else-if='loading.application'/>
+                <TablerLoading v-else-if='loading.application' desc='Loading Application'/>
+                <TablerLoading v-else-if='loading.save' desc='Saving Application'/>
                 <div v-else class="col-lg-12">
                     <div class="card">
                         <div class='card-header'>
@@ -33,6 +34,7 @@
 
                                     <div class='ms-auto btn-list'>
                                         <TablerEpoch :date='application.created'/>
+                                        <SettingsIcon v-if='!edit' class='cursor-pointer' @click='$router.push(`/application/${$route.params.applicationid}/edit`)'/>
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +46,7 @@
                                 <template v-if='edit'>
                                     <div class='d-flex'>
                                         <div class='ms-auto'>
-                                            <button class='btn btn-primary'>Save</button>
+                                            <button @click='submit' class='btn btn-primary'>Save</button>
                                         </div>
                                     </div>
                                 </template>
@@ -87,6 +89,7 @@ export default {
         return {
             edit: ["application-edit", "application-new"].includes(this.$route.name),
             loading: {
+                save: false,
                 application: true,
             },
             application: {
@@ -106,6 +109,23 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        submit: async function() {
+            this.loading.save = true;
+
+            if (this.$route.params.applicationid) {
+                this.application = await window.std(`/api/application/${this.$route.params.applicationid}`, {
+                    method: 'PATCH',
+                    body: this.application
+                });
+            } else {
+                this.application = await window.std(`/api/application`, {
+                    method: 'POST',
+                    body: this.application
+                });
+            }
+
+            this.$router.push(`/application/${this.application.id}`);
+        },
         fetch: async function() {
             this.loading.application = true;
             this.application = await window.std(`/api/application/${this.$route.params.applicationid}`);
