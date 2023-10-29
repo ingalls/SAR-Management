@@ -45,8 +45,9 @@
 
                                 <template v-if='edit'>
                                     <div class='d-flex'>
+                                        <TablerDelete @delete='deleteApp'/>
                                         <div class='ms-auto'>
-                                            <button @click='submit' class='btn btn-primary'>Save</button>
+                                            <button @click='submit' class='btn btn-primary'>save</button>
                                         </div>
                                     </div>
                                 </template>
@@ -67,6 +68,7 @@ import {
     TablerEpoch,
     TablerBreadCrumb,
     TablerSchema,
+    TablerDelete,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
@@ -126,6 +128,14 @@ export default {
 
             this.$router.push(`/application/${this.application.id}`);
         },
+        deleteApp: async function() {
+            this.loading.application = true;
+            await window.std(`/api/application/${this.$route.params.applicationid}`, {
+                method: 'DELETE'
+            });
+            this.loading.application = false;
+            this.$router.push('/application');
+        },
         fetch: async function() {
             this.loading.application = true;
             this.application = await window.std(`/api/application/${this.$route.params.applicationid}`);
@@ -140,6 +150,7 @@ export default {
         SettingsIcon,
         TablerBreadCrumb,
         TablerLoading,
+        TablerDelete,
         TablerSchema,
         NoAccess
     }
