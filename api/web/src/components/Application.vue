@@ -45,7 +45,7 @@
 
                                 <template v-if='edit'>
                                     <div class='d-flex'>
-                                        <TablerDelete @delete='deleteApp'/>
+                                        <TablerDelete v-if='is_iam("Application:Admin")' @delete='deleteApp'/>
                                         <div class='ms-auto'>
                                             <button @click='submit' class='btn btn-primary'>save</button>
                                         </div>
