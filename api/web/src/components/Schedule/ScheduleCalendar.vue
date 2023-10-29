@@ -16,8 +16,9 @@
         </div>
         <div class="modal-body">
             <div class='col-12'>
-                <TablerInput label='Shift Start' v-model='modal.start'/>
-                <TablerInput label='Shift End' v-model='modal.end'/>
+                <TablerInput type='datetime-local' label='Shift Start' v-model='modal.start'/>
+                <TablerInput type='datetime-local' label='Shift End' v-model='modal.end'/>
+                <UserDropdown/>
             </div>
             <div class='col-12 d-flex'>
                 <button @click='createFolder' class='btn btn-primary mt-2 ms-auto'>Submit</button>
@@ -32,6 +33,7 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
+import UserDropdown from '../util/UserDropdown.vue';
 import {
     TablerModal,
     TablerInput,
@@ -102,6 +104,7 @@ export default {
     components: {
         TablerModal,
         TablerInput,
+        UserDropdown,
         TablerLoading,
     }
 }
