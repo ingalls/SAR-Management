@@ -18,11 +18,11 @@
             <div class='col-12'>
                 <TablerInput type='datetime-local' label='Shift Start' v-model='modal.start'/>
                 <TablerInput type='datetime-local' label='Shift End' v-model='modal.end'/>
-                <UserDropdown/>
+                <UserDropdown v-model='modal.user'/>
             </div>
-            <div class='col-12 d-flex'>
-                <button @click='createFolder' class='btn btn-primary mt-2 ms-auto'>Submit</button>
-            </div>
+        </div>
+        <div class='modal-footer'>
+            <button @click='createFolder' class='btn btn-primary mt-2 ms-auto'>Submit</button>
         </div>
     </TablerModal>
 </div>
@@ -53,6 +53,7 @@ export default {
             calendar: null,
             modal: {
                 shown: false,
+                user: null,
                 start: '',
                 end: ''
             }
@@ -95,9 +96,8 @@ export default {
         this.calendar.render();
 
         this.calendar.on('select', (event) => {
-            console.error(event);
-            this.modal.start = String(event.startStr);
-            this.modal.end = String(event.endStr);
+            this.modal.start = `${event.startStr}T00:00`;
+            this.modal.end = `${event.endStr}T00:00`;
             this.modal.shown = true;
         });
     },
