@@ -25,6 +25,7 @@
                         <a @click='$router.push("/team")' class="dropdown-item">Team</a>
                         <a @click='$router.push("/calendar")' class="dropdown-item">Calendar</a>
                         <a @click='$router.push("/schedule")' class="dropdown-item">On-Call</a>
+                        <a @click='$router.push("/application")' class="dropdown-item">Applications</a>
                     </div>
 
 
@@ -115,12 +116,30 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link cursor-pointer" @click='$router.push("/schedule")'>
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <CalendarTimeIcon/>
-                                </span>
-                                <span class="nav-link-title">On-Call</span>
-                            </a>
+                            <TablerDropdown>
+                                <template #default>
+                                    <a class="nav-link cursor-pointer">
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                            <CaretDownIcon/>
+                                        </span>
+                                        <span class="nav-link-title">More</span>
+                                    </a>
+                                </template>
+                                <template #dropdown>
+                                    <a class="nav-link cursor-pointer" @click='$router.push("/schedule")'>
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                            <CalendarTimeIcon/>
+                                        </span>
+                                        <span class="nav-link-title">On-Call</span>
+                                    </a>
+                                    <a class="nav-link cursor-pointer" @click='$router.push("/application")'>
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                            <UserPlusIcon/>
+                                        </span>
+                                        <span class="nav-link-title">Applications</span>
+                                    </a>
+                                </template>
+                            </TablerDropdown>
                         </li>
                     </ul>
                     <div v-if='user && user.access === "admin"' class='ms-auto'>
@@ -164,6 +183,7 @@ import '@tabler/core/dist/css/tabler.min.css';
 import PageFooter from './components/util/PageFooter.vue';
 import {
     TablerError,
+    TablerDropdown,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
@@ -172,11 +192,13 @@ import {
     BellIcon,
     HomeIcon,
     PlusIcon,
+    UserPlusIcon,
     TruckIcon,
     UsersIcon,
     MenuIcon,
     ShovelIcon,
     BugIcon,
+    CaretDownIcon,
     NotebookIcon,
     AmbulanceIcon,
     CalendarIcon,
@@ -251,6 +273,7 @@ export default {
     components: {
         BugIcon,
         HomeIcon,
+        UserPlusIcon,
         MenuIcon,
         UsersIcon,
         UserIcon,
@@ -262,7 +285,9 @@ export default {
         TruckIcon,
         AmbulanceIcon,
         AdjustmentsIcon,
+        CaretDownIcon,
         TablerError,
+        TablerDropdown,
         TablerLoading,
         PageFooter
     }
