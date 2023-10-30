@@ -32,7 +32,7 @@ export default {
     },
     watch: {
         modelValue: function() {
-            if (!this.loaded) return;
+            if (!this.loaded || !map.getSource('point')) return;
 
             map.getSource('point').setData({
                 type: 'FeatureCollection',

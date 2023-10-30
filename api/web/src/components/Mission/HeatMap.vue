@@ -48,7 +48,7 @@ export default {
                 }
             })
 
-            if (!map) return;
+            if (!map || !map.getSource('points')) return;
             map.getSource('points').setData(this.fc);
 
             if (this.fc.features.length) {
