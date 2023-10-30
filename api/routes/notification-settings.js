@@ -22,8 +22,16 @@ export default async function router(schema, config) {
 
             const setting = (await UserSetting.from(config.pool, req.auth.id, 'notification')).value;
             if (!setting.disabled) setting.disabled = false;
-            if (!setting.settings) setting.settings = [];
-            for (const s of setting.settings) settingsMap.set(s.name, s);
+            if (!setting.settings) {
+                setting.settings = [];
+            } else {
+                for (const s of Object.keys(setting.settings)) {
+                    settingsMap.set(s, {
+                        name: s,
+                        value: setting.settings[s]
+                    });
+                }
+            }
 
             res.json({
                 disabled: setting.disabled,
@@ -46,19 +54,27 @@ export default async function router(schema, config) {
             await Auth.is_auth(req);
 
             const known = Object.keys(Permissions);
+
+            const value = {
+                disabled: req.body.disabled,
+                settings: {}
+            }
+
             for (const setting of req.body.settings) {
                 if (!known.includes(setting.name)) throw new Err(400, null, `Unknown Setting: ${setting.name}`);
+                value.settings[setting.name] = setting.value;
             }
 
             const setting = await UserSetting.from(config.pool, req.auth.id, 'notification');
+
             if (!Object.keys(setting.value).length) {
                 await UserSetting.generate(config.pool, {
                     uid: req.auth.id,
                     key: 'notification',
-                    value: req.body
+                    value
                 });
             } else {
-                await setting.commit({ value: req.body });
+                await setting.commit({ value });
             }
 
             res.json(req.body);
