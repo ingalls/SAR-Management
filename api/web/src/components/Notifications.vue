@@ -22,8 +22,9 @@
                             <div class="card-header">
                                 <div class='col d-flex'>
                                     <h1 class='card-title'>Notifications</h1>
-                                    <div class='ms-auto'>
+                                    <div class='ms-auto btn-list'>
                                         <TrashIcon @click='clearNotifications' class='cursor-pointer'/>
+                                        <SettingsIcon @click='$router.push("/notification/edit")' class='cursor-pointer'/>
                                     </div>
                                 </div>
                             </div>
@@ -56,6 +57,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
+    SettingsIcon,
     CircleDotIcon,
     TrashIcon
 } from 'vue-tabler-icons';
@@ -98,6 +100,7 @@ export default {
     },
     components: {
         TablerNone,
+        SettingsIcon,
         CircleDotIcon,
         TablerLoading,
         TrashIcon,
