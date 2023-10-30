@@ -1,9 +1,8 @@
 import Err from '@openaddresses/batch-error';
 import Application from '../lib/types/application.js';
-import Auth, { Permissions } from '../lib/auth.js';
+import Auth from '../lib/auth.js';
 import Server from '../lib/types/server.js';
 import Ajv from 'ajv';
-import Notify from '../lib/notify.js';
 
 const ajv = new Ajv({ allErrors: true });
 
@@ -43,7 +42,7 @@ export default async function router(schema, config) {
             const input = {
                 schema,
                 meta: {}
-            }
+            };
             for (const prop in req.body) {
                 if (['name', 'phone', 'email'].includes(prop)) {
                     input[prop] = req.body[prop];
@@ -54,7 +53,7 @@ export default async function router(schema, config) {
 
             const app = await Application.generate(config.pool, input);
 
-            return res.json(app)
+            return res.json(app);
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -98,7 +97,7 @@ export default async function router(schema, config) {
             const input = {
                 schema,
                 meta: {}
-            }
+            };
             for (const prop in req.body) {
                 if (['name', 'phone', 'email'].includes(prop)) {
                     input[prop] = req.body[prop];
@@ -111,8 +110,6 @@ export default async function router(schema, config) {
             Object.assign(app, app.meta);
             delete app.meta;
             return res.json(app);
-
-            return res.json(app)
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -134,7 +131,7 @@ export default async function router(schema, config) {
             return res.json({
                 status: 200,
                 message: 'Application Deleted'
-            })
+            });
         } catch (err) {
             return Err.respond(err, res);
         }
