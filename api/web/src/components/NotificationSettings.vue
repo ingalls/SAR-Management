@@ -31,7 +31,7 @@
                                 <div class='row g-2'>
                                     <template v-for='setting in list.settings'>
                                         <div class='col-12 border-bottom pb-2'>
-                                            <TablerToggle :label='setting.name' v-model='setting.value'/>
+                                            <TablerToggle :disabled='list.disabled' :label='setting.name' v-model='setting.value'/>
                                         </div>
                                     </template>
 
