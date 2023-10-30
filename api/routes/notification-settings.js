@@ -58,8 +58,7 @@ export default async function router(schema, config) {
                     value: req.body
                 });
             } else {
-                setting.value = req.body;
-                await setting.commit();
+                await setting.commit({ value: req.body });
             }
 
             res.json(req.body);

@@ -34,6 +34,12 @@
                                             <TablerToggle :label='setting.name' v-model='setting.value'/>
                                         </div>
                                     </template>
+
+                                    <div class='d-flex pt-3 pb-1'>
+                                        <div class='ms-auto'>
+                                            <button @click='postNotify' class='btn btn-primary'>Save Settings</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -66,14 +72,9 @@ export default {
         }
     },
     watch: {
-        list: {
-            deep: true,
-            handler: async function() {
-                const res = JSON.parse(JSON.stringify(this.list));
-                if (res.disabled) res.settings = [];
-
-                this.postNotify(res);
-            }
+        'list.disabled': function() {
+            if (!this.list.disabled) return;
+            this.list.settings.forEach((s) => s.value = false);
         }
     },
     mounted: async function() {
@@ -85,11 +86,15 @@ export default {
             this.list = await window.std('/api/notification/settings');
             this.loading.list = false;
         },
-        postNotify: async function(body) {
+        postNotify: async function() {
+            this.loading.list = true;
+            const body = JSON.parse(JSON.stringify(this.list));
+            
             this.list = await window.std('/api/notification/settings', {
                 method: 'PATCH',
                 body
             });
+            this.loading.list = false;
         },
     },
     components: {
