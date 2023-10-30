@@ -31,6 +31,7 @@
 
                     <a @click='$router.push("/notification")' class="btn btn-dark" target="_blank" rel="noreferrer">
                         <BellIcon/>
+                        <span v-if='notifications' class="badge bg-red"></span>
                     </a>
 
                     <div class='dropdown'>
@@ -166,6 +167,7 @@
         <router-view
             :key="$route.fullPath"
             @login='getUser'
+            @notifications='notifications = $event'
             :iam='iam'
             :auth='user'
         />
@@ -213,6 +215,7 @@ export default {
             loading: {
                 user: false
             },
+            notifications: false,
             name: 'Search & Rescue',
             iam: {},
             user: null,
@@ -242,11 +245,15 @@ export default {
     mounted: async function() {
         await this.getIAM();
         await this.fetchName();
+        await this.fetchNotify();
         if (localStorage.token) return await this.getUser();
     },
     methods: {
         fetchName: async function() {
             this.name = (await window.std('/api/server/name')).value;
+        },
+        fetchNotify: async function() {
+            this.notifications = !!(await window.std('/api/notification')).total;
         },
         getIAM: async function() {
             this.iam = await window.std('/api/iam');
