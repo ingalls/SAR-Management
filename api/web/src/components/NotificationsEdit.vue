@@ -27,7 +27,9 @@
                             <div class="card-body">
                                 <div class='row g-2'>
                                     <template v-for='setting in list.settings'>
-                                        <TablerToggle :label='setting.name' v-model='setting.value'/>
+                                        <div class='col-12 border-bottom pb-2'>
+                                            <TablerToggle :label='setting.name' v-model='setting.value'/>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
