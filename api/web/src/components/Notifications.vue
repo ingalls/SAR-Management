@@ -87,14 +87,15 @@ export default {
         clearNotifications: async function(notify=null) {
             this.loading.list = true;
             if (notify) {
-                this.list = await window.std(`/api/notification/${notify.id}`, {
+                await window.std(`/api/notification/${notify.id}`, {
                     method: 'DELETE'
                 });
             } else {
-                this.list = await window.std('/api/notification', {
+                await window.std('/api/notification', {
                     method: 'DELETE'
                 });
             }
+            await this.listNotifications();
             this.loading.list = false;
         }
     },
