@@ -21,6 +21,7 @@ export default class Notify {
         if (this.email) {
             const setting = (await UserSetting.from(this.pool, uid, 'notification')).value;
             if (setting.disabled) return;
+            if (!setting.settings) setting.settings = [];
             if (setting.settings[type] === undefined) setting.settings[type] = true;
             if (!setting.settings[type]) return;
 
