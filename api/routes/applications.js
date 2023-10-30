@@ -3,6 +3,8 @@ import Application from '../lib/types/application.js';
 import Auth, { Permissions } from '../lib/auth.js';
 import Server from '../lib/types/server.js';
 import Ajv from 'ajv';
+import Notify from '../lib/notify.js';
+
 const ajv = new Ajv({ allErrors: true });
 
 export default async function router(schema, config) {

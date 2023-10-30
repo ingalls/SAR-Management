@@ -4,11 +4,9 @@ import ViewEquipment from '../lib/views/equipment.js';
 import EquipmentAssigned from '../lib/types/equipment-assigned.js';
 import Notify from '../lib/notify.js';
 import Auth from '../lib/auth.js';
-import Email from '../lib/email.js';
 
 export default async function router(schema, config) {
-    const email = new Email(config);
-    const notify = new Notify(config, email);
+    const notify = new Notify(config);
 
     await schema.get('/equipment', {
         name: 'List Equipment',

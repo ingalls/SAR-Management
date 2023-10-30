@@ -1,13 +1,14 @@
 import Notification from './types/notification.js';
 import User from '../lib/types/user.js';
 import UserSetting from '../lib/types/user-setting.js';
+import Email from '../lib/email.js';
 
 export default class Notify {
-    constructor(config, email = null) {
+    constructor(config) {
         this.pool = config.pool;
 
         if (config.email) {
-            this.email = email;
+            this.email = new Email(config);
         } else {
             this.email = null;
         }
