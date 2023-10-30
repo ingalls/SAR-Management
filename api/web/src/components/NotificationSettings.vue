@@ -22,6 +22,9 @@
                             <div class="card-header">
                                 <div class='col d-flex'>
                                     <h1 class='card-title'>Email Notification Settings</h1>
+                                    <div class='ms-auto'>
+                                        <TablerToggle label='All Disabled' v-model='list.disabled'/>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -57,7 +60,19 @@ export default {
                 list: true
             },
             list: {
+                disabled: false,
                 settings: []
+            }
+        }
+    },
+    watch: {
+        list: {
+            deep: true,
+            handler: async function() {
+                const res = JSON.parse(JSON.stringify(this.list));
+                if (res.disabled) res.settings = [];
+
+                this.postNotify(res);
             }
         }
     },
@@ -69,6 +84,12 @@ export default {
             this.loading.list = true;
             this.list = await window.std('/api/notification/settings');
             this.loading.list = false;
+        },
+        postNotify: async function(body) {
+            this.list = await window.std('/api/notification/settings', {
+                method: 'PATCH',
+                body
+            });
         },
     },
     components: {

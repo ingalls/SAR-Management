@@ -24,7 +24,7 @@
                                     <h1 class='card-title'>Notifications</h1>
                                     <div class='ms-auto btn-list'>
                                         <TrashIcon @click='clearNotifications' class='cursor-pointer'/>
-                                        <SettingsIcon @click='$router.push("/notification/edit")' class='cursor-pointer'/>
+                                        <SettingsIcon @click='$router.push("/notification/settings")' class='cursor-pointer'/>
                                     </div>
                                 </div>
                             </div>

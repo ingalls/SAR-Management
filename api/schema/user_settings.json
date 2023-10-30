@@ -10,11 +10,15 @@
         },
         "value": {
             "$ref": "./user_settings/value.json"
+        },
+        "id": {
+            "$ref": "./user_settings/id.json"
         }
     },
     "required": [
         "uid",
         "key",
-        "value"
+        "value",
+        "id"
     ]
 }

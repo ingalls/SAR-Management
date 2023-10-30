@@ -16,20 +16,17 @@ export default async function router(schema, config) {
             await Auth.is_auth(req);
 
             const settingsMap = new Map();
-            settingsMap.set('Disable All', { name: 'Disable All', value: false });
             const settings = Object.keys(Permissions).forEach((setting) => {
-                settingsMap.set(setting, {
-                    name: setting,
-                    value: true
-                })
+                settingsMap.set(setting, { name: setting, value: true })
             });
 
-            const setting = await UserSetting.from(config.pool, req.auth.id, 'notification');
-
-            // TODO Merge setting with Map
-            console.error(setting)
+            const setting = (await UserSetting.from(config.pool, req.auth.id, 'notification')).value;
+            if (!setting.disabled) setting.disabled = false;
+            if (!setting.settings) setting.settings = [];
+            for (const s of setting.settings) settingsMap.set(s.name, s);
 
             res.json({
+                disabled: setting.disabled,
                 settings: Array.from(settingsMap.values())
             });
         } catch (err) {
@@ -43,29 +40,29 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get all notifications settings',
         body: 'req.body.UpdateNotificationSettings.json',
-        res: 'res.Standard.json'
+        res: 'res.ListNotificationSettings.json'
     }, async (req, res) => {
         try {
             await Auth.is_auth(req);
 
-            const settingsMap = new Map();
-            settingsMap.set('Disable All', { name: 'Disable All', value: false });
-            const settings = Object.keys(Permissions).forEach((setting) => {
-                settingsMap.set(setting, {
-                    name: setting,
-                    value: true
-                })
-            });
+            const known = Object.keys(Permissions);
+            for (const setting of req.body.settings) {
+                if (!known.includes(setting.name)) throw new Err(400, null, `Unknown Setting: ${setting.name}`);
+            }
 
             const setting = await UserSetting.from(config.pool, req.auth.id, 'notification');
+            if (!Object.keys(setting.value).length) {
+                await UserSetting.generate(config.pool, {
+                    uid: req.auth.id,
+                    key: 'notification',
+                    value: req.body
+                });
+            } else {
+                setting.value = req.body;
+                await setting.commit();
+            }
 
-            // TODO Merge setting with Map
-            console.error(setting)
-
-            res.json({
-                status: 200,
-                message: 'Settings Updated'
-            });
+            res.json(req.body);
         } catch (err) {
             return Err.respond(err, res);
         }

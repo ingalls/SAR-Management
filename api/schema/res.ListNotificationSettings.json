@@ -3,6 +3,9 @@
     "required": ["settings"],
     "additionalProperties": false,
     "properties": {
+        "disabled": {
+            "type": "boolean"
+        },
         "settings": {
             "type": "array",
             "items": {
