@@ -6,50 +6,36 @@
             <div class='col d-flex'>
                 <h1 class="card-title" v-text='file'></h1>
                 <div class='ms-auto btn-list'>
-                    <template v-if='is_pdf || preview'>
-                        <ArrowBadgeLeftIcon v-if='pages.page !== 1' v-tooltip='"Preview Page"' @click='pages.page--' class='cursor-pointer'/>
-                        <ArrowBadgeRightIcon @click='pages.page++' v-tooltip='"Next Page"' class='cursor-pointer'/>
-                    </template>
-
                     <TablerDelete displaytype='icon' v-tooltip='"Delete File"' v-if='manage' @delete='deleteFile'/>
                     <DownloadIcon @click='download' v-tooltip='"Download File"' class='cursor-pointer'/>
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <div v-if='is_img'>
-                <img :src='url(false)'/>
+        <div v-if='is_img'>
+            <img :src='url(false)'/>
+        </div>
+        <div v-else-if='loading.preview'>
+            <TablerLoading desc='Loading Preview'/>
+        </div>
+        <div v-else-if='is_pdf || preview'>
+            <embed
+                :src='preview'
+                width='100%'
+                height='1000px'
+            />
+        </div>
+        <div v-else-if='preview === null'>
+            <div class='d-flex justify-content-center mt-4 mb-2'>
+                <EyeOffIcon width='48' height='48'/>
             </div>
-            <div v-else-if='is_pdf'>
-                <PDF :src="url()" :page='pages.page' :resize='true' :text='false'>
-                    <template slot="loading">
-                        <TablerLoading/>
-                    </template>
-                </PDF>
-            </div>
-            <div v-else-if='loading.preview'>
-                <TablerLoading desc='Loading Preview'/>
-            </div>
-            <div v-else-if='preview'>
-                <PDF :src='preview' :page='pages.page' :resize='true' :text='false'>
-                    <template slot="loading">
-                        <TablerLoading/>
-                    </template>
-                </PDF>
-            </div>
-            <div v-else-if='preview === null'>
-                <div class='d-flex justify-content-center mt-4 mb-2'>
-                    <EyeOffIcon width='48' height='48'/>
-                </div>
 
-                <div class='text-center mb-4 mt-2'>
-                    <div>Unsupported Preview Format</div>
-                </div>
+            <div class='text-center mb-4 mt-2'>
+                <div>Unsupported Preview Format</div>
+            </div>
 
-                <div v-if='manage' class='d-flex justify-content-center my-4'>
-                    <TablerLoading v-if='loading.generate' desc='Generating Preview'/>
-                    <div v-else @click='generate' class='btn btn-secondary'>Generate PDF</div>
-                </div>
+            <div v-if='manage' class='d-flex justify-content-center my-4'>
+                <TablerLoading v-if='loading.generate' desc='Generating Preview'/>
+                <div v-else @click='generate' class='btn btn-secondary'>Generate PDF</div>
             </div>
         </div>
     </template>
@@ -57,7 +43,6 @@
 </template>
 
 <script>
-import PDF from 'pdfvuer/dist/pdfvuer.common.js';
 import {
     TablerDelete,
     TablerLoading
@@ -98,10 +83,6 @@ export default {
     },
     data: function() {
         return {
-            pages: {
-                page: 1,
-                total: 1
-            },
             loading: {
                 main: false,
                 generate: false,
@@ -168,7 +149,6 @@ export default {
         }
     },
     components: {
-        PDF,
         TablerDelete,
         ArrowBadgeLeftIcon,
         ArrowBadgeRightIcon,
