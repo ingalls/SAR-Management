@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                             <div v-if='type.schema && type.schema.properties' class="col-md-12">
-                                <EquipmentMeta v-if='equipment.meta' v-model='equipment.meta' :disabled='true' :schema='type.schema'/>
+                                <EquipmentMeta v-model='equipment.meta' :disabled='true' :schema='type.schema'/>
                             </div>
                         </div>
                     </div>

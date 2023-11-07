@@ -1,5 +1,5 @@
 <template>
-<div class='col-md-12 my-3'>
+<div v-if='schema.properties && Object.keys(schema.properties).length !== 0' class='col-md-12 my-3'>
     <div class='card-header'>
         <span class='card-title'>Equipment Metadata</span>
     </div>
