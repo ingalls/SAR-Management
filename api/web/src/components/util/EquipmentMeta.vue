@@ -10,11 +10,6 @@
                 Only Object Schemas are Supported.
             </div>
         </template>
-        <template v-else-if='!schema.properties || Object.keys(schema.properties).length === 0'>
-            <div class="d-flex justify-content-center my-4">
-                No metadata properties defined in type
-            </div>
-        </template>
         <template v-else>
             <div :key='key' v-for='key in Object.keys(schema.properties)' class='py-2 px-3 floating-input'>
                 <template v-if='schema.properties[key].enum'>
