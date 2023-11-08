@@ -91,6 +91,7 @@ export default async function router(schema) {
 
                 const jpeg = await sharp(Body)
                     .jpeg({ mozjpeg: true })
+                    .withMetadata()
                     .toBuffer();
 
                 await spaces.upload({
@@ -101,6 +102,7 @@ export default async function router(schema) {
                 const jpegmini = await sharp(Body)
                     .resize(100)
                     .jpeg({ mozjpeg: true })
+                    .withMetadata()
                     .toBuffer();
 
                 await spaces.upload({
