@@ -7,7 +7,7 @@
     "scripts": {
         "test": "tape test/**.test.js",
         "lint": "eslint index.js routes/**.js lib/**.js test/**.js",
-        "loaddb": "echo 'DROP DATABASE sar' | psql && echo 'CREATE DATABASE sar' | psql && psql sar < sar-latest.dump && knex migrate:latest",
+        "loaddb": "echo 'DROP DATABASE sar' | psql && echo 'CREATE DATABASE sar' | psql && psql sar < sar-latest.dump && knex migrate:latest && echo \"UPDATE users SET email = username || '@ingalls.ca'\" | psql sar",
         "prod": "node index.js",
         "dev": "StackName=test nodemon -i schema/ -i web/ -i doc/ index.js"
     },

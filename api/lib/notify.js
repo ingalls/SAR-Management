@@ -28,4 +28,8 @@ export default class Notify {
             await this.email.notify(user, notify);
         }
     }
+
+    async list(type, text) {
+
+    }
 }
