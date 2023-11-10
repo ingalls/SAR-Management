@@ -41,6 +41,16 @@
                                             description='A Human Readable description for the schedule'
                                         />
                                     </div>
+                                    <div class="col-md-12">
+                                        <TablerInput
+                                            type='time'
+                                            v-model='schedule.handoff'
+                                            :error='errors.handoff'
+                                            :required='true'
+                                            label='Schedule Handoff'
+                                            description='Default time at which Schedules change'
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -89,7 +99,7 @@ import {
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'MissionEdit',
+    name: 'ScheduleEdit',
     props: {
         iam: {
             type: Object,
@@ -108,10 +118,12 @@ export default {
             errors: {
                 name: '',
                 body: '',
+                handoff: ''
             },
             schedule: {
                 name: '',
-                body: ''
+                body: '',
+                handoff: '06:00'
             },
             assigned: []
         }
@@ -135,7 +147,7 @@ export default {
             this.$router.push('/schedule');
         },
         validate: function() {
-            for (const field of ['name', 'body']) {
+            for (const field of ['name', 'body', 'handoff']) {
                 if (!this.schedule[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = '';
             }

@@ -12,6 +12,9 @@
         "body": {
             "type": "string"
         },
+        "handoff": {
+            "type": "string"
+        },
         "assigned": {
             "type": "array",
             "default": [],

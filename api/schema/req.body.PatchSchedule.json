@@ -7,6 +7,9 @@
         },
         "body": {
             "type": "string"
+        },
+        "handoff": {
+            "type": "string"
         }
     }
 }

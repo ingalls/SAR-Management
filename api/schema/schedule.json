@@ -16,6 +16,9 @@
         },
         "body": {
             "$ref": "./schedule/body.json"
+        },
+        "handoff": {
+            "$ref": "./schedule/handoff.json"
         }
     },
     "required": [
@@ -23,6 +26,7 @@
         "created",
         "updated",
         "name",
-        "body"
+        "body",
+        "handoff"
     ]
 }

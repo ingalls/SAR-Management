@@ -18,7 +18,10 @@
             <div class='col-12'>
                 <TablerInput type='datetime-local' label='Shift Start' v-model='modal.start'/>
                 <TablerInput type='datetime-local' label='Shift End' v-model='modal.end'/>
-                <UserDropdown v-model='modal.user'/>
+                <UserDropdown
+                    v-model='modal.user'
+                    :url='`/api/schedule/${schedule.id}/assigned`'
+                />
             </div>
         </div>
         <div class='modal-footer'>
@@ -43,8 +46,8 @@ import {
 export default {
     name: 'Calendar',
     props: {
-        scheduleid: {
-            type: Number,
+        schedule: {
+            type: Object,
             required: true
         }
     },
@@ -70,7 +73,7 @@ export default {
             eventSources: async (fetchInfo, resolve, reject) => {
                 try {
                     let events = [];
-                    const url = window.stdurl(`/api/schedule/${this.scheduleid}/events`)
+                    const url = window.stdurl(`/api/schedule/${this.schedule.id}/events`)
                     url.searchParams.append('start', fetchInfo.startStr);
                     url.searchParams.append('end', fetchInfo.endStr);
                     events = events.concat(await window.std(url));
@@ -96,8 +99,8 @@ export default {
         this.calendar.render();
 
         this.calendar.on('select', (event) => {
-            this.modal.start = `${event.startStr}T00:00`;
-            this.modal.end = `${event.endStr}T00:00`;
+            this.modal.start = `${event.startStr}T${this.schedule.handoff}`;
+            this.modal.end = `${event.endStr}T${this.schedule.handoff}`;
             this.modal.shown = true;
         });
     },
