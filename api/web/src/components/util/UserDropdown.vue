@@ -66,7 +66,7 @@ export default {
         },
         listUsers: async function() {
             const url = window.stdurl(this.url);
-            url.searchParams.append('filter', this.filter);
+            if (this.filter) url.searchParams.append('filter', this.filter);
             url.searchParams.append('limit', this.limit);
             const list = await window.std(url);
             if (list.assigned) list.users = list.assigned;

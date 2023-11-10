@@ -5,6 +5,28 @@ import { sql } from 'slonik';
 export default class ScheduleAssigned extends Generic {
     static _table = 'schedules_assigned';
 
+    static async is_user(pool, schedule_id, uid) {
+        schedule_id = Params.integer(schedule_id);
+        uid = Params.integer(uid);
+
+        try {
+            const pgres = await pool.query(sql`
+                SELECT
+                    schedules_assigned.*
+                FROM
+                    ${sql.identifier([this._table])}
+                WHERE
+                    schedule_id = ${schedule_id}
+                    AND uid = ${uid}
+            `);
+
+            if (!pgres.rows.length) throw new Error('User is not part of On-Call Schedule');
+            return true;
+        } catch (err) {
+            throw new Err(500, err, 'Failed to enser user is part of schedule');
+        }
+    }
+
     static async list(pool, schedule_id, query) {
         schedule_id = Params.integer(schedule_id);
 

@@ -1,4 +1,4 @@
-<template>
+schedules_assigned.json<template>
 <div class="card">
     <div class="card-header">
         <h1 class='card-title'>Schedule Calendar</h1>
@@ -15,17 +15,18 @@
             <div class='modal-title'>Create Shift</div>
         </div>
         <div class="modal-body">
-            <div class='col-12'>
+            <TablerLoading v-if='modal.loading' desc='Loading Assignment'/>
+            <div v-else class='col-12'>
                 <TablerInput type='datetime-local' label='Shift Start' v-model='modal.start'/>
                 <TablerInput type='datetime-local' label='Shift End' v-model='modal.end'/>
                 <UserDropdown
-                    v-model='modal.user'
+                    @selected='modal.user = $event.uid'
                     :url='`/api/schedule/${schedule.id}/assigned`'
                 />
             </div>
         </div>
         <div class='modal-footer'>
-            <button @click='createFolder' class='btn btn-primary mt-2 ms-auto'>Submit</button>
+            <button @click='createAssignment' class='btn btn-primary mt-2 ms-auto'>Submit</button>
         </div>
     </TablerModal>
 </div>
@@ -55,6 +56,7 @@ export default {
         return {
             calendar: null,
             modal: {
+                loading: false,
                 shown: false,
                 user: null,
                 start: '',
@@ -103,6 +105,25 @@ export default {
             this.modal.end = `${event.endStr}T${this.schedule.handoff}`;
             this.modal.shown = true;
         });
+    },
+    methods: {
+        createAssignment: async function() {
+            this.modal.loading = true;
+            await window.std(`/api/schedule/${this.schedule.id}/events`, {
+                method: 'POST',
+                body: {
+                    uid:  this.modal.user,
+                    start_ts: this.modal.start,
+                    end_ts: this.modal.end
+                }
+            });
+
+            this.calendar.refetchEvents();
+
+            this.modal.user = null;
+            this.modal.loading = false;
+            this.modal.shown = false;
+        }
     },
     components: {
         TablerModal,

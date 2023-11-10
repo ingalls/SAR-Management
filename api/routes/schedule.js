@@ -75,6 +75,36 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.post('/schedule/:scheduleid/events', {
+        name: 'Create Event',
+        group: 'Schedules',
+        auth: 'user',
+        description: 'Create a new Schedule Event',
+        ':scheduleid': 'integer',
+        body: 'req.body.CreateScheduleEvent.json',
+        res: 'schedules_event.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Schedule:View');
+
+            await Schedule.from(config.pool, req.params.scheduleid);
+            await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
+
+            // TODO: Generic should handle this
+            req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
+            req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
+
+            const event = await ScheduleEvent.generate(config.pool, {
+                ...req.body,
+                schedule_id: req.params.scheduleid
+            });
+
+            res.json(event);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.get('/schedule/:scheduleid/events', {
         name: 'List Events',
         group: 'Schedules',
@@ -103,7 +133,8 @@ export default async function router(schema, config) {
                     end_ts: query.end
                 })).events) {
                     events.push({
-                        title: 'DEMO',
+                        title: `${event.fname} ${event.lname}`,
+                        imageurl: '',
                         start: moment(event.start_ts),
                         end: moment(event.end_ts)
                     });
