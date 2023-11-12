@@ -120,7 +120,7 @@
                             <TablerDropdown>
                                 <template #default>
                                     <a class="nav-link cursor-pointer">
-                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <span class="nav-link-icon">
                                             <CaretDownIcon/>
                                         </span>
                                         <span class="nav-link-title">More</span>
@@ -128,13 +128,13 @@
                                 </template>
                                 <template #dropdown>
                                     <a class="nav-link cursor-pointer" @click='$router.push("/schedule")'>
-                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <span class="nav-link-icon">
                                             <CalendarTimeIcon/>
                                         </span>
                                         <span class="nav-link-title">On-Call</span>
                                     </a>
                                     <a class="nav-link cursor-pointer" @click='$router.push("/application")'>
-                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <span class="nav-link-icon">
                                             <UserPlusIcon/>
                                         </span>
                                         <span class="nav-link-title">Applications</span>

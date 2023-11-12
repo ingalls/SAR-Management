@@ -2,13 +2,13 @@
 <div class="card">
     <div class='card-header'>
         <h3 class='card-title'>Assigned</h3>
+        <div class='ms-auto'>
+            <SettingsIcon @click='edit = !edit' class='cursor-pointer' v-tooltip='"Edit"'/>
+        </div>
     </div>
-    <template v-if='loading.list'>
-        <TablerLoading desc='Loading Assigned'/>
-    </template>
-    <template v-else-if='!list.assigned.length'>
-        <TablerNone label='Assigned Users' :create='false'/>
-    </template>
+
+    <TablerLoading v-if='loading.list' desc='Loading Assigned'/>
+    <TablerNone v-else-if ='!list.assigned.length' label='Assigned Users' :create='false'/>
     <template v-else>
         <div class='table-responsive'>
             <table class="table card-table table-hover table-vcenter datatable">
@@ -22,18 +22,13 @@
                     <tr :key='user.id' v-for='(user, user_it) in list.assigned'>
                         <template v-for='h in header'>
                             <template v-if='h.display'>
-                                <td v-if='h.name === "name"' @click='$router.push(`/user/${user.id}`)'>
-                                    <Avatar :link='true' :user='user'/>
-                                </td>
-                                <td v-else-if='h.name === "email"'>
-                                    <a :href='`mailto:${user.email}`' v-text='user.email'></a>
-                                </td>
-                                <td v-else-if='h-name === "phone"'>
+                                <td v-if='h.name === "name"'>
                                     <div class='d-flex'>
-                                        <a :href='`tel:${user.phone}`' v-text='user.phone'></a>
+                                        <Avatar :link='true' :user='user'/>
+
                                         <div v-if='edit' class='ms-auto'>
                                             <div v-if='!user._loading' class='btn-list'>
-                                                <TrashIcon @click='removeUser(user, user_it)' class='cursor-pointer'/>
+                                                <TablerDelete displaytype='icon' @delete='removeUser(user, user_it)'/>
                                             </div>
                                             <div v-else class='btn-list'>
                                                 <TablerLoading :inline='true'/>
@@ -41,12 +36,8 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td v-else-if='["last_login", "updated", "created"].includes(h.name)'>
-                                    <TablerEpoch v-if='user[h.name]' :date='user[h.name]'/>
-                                    <span v-else>Never</span>
-                                </td>
                                 <td v-else>
-                                    <span v-text='user[h.name]'></span>
+                                    <span v-text='user[h.name]'/>
                                 </td>
                             </template>
                         </template>
@@ -63,10 +54,9 @@
 <script>
 import Avatar from '../util/Avatar.vue';
 import {
+    SettingsIcon,
     ListIcon,
     SearchIcon,
-    PolaroidIcon,
-    AddressBookIcon,
     TrashIcon
 } from 'vue-tabler-icons'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
@@ -75,30 +65,16 @@ import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
     TablerEpoch,
-    TablerLoading
+    TablerLoading,
+    TablerDelete
 } from '@tak-ps/vue-tabler'
 import UserProfile from '../User/Profile.vue';
 
 export default {
     name: 'CardScheduleAssigned',
-    props: {
-        dropdown: {
-            type: Boolean,
-            default: true
-        },
-        url: {
-            type: String,
-            default: '/api/user'
-        },
-        edit: {
-            type: Boolean,
-            default: false,
-        },
-        team: Number
-    },
     data: function() {
         return {
-            mode: 'list',
+            edit: false,
             loading: {
                 list: true,
             },
@@ -163,6 +139,7 @@ export default {
         },
     },
     components: {
+        SettingsIcon,
         TablerNone,
         TablerEpoch,
         Avatar,
@@ -170,11 +147,11 @@ export default {
         TrashIcon,
         SearchIcon,
         ListIcon,
-        PolaroidIcon,
         UserProfile,
         TablerLoading,
         TableFooter,
-        TableHeader
+        TableHeader,
+        TablerDelete
     }
 }
 </script>

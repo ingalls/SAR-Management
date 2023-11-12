@@ -37,11 +37,10 @@
                                         <div class="col-md-12 pb-4" v-text='equipment.description'></div>
                                         <div class="col-md-8">
                                             <div class="datagrid">
-                                                <div class="datagrid-item">
+                                                <div v-if='parent.id' class="datagrid-item">
                                                     <div class="datagrid-title">Parent Container</div>
                                                     <div class="datagrid-content">
-                                                        <a v-if='parent.id' @click='$router.push(`/equipment/${parent.id}`)' class='cursor-pointer' v-text='parent.name'></a>
-                                                        <span v-else>None</span>
+                                                        <a @click='$router.push(`/equipment/${parent.id}`)' class='cursor-pointer' v-text='parent.name'></a>
                                                     </div>
                                                 </div>
                                                 <div class="datagrid-item">
