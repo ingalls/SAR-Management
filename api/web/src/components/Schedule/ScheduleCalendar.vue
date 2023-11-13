@@ -27,6 +27,7 @@ schedules_assigned.json<template>
                 <TablerInput type='datetime-local' label='Shift Start' v-model='modal.start'/>
                 <TablerInput type='datetime-local' label='Shift End' v-model='modal.end'/>
                 <UserDropdown
+                    v-model='modal.title'
                     @selected='modal.user = $event.uid'
                     :url='`/api/schedule/${schedule.id}/assigned`'
                 />
@@ -82,8 +83,9 @@ export default {
                 this.modal = {
                     id: event.event.id,
                     uid: event.event.extendedProps.uid,
-                    start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth()).padStart(2, '0')}-${String(event.event.start.getDay()).padStart(2, '0')} ${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
-                    end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth()).padStart(2, '0')}-${String(event.event.end.getDay()).padStart(2, '0')} ${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
+                    title: event.event.title,
+                    start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth() + 1).padStart(2, '0')}-${String(event.event.start.getDate()).padStart(2, '0')} ${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
+                    end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth() + 1).padStart(2, '0')}-${String(event.event.end.getDate()).padStart(2, '0')} ${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
                     shown: true
                 }
             },
