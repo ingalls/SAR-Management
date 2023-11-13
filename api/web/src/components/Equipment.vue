@@ -63,13 +63,10 @@
                                                         <span v-else>Unknown</span>
                                                     </div>
                                                 </div>
-                                                <div class="datagrid-item">
+                                                <div v-if='assigned.length' class="datagrid-item">
                                                     <div class="datagrid-title">Assigned</div>
                                                     <div class="datagrid-content">
-                                                        <template v-if='assigned.length'>
-                                                            <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1' :link='true'/>
-                                                        </template>
-                                                        <span v-else>None</span>
+                                                        <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1' :link='true'/>
                                                     </div>
                                                 </div>
                                             </div>
