@@ -152,7 +152,7 @@ export default {
                 });
             } else {
                 await window.std(`/api/schedule/${this.schedule.id}/events`, {
-                    method: 'PATCH',
+                    method: 'POST',
                     body: {
                         uid:  this.modal.user,
                         start_ts: this.modal.start,
