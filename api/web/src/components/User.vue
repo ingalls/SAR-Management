@@ -171,7 +171,12 @@
                     <NoAccess v-if='!is_iam("Mission:View")' title='Mission Log'/>
                     <CardMission v-else
                         label='Mission Log'
+                        :create='false'
                         :assigned='userid'
+                        :search='false'
+                        :footer='false'
+                        :iam='iam'
+                        :auth='auth'
                     />
                 </div>
                 <div class="col-lg-12">
