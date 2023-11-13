@@ -82,13 +82,8 @@ export default {
                 this.modal = {
                     id: event.event.id,
                     uid: event.event.extendedProps.uid,
-                    start: (new Date(event.event.start)).toISOString()
-                        .replace('T', ' ')
-                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, ''),
-
-                    end: (new Date(event.event.end)).toISOString()
-                        .replace('T', ' ')
-                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, ''),
+                    start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth()).padStart(2, '0')}-${String(event.event.start.getDay()).padStart(2, '0')} ${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
+                    end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth()).padStart(2, '0')}-${String(event.event.end.getDay()).padStart(2, '0')} ${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
                     shown: true
                 }
             },
