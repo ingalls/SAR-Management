@@ -1,10 +1,9 @@
 <template>
-
-<div class="dropdown">
-    <div type="button" id="userSelect" data-bs-toggle="dropdown" aria-expanded="false">
-        <TablerInput :disabled='disabled' placeholder='Name' v-model='filter'/>
-    </div>
-    <ul class="dropdown-menu w-100" aria-labelledby="userSelect">
+<TablerDropdown>
+    <template #default>
+        <TablerInput label='Name' :disabled='disabled' v-model='filter'/>
+    </template>
+    <template #dropdown>
         <div class='m-1'>
             <div @click='select(user)' :key='user.id' v-for='user in list.users'>
                 <div class="d-flex align-items-center my-1 cursor-pointer">
@@ -12,13 +11,14 @@
                 </div>
             </div>
         </div>
-    </ul>
-</div>
+    </template>
+</TablerDropdown>
 </template>
 
 <script>
 import Avatar from './Avatar.vue';
 import {
+    TablerDropdown,
     TablerInput
 } from '@tak-ps/vue-tabler'
 
@@ -75,6 +75,7 @@ export default {
     },
     components: {
         Avatar,
+        TablerDropdown,
         TablerInput
     }
 }
