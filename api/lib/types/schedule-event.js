@@ -16,6 +16,8 @@ export default class ScheduleAssigned extends Generic {
         try {
             const pgres = await pool.query(sql`
                 SELECT
+                    schedules_event.id,
+                    schedules_event.uid,
                     count(*) OVER() AS count,
                     schedules_event.*,
                     users.fname,

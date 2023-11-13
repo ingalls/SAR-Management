@@ -12,7 +12,14 @@ schedules_assigned.json<template>
         <button type="button" class="btn-close" @click='modal.shown = false' aria-label="Close"></button>
         <div class="modal-status bg-yellow"></div>
         <div class='modal-header'>
-            <div class='modal-title'>Create Shift</div>
+            <template v-if='modal.id'>
+                <div class='modal-title'>Edit Shift</div>
+
+                <div class='ms-auto'>
+                    <TablerDelete @delete='deleteAssignment' displaytype='icon' v-tooltip='"Delete Event"'/>
+                </div>
+            </template>
+            <div v-else class='modal-title'>Create Shift</div>
         </div>
         <div class="modal-body">
             <TablerLoading v-if='modal.loading' desc='Loading Assignment'/>
@@ -26,7 +33,7 @@ schedules_assigned.json<template>
             </div>
         </div>
         <div class='modal-footer'>
-            <button @click='createAssignment' class='btn btn-primary mt-2 ms-auto'>Submit</button>
+            <button @click='submitAssignment' class='btn btn-primary mt-2 ms-auto'>Submit</button>
         </div>
     </TablerModal>
 </div>
@@ -41,6 +48,7 @@ import UserDropdown from '../util/UserDropdown.vue';
 import {
     TablerModal,
     TablerInput,
+    TablerDelete,
     TablerLoading,
 } from '@tak-ps/vue-tabler';
 
@@ -71,11 +79,9 @@ export default {
             unselectAuto: true,
             eventClick: async (event) => {
 
-                console.error(event.end)
-                console.error(event.start);
-
                 this.modal = {
-                    ...event.event,
+                    id: event.event.id,
+                    uid: event.event.extendedProps.uid,
                     start: (new Date(event.event.start)).toISOString()
                         .replace('T', ' ')
                         .replace(/:[0-9]+\.[0-9]+[A-Z]/, ''),
@@ -121,27 +127,49 @@ export default {
         });
     },
     methods: {
-        createAssignment: async function() {
+        deleteAssignment: async function() {
             this.modal.loading = true;
-            await window.std(`/api/schedule/${this.schedule.id}/events`, {
-                method: 'POST',
-                body: {
-                    uid:  this.modal.user,
-                    start_ts: this.modal.start,
-                    end_ts: this.modal.end
-                }
+
+            await window.std(`/api/schedule/${this.schedule.id}/events/${this.modal.id}`, {
+                method: 'DELETE',
             });
 
             this.calendar.refetchEvents();
 
-            this.modal.user = null;
-            this.modal.loading = false;
-            this.modal.shown = false;
+            this.modal = { shown: false }
+        },
+        submitAssignment: async function() {
+            this.modal.loading = true;
+
+            if (this.modal.id) {
+                await window.std(`/api/schedule/${this.schedule.id}/events/${this.modal.id}`, {
+                    method: 'PATCH',
+                    body: {
+                        uid:  this.modal.user,
+                        start_ts: this.modal.start,
+                        end_ts: this.modal.end
+                    }
+                });
+            } else {
+                await window.std(`/api/schedule/${this.schedule.id}/events`, {
+                    method: 'PATCH',
+                    body: {
+                        uid:  this.modal.user,
+                        start_ts: this.modal.start,
+                        end_ts: this.modal.end
+                    }
+                });
+            }
+
+            this.calendar.refetchEvents();
+
+            this.modal = { shown: false }
         }
     },
     components: {
         TablerModal,
         TablerInput,
+        TablerDelete,
         UserDropdown,
         TablerLoading,
     }

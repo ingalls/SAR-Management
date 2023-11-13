@@ -105,13 +105,87 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.patch('/schedule/:scheduleid/events/:eventid', {
+        name: 'Update Event',
+        group: 'Schedules',
+        auth: 'user',
+        description: 'Update a Scheduled Event',
+        ':scheduleid': 'integer',
+        ':eventid': 'integer',
+        body: 'req.body.UpdateScheduleEvent.json',
+        res: 'schedules_event.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Schedule:View');
+
+            const schedule = await Schedule.from(config.pool, req.params.scheduleid);
+            if (req.body.uid) await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
+
+            // TODO: Generic should handle this
+            if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
+            if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
+
+            const event = await ScheduleEvent.from(config.pool, req.params.eventid)
+            if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
+
+            await event.commit(req.body);
+
+            res.json(event);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+    await schema.delete('/schedule/:scheduleid/events/:eventid', {
+        name: 'Delete Event',
+        group: 'Schedules',
+        auth: 'user',
+        description: 'Update a Scheduled Event',
+        ':scheduleid': 'integer',
+        ':eventid': 'integer',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Schedule:View');
+
+            const schedule = await Schedule.from(config.pool, req.params.scheduleid);
+
+            const event = await ScheduleEvent.from(config.pool, req.params.eventid)
+            if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
+
+            await event.delete();
+
+            res.json({
+                status: 200,
+                message: 'Event Deleted'
+            });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.get('/schedule/:scheduleid/events', {
         name: 'List Events',
         group: 'Schedules',
         auth: 'user',
         description: 'Query Events from a given schedule',
         ':scheduleid': 'integer',
-        query: 'req.query.ListEvents.json'
+        query: 'req.query.ListEvents.json',
+        res: {
+            type: 'array',
+            items: {
+                type: 'object',
+                required: ['title', 'imageurl', 'start', 'end', 'uid', 'id'],
+                properties: {
+                    title: { type: 'string' },
+                    imageurl: { type: 'string' },
+                    start: { type: 'string' },
+                    end: { type: 'string' },
+                    uid: { type: 'integer' },
+                    id: { type: 'integer' },
+                }
+            }
+        }
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Schedule:View');
@@ -133,6 +207,8 @@ export default async function router(schema, config) {
                     end_ts: query.end
                 })).events) {
                     events.push({
+                        id: event.id,
+                        uid: event.uid,
                         title: `${event.fname} ${event.lname}`,
                         imageurl: '',
                         start: moment(event.start_ts),
