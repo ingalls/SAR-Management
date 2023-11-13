@@ -70,7 +70,21 @@ export default {
             selectable: true,
             unselectAuto: true,
             eventClick: async (event) => {
-                this.$router.push(event.event._def.extendedProps.path);
+
+                console.error(event.end)
+                console.error(event.start);
+
+                this.modal = {
+                    ...event.event,
+                    start: (new Date(event.event.start)).toISOString()
+                        .replace('T', ' ')
+                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, ''),
+
+                    end: (new Date(event.event.end)).toISOString()
+                        .replace('T', ' ')
+                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, ''),
+                    shown: true
+                }
             },
             eventSources: async (fetchInfo, resolve, reject) => {
                 try {
