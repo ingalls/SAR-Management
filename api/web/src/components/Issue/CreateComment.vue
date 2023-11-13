@@ -3,8 +3,7 @@
     <div class="card">
         <div class="card-body">
             <div class="mb-3">
-                <label class="form-label">Comment</label>
-                <textarea v-model='body' type="text" class="form-control"/>
+                <TablerInput label='Comment' v-model='body' rows='2'/>
             </div>
 
             <div class="col-md-12">
@@ -27,6 +26,10 @@
 </template>
 
 <script>
+import {
+    TablerInput
+} from '@tak-ps/vue-tabler'
+
 export default {
     name: 'CreateComment',
     data: function() {
@@ -48,5 +51,8 @@ export default {
             if (close) this.$emit('close');
         }
     },
+    components: {
+        TablerInput
+    }
 }
 </script>
