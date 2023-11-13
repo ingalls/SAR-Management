@@ -2,7 +2,7 @@
 <div class="card">
     <div class="card-header">
         <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
-        <h3 class="card-title"><a @click='$router.push("/mission")' class='cursor-pointer' v-text='label'></a></h3>
+        <h3 class="card-title"><a @click='goto' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
             <PlusIcon v-if='create && is_iam("Mission:Manage")' @click='$router.push(`/mission/new`)' class='cursor-pointer'/>
@@ -161,6 +161,10 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        goto: function() {
+            if (this.assigned) this.$router.push(`/mission?assigned=${this.assigned}`);
+            else this.$router.push('/mission');
+        },
         listSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/mission');
             this.header = ['title', 'dates'].map((h) => {
