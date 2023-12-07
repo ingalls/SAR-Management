@@ -55,10 +55,7 @@
                             </div>
                             <div class="card-body">
                                 <div class='row row-cards'>
-                                    <div class="col-md-12" v-text='training.body'></div>
-
-                                    <div class='col-md-12'>
-                                    </div>
+                                    <TablerMarkdown class="col-md-12" :markdown='training.body'/>
                                 </div>
                             </div>
 
@@ -96,6 +93,7 @@ import {
 import {
     TablerEpochRange,
     TablerBreadCrumb,
+    TablerMarkdown,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
@@ -199,6 +197,7 @@ export default {
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
+        TablerMarkdown,
         NoAccess
     }
 }
