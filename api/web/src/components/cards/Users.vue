@@ -66,12 +66,12 @@
                                 <td v-else-if='h.name === "email"'>
                                     <a :href='`mailto:${user.email}`' v-text='user.email'></a>
                                 </td>
-                                <td v-else-if='h-name === "phone"'>
+                                <td v-else-if='h.name === "phone"'>
                                     <div class='d-flex'>
                                         <a :href='`tel:${user.phone}`' v-text='user.phone'></a>
                                         <div v-if='edit' class='ms-auto'>
                                             <div v-if='!user._loading' class='btn-list'>
-                                                <TrashIcon @click='removeUser(user, user_it)' class='cursor-pointer'/>
+                                                <TablerDelete @delete='removeUser(user, user_it)' displaytype='icon'/>
                                             </div>
                                             <div v-else class='btn-list'>
                                                 <TablerLoading :inline='true'/>
@@ -126,13 +126,13 @@ import {
     SearchIcon,
     PolaroidIcon,
     AddressBookIcon,
-    TrashIcon
 } from 'vue-tabler-icons'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
+    TablerDelete,
     TablerEpoch,
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -211,7 +211,7 @@ export default {
         },
         listUsersSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/user');
-            this.header = ['name', 'email', 'phone', 'last_login'].map((h) => {
+            this.header = ['name', 'email', 'last_login', 'phone'].map((h) => {
                 return { name: h, display: true };
             });
 
@@ -276,7 +276,7 @@ export default {
         Avatar,
         AddressBookIcon,
         UserDropdownIcon,
-        TrashIcon,
+        TablerDelete,
         SearchIcon,
         ListIcon,
         PolaroidIcon,
