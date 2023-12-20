@@ -37,7 +37,9 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Training:View');
 
-            res.json(await TrainingView.from(config.pool, req.params.trainingid));
+            const training = await TrainingView.from(config.pool, req.params.trainingid);
+            if (!training.users) training.users = [];
+            return res.json(training);
         } catch (err) {
             return Err.respond(err, res);
         }

@@ -35,7 +35,9 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'Mission:View');
 
-            res.json(await MissionView.from(config.pool, req.params.missionid));
+            const mission = await MissionView.from(config.pool, req.params.missionid);
+            if (!mission.users) mission.users = [];
+            return res.json(mission);
         } catch (err) {
             return Err.respond(err, res);
         }

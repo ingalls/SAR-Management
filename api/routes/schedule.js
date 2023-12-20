@@ -125,7 +125,7 @@ export default async function router(schema, config) {
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
 
-            const event = await ScheduleEvent.from(config.pool, req.params.eventid)
+            const event = await ScheduleEvent.from(config.pool, req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
 
             await event.commit(req.body);
@@ -150,7 +150,7 @@ export default async function router(schema, config) {
 
             const schedule = await Schedule.from(config.pool, req.params.scheduleid);
 
-            const event = await ScheduleEvent.from(config.pool, req.params.eventid)
+            const event = await ScheduleEvent.from(config.pool, req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
 
             await event.delete();
@@ -182,7 +182,7 @@ export default async function router(schema, config) {
                     start: { type: 'string' },
                     end: { type: 'string' },
                     uid: { type: 'integer' },
-                    id: { type: 'integer' },
+                    id: { type: 'integer' }
                 }
             }
         }
