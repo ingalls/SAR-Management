@@ -61,6 +61,10 @@
 
                                     <div class='col-12 datagrid'>
                                         <div class="datagrid-item">
+                                            <div class="datagrid-title">Personnel</div>
+                                            <div class="datagrid-content" v-text='mission.users.length'></div>
+                                        </div>
+                                        <div class="datagrid-item">
                                             <div class="datagrid-title">Man-Hours</div>
                                             <div class="datagrid-content" v-text='Math.round(mission.users.length * (mission.end_ts - mission.start_ts) / 1000 / 60 / 60)'></div>
                                         </div>
