@@ -75,7 +75,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" v-if='!loading.mission'>
                         <UserPresentSelect
                             v-model='assigned'
                             :loading='loading.assigned'

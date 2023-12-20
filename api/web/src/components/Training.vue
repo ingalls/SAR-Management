@@ -56,6 +56,17 @@
                             <div class="card-body">
                                 <div class='row row-cards'>
                                     <TablerMarkdown class="col-md-12" :markdown='training.body'/>
+
+                                    <div class='col-12 datagrid'>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Personnel</div>
+                                            <div class="datagrid-content" v-text='mission.users.length'></div>
+                                        </div>
+                                        <div class="datagrid-item">
+                                            <div class="datagrid-title">Man-Hours</div>
+                                            <div class="datagrid-content" v-text='Math.round(mission.users.length * (mission.end_ts - mission.start_ts) / 1000 / 60 / 60)'></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -63,7 +74,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" v-if='!loading.training'>
                         <UserPresentSelect
                             label='Training Roster'
                             :disabled='!is_iam("Training:Manage")'
