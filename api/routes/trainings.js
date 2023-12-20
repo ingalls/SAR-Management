@@ -32,7 +32,7 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Get a single Training',
         ':trainingid': 'integer',
-        res: 'res.Training.json'
+        res: 'view_training.json'
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Training:View');
