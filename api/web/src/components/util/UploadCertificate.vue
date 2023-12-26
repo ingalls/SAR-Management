@@ -16,7 +16,15 @@
                         <TablerInput label='Custom Name' v-model='cert.custom' class='my-3'/>
                     </template>
 
-                    <TablerInput label='Expiration' type='date' v-model='cert.expiry' class='my-3'/>
+                    <TablerInput
+                        label='Expiration'
+                        type='date'
+                        v-model='cert.expiry'
+                        class='my-3'
+                        :disabled='noExpiry'
+                    >
+                        <TablerToggle v-model='noExpiry' label='No Expiry'/>
+                    </TablerInput>
 
                     <UploadDefault
                         :url='url'
@@ -34,6 +42,7 @@
 import {
     TablerModal,
     TablerInput,
+    TablerToggle,
     TablerEnum,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -61,6 +70,7 @@ export default {
         return {
             loading: true,
             custom: '',
+            noExpiry: false,
             cert: {
                 name: '',
                 custom: '',
@@ -87,6 +97,7 @@ export default {
         TablerModal,
         TablerInput,
         TablerLoading,
+        TablerToggle,
         TablerEnum,
         UploadDefault
     }
