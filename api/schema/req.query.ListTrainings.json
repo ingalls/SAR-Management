@@ -36,10 +36,12 @@
             "type": "integer"
         },
         "start": {
-            "type": "integer"
+            "type": "string",
+            "description": "Show missions after the given date string"
         },
         "end": {
-            "type": "integer"
+            "type": "string",
+            "description": "Show missions before the given date string"
         },
         "filter": {
             "type": "string",

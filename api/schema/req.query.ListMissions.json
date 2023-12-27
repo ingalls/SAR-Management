@@ -11,6 +11,14 @@
         "order": {
             "$ref": "./util/order.json"
         },
+        "start": {
+            "type": "string",
+            "description": "Show missions after the given date string"
+        },
+        "end": {
+            "type": "string",
+            "description": "Show missions before the given date string"
+        },
         "sort": {
             "type": "string",
             "default": "start_ts",

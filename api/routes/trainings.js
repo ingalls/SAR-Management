@@ -59,7 +59,6 @@ export default async function router(schema, config) {
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
             else delete req.body.start_ts;
-
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
             else delete req.body.end_ts;
 
