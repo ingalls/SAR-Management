@@ -33,11 +33,11 @@
                                     <TablerNone label='Notifications' :create='false'/>
                                 </template>
                                 <template v-else>
-                                    <div :key='notify.id' v-for='notify in list.notifications'  class='col my-2 d-flex'>
+                                    <div :key='notify.id' v-for='notify in list.notifications'  class='col py-2 d-flex align-items-center hover-light rounded'>
                                         <CircleDotIcon class='mx-2' />
                                         <span v-if='!notify.url' v-text='notify.text'/>
                                         <a v-else :href='notify.url' v-text='notify.text'/>
-                                        <div class='ms-auto'>
+                                        <div class='ms-auto btn-list mx-2'>
                                             <TrashIcon @click='clearNotifications(notify)' class='cursor-pointer'/>
                                         </div>
                                     </div>
