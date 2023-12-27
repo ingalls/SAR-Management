@@ -37,53 +37,55 @@
                             <TablerNone :create='false' label='Leaders'/>
                         </template>
                         <template v-else>
-                            <table class="table card-table table-vcenter">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr :key='leader.id' v-for='(leader, leader_it) in list.leadership'>
-                                        <template v-if='leader._edit'>
-                                            <td>
-                                                <UserDropdown v-model='leader.name' :disabled='leader._loading' @selected='selected(leader, $event)'/>
-                                            </td>
-                                            <td>
-                                                <div class='d-flex'>
-                                                    <TablerInput v-model='leader.position' :disabled='leader._loading' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
-                                                    <div class='ms-auto'>
-                                                        <div v-if='!leader._loading' class='btn-list'>
-                                                            <CheckIcon @click='saveLeader(leader)' class='my-1 cursor-pointer'/>
-                                                        </div>
-                                                        <div v-else class='btn-list'>
-                                                            <TablerLoading :inline='true'/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </template>
-                                        <template v-else>
-                                            <td><Avatar :user='leader' :link='true'/></td>
-                                            <td>
-                                                <div class='d-flex'>
-                                                    <span v-text='leader.position'/>
-                                                    <div class='ms-auto'>
-                                                        <div v-if='!leader._loading' class='btn-list'>
-                                                            <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
-                                                            <TrashIcon @click='removeLeader(leader, leader_it)' class='cursor-pointer'/>
-                                                        </div>
-                                                        <div v-else class='btn-list'>
-                                                            <TablerLoading :inline='true'/>
+                            <div class='table-responsive'>
+                                <table class="table card-table table-hover table-vcenter">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr :key='leader.id' v-for='(leader, leader_it) in list.leadership'>
+                                            <template v-if='leader._edit'>
+                                                <td>
+                                                    <UserDropdown v-model='leader.name' :disabled='leader._loading' @selected='selected(leader, $event)'/>
+                                                </td>
+                                                <td>
+                                                    <div class='d-flex'>
+                                                        <TablerInput v-model='leader.position' :disabled='leader._loading' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
+                                                        <div class='ms-auto'>
+                                                            <div v-if='!leader._loading' class='btn-list'>
+                                                                <CheckIcon @click='saveLeader(leader)' class='my-1 cursor-pointer'/>
+                                                            </div>
+                                                            <div v-else class='btn-list'>
+                                                                <TablerLoading :inline='true'/>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </template>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                </td>
+                                            </template>
+                                            <template v-else>
+                                                <td><Avatar :user='leader' :link='true'/></td>
+                                                <td>
+                                                    <div class='d-flex'>
+                                                        <span v-text='leader.position'/>
+                                                        <div class='ms-auto'>
+                                                            <div v-if='!leader._loading' class='btn-list'>
+                                                                <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
+                                                                <TrashIcon @click='removeLeader(leader, leader_it)' class='cursor-pointer'/>
+                                                            </div>
+                                                            <div v-else class='btn-list'>
+                                                                <TablerLoading :inline='true'/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </template>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </template>
 
                         <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
