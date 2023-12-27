@@ -57,8 +57,8 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import { MdEditor } from 'md-editor-v3';
 import UserSelect from './util/UserSelect.vue';
+import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import {
     TablerBreadCrumb,

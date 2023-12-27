@@ -22,7 +22,17 @@
                             <div class='row row-cards'>
                                 <div class="col-md-10">
                                     <TablerInput v-model='issue.title' label='Issue Title' :error='errors.title'/>
-                                    <TablerInput v-model='issue.body' :rows='6' label='Issue Body' :error='errors.body'/>
+                                    <MdEditor
+                                        :preview='false' noUploadImg noMermaid
+                                        :noKatex='true'
+                                        :toolbarsExclude='[
+                                            "save",
+                                            "prettier",
+                                            "mermaid"
+                                        ]'
+                                        language='en-US'
+                                        v-model="issue.body"
+                                    />
                                 </div>
                                 <div class="col-md-2">
                                     <UserSelect
@@ -75,6 +85,8 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import UserSelect from './util/UserSelect.vue';
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -163,6 +175,7 @@ export default {
         TablerBreadCrumb,
         UserSelect,
         TrashIcon,
+        MdEditor,
         PlusIcon
 
     }
