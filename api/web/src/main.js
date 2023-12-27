@@ -26,6 +26,7 @@ const router = new VueRouter.createRouter({
         { path: '/issue', name: 'issues', component: () => import('./components/Issues.vue') },
         { path: '/issue/new', name: 'issues-new', component: () => import('./components/IssuesNew.vue') },
         { path: '/issue/:issueid', name: 'issue', component: () => import('./components/Issue.vue') },
+        { path: '/issue/:issueid/edit', name: 'issue-edit', component: () => import('./components/IssueEdit.vue') },
 
         { path: '/equipment', name: 'equipments', component: () => import('./components/Equipments.vue') },
         { path: '/equipment/type', name: 'equipment-types', component: () => import('./components/EquipmentTypes.vue') },

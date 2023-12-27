@@ -39,7 +39,7 @@
 
                                                     <button v-if='issue.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                                     <div class="dropdown-menu dropdown-menu-end" style="">
-                                                        <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
+                                                        <a @click='$router.push(`/issue/${$route.params.issueid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
                                                         <a v-if='issue.status === "open"' @click='update("closed")' class="dropdown-item cursor-pointer">Close</a>
                                                         <a v-if='issue.status === "closed"' @click='update("open")' class="dropdown-item cursor-pointer">Re-Open</a>
                                                     </div>

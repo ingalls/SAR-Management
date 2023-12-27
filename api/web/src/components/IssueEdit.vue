@@ -19,29 +19,32 @@
                     <NoAccess v-if='!is_iam("Issue:Manage")' title='New Issue'/>
                     <div v-else class="card">
                         <div class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-10">
-                                    <TablerInput v-model='issue.title' label='Issue Title' :error='errors.title'/>
-                                    <MdEditor
-                                        :preview='false' noUploadImg noMermaid
-                                        :noKatex='true'
-                                        :toolbarsExclude='[
-                                            "save",
-                                            "prettier",
-                                            "mermaid"
-                                        ]'
-                                        language='en-US'
-                                        v-model="issue.body"
-                                    />
-                                </div>
-                                <div class="col-md-12 d-flex">
-                                    <div class='ms-auto'>
-                                        <a @click='update' class="cursor-pointer btn btn-primary">
-                                            Update Issue
-                                        </a>
+                            <TablerLoading v-if='loading' desc='Loading Issue'/>
+                            <template v-else>
+                                <div class='row row-cards'>
+                                    <div class="col-md-12">
+                                        <TablerInput v-model='issue.title' label='Issue Title' :error='errors.title'/>
+                                        <MdEditor
+                                            :preview='false' noUploadImg noMermaid
+                                            :noKatex='true'
+                                            :toolbarsExclude='[
+                                                "save",
+                                                "prettier",
+                                                "mermaid"
+                                            ]'
+                                            language='en-US'
+                                            v-model="issue.body"
+                                        />
+                                    </div>
+                                    <div class="col-md-12 d-flex">
+                                        <div class='ms-auto'>
+                                            <a @click='update' class="cursor-pointer btn btn-primary">
+                                                Update Issue
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -59,6 +62,7 @@ import UserSelect from './util/UserSelect.vue';
 import 'md-editor-v3/lib/style.css';
 import {
     TablerBreadCrumb,
+    TablerLoading,
     TablerInput,
 } from '@tak-ps/vue-tabler';
 import {
@@ -80,6 +84,7 @@ export default {
     },
     data: function() {
         return {
+            loading: true,
             errors: {
                 title: '',
                 body: ''
@@ -91,8 +96,16 @@ export default {
             }
         }
     },
+    mounted: async function() {
+        await this.fetch();
+    },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        fetch: async function() {
+            this.loading = true;
+            this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`);
+            this.loading = false;
+        },
         update: async function() {
             for (const field of ['title', 'body']) {
                 if (!this.issue[field]) this.errors[field] = 'Cannot be empty';
@@ -118,6 +131,7 @@ export default {
     },
     components: {
         NoAccess,
+        TablerLoading,
         TablerInput,
         MdEditor,
         TablerBreadCrumb,
