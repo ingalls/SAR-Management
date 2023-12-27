@@ -6,8 +6,11 @@ import ViewIssue from '../lib/views/issue.js';
 import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth from '../lib/auth.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
+import Notify from '../lib/notify.js';
 
 export default async function router(schema, config) {
+    const notify = new Notify(config);
+
     await schema.get('/issue', {
         name: 'Get Issues',
         group: 'Issue',

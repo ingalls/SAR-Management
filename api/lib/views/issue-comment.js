@@ -12,6 +12,7 @@ export default class IssueComment extends Generic {
         query.page = Params.integer(query.page, { default: 0 });
         query.sort = Params.string(query.sort, { default: 'created' });
         query.order = Params.order(query.order);
+        query.archived = Params.boolean(query.archived, { default: false });
 
         try {
             const pgres = await pool.query(sql`
@@ -22,6 +23,7 @@ export default class IssueComment extends Generic {
                     ${sql.identifier([this._view])}
                 WHERE
                     issue = ${issue_id}
+                    AND archived = ${query.archived}::BOOLEAN
                 ORDER BY
                     ${sql.identifier([this._view, query.sort])} ${query.order}
                 LIMIT

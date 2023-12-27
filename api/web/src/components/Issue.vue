@@ -37,19 +37,20 @@
                                                         <Avatar :user='issue.user'/>
                                                     </div>
 
-                                                    <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                                    <button v-if='issue.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                                     <div class="dropdown-menu dropdown-menu-end" style="">
                                                         <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
                                                         <a v-if='issue.status === "open"' @click='update("closed")' class="dropdown-item cursor-pointer">Close</a>
                                                         <a v-if='issue.status === "closed"' @click='update("open")' class="dropdown-item cursor-pointer">Re-Open</a>
-                                                        <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body" v-text='issue.body'></div>
+                                <div class="card-body">
+                                    <TablerMarkdown :markdown='issue.body'/>
+                                </div>
 
                                 <IssuePoll v-if='issue.poll_id' :issue='issue'/>
                             </template>
@@ -84,17 +85,19 @@
                                                     <Avatar :user='comment.user'/>
                                                 </div>
 
-                                                <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                                <button v-if='comment.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                                 <div class="dropdown-menu dropdown-menu-end" style="">
                                                     <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
-                                                    <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Delete</a>
+                                                    <a @click='deleteComment(comment)' class="dropdown-item cursor-pointer">Delete</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-body" v-text='comment.body'></div>
+                            <div class="card-body">
+                               <TablerMarkdown :markdown='comment.body'/>
+                            </div>
                         </div>
                     </div>
 
@@ -116,6 +119,7 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import {
     TablerBreadCrumb,
+    TablerMarkdown,
     TablerLoading,
 } from '@tak-ps/vue-tabler'
 import Avatar from './util/Avatar.vue';
@@ -177,6 +181,12 @@ export default {
                 method: 'DELETE'
             })
         },
+        deleteComment: async function(comment) {
+            await window.std(`/api/issue/${this.$route.params.issueid}/comment/${comment.id}`, {
+                method: 'DELETE'
+            })
+            await this.fetchComments();
+        },
         postAssigned: async function(user) {
             this.loading.assigned = true;
             await window.std(`/api/issue/${this.$route.params.issueid}/assigned`, {
@@ -205,6 +215,7 @@ export default {
         Avatar,
         NoAccess,
         TablerLoading,
+        TablerMarkdown,
         TablerBreadCrumb,
         CreateComment,
         IssuePoll,

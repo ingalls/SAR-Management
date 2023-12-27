@@ -22,6 +22,34 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.delete('/issue/:issueid/comment/:commentid', {
+        name: 'Archive Comment',
+        group: 'Comments',
+        auth: 'user',
+        ':issueid': 'integer',
+        ':commentid': 'integer',
+        description: 'Archive an issue comment',
+        res: 'res.Standard.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Issue:Manage');
+
+            const comment = await IssueComment.from(config.pool, req.params.commentid);
+            if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
+
+            await Auth.is_own_or_iam(req, comment.author, 'Admin');
+
+            await comment.delete();
+
+            return res.json({
+                status: 200,
+                message: 'Comment Deleted'
+            });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.post('/issue/:issueid/comment', {
         name: 'Create Comment',
         group: 'Comments',

@@ -10,11 +10,15 @@
         },
         "uid": {
             "$ref": "./issues_assigned/uid.json"
+        },
+        "visible": {
+            "$ref": "./issues_assigned/visible.json"
         }
     },
     "required": [
         "id",
         "issue_id",
-        "uid"
+        "uid",
+        "visible"
     ]
 }
