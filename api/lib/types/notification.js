@@ -34,5 +34,40 @@ export default class Notification extends Generic {
             throw new Err(500, err, 'Failed to list Notifications');
         }
     }
+
+    static async users(pool, type, perms) {
+        type = Params.string(type);
+
+        try {
+            const pgres = await pool.query(sql`
+                SELECT
+                    users.id,
+                    users.username,
+                    users.email,
+                    users.fname,
+                    users.lname,
+                    teams.perm
+                FROM
+                    (
+                        SELECT
+                            id,
+                            COALESCE(iam->>${type}::TEXT, 'None') AS perm
+                        FROM
+                            teams
+                        WHERE
+                            COALESCE(iam->>'Application', 'None') = ANY(${sql.array(perms, sql`text[]`)}::TEXT[])
+                    ) AS teams
+                        LEFT JOIN
+                            users_to_teams
+                                ON teams.id = users_to_teams.tid
+                        LEFT JOIN
+                            users
+                                ON users.id = users_to_teams.uid
+            `);
+            return this.deserialize_list(pgres, 'users');
+        } catch (err) {
+            throw new Err(500, err, 'Failed to list Notify List');
+        }
+    }
 }
 

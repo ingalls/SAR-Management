@@ -114,19 +114,24 @@ export default {
         submit: async function() {
             this.loading.save = true;
 
-            const body = JSON.parse(JSON.stringify(this.application));
-            for (const prop of ['id', 'schema', 'created', 'updated']) delete body[prop];
-            if (this.$route.params.applicationid) {
-                this.application = await window.std(`/api/application/${this.$route.params.applicationid}`, {
-                    method: 'PATCH', body
-                });
-            } else {
-                this.application = await window.std(`/api/application`, {
-                    method: 'POST', body
-                });
-            }
+            try {
+                const body = JSON.parse(JSON.stringify(this.application));
+                for (const prop of ['id', 'schema', 'created', 'updated']) delete body[prop];
+                if (this.$route.params.applicationid) {
+                    this.application = await window.std(`/api/application/${this.$route.params.applicationid}`, {
+                        method: 'PATCH', body
+                    });
+                } else {
+                    this.application = await window.std(`/api/application`, {
+                        method: 'POST', body
+                    });
+                }
 
-            this.$router.push(`/application/${this.application.id}`);
+                this.$router.push(`/application/${this.application.id}`);
+            } catch (err) {
+                this.loading.save = false;
+                throw err;
+            }
         },
         deleteApp: async function() {
             this.loading.application = true;

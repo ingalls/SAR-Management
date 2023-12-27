@@ -16,6 +16,9 @@
         },
         "text": {
             "$ref": "./notifications/text.json"
+        },
+        "url": {
+            "$ref": "./notifications/url.json"
         }
     },
     "required": [
@@ -23,6 +26,7 @@
         "created",
         "updated",
         "uid",
-        "text"
+        "text",
+        "url"
     ]
 }

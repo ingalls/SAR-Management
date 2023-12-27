@@ -2,11 +2,14 @@ import Err from '@openaddresses/batch-error';
 import Application from '../lib/types/application.js';
 import Auth from '../lib/auth.js';
 import Server from '../lib/types/server.js';
+import Notify from '../lib/notify.js';
 import Ajv from 'ajv';
 
 const ajv = new Ajv({ allErrors: true });
 
 export default async function router(schema, config) {
+    const notify = new Notify(config);
+
     await schema.get('/application', {
         name: 'Get Applications',
         group: 'Applications',
@@ -53,7 +56,12 @@ export default async function router(schema, config) {
 
             const app = await Application.generate(config.pool, input);
 
-            return res.json(app);
+            res.json(app);
+
+            await notify.users('Application', 'View', {
+                text: 'A new application has been submitted',
+                url: `application/${app.id}`
+            });
         } catch (err) {
             return Err.respond(err, res);
         }

@@ -2,6 +2,7 @@ import Notification from './types/notification.js';
 import User from '../lib/types/user.js';
 import UserSetting from '../lib/types/user-setting.js';
 import Email from '../lib/email.js';
+import { Permissions } from '../lib/auth.js';
 
 export default class Notify {
     constructor(config) {
@@ -14,8 +15,11 @@ export default class Notify {
         }
     }
 
-    async generate(type, uid, text) {
-        const notify = await Notification.generate(this.pool, { uid, text });
+    async generate(type, uid, notification) {
+        const notify = await Notification.generate(this.pool, {
+            ...notification,
+            uid,
+        });
         const user = await User.from(this.pool, uid);
 
         if (this.email) {
@@ -29,7 +33,19 @@ export default class Notify {
         }
     }
 
-    async list(type, text) {
+    async users(type, minperm, notification) {
+        try {
+            if (!Permissions[type]) throw new Error('Permission not included in permission set');
+            if (!Permissions[type].includes(minperm)) throw new Error('Mim Perm not included in permission set');
+            const perms = Permissions[type].slice(0, Permissions[type].indexOf(minperm));
 
+            const users = (await Notification.users(this.pool, type, perms)).users;
+
+            for (const user of users) {
+                await this.generate(type, user.id, notification);
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
 }

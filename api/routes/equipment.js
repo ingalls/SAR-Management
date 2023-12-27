@@ -61,7 +61,10 @@ export default async function router(schema, config) {
             if (assigned) {
                 for (const uid of assigned) {
                     await EquipmentAssigned.generate(config.pool, { equip_id: equipment.id, uid });
-                    await notify.generate('Equipment', uid, `Equipment: ${equipment.name} has been assigned to you`);
+                    await notify.generate('Equipment', uid, {
+                        text: `Equipment: ${equipment.name} has been assigned to you`,
+                        url: `/equipment/${equipment.id}`
+                    });
                 }
             }
 
@@ -109,13 +112,19 @@ export default async function router(schema, config) {
                     });
 
                     if (!old_assigned.includes(uid)) {
-                        await notify.generate('Equipment', uid, `Equipment: ${equipment.name} has been assigned to you`);
+                        await notify.generate('Equipment', uid, {
+                            text: `Equipment: ${equipment.name} has been assigned to you`,
+                            url: `/equipment/${equipment.id}`
+                        });
                     }
                 }
 
                 for (const uid of old_assigned) {
                     if (!assigned.includes(uid)) {
-                        await notify.generate('Equipment', uid, `Equipment: ${equipment.name} has been unassigned to you`);
+                        await notify.generate('Equipment', uid, {
+                            text: `Equipment: ${equipment.name} has been unassigned to you`,
+                            url: `/equipment/${equipment.id}`
+                        });
                     }
                 }
             }

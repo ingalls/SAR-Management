@@ -34,7 +34,9 @@
                                 </template>
                                 <template v-else>
                                     <div :key='notify.id' v-for='notify in list.notifications'  class='col my-2 d-flex'>
-                                        <CircleDotIcon class='mx-2' /><span v-text='notify.text'/>
+                                        <CircleDotIcon class='mx-2' />
+                                        <span v-if='!notify.url' v-text='notify.text'/>
+                                        <a v-else :href='notify.url' v-text='notify.text'/>
                                         <div class='ms-auto'>
                                             <TrashIcon @click='clearNotifications(notify)' class='cursor-pointer'/>
                                         </div>
