@@ -90,14 +90,14 @@ export default {
             required: true
         },
         start: {
-            type: Number
+            type: String
         },
         order: {
             type: String,
             default: 'desc'
         },
         end: {
-            type: Number
+            type: String
         },
         dragHandle: {
             type: Boolean,
