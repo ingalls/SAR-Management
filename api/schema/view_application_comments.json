@@ -1,0 +1,40 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./view_application_comments/id.json"
+        },
+        "application": {
+            "$ref": "./view_application_comments/application.json"
+        },
+        "created": {
+            "$ref": "./view_application_comments/created.json"
+        },
+        "updated": {
+            "$ref": "./view_application_comments/updated.json"
+        },
+        "body": {
+            "$ref": "./view_application_comments/body.json"
+        },
+        "author": {
+            "$ref": "./view_application_comments/author.json"
+        },
+        "archived": {
+            "$ref": "./view_application_comments/archived.json"
+        },
+        "user": {
+            "$ref": "./view_application_comments/user.json"
+        }
+    },
+    "required": [
+        "id",
+        "application",
+        "created",
+        "updated",
+        "body",
+        "author",
+        "archived",
+        "user"
+    ]
+}

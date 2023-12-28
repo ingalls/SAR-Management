@@ -181,6 +181,9 @@ export default {
                 method: 'DELETE'
             })
         },
+        fetchComments: async function() {
+            this.comments = await window.std(`/api/issue/${this.$route.params.issueid}/comment`);
+        },
         deleteComment: async function(comment) {
             await window.std(`/api/issue/${this.$route.params.issueid}/comment/${comment.id}`, {
                 method: 'DELETE'
@@ -197,9 +200,6 @@ export default {
             })
 
             await this.fetchAssigned();
-        },
-        fetchComments: async function() {
-            this.comments = await window.std(`/api/issue/${this.$route.params.issueid}/comment`);
         },
         update: async function(status) {
             if (status) this.issue.status = status;

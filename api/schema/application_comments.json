@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "$ref": "./application_comments/id.json"
+        },
+        "application": {
+            "$ref": "./application_comments/application.json"
+        },
+        "created": {
+            "$ref": "./application_comments/created.json"
+        },
+        "updated": {
+            "$ref": "./application_comments/updated.json"
+        },
+        "body": {
+            "$ref": "./application_comments/body.json"
+        },
+        "author": {
+            "$ref": "./application_comments/author.json"
+        },
+        "archived": {
+            "$ref": "./application_comments/archived.json"
+        }
+    },
+    "required": [
+        "id",
+        "application",
+        "created",
+        "updated",
+        "body",
+        "author",
+        "archived"
+    ]
+}

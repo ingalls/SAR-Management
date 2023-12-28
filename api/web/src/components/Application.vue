@@ -42,7 +42,6 @@
                         <div class="card-body">
                             <div class='row'>
                                 <TablerSchema :disabled='!edit' :schema='application.schema' v-model='application'/>
-
                                 <template v-if='edit'>
                                     <div class='d-flex'>
                                         <TablerDelete v-if='is_iam("Application:Admin")' @delete='deleteApp'/>
@@ -55,6 +54,39 @@
                         </div>
                     </div>
                 </div>
+
+                <div :key='comment.id' v-for='comment in comments.application_comments' class="col-md-12 py-2">
+                    <div class="card">
+                        <div class='card-header'>
+                            <div class="col">
+                                <div class="d-flex">
+                                    <div class='ms-auto'>
+                                        <div class='btn-list'>
+                                            <div class="d-flex align-items-center">
+                                                <Avatar :user='comment.user'/>
+                                            </div>
+
+                                            <button v-if='comment.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
+                                            <div class="dropdown-menu dropdown-menu-end" style="">
+                                                <a @click='deleteComment(comment)' class="dropdown-item cursor-pointer">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                           <TablerMarkdown :markdown='comment.body'/>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if='!edit' class="col-lg-12">
+                    <CreateComment
+                        @comment='fetchComments'
+                        @close='update("closed")'
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -64,10 +96,13 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import Avatar from './util/Avatar.vue';
+import CreateComment from './Application/CreateComment.vue';
 import {
     TablerEpoch,
     TablerBreadCrumb,
     TablerSchema,
+    TablerMarkdown,
     TablerDelete,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -94,6 +129,9 @@ export default {
                 save: false,
                 application: true,
             },
+            comments: {
+                application_comments: []
+            },
             application: {
                 name: '',
                 schema: {},
@@ -104,6 +142,7 @@ export default {
     mounted: async function() {
         if (this.$route.params.applicationid && this.is_iam("Application:View")) {
             await this.fetch();
+            await this.fetchComments();
         } else {
             this.application.schema = await this.getSchema();
             this.loading.application = false;
@@ -111,6 +150,15 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        fetchComments: async function() {
+            this.comments = await window.std(`/api/application/${this.$route.params.applicationid}/comment`);
+        },
+        deleteComment: async function(comment) {
+            await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {
+                method: 'DELETE'
+            })
+            await this.fetchComments();
+        },
         submit: async function() {
             this.loading.save = true;
 
@@ -151,10 +199,13 @@ export default {
         },
     },
     components: {
+        Avatar,
         TablerEpoch,
+        CreateComment,
         SettingsIcon,
         TablerBreadCrumb,
         TablerLoading,
+        TablerMarkdown,
         TablerDelete,
         TablerSchema,
         NoAccess
