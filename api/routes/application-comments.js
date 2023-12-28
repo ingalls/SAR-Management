@@ -50,6 +50,35 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.patch('/application/:applicationid/comment/:commentid', {
+        name: 'Update Comment',
+        group: 'AppComments',
+        auth: 'user',
+        ':applicationid': 'integer',
+        ':commentid': 'integer',
+        description: 'Update an application comment',
+        body: 'req.body.PatchApplicationComment.json',
+        res: 'view_application_comments.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Issue:Manage');
+
+            const comment = await ApplicationComment.from(config.pool, req.params.commentid);
+            if (comment.application !== req.params.applicationid) throw new Err(400, null, 'Comment does not belong to given application');
+
+            await Auth.is_own_or_iam(req, comment.author, 'Admin');
+
+            await comment.commit({
+                updated: sql`Now()`,
+                ...req.body
+            })
+
+            return res.json(await ViewIssueComment.from(config.pool, comment.id));
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.post('/application/:applicationid/comment', {
         name: 'Create Comment',
         group: 'AppComments',

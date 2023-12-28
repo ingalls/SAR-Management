@@ -57,7 +57,8 @@
 
                 <div :key='comment.id' v-for='comment in comments.application_comments' class="col-md-12 py-2">
                     <Comment
-                        @delete='fetchComments'
+                        @delete='deleteComment($event)'
+                        @update='updateComment($event)'
                         :canEdit='comment.author === auth.id || is_iam("Application:Admin")'
                         :comment='comment'
                     />
@@ -138,6 +139,19 @@ export default {
         deleteComment: async function(comment) {
             await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {
                 method: 'DELETE'
+            })
+            await this.fetchComments();
+        },
+        deleteComment: async function(comment) {
+            await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {
+                method: 'DELETE'
+            })
+            await this.fetchComments();
+        },
+        updateComment: async function(comment) {
+            await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {
+                method: 'PATCH',
+                body: comment
             })
             await this.fetchComments();
         },
