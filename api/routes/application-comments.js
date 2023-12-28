@@ -2,6 +2,7 @@ import Err from '@openaddresses/batch-error';
 import ApplicationComment from '../lib/types/application-comment.js';
 import ViewApplicationComment from '../lib/views/application-comment.js';
 import Auth from '../lib/auth.js';
+import { sql } from 'slonik';
 
 export default async function router(schema, config) {
     await schema.get('/application/:applicationid/comment', {
@@ -73,7 +74,7 @@ export default async function router(schema, config) {
                 ...req.body
             })
 
-            return res.json(await ViewIssueComment.from(config.pool, comment.id));
+            return res.json(await ViewApplicationComment.from(config.pool, comment.id));
         } catch (err) {
             return Err.respond(err, res);
         }
