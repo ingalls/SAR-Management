@@ -51,16 +51,6 @@ import UploadDefault from './UploadDefault.vue';
 export default {
     name: 'UploadModal',
     props: {
-        url: {
-            type: [String, URL],
-            default: '/api/asset'
-        },
-        headers: {
-            type: Object,
-            default: function() {
-                return {};
-            }
-        },
         prefix: {
             type: String,
             default: ''
@@ -71,6 +61,10 @@ export default {
             loading: true,
             custom: '',
             noExpiry: false,
+            url: window.stdurl('api/asset'),
+            headers: {
+                Authorization: `Bearer ${localStorage.token}`
+            },
             cert: {
                 name: '',
                 custom: '',
