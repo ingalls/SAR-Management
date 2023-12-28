@@ -56,29 +56,7 @@
                 </div>
 
                 <div :key='comment.id' v-for='comment in comments.application_comments' class="col-md-12 py-2">
-                    <div class="card">
-                        <div class='card-header'>
-                            <div class="col">
-                                <div class="d-flex">
-                                    <div class='ms-auto'>
-                                        <div class='btn-list'>
-                                            <div class="d-flex align-items-center">
-                                                <Avatar :user='comment.user'/>
-                                            </div>
-
-                                            <button v-if='comment.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                            <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a @click='deleteComment(comment)' class="dropdown-item cursor-pointer">Delete</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                           <TablerMarkdown :markdown='comment.body'/>
-                        </div>
-                    </div>
+                    <Comment :canEdit='comment.author === auth.id || is_iam("Application:Admin")' :comment='comment'/>
                 </div>
 
                 <div v-if='!edit' class="col-lg-12">
@@ -98,11 +76,11 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Avatar from './util/Avatar.vue';
 import CreateComment from './Application/CreateComment.vue';
+import Comment from './util/Comment.vue';
 import {
     TablerEpoch,
     TablerBreadCrumb,
     TablerSchema,
-    TablerMarkdown,
     TablerDelete,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -205,10 +183,10 @@ export default {
         SettingsIcon,
         TablerBreadCrumb,
         TablerLoading,
-        TablerMarkdown,
         TablerDelete,
         TablerSchema,
-        NoAccess
+        NoAccess,
+        Comment
     }
 }
 </script>
