@@ -3,7 +3,17 @@
     <div class="card">
         <div class="card-body">
             <div class="mb-3">
-                <TablerInput label='Comment' v-model='body' rows='2'/>
+                <MdEditor
+                    :preview='false' noUploadImg noMermaid
+                    :noKatex='true'
+                    :toolbarsExclude='[
+                        "save",
+                        "prettier",
+                        "mermaid"
+                    ]'
+                    language='en-US'
+                    v-model="body"
+                />
             </div>
 
             <div class="col-md-12">
@@ -29,6 +39,8 @@
 import {
     TablerInput
 } from '@tak-ps/vue-tabler'
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 
 export default {
     name: 'CreateComment',
@@ -52,6 +64,7 @@ export default {
         }
     },
     components: {
+        MdEditor,
         TablerInput
     }
 }
