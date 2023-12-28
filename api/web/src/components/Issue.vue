@@ -39,9 +39,9 @@
 
                                                     <button v-if='issue.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                                                     <div class="dropdown-menu dropdown-menu-end" style="">
-                                                        <a @click='$router.push(`/issue/${$route.params.issueid}/edit`)' class="dropdown-item cursor-pointer">Edit</a>
-                                                        <a v-if='issue.status === "open"' @click='update("closed")' class="dropdown-item cursor-pointer">Close</a>
-                                                        <a v-if='issue.status === "closed"' @click='update("open")' class="dropdown-item cursor-pointer">Re-Open</a>
+                                                        <a @click='$router.push(`/issue/${$route.params.issueid}/edit`)' class="dropdown-item cursor-pointer hover-light">Edit</a>
+                                                        <a v-if='issue.status === "open"' @click='update("closed")' class="dropdown-item cursor-pointer hover-light">Close</a>
+                                                        <a v-if='issue.status === "closed"' @click='update("open")' class="dropdown-item cursor-pointer hover-light">Re-Open</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -53,6 +53,10 @@
                                 </div>
 
                                 <IssuePoll v-if='issue.poll_id' :issue='issue'/>
+
+                                <div class='card-footer'>
+                                    <span v-text='fromNow'/>
+                                </div>
                             </template>
                         </div>
                     </div>
@@ -74,31 +78,13 @@
                         </div>
                     </div>
 
-                    <div :key='comment.id' v-for='comment in comments.issues_comments' class="col-md-9">
-                        <div class="card">
-                            <div class='card-header'>
-                                <div class="col">
-                                    <div class="d-flex">
-                                        <div class='ms-auto'>
-                                            <div class='btn-list'>
-                                                <div class="d-flex align-items-center">
-                                                    <Avatar :user='comment.user'/>
-                                                </div>
-
-                                                <button v-if='comment.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                                <div class="dropdown-menu dropdown-menu-end" style="">
-                                                    <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
-                                                    <a @click='deleteComment(comment)' class="dropdown-item cursor-pointer">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                               <TablerMarkdown :markdown='comment.body'/>
-                            </div>
-                        </div>
+                    <div :key='comment.updated' v-for='comment in comments.issues_comments' class="col-md-9">
+                        <Comment
+                            @delete='deleteComment($event)'
+                            @update='updateComment($event)'
+                            :canEdit='comment.author === auth.id || is_iam("Issue:Admin")'
+                            :comment='comment'
+                        />
                     </div>
 
                     <template v-if='issue.status === "open"'>
@@ -116,6 +102,8 @@
 
 <script>
 import iam from '../iam.js';
+import Comment from './util/Comment.vue';
+import CreateComment from './Issue/CreateComment.vue';
 import NoAccess from './util/NoAccess.vue';
 import {
     TablerBreadCrumb,
@@ -124,8 +112,29 @@ import {
 } from '@tak-ps/vue-tabler'
 import Avatar from './util/Avatar.vue';
 import IssuePoll from './Issue/Poll.vue';
-import CreateComment from './Issue/CreateComment.vue';
 import UserSelect from './util/UserSelect.vue';
+import moment from 'moment';
+
+moment.updateLocale('en', {
+    relativeTime : {
+        future: "in %s",
+        past:   "%s ago",
+        s  : 'a few seconds',
+        ss : '%d seconds',
+        m:  "a minute",
+        mm: "%d minutes",
+        h:  "an hour",
+        hh: "%d hours",
+        d:  "a day",
+        dd: "%d days",
+        w:  "a week",
+        ww: "%d weeks",
+        M:  "a month",
+        MM: "%d months",
+        y:  "a year",
+        yy: "%d years"
+    }
+});
 
 export default {
     name: 'Issue',
@@ -155,6 +164,11 @@ export default {
             comments: {
                 issues_comments: []
             }
+        }
+    },
+    computed: {
+        fromNow: function() {
+            return "Posted " + moment(this.issue.created).fromNow();
         }
     },
     mounted: async function() {
@@ -190,6 +204,13 @@ export default {
             })
             await this.fetchComments();
         },
+        updateComment: async function(comment) {
+            await window.std(`/api/issue/${this.$route.params.issueid}/comment/${comment.id}`, {
+                method: 'PATCH',
+                body: comment
+            })
+            await this.fetchComments();
+        },
         postAssigned: async function(user) {
             this.loading.assigned = true;
             await window.std(`/api/issue/${this.$route.params.issueid}/assigned`, {
@@ -214,6 +235,7 @@ export default {
     components: {
         Avatar,
         NoAccess,
+        Comment,
         TablerLoading,
         TablerMarkdown,
         TablerBreadCrumb,

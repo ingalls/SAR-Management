@@ -56,7 +56,11 @@
                 </div>
 
                 <div :key='comment.id' v-for='comment in comments.application_comments' class="col-md-12 py-2">
-                    <Comment :canEdit='comment.author === auth.id || is_iam("Application:Admin")' :comment='comment'/>
+                    <Comment
+                        @delete='fetchComments'
+                        :canEdit='comment.author === auth.id || is_iam("Application:Admin")'
+                        :comment='comment'
+                    />
                 </div>
 
                 <div v-if='!edit' class="col-lg-12">

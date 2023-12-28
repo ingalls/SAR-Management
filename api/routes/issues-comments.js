@@ -2,6 +2,7 @@ import Err from '@openaddresses/batch-error';
 import IssueComment from '../lib/types/issue-comment.js';
 import ViewIssueComment from '../lib/views/issue-comment.js';
 import Auth from '../lib/auth.js';
+import { sql } from 'slonik';
 
 export default async function router(schema, config) {
     await schema.get('/issue/:issueid/comment', {
@@ -45,6 +46,35 @@ export default async function router(schema, config) {
                 status: 200,
                 message: 'Comment Deleted'
             });
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
+    await schema.patch('/issue/:issueid/comment/:commentid', {
+        name: 'Update Comment',
+        group: 'Comments',
+        auth: 'user',
+        ':issueid': 'integer',
+        ':commentid': 'integer',
+        description: 'Update an issue comment',
+        body: 'req.body.PatchIssueComment.json',
+        res: 'view_issues_comments.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'Issue:Manage');
+
+            const comment = await IssueComment.from(config.pool, req.params.commentid);
+            if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
+
+            await Auth.is_own_or_iam(req, comment.author, 'Admin');
+
+            await comment.commit({
+                updated: sql`Now()`,
+                ...req.body
+            })
+
+            return res.json(await ViewIssueComment.from(config.pool, comment.id));
         } catch (err) {
             return Err.respond(err, res);
         }

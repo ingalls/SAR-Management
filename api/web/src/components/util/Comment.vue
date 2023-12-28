@@ -9,25 +9,50 @@
                 <div class='ms-auto btn-list'>
                     <button v-if='canEdit' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
                     <div class="dropdown-menu dropdown-menu-end" style="">
-                        <a @click='$router.push("/team/leadership")' class="dropdown-item cursor-pointer">Edit</a>
-                        <a @click='deleteComment(comment)' class="dropdown-item cursor-pointer">Delete</a>
+                        <a @click='edit = true' class="dropdown-item cursor-pointer hover-light">Edit</a>
+                        <a @click='$emit("delete", comment)' class="dropdown-item cursor-pointer hover-light">Delete</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card-body">
-       <TablerMarkdown :markdown='comment.body'/>
-    </div>
+
+    <TablerLoading v-if='loading'/>
+    <template v-else-if='edit'>
+        <MdEditor
+            :preview='false' noUploadImg noMermaid
+            :noKatex='true'
+            :toolbarsExclude='[
+                "save",
+                "prettier",
+                "mermaid"
+            ]'
+            language='en-US'
+            v-model="comment.body"
+        />
+        <div class='card-footer d-flex'>
+            <div class='ms-auto'>
+                <button @click='updateComment' class='btn btn-primary'>Update</button>
+            </div>
+        </div>
+    </template>
+    <template v-else>
+        <div class="card-body">
+            <TablerMarkdown :markdown='comment.body'/>
+        </div>
+    </template>
 </div>
 </template>
 
 <script>
 import {
     TablerMarkdown,
+    TablerLoading
 } from '@tak-ps/vue-tabler'
 import Avatar from './Avatar.vue';
 import moment from 'moment';
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 
 moment.updateLocale('en', {
     relativeTime : {
@@ -62,22 +87,28 @@ export default {
             required: true
         }
     },
+    data: function() {
+        return {
+            loading: false,
+            edit: false
+        }
+    },
     computed: {
         fromNow: function() {
             return moment(this.comment.created).fromNow();
         }
     },
     methods: {
-        deleteComment: async function(comment) {
-            await window.std(`/api/issue/${this.$route.params.issueid}/comment/${comment.id}`, {
-                method: 'DELETE'
-            })
-            this.$emit('delete');
-        },
+        updateComment: function() {
+            this.loading = true;
+            this.$emit('update', this.comment);
+        }
     },
     components: {
         Avatar,
+        MdEditor,
         TablerMarkdown,
+        TablerLoading
     }
 }
 </script>
