@@ -1,6 +1,6 @@
 <template>
     <TablerModal>
-        <button type="button" class="btn-close" @click='close' aria-label="Close"></button>
+        <button type="button" class="btn-close" @click='$emit("close")' aria-label="Close"></button>
             <div class="modal-status bg-yellow"></div>
             <div class="modal-header">
                 <div class='modal-title'>Certificate Upload</div>
@@ -10,7 +10,7 @@
                     <TablerLoading/>
                 </template>
                 <template v-else>
-                    <TablerEnum label='Certificate Name' v-model='cert.name' :options='known'/>
+                    <TablerEnum label='Certificate Name' v-model='cert.name' :options='knownNames'/>
 
                     <template v-if='cert.name === "Other"'>
                         <TablerInput label='Custom Name' v-model='cert.custom' class='my-3'/>
@@ -26,14 +26,30 @@
                         <TablerToggle v-model='noExpiry' label='No Expiry'/>
                     </TablerInput>
 
-                    <UploadDefault
-                        :url='url'
-                        :headers='headers'
-                        :cancel='false'
-                        @done='$emit("done", $event)'
-                        @cancel='$emit("cancel")'
-                    />
+                    <template v-if='asset'>
+                        <div class='d-flex justify-content-center mb-4'>
+                            <CheckIcon width='48' height='48' />
+                        </div>
+
+                        <div class='d-flex justify-content-center'>
+                            <div v-text='asset.name'></div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <UploadDefault
+                            :url='url'
+                            :headers='headers'
+                            :cancel='false'
+                            @done='asset = $event'
+                            @cancel='$emit("cancel")'
+                        />
+                    </template>
                 </template>
+            </div>
+            <div class='modal-footer d-flex'>
+                <div class='ms-auto'>
+                    <button @click='saveCert' :disabled='!asset' class='btn btn-primary'>Save Certificate</button>
+                </div>
             </div>
     </TablerModal>
 </template>
@@ -46,11 +62,17 @@ import {
     TablerEnum,
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import {
+    CheckIcon
+} from 'vue-tabler-icons';
 import UploadDefault from './UploadDefault.vue';
 
 export default {
-    name: 'UploadModal',
+    name: 'UploadCertificateModal',
     props: {
+        uid: {
+            type: Number
+        },
         prefix: {
             type: String,
             default: ''
@@ -65,12 +87,14 @@ export default {
             headers: {
                 Authorization: `Bearer ${localStorage.token}`
             },
+            asset: null,
             cert: {
                 name: '',
                 custom: '',
-                expiry: ''
+                expiry: '',
             },
-            known: []
+            knownMap: new Map(),
+            knownNames: []
         }
     },
     mounted: async function() {
@@ -80,14 +104,35 @@ export default {
         getKnown: async function() {
             this.loading = true;
             const known = await window.std('/api/certs');
-            this.known = known.certs.map((k) => k.name).concat(['Other']);
+            this.knownNames = known.certs.map((k) => k.name).concat(['Other']);
+            for (const cert of known.certs) {
+                this.knownMap.set(known.name, known);
+            }
+
             this.loading = false;
         },
-        close: function() {
+        saveCert: async function() {
+            const body = this.cert;
+            if (this.noExpiry) delete body.expiry;
+            body.asset = this.asset.id;
+
+            if (body.name === "Other") {
+                body.name = body.custom;
+            } else {
+                body.known
+            }
+            delete body.custom;
+
+            await window.std(`/api/user/${this.uid}/cert`, {
+                method: 'POST',
+                body
+            });
+
             this.$emit('close');
-        }
+        },
     },
     components: {
+        CheckIcon,
         TablerModal,
         TablerInput,
         TablerLoading,

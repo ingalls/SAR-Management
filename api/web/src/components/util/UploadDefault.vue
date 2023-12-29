@@ -101,7 +101,7 @@ export default {
 
                     this.progress = 101;
 
-                    this.$emit('done');
+                    this.$emit('done', JSON.parse(xhr.response));
                 });
 
                 formData.append('file', file)

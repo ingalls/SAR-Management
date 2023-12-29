@@ -22,6 +22,9 @@
         },
         "expiry": {
             "$ref": "./certs/expiry.json"
+        },
+        "asset": {
+            "$ref": "./certs/asset.json"
         }
     },
     "required": [
@@ -31,6 +34,7 @@
         "uid",
         "known",
         "name",
-        "expiry"
+        "expiry",
+        "asset"
     ]
 }

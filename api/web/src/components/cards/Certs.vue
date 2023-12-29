@@ -25,12 +25,13 @@
             <tbody>
                 <tr :key='cert.id' v-for='cert in list.certs'>
                     <td><a @click='$router.push(`/certs/${cert.id}`)' v-text='cert.name' class='cursor-pointer'></a></td>
-                    <td v-text='cert.expiry'></td>
+                    <td v-text='cert.expiry || "None"'></td>
                 </tr>
             </tbody>
         </table>
     </template>
     <UploadCertificate
+        :uid='assigned'
         v-if='upload'
         @err='error($event)'
         @close='upload = null'
@@ -70,12 +71,17 @@ export default {
             }
         }
     },
+    watch: {
+        upload: async function() {
+            await this.fetch();
+        }
+    },
     mounted: async function() {
         await this.fetch();
     },
     methods: {
         fetch: async function() {
-            const url = window.stdurl(`/api/user/${this.assigned}/certs`);
+            const url = window.stdurl(`/api/user/${this.assigned}/cert`);
             url.searchParams.append('limit', this.limit);
             url.searchParams.append('page', this.page);
 

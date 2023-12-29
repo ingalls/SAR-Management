@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "required": [
+        "name",
+        "asset"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "asset": {
+            "type": "integer"
+        },
+        "known": {
+            "type": "integer"
+        },
+        "expiry": {
+            "type": "string"
+        }
+    }
+}
