@@ -46,7 +46,17 @@
                                         />
                                     </div>
                                     <div class="col-md-12">
-                                        <TablerInput v-model='training.body' :rows='6' label='Training Summary'/>
+                                        <MdEditor
+                                            :preview='false' noUploadImg noMermaid
+                                            :noKatex='true'
+                                            :toolbarsExclude='[
+                                                "save",
+                                                "prettier",
+                                                "mermaid"
+                                            ]'
+                                            language='en-US'
+                                            v-model="training.body"
+                                        />
                                     </div>
                                     <div class='col-md-12'>
                                         <LocationDropdown @locGeom='training.location_geom = $event' v-model='training.location'/>
@@ -88,6 +98,8 @@ import NoAccess from './util/NoAccess.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -174,6 +186,7 @@ export default {
     },
     components: {
         Location,
+        MdEditor,
         TablerInput,
         TablerToggle,
         TablerLoading,
