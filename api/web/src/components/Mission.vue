@@ -50,7 +50,7 @@
                                     </div>
                                     <div v-if='mission.teams.length' class='col-12 mt-2 btn-list'>
                                         <template v-for='team in mission.teams'>
-                                            <TeamBadge :team='team'/>
+                                            <TeamBadge class='mx-1' :team='team'/>
                                         </template>
                                     </div>
                                 </div>

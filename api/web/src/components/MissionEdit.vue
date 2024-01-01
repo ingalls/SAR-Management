@@ -69,12 +69,16 @@
                                         />
                                     </div>
                                     <div class="col-12 col-md-12">
-                                        <TablerInput
-                                            v-model='mission.body'
-                                            :required='true'
-                                            :error='errors.body'
-                                            :rows='6'
-                                            label='Mission Report'
+                                        <MdEditor
+                                            :preview='false' noUploadImg noMermaid
+                                            :noKatex='true'
+                                            :toolbarsExclude='[
+                                                "save",
+                                                "prettier",
+                                                "mermaid"
+                                            ]'
+                                            language='en-US'
+                                            v-model="training.body"
                                         />
                                     </div>
                                     <div class='col-md-12'>
@@ -137,6 +141,8 @@ import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import TeamSelect from './util/TeamSelect.vue';
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -278,6 +284,7 @@ export default {
     },
     components: {
         Location,
+        MdEditor,
         TablerInput,
         LocationDropdown,
         UserPresentSelect,

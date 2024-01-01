@@ -48,7 +48,7 @@
                                     </div>
                                     <div v-if='training.teams.length' class='mt-2'>
                                         <template v-for='team in training.teams'>
-                                            <TeamBadge :team='team'/>
+                                            <TeamBadge class='mx-1' :team='team'/>
                                         </template>
                                     </div>
                                 </div>
