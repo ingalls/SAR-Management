@@ -24,7 +24,7 @@
             </thead>
             <tbody>
                 <tr :key='cert.id' v-for='cert in list.certs'>
-                    <td><a @click='$router.push(`/certs/${cert.id}`)' v-text='cert.name' class='cursor-pointer'></a></td>
+                    <td><a @click='$router.push(`/user/${cert.uid}/cert/${cert.id}`)' v-text='cert.name' class='cursor-pointer'></a></td>
                     <td v-text='cert.expiry || "None"'></td>
                 </tr>
             </tbody>

@@ -21,6 +21,27 @@ export default async function router(schema, config) {
         }
     });
 
+    await schema.get('/user/:userid/cert/:certid', {
+        name: 'Get Certs',
+        group: 'Cert',
+        auth: 'user',
+        description: 'Get all certs for the given user',
+        ':userid': 'integer',
+        ':certid': 'integer',
+        res: 'certs.json'
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(req, 'User:View');
+
+            const cert = await Cert.from(config.pool, req.params.certid);
+            if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
+
+            return res.json(cert);
+        } catch (err) {
+            return Err.respond(err, res);
+        }
+    });
+
     await schema.post('/user/:userid/cert', {
         name: 'Create Certs',
         group: 'Cert',
