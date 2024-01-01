@@ -243,6 +243,11 @@ export default {
         }
     },
     mounted: async function() {
+        window.addEventListener('error', (evt) => {
+            evt.preventDefault();
+            this.err = evt;
+        });
+
         await this.getIAM();
         await this.fetchName();
         await this.fetchNotify();

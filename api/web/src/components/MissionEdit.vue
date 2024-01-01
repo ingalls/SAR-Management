@@ -78,7 +78,7 @@
                                                 "mermaid"
                                             ]'
                                             language='en-US'
-                                            v-model="training.body"
+                                            v-model="mission.body"
                                         />
                                     </div>
                                     <div class='col-md-12'>
