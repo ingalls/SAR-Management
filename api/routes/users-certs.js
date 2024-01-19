@@ -15,7 +15,10 @@ export default async function router(schema, config) {
         try {
             await Auth.is_iam(req, 'User:View');
 
-            res.json(await Cert.list(config.pool, req.query));
+            res.json(await Cert.list(config.pool, {
+                uid: req.params.userid,
+                ...req.query
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }
