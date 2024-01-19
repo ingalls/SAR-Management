@@ -1,5 +1,6 @@
 import Generic, { Params } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
+import { sql } from 'slonik';
 
 export default class User extends Generic {
     static _table = 'certs';
@@ -32,7 +33,7 @@ export default class User extends Generic {
 
             return this.deserialize_list(pgres, 'schedules');
         } catch (err) {
-            throw new Err(500, err, 'Failed to list Schedules');
+            throw new Err(500, err, 'Failed to list Certs');
         }
     }
 }
