@@ -1,4 +1,5 @@
 import Generic, { Params } from '@openaddresses/batch-generic';
+import Err from '@openaddresses/batch-error';
 
 export default class User extends Generic {
     static _table = 'certs';
@@ -20,7 +21,7 @@ export default class User extends Generic {
                     schedule
                 WHERE
                     (${query.uid}::BIGINT IS NULL OR uid = ${query.uid})
-                    (${query.filter}::TEXT IS NULL OR name ~* ${query.filter})
+                    AND (${query.filter}::TEXT IS NULL OR name ~* ${query.filter})
                 ORDER BY
                     ${sql.identifier([this._table, query.sort])} ${query.order}
                 LIMIT
