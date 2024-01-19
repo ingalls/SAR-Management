@@ -17,9 +17,9 @@ export default class User extends Generic {
             const pgres = await pool.query(sql`
                 SELECT
                     count(*) OVER() AS count,
-                    schedule.*
+                    certs.*
                 FROM
-                    schedule
+                    certs
                 WHERE
                     (${query.uid}::BIGINT IS NULL OR uid = ${query.uid})
                     AND (${query.filter}::TEXT IS NULL OR name ~* ${query.filter})
@@ -31,7 +31,7 @@ export default class User extends Generic {
                     ${query.limit * query.page}
             `);
 
-            return this.deserialize_list(pgres, 'schedules');
+            return this.deserialize_list(pgres, 'certs');
         } catch (err) {
             throw new Err(500, err, 'Failed to list Certs');
         }
