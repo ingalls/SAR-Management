@@ -1,5 +1,7 @@
 <template>
-<div class='card'>
+<div :class='{
+    "card": title
+}'>
     <div v-if='title' class='card-header' v-text='title'></div>
     <div class='card-body'>
         <div class='d-flex justify-content-center' :class='{
