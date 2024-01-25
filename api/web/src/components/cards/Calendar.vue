@@ -38,7 +38,7 @@
 
         <div id='calendar' style='width: 100%; height: 500px;'></div>
     </div>
-    <NoAccess v-else title='Calendar'/>
+    <NoAccess v-else/>
 </div>
 </template>
 

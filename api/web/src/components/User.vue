@@ -125,14 +125,12 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-6">
-                    <NoAccess v-if='!is_iam("Mission:View")'/>
-                    <CardMissionMini v-else
+                    <CardMissionMini v-if='is_iam("Mission:View")'
                         :assigned='userid'
                     />
                 </div>
                 <div class="col-sm-6 col-lg-6">
-                    <NoAccess v-if='!is_iam("Training:View")'/>
-                    <CardTrainingMini v-else
+                    <CardTrainingMini v-if='is_iam("Training:View")'
                         :assigned='userid'
                     />
                 </div>

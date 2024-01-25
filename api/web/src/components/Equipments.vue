@@ -27,7 +27,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment'/>
-                    <CardEquipment/>
+                    <CardEquipment v-else/>
                 </div>
             </div>
         </div>
