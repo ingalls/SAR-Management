@@ -1,7 +1,7 @@
 {
     "name": "sar-Management",
     "type": "module",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -10,7 +10,7 @@
         "lint": "eslint index.js routes/**.ts lib/**.ts test/**.ts",
         "loaddb": "echo 'DROP DATABASE sar' | psql && echo 'CREATE DATABASE sar' | psql && psql sar < sar-latest.dump && echo \"UPDATE users SET email = username || '@ingalls.ca'\" | psql sar",
         "prod": "node dist/index.js",
-        "dev": "StackName=test nodemon -i schema/ -i web/ -i doc/ index.js"
+        "dev": "StackName=test nodemon -i schema/ -i web/ -i doc/ index.ts"
     },
     "repository": {
         "type": "git",
@@ -26,7 +26,7 @@
         "@aws-sdk/client-s3": "^3.267.0",
         "@aws-sdk/lib-storage": "^3.287.0",
         "@openaddresses/batch-error": "^2.0.0",
-        "@openaddresses/batch-generic": "^14.0.0",
+        "@openaddresses/batch-generic": "^15.0.0",
         "@openaddresses/batch-schema": "^9.0.0",
         "ajv": "^8.11.2",
         "ajv-formats": "^2.1.1",
@@ -41,7 +41,6 @@
         "form-data": "^4.0.0",
         "ical-generator": "^5.0.0",
         "jsonwebtoken": "^9.0.0",
-        "knex": "^3.0.0",
         "mailgen": "^2.0.27",
         "mailgun.js": "^9.0.0",
         "minimist": "^1.2.7",
@@ -51,6 +50,7 @@
         "sharp": "^0.32.0",
         "slonik": "^32.0.0",
         "swagger-ui-express": "^5.0.0",
+        "ts-node": "^10.9.2",
         "vcard-creator": "^0.6.0"
     },
     "devDependencies": {
