@@ -95,7 +95,7 @@ export const ApplicationComment = pgTable('application_comments', {
     application: integer('application').notNull().references(() => Application.id),
     created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
-    body: text('body').notNull()
+    body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
     archived: boolean('archived').notNull().default(false)
 })
@@ -120,7 +120,7 @@ export const Cert = pgTable('certs', {
     created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
     uid: integer('uid').notNull().references(() => User.id),
-    known: integer('known').references(() => KnownCert.id),
+    known: integer('known').references(() => CertKnown.id),
     name: text('name').notNull(),
     expiry: timestamp('expiry'),
     asset: integer('asset').notNull().references(() => Asset.id)
@@ -138,7 +138,7 @@ export const Equipment = pgTable('equipment', {
     parent: integer('parent').references(() => Equipment.id),
     meta: json('meta').notNull().default({}),
     archived: boolean('archived').notNull().default(false),
-    quantity: boolean('quantity').notNull().default(1),
+    quantity: integer('quantity').notNull().default(1),
     value: integer('value')
 });
 
@@ -171,7 +171,7 @@ export const Issue = pgTable('issues', {
     created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
     status: text('status').notNull().default('open'),
-    start_ts: timestamp('start_ts')
+    start_ts: timestamp('start_ts'),
     end_ts: timestamp('end_ts'),
     title: text('title').notNull(),
     body: text('body').notNull(),
@@ -220,8 +220,8 @@ export const Mission = pgTable('missions', {
     body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
     location: text('location').notNull().default(''),
-    location_geom: geometry({ type: GeometryType.Polygon, srid: 4326 }),
-    externalid: text('external_id').default('');
+    location_geom: geometry('location_geom', { type: GeometryType.Polygon, srid: 4326 }),
+    externalid: text('external_id').default('')
 });
 
 export const MissionAssigned = pgTable('missions_assigned', {
@@ -276,7 +276,7 @@ export const ScheduleAssigned = pgTable('schedules_assigned', {
 });
 
 export const ScheduleEvent = pgTable('schedules_event', {
-    id: serial('id').primarKey(),
+    id: serial('id').primaryKey(),
     schedule_id: integer('schedule_id').notNull().references(() => Schedule.id),
     start_ts: timestamp('start_ts').notNull(),
     end_ts: timestamp('end_ts').notNull(),
@@ -299,12 +299,12 @@ export const Training = pgTable('training', {
     title: text('title').notNull(),
     body: text('body').notNull(),
     location: text('location').notNull().default(''),
-    location_geom: geometry({ type: GeometryType.Polygon, srid: 4326 }),
+    location_geom: geometry('location_geom', { type: GeometryType.Polygon, srid: 4326 }),
     required: boolean('required').notNull().default(false)
 });
 
 export const TrainingAssigned = pgTable('training_assigned', {
-    id: serial('id').priaryKey(),
+    id: serial('id').primaryKey(),
     training_id: integer('training_id').notNull().references(() => Training.id),
     confirmed: boolean('confirmed').notNull().default(false),
     role: text('role').notNull(),
