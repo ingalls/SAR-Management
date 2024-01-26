@@ -9,7 +9,7 @@
         </div>
     </div>
 
-    <NoAccess v-if='!is_iam("Training:View")' title='Trainings'/>
+    <NoAccess v-if='!is_iam("Training:View")'/>
     <template v-else-if='loading'>
         <TablerLoading desc='Loading Trainings'/>
     </template>
@@ -157,7 +157,9 @@ export default {
     },
     mounted: async function() {
         await this.listSchema();
-        await this.fetch();
+        if (this.is_iam("Training:View")) {
+            await this.fetch();
+        }
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },

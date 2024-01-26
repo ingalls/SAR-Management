@@ -101,6 +101,7 @@ export default {
 
                     this.progress = 101;
 
+                    if (!xhr.response) return;
                     this.$emit('done', JSON.parse(xhr.response));
                 });
 
