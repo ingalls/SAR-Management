@@ -176,7 +176,7 @@ export const Issue = pgTable('issues', {
     title: text('title').notNull(),
     body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
-    poll_id: integer('poll_id').notNull().references(() => Poll.id),
+    poll_id: integer('poll_id').references(() => Poll.id),
 });
 
 export const IssueAssigned = pgTable('issues_assigned', {
@@ -220,8 +220,8 @@ export const Mission = pgTable('missions', {
     body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
     location: text('location').notNull().default(''),
-    location_geom: geometry('location_geom', { type: GeometryType.Polygon, srid: 4326 }),
-    externalid: text('external_id').default('')
+    location_geom: geometry('location_geom', { type: GeometryType.Point, srid: 4326 }),
+    externalid: text('externalid').default('')
 });
 
 export const MissionAssigned = pgTable('missions_assigned', {
@@ -284,7 +284,7 @@ export const ScheduleEvent = pgTable('schedules_event', {
 });
 
 export const Server = pgTable('server', {
-    key: text('key').notNull(),
+    key: text('key').primaryKey(),
     value: text('value').notNull(),
     public: boolean('public').notNull().default(false)
 });
@@ -299,7 +299,7 @@ export const Training = pgTable('training', {
     title: text('title').notNull(),
     body: text('body').notNull(),
     location: text('location').notNull().default(''),
-    location_geom: geometry('location_geom', { type: GeometryType.Polygon, srid: 4326 }),
+    location_geom: geometry('location_geom', { type: GeometryType.Point, srid: 4326 }),
     required: boolean('required').notNull().default(false)
 });
 
