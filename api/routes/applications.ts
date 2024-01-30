@@ -1,14 +1,18 @@
 import Err from '@openaddresses/batch-error';
-import Application from '../lib/types/application.js';
+import { Application } from '../lib/schema.js';
+import { Request, Response } from 'express';
 import Auth from '../lib/auth.js';
 import Server from '../lib/types/server.js';
 import Notify from '../lib/notify.js';
+import Config from '../lib/config.js';
+import Modeler from '@openaddresses/batch-generic';
 import Ajv from 'ajv';
 
 const ajv = new Ajv({ allErrors: true });
 
-export default async function router(schema, config) {
+export default async function router(schema: any, config: Config) {
     const notify = new Notify(config);
+    const ApplicationModel = new Modeler(config.pool, Application);
 
     await schema.get('/application', {
         name: 'Get Applications',
@@ -17,11 +21,11 @@ export default async function router(schema, config) {
         description: 'Get all applications',
         query: 'req.query.ListApplications.json',
         res: 'res.ListApplications.json'
-    }, async (req, res) => {
+    }, async (req: Request, res: Response) => {
         try {
             await Auth.is_iam(req, 'Application:View');
 
-            const list = await Application.list(config.pool, req.query);
+            const list = await ApplicationModel.list(req.query);
             return res.json(list);
         } catch (err) {
             return Err.respond(err, res);
@@ -35,14 +39,14 @@ export default async function router(schema, config) {
         description: 'Submit a new application for consideration',
         body: { type: 'object' },
         res: 'applications.json'
-    }, async (req, res) => {
+    }, async (req: Request, res: Response) => {
         try {
             const schema = JSON.parse((await Server.from(config.pool, 'application')).value);
 
             const isValid = ajv.validate(schema, req.body);
             if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
 
-            const input = {
+            const input: any = {
                 schema,
                 meta: {}
             };
@@ -54,7 +58,7 @@ export default async function router(schema, config) {
                 }
             }
 
-            const app = await Application.generate(config.pool, input);
+            const app = await ApplicationModel.generate(input);
 
             res.json(app);
 
@@ -74,11 +78,11 @@ export default async function router(schema, config) {
         ':applicationid': 'integer',
         description: 'Return an application',
         res: { type: 'object' }
-    }, async (req, res) => {
+    }, async (req: Request, res: Response) => {
         try {
             await Auth.is_iam(req, 'Application:View');
 
-            const app = (await Application.from(config.pool, req.params.applicationid)).serialize();
+            const app = await ApplicationModel.from(req.params.applicationid);
             Object.assign(app, app.meta);
             delete app.meta;
             return res.json(app);
@@ -95,7 +99,7 @@ export default async function router(schema, config) {
         description: 'Modify an application',
         body: { type: 'object' },
         res: { type: 'object' }
-    }, async (req, res) => {
+    }, async (req: Request, res: Response) => {
         try {
             const schema = JSON.parse((await Server.from(config.pool, 'application')).value);
 
@@ -114,7 +118,7 @@ export default async function router(schema, config) {
                 }
             }
 
-            const app = (await Application.from(config.pool, req.params.applicationid)).serialize();
+            const app = await ApplicationModel.from(req.params.applicationid);
             Object.assign(app, app.meta);
             delete app.meta;
             return res.json(app);
@@ -130,11 +134,11 @@ export default async function router(schema, config) {
         ':applicationid': 'integer',
         description: 'Delete an application',
         res: 'res.Standard.json'
-    }, async (req, res) => {
+    }, async (req: Request, res: Response) => {
         try {
             await Auth.is_iam(req, 'Application:Admin');
 
-            await Application.delete(config.pool, req.params.applicationid);
+            await ApplicationModel.delete(req.params.applicationid);
 
             return res.json({
                 status: 200,

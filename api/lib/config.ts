@@ -1,3 +1,6 @@
+import { Pool } from '@openaddresses/batch-generic';
+import * as pgtypes from './schema.js';
+
 /**
  * @class
  */
@@ -9,7 +12,10 @@ export default class Config {
     SigningSecret: string;
     URL: string;
     APIURL: URL;
+    OrgName: string;
     MailGun: string;
+
+    pool?: Pool<typeof pgtypes>;
 
     static env(args: {
         email?: string;

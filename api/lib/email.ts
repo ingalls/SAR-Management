@@ -1,7 +1,11 @@
 import formData from 'form-data';
-import Mailgun from 'mailgun.js';
+import Mailgun, { Interfaces } from 'mailgun.js';
 import Mailgen from 'mailgen';
+import Config from './config.js';
 import Err from '@openaddresses/batch-error';
+import { Notification } from './schema.js';
+import { InferSelectModel } from 'drizzle-orm';
+
 const mailgun = new Mailgun(formData);
 
 /**
@@ -11,6 +15,10 @@ const mailgun = new Mailgun(formData);
  * @prop {Object} mailGenerator MailGen Generation API
  */
 export default class Email {
+    config: Config;
+    mg: Interfaces.IMailgunClient;
+    mailGenerator: Mailgen;
+
     constructor(config) {
         this.config = config;
 
@@ -36,7 +44,11 @@ export default class Email {
      * @param {String} user.email
      * @param {String} user.token
      */
-    async verify(user) {
+    async verify(user: {
+        username: string;
+        email: string;
+        token: string;
+    }): Promise<void> {
         const email = {
             body: {
                 name: user.email,
@@ -54,13 +66,17 @@ export default class Email {
         };
 
         try {
-            return await this.send(user.email, 'SAR Email Verification', this.mailGenerator.generate(email));
+            await this.send(user.email, 'SAR Email Verification', this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Confirmation Error');
         }
     }
 
-    async forgot(user) {
+    async forgot(user: {
+        username: string;
+        email: string;
+        token: string;
+    }): Promise<void> {
         const email = {
             body: {
                 name: user.email,
@@ -78,13 +94,16 @@ export default class Email {
         };
 
         try {
-            return await this.send(user.email, 'SAR Password Reset', this.mailGenerator.generate(email));
+            await this.send(user.email, 'SAR Password Reset', this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Forgot Error');
         }
     }
 
-    async newuser(user) {
+    async newuser(user: {
+        fname: string;
+        email: string;
+    }): Promise<void> {
         const email = {
             body: {
                 name: user.email,
@@ -102,14 +121,14 @@ export default class Email {
         };
 
         try {
-            return await this.send(user.email, `Welcome to ${this.config.OrgName}`, this.mailGenerator.generate(email));
+            await this.send(user.email, `Welcome to ${this.config.OrgName}`, this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Forgot Error');
         }
     }
 
-    async send(to, subject, body) {
-        if (!to) throw Error(400, null, 'send - to field required');
+    async send(to: string, subject: string, body: string): Promise<void> {
+        if (!to) throw new Err(400, null, 'send - to field required');
         if (!subject) throw new Err(400, null, 'send - subject field required');
 
         const from = `${this.config.OrgName} No Reply <robot@mesacountysar.com>`;
@@ -125,7 +144,9 @@ export default class Email {
 
     }
 
-    async user_disabled(user) {
+    async user_disabled(user: {
+        email: string;
+    }): Promise<void> {
         const email = {
             body: {
                 name: user.email,
@@ -135,13 +156,18 @@ export default class Email {
         };
 
         try {
-            return await this.send(user.email, `${this.config.OrgName} - Account Disabled`, this.mailGenerator.generate(email));
+            await this.send(user.email, `${this.config.OrgName} - Account Disabled`, this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Notification');
         }
     }
 
-    async notify(user, notify) {
+    async notify(
+        user: {
+            email: string;
+        },
+        notify: InferSelectModel<typeof Notification>
+    ): Promise<void> {
         const email = {
             body: {
                 name: user.email,
@@ -159,7 +185,7 @@ export default class Email {
         };
 
         try {
-            return await this.send(user.email, `${this.config.OrgName} - New Notification`, this.mailGenerator.generate(email));
+            await this.send(user.email, `${this.config.OrgName} - New Notification`, this.mailGenerator.generate(email));
         } catch (err) {
             throw new Err(500, err, 'Internal User Notification');
         }

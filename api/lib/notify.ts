@@ -1,21 +1,27 @@
-import Notification from './types/notification.js';
-import User from '../lib/types/user.js';
-import UserSetting from '../lib/types/user-setting.js';
+import {
+    User,
+    UserSetting,
+    Notification
+} from './schema.js';
+import * as pgtypes from './schema.js';
 import Email from '../lib/email.js';
+import Config from '../lib/config.js';
 import { Permissions } from '../lib/auth.js';
+import { InferInputModel } from 'drizzle-orm';
 
 export default class Notify {
-    constructor(config) {
+    pool: Pool<typeof pgtypes>;
+    email?: Email;
+
+    constructor(config: Config) {
         this.pool = config.pool;
 
         if (config.email) {
             this.email = new Email(config);
-        } else {
-            this.email = null;
         }
     }
 
-    async generate(type, uid, notification) {
+    async generate(type: string, uid: number, notification: InferInputModel<Notification>) {
         const notify = await Notification.generate(this.pool, {
             ...notification,
             uid,
