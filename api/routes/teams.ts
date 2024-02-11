@@ -3,7 +3,7 @@ import Team from '../lib/types/team.js';
 import TeamView from '../lib/views/team.js';
 import Auth, { Permissions } from '../lib/auth.js';
 
-export default async function router(schema, config) {
+export default async function router(schema, config: Config) {
     await schema.get('/iam', {
         name: 'Get IAM',
         group: 'IAM',

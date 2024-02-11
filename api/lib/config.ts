@@ -1,5 +1,6 @@
 import { Pool } from '@openaddresses/batch-generic';
 import * as pgtypes from './schema.js';
+import Models from './models.js';
 
 /**
  * @class
@@ -14,6 +15,7 @@ export default class Config {
     APIURL: URL;
     OrgName: string;
     MailGun: string;
+    models: Models;
 
     pool?: Pool<typeof pgtypes>;
 

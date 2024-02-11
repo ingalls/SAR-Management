@@ -7,8 +7,9 @@ import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth from '../lib/auth.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import Notify from '../lib/notify.js';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema, config: Config) {
     const notify = new Notify(config);
 
     await schema.get('/issue', {

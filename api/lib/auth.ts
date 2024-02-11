@@ -1,18 +1,25 @@
 import Err from '@openaddresses/batch-error';
 import { sql } from 'slonik';
 
+export enum PermissionsLevel {
+    ADMIN = 'Admin',
+    MANAGE = 'Manage',
+    VIEW = 'View',
+    NONE = 'None'
+}
+
 const Permissions = {
-    Application: ['Admin', 'Manage', 'View', 'None'],
-    Calendar: ['View', 'None'],
-    Doc: ['Admin', 'Manage', 'View', 'None'],
-    Equipment: ['Admin', 'Manage', 'View', 'None'],
-    Issue: ['Admin', 'Manage', 'View', 'None'],
-    Leadership: ['Admin', 'View', 'None'],
-    Mission: ['Admin', 'Manage', 'View', 'None'],
-    Team: ['Admin', 'Manage', 'View', 'None'],
-    Training: ['Admin', 'Manage', 'View', 'None'],
-    User: ['Admin', 'View', 'None'],
-    OnCall: ['Admin', 'View', 'None']
+    Application: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Calendar: [PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Doc: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Equipment: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Issue: [PermissionsLevel.ADMIN,  PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Leadership: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Mission: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Team: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Training: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    User: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    OnCall: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE]
 };
 
 class AuthAugment {

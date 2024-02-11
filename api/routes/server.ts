@@ -1,8 +1,8 @@
 import Err from '@openaddresses/batch-error';
-import Server from '../lib/types/server.js';
 import Auth from '../lib/auth.js';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema, config: Config) {
     await schema.put('/server', {
         name: 'Put Meta',
         group: 'Server',
@@ -16,10 +16,10 @@ export default async function router(schema, config) {
 
             let server;
             try {
-                server = await Server.from(config.pool, req.body.key);
+                server = await await config.models.Server.from(req.body.key);
                 await server.commit(req.body);
             } catch (err) {
-                server = await Server.generate(config.pool, req.body);
+                server = await await config.models.Server.generate(req.body);
             }
 
             return res.json(server);
@@ -37,7 +37,7 @@ export default async function router(schema, config) {
         res: 'server.json'
     }, async (req, res) => {
         try {
-            const server = await Server.from(config.pool, req.params.key);
+            const server = await config.models.Server.from(req.params.key);
 
             if (server.public) return res.json(server);
 
@@ -60,9 +60,7 @@ export default async function router(schema, config) {
         try {
             await Auth.is_admin(req);
 
-            const server = await Server.from(config.pool, req.params.key);
-
-            await server.delete(req.body);
+            await config.models.Server.delete(req.params.key);
 
             return res.json({
                 status: 200,
