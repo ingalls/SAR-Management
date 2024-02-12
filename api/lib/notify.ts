@@ -1,5 +1,4 @@
 import {
-    User,
     UserSetting,
     Notification
 } from './schema.js';
@@ -8,6 +7,7 @@ import Email from './email.js';
 import { Permissions } from './auth.js';
 import { InferSelectModel } from 'drizzle-orm';
 import Config from './config.js';
+import { sql } from 'drizzle-orm';
 
 export default class Notify {
     config: Config;
@@ -30,7 +30,21 @@ export default class Notify {
         const user = await this.config.models.User.from(uid);
 
         if (this.email) {
-            const setting = (await UserSetting.from(this.pool, uid, 'notification')).value;
+            let setting;
+            try {
+                setting = await this.config.models.UserSetting.from(sql`
+                    uid = ${uid}
+                    AND key = 'notification'
+                `);
+            } catch (err)  {
+                setting = {
+                    uid,
+                    key: 'notification',
+                    value: {}
+                    
+                };
+            }
+
             if (setting.disabled) return;
             if (!setting.settings) setting.settings = [];
             if (setting.settings[type] === undefined) setting.settings[type] = true;
@@ -46,7 +60,7 @@ export default class Notify {
             if (!Permissions[type].includes(minperm)) throw new Error('Mim Perm not included in permission set');
             const perms = Permissions[type].slice(0, Permissions[type].indexOf(minperm));
 
-            const users = (await Notification.users(this.pool, type, perms)).users;
+            const users = (await Notification.users(type, perms)).users;
 
             for (const user of users) {
                 await this.generate(type, user.id, notification);

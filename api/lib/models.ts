@@ -37,6 +37,8 @@ export default class Models {
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
     constructor(pg: Pool<typeof pgtypes>) {
+        this.Notification = new Modeler(pg, pgtypes.Notification);
+
         this.User = new Modeler(pg, pgtypes.User);
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
         this.UserReset = new Modeler(pg, pgtypes.UserReset);
@@ -60,7 +62,6 @@ export default class Models {
         this.Mission = new Modeler(pg, pgtypes.Mission);
         this.MissionAssigned = new Modeler(pg, pgtypes.MissionAssigned);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);
-        this.Notification = new Modeler(pg, pgtypes.Notification);
         this.PollQuestion = new Modeler(pg, pgtypes.PollQuestion);
         this.PollVote = new Modeler(pg, pgtypes.PollVote);
         this.Schedule = new Modeler(pg, pgtypes.Schedule);

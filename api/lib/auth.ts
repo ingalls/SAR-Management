@@ -72,7 +72,7 @@ export default class Auth {
      * @param {Object} req Express Request
      * @param {boolean} token Should URL query tokens be allowed (usually only for downloads)
      */
-    static async is_auth(req, token = false) {
+    static async is_auth(req, token = false): Promise<boolean> {
         if (token && req.token) req.auth = req.token;
 
         if (!req.auth || !req.auth.access || !['session', 'token'].includes(req.auth.type)) {
@@ -86,7 +86,7 @@ export default class Auth {
         return true;
     }
 
-    static async is_own_or_iam(req, uid, permission) {
+    static async is_own_or_iam(req, uid, permission): Promise<Boolean> {
         await Auth.is_auth(req);
 
         // Admins will be admins
@@ -99,7 +99,7 @@ export default class Auth {
     }
 
     // Ensure IAM permission is at least permission
-    static async is_iam(req, permission) {
+    static async is_iam(req, permission): Promise<boolean> {
         await Auth.is_auth(req);
 
         // Admins will be admins
@@ -119,7 +119,7 @@ export default class Auth {
     }
 
     // Ensure Scope Of token is respected
-    static async is_scope(req, scopes) {
+    static async is_scope(req, scopes): Promise<boolean> {
         await Auth.is_auth(req);
 
         for (const scope of scopes) {
@@ -131,7 +131,7 @@ export default class Auth {
         throw new Err(403, null, 'Authentication Level Insufficient');
     }
 
-    static async is_admin(req) {
+    static async is_admin(req): Promise<boolean> {
         if (!req.auth || !req.auth.access || req.auth.access !== 'admin') {
             throw new Err(403, null, 'Admin token required');
         }
