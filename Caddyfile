@@ -2,6 +2,10 @@
     admin off
 }
 
+www.mesacountysar.com {
+    redir https://mesacountysar.com{uri}
+}
+
 mesacountysar.com {
 
     encode zstd gzip {
