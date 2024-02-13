@@ -1,4 +1,5 @@
 import Modeler, { Pool } from '@openaddresses/batch-generic';
+import NotificationModel from './models/Notification.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
@@ -25,7 +26,7 @@ export default class Models {
     Mission: Modeler<typeof pgtypes.Mission>;
     MissionAssigned: Modeler<typeof pgtypes.MissionAssigned>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
-    Notification: Modeler<typeof pgtypes.Notification>;
+    Notification: NotificationModel;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
     PollVote: Modeler<typeof pgtypes.PollVote>;
     Schedule: Modeler<typeof pgtypes.Schedule>;
@@ -37,7 +38,7 @@ export default class Models {
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
     constructor(pg: Pool<typeof pgtypes>) {
-        this.Notification = new Modeler(pg, pgtypes.Notification);
+        this.Notification = new NotificationModel(pg);
 
         this.User = new Modeler(pg, pgtypes.User);
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
