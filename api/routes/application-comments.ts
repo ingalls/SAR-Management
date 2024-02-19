@@ -1,10 +1,10 @@
 import Err from '@openaddresses/batch-error';
-import ApplicationComment from '../lib/types/application-comment.js';
-import ViewApplicationComment from '../lib/views/application-comment.js';
-import Auth from '../lib/auth.js';
-import { sql } from 'slonik';
+import Auth, { AuthRequest } from '../lib/auth.js';
+import { Response } from 'express';
+import Config from '../lib/config.js';
+import { sql } from 'drizzle-orm';
 
-export default async function router(schema, config) {
+export default async function router(schema: any, config: Config) {
     await schema.get('/application/:applicationid/comment', {
         name: 'Get Comments',
         group: 'AppComments',
@@ -13,11 +13,19 @@ export default async function router(schema, config) {
         ':applicationid': 'integer',
         query: 'req.query.ListApplicationComments.json',
         res: 'res.ListApplicationComments.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res: Response) => {
         try {
             await Auth.is_iam(req, 'Application:View');
 
-            res.json(await ViewApplicationComment.list(config.pool, req.params.applicationid, req.query));
+            res.json(await config.models.ApplicationComment.augmented_list({
+                limit: Number(req.query.limit),
+                page: Number(req.query.page),
+                order: String(req.query.order),
+                sort: String(req.query.sort),
+                where: sql`
+                    application ~* ${req.params.applicationid}
+                `
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -31,16 +39,16 @@ export default async function router(schema, config) {
         ':commentid': 'integer',
         description: 'Archive an application comment',
         res: 'res.Standard.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res: Response) => {
         try {
             await Auth.is_iam(req, 'Application:Manage');
 
-            const comment = await ApplicationComment.from(config.pool, req.params.commentid);
+            const comment = await config.models.ApplicationComment.from(req.params.commentid);
             if (comment.application !== req.params.applicationid) throw new Err(400, null, 'Comment does not belong to given application');
 
             await Auth.is_own_or_iam(req, comment.author, 'Admin');
 
-            await comment.delete();
+            await config.models.ApplicationComment.delete(comment.id);
 
             return res.json({
                 status: 200,
@@ -60,21 +68,21 @@ export default async function router(schema, config) {
         description: 'Update an application comment',
         body: 'req.body.PatchApplicationComment.json',
         res: 'view_application_comments.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res: Response) => {
         try {
             await Auth.is_iam(req, 'Issue:Manage');
 
-            const comment = await ApplicationComment.from(config.pool, req.params.commentid);
+            const comment = await config.models.ApplicationComment.from(req.params.commentid);
             if (comment.application !== req.params.applicationid) throw new Err(400, null, 'Comment does not belong to given application');
 
             await Auth.is_own_or_iam(req, comment.author, 'Admin');
 
-            await comment.commit({
+            await config.models.ApplicationComment.commit(comment.id, {
                 updated: sql`Now()`,
                 ...req.body
             })
 
-            return res.json(await ViewApplicationComment.from(config.pool, comment.id));
+            return res.json(await config.models.ApplicationComment.augmented_from(comment.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -88,17 +96,17 @@ export default async function router(schema, config) {
         description: 'Create a new application comment',
         body: 'req.body.CreateApplicationComment.json',
         res: 'view_application_comments.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res: Response) => {
         try {
             await Auth.is_iam(req, 'Application:Manage');
 
-            const comment = await ApplicationComment.generate(config.pool, {
+            const comment = await config.models.ApplicationComment.generate({
                 application: req.params.applicationid,
                 author: req.auth.id,
                 ...req.body
             });
 
-            return res.json(await ViewApplicationComment.from(config.pool, comment.id));
+            return res.json(await config.models.ApplicationComment.augmented_from(comment.id));
         } catch (err) {
             return Err.respond(err, res);
         }

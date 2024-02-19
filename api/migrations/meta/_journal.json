@@ -8,6 +8,13 @@
       "when": 1706310092285,
       "tag": "0000_mighty_proudstar",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1708351520126,
+      "tag": "0001_organic_stark_industries",
+      "breakpoints": true
     }
   ]
 }

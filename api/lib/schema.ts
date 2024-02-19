@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import { geometry, GeometryType } from '@openaddresses/batch-generic';
 
 import {
@@ -7,6 +7,7 @@ import {
     integer,
     timestamp,
     pgTable,
+    pgView,
     serial,
     varchar,
     text,

@@ -1,5 +1,6 @@
 import Modeler, { Pool } from '@openaddresses/batch-generic';
 import NotificationModel from './models/Notification.js'
+import ApplicationCommentModel from './models/ApplicationComment.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
@@ -9,7 +10,6 @@ export default class Models {
     Team: Modeler<typeof pgtypes.Team>;
     UserTeam: Modeler<typeof pgtypes.UserTeam>;
     Application: Modeler<typeof pgtypes.Application>;
-    ApplicationComment: Modeler<typeof pgtypes.ApplicationComment>;
     Asset: Modeler<typeof pgtypes.Asset>;
     CertKnown: Modeler<typeof pgtypes.CertKnown>;
     Cert: Modeler<typeof pgtypes.Cert>;
@@ -26,7 +26,6 @@ export default class Models {
     Mission: Modeler<typeof pgtypes.Mission>;
     MissionAssigned: Modeler<typeof pgtypes.MissionAssigned>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
-    Notification: NotificationModel;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
     PollVote: Modeler<typeof pgtypes.PollVote>;
     Schedule: Modeler<typeof pgtypes.Schedule>;
@@ -37,8 +36,12 @@ export default class Models {
     TrainingAssigned: Modeler<typeof pgtypes.TrainingAssigned>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
+    Notification: NotificationModel;
+    ApplicationComment: ApplicationCommentModel;
+
     constructor(pg: Pool<typeof pgtypes>) {
         this.Notification = new NotificationModel(pg);
+        this.ApplicationComment = new ApplicationCommentModel(pg);
 
         this.User = new Modeler(pg, pgtypes.User);
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
@@ -46,7 +49,6 @@ export default class Models {
         this.Team = new Modeler(pg, pgtypes.Team);
         this.UserTeam = new Modeler(pg, pgtypes.UserTeam);
         this.Application = new Modeler(pg, pgtypes.Application);
-        this.ApplicationComment = new Modeler(pg, pgtypes.ApplicationComment);
         this.Asset = new Modeler(pg, pgtypes.Asset);
         this.CertKnown = new Modeler(pg, pgtypes.CertKnown);
         this.Cert = new Modeler(pg, pgtypes.Cert);
