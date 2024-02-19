@@ -60,7 +60,7 @@ export default class Notify {
             if (!Permissions[type].includes(minperm)) throw new Error('Mim Perm not included in permission set');
             const perms = Permissions[type].slice(0, Permissions[type].indexOf(minperm));
 
-            const users = (await Notification.users(type, perms)).users;
+            const users = (await this.config.models.Notification.users(type, perms)).items;
 
             for (const user of users) {
                 await this.generate(type, user.id, notification);

@@ -1,19 +1,25 @@
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
-import express from 'express';
+import {
+    AuthRequest,
+    AuthUserType
+} from './lib/auth.js';
+import express, {
+    Request,
+    Response,
+    NextFunction
+} from 'express';
 import minify from 'express-minify';
 import history from 'connect-history-api-fallback';
 import Schema from '@openaddresses/batch-schema';
 import { Pool } from '@openaddresses/batch-generic';
 import minimist from 'minimist';
-import User from './lib/types/user.js';
 import jwt from 'jsonwebtoken';
 import Err from '@openaddresses/batch-error';
 import { AuthAugment } from './lib/auth.js';
 import SwaggerUI from 'swagger-ui-express';
 import Models from './lib/models.js';
-import Server from './lib/types/server.js';
 
 try {
     const dotfile = new URL('.env', import.meta.url);
@@ -64,9 +70,9 @@ export default async function server(config) {
     });
 
     config.models = new Models(config.pool);
-    config.URL = (await Server.from(config.pool, 'frontend')).value;
-    config.APIURL = new URL((await Server.from(config.pool, 'frontend')).value);
-    config.OrgName = (await Server.from(config.pool, 'name')).value;
+    config.URL = (await config.models.Server.from('frontend')).value;
+    config.APIURL = new URL((await config.models.Server.from('frontend')).value);
+    config.OrgName = (await config.models.Server.from('name')).value;
 
     const app = express();
 
@@ -104,7 +110,7 @@ export default async function server(config) {
     app.use('/api', schema.router);
     app.use('/docs', express.static('./doc'));
 
-    schema.router.use(async (req, res, next) => {
+    schema.router.use(async (req: AuthRequest, res: Response, next: NextFunction) => {
         if (req.header('authorization')) {
             const authorization = req.header('authorization').split(' ');
 
@@ -123,8 +129,19 @@ export default async function server(config) {
             } else {
                 try {
                     const decoded = jwt.verify(authorization[1], config.SigningSecret);
-                    req.auth = await User.from(config.pool, decoded.u);
-                    req.auth.type = 'session';
+                    const user = await config.models.User.from(config.pool, decoded.u)
+                    req.auth = {
+                        id: user.id,
+                        username: user.username,
+                        disabled: user.disabled,
+                        access: user.access,
+                        email: user.email,
+                        validated: user.validated,
+                        fname: user.fname,
+                        lname: user.lname,
+                        type: AuthUserType.SESSION,
+                        scopes: decoded.scopes || [],
+                    };
                 } catch (err) {
                     console.error(err);
                     return Err.respond(new Err(401, err, 'Invalid Token'), res);
@@ -133,15 +150,23 @@ export default async function server(config) {
         } else if (req.query.token) {
             try {
                 const decoded = jwt.verify(req.query.token, config.SigningSecret);
-                req.token = await User.from(config.pool, decoded.u);
-                req.token.type = 'token';
-                req.token.scopes = decoded.scopes || [];
+                const user = await config.models.User.from(config.pool, decoded.u)
+                req.token = {
+                    id: user.id,
+                    username: user.username,
+                    disabled: user.disabled,
+                    access: user.access,
+                    email: user.email,
+                    validated: user.validated,
+                    fname: user.fname,
+                    lname: user.lname,
+                    type: AuthUserType.TOKEN,
+                    scopes: decoded.scopes || [],
+                };
             } catch (err) {
                 console.error(err);
                 return Err.respond(new Err(401, err, 'Invalid Token'), res);
             }
-        } else {
-            req.auth = false;
         }
 
         if (req.auth) req.auth.iam = await AuthAugment.iam(config.pool, req.auth.id);

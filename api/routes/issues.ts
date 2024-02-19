@@ -4,7 +4,7 @@ import Poll from '../lib/types/poll.js';
 import PollQuestion from '../lib/types/poll-question.js';
 import ViewIssue from '../lib/views/issue.js';
 import IssueAssigned from '../lib/types/issue-assigned.js';
-import Auth from '../lib/auth.js';
+import Auth, { AuthRequest } from '../lib/auth.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import Notify from '../lib/notify.js';
 import Config from '../lib/config.js';
@@ -19,7 +19,7 @@ export default async function router(schema, config: Config) {
         description: 'Get all issues for the Org',
         query: 'req.query.ListIssues.json',
         res: 'res.ListIssues.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res) => {
         try {
             await Auth.is_iam(req, 'Issue:View');
 
@@ -56,7 +56,7 @@ export default async function router(schema, config: Config) {
         description: 'Create a new issue',
         body: 'req.body.CreateIssue.json',
         res: 'view_issues.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res) => {
         try {
             await Auth.is_iam(req, 'Issue:Manage');
 
@@ -105,7 +105,7 @@ export default async function router(schema, config: Config) {
         ':issueid': 'integer',
         body: 'req.body.PatchIssue.json',
         res: 'view_issues.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res) => {
         try {
             await Auth.is_iam(req, 'Issue:Manage');
 
@@ -136,7 +136,7 @@ export default async function router(schema, config: Config) {
         ':issueid': 'integer',
         description: 'Get an issue',
         res: 'view_issues.json'
-    }, async (req, res) => {
+    }, async (req: AuthRequest, res) => {
         try {
             await Auth.is_iam(req, 'Issue:View');
 

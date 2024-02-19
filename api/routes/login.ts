@@ -4,7 +4,8 @@ import Auth from '../lib/auth.js';
 import Login from '../lib/login.js';
 import Config from '../lib/config.js';
 import Email from '../lib/email.js';
-import { Request, Response } from 'express';
+import { AuthRequest } from '../lib/auth.js';
+import { Response } from 'express';
 import { sql } from 'slonik';
 
 export default async function router(schema: any, config: Config) {
@@ -16,7 +17,7 @@ export default async function router(schema: any, config: Config) {
         auth: 'user',
         description: 'Return information about the currently logged in user',
         res: 'res.Login.json'
-    }, async (req: Request, res: Response) => {
+    }, async (req: AuthRequest, res: Response) => {
         try {
             await Auth.is_auth(req);
 
@@ -40,7 +41,7 @@ export default async function router(schema: any, config: Config) {
         description: 'Log a user into the service and create an auth cookie',
         body: 'req.body.CreateLogin.json',
         res: 'res.Login.json'
-    }, async (req: Request, res: Response) => {
+    }, async (req: AuthRequest, res: Response) => {
         try {
             req.auth = await Login.attempt(config.pool, {
                 username: req.body.username.toLowerCase(),
