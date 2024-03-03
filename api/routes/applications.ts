@@ -1,31 +1,49 @@
 import Err from '@openaddresses/batch-error';
+import { Type } from '@sinclair/typebox';
+import { sql } from 'drizzle-orm';
 import { Application } from '../lib/schema.js';
-import { Request, Response } from 'express';
+import { StandardResponse, ApplicationResponse } from '../lib/types.js';
 import Auth from '../lib/auth.js';
-import Server from '../lib/types/server.js';
 import Notify from '../lib/notify.js';
 import Config from '../lib/config.js';
-import Modeler from '@openaddresses/batch-generic';
+import { GenericListOrder } from '@openaddresses/batch-generic';
 import Ajv from 'ajv';
 
 const ajv = new Ajv({ allErrors: true });
 
 export default async function router(schema: any, config: Config) {
     const notify = new Notify(config);
-    const ApplicationModel = new Modeler(config.pool, Application);
 
     await schema.get('/application', {
         name: 'Get Applications',
         group: 'Applications',
         auth: 'user',
         description: 'Get all applications',
-        query: 'req.query.ListApplications.json',
-        res: 'res.ListApplications.json'
-    }, async (req: Request, res: Response) => {
+        query: Type.Object({
+            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Application) }))),
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Application)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(ApplicationResponse)
+        })
+    }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Application:View');
 
-            const list = await ApplicationModel.list(req.query);
+            const list = await config.models.Application.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    name ~* ${req.query.filter}
+                `
+            });
             return res.json(list);
         } catch (err) {
             return Err.respond(err, res);
@@ -37,11 +55,11 @@ export default async function router(schema: any, config: Config) {
         group: 'Applications',
         auth: 'user',
         description: 'Submit a new application for consideration',
-        body: { type: 'object' },
-        res: 'applications.json'
-    }, async (req: Request, res: Response) => {
+        body: Type.Any(),
+        res: ApplicationResponse
+    }, async (req, res) => {
         try {
-            const schema = JSON.parse((await Server.from(config.pool, 'application')).value);
+            const schema = JSON.parse((await config.models.Server.from('application')).value);
 
             const isValid = ajv.validate(schema, req.body);
             if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
@@ -58,7 +76,7 @@ export default async function router(schema: any, config: Config) {
                 }
             }
 
-            const app = await ApplicationModel.generate(input);
+            const app = await config.models.Application.generate(input);
 
             res.json(app);
 
@@ -75,14 +93,16 @@ export default async function router(schema: any, config: Config) {
         name: 'Get Application',
         group: 'Applications',
         auth: 'user',
-        ':applicationid': 'integer',
+        params: Type.Object({
+            applicationid: Type.Integer()
+        }),
         description: 'Return an application',
-        res: { type: 'object' }
-    }, async (req: Request, res: Response) => {
+        res: Type.Unknown()
+    }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Application:View');
 
-            const app = await ApplicationModel.from(req.params.applicationid);
+            const app = await config.models.Application.from(req.params.applicationid);
             Object.assign(app, app.meta);
             delete app.meta;
             return res.json(app);
@@ -95,13 +115,15 @@ export default async function router(schema: any, config: Config) {
         name: 'Update Application',
         group: 'Applications',
         auth: 'user',
-        ':applicationid': 'integer',
+        params: Type.Object({
+            applicationid: Type.Integer()
+        }),
         description: 'Modify an application',
-        body: { type: 'object' },
-        res: { type: 'object' }
-    }, async (req: Request, res: Response) => {
+        body: Type.Any(),
+        res: Type.Any()
+    }, async (req, res) => {
         try {
-            const schema = JSON.parse((await Server.from(config.pool, 'application')).value);
+            const schema = JSON.parse((await config.models.Server.from('application')).value);
 
             const isValid = ajv.validate(schema, req.body);
             if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
@@ -118,7 +140,7 @@ export default async function router(schema: any, config: Config) {
                 }
             }
 
-            const app = await ApplicationModel.from(req.params.applicationid);
+            const app = await config.models.Application.from(req.params.applicationid);
             Object.assign(app, app.meta);
             delete app.meta;
             return res.json(app);
@@ -131,14 +153,16 @@ export default async function router(schema: any, config: Config) {
         name: 'Delete Application',
         group: 'Applications',
         auth: 'user',
-        ':applicationid': 'integer',
+        params: Type.Object({
+            applicationid: Type.Integer()
+        }),
         description: 'Delete an application',
-        res: 'res.Standard.json'
-    }, async (req: Request, res: Response) => {
+        res: StandardResponse
+    }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Application:Admin');
 
-            await ApplicationModel.delete(req.params.applicationid);
+            await config.models.Application.delete(req.params.applicationid);
 
             return res.json({
                 status: 200,
