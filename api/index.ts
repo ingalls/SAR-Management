@@ -77,7 +77,8 @@ export default async function server(config) {
     const app = express();
 
     const schema = new Schema(express.Router(), {
-        schemas: new URL('./schema', import.meta.url)
+        logging: true,
+        limit: 50
     });
 
     app.disable('x-powered-by');
@@ -185,8 +186,6 @@ export default async function server(config) {
             silent: !!config.silent
         }
     );
-    schema.not_found();
-    schema.error();
 
     app.use('/docs', SwaggerUI.serve, SwaggerUI.setup(schema.docs.base));
 
