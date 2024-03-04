@@ -7,11 +7,12 @@ import Auth from '../lib/auth.js';
 import Notify from '../lib/notify.js';
 import Config from '../lib/config.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
+import Schema from '@openaddresses/batch-schema';
 import Ajv from 'ajv';
 
 const ajv = new Ajv({ allErrors: true });
 
-export default async function router(schema: any, config: Config) {
+export default async function router(schema: Schema, config: Config) {
     const notify = new Notify(config);
 
     await schema.get('/application', {

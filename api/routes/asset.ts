@@ -3,8 +3,10 @@ import busboy from 'busboy';
 import Auth from '../lib/auth.js';
 import Asset from '../lib/types/asset.js';
 import Spaces from '../lib/aws/spaces.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     const spaces = new Spaces();
 
     await schema.get('/asset', {

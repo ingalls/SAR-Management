@@ -2,12 +2,13 @@ import Err from '@openaddresses/batch-error';
 import { Application } from '../lib/schema.js';
 import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
-import Config from '../lib/config.js';
 import { sql } from 'drizzle-orm';
 import { StandardResponse, ApplicationCommentResponse } from '../lib/types.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema: any, config: Config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/application/:applicationid/comment', {
         name: 'Get Comments',
         group: 'AppComments',
