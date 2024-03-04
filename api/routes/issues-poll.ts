@@ -3,13 +3,17 @@ import Issue from '../lib/types/issue.js';
 import Poll from '../lib/types/poll.js';
 import PollVote from '../lib/types/poll-vote.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/poll', {
         name: 'Get Poll',
         group: 'IssuePoll',
         auth: 'user',
-        ':issueid': 'integer',
+        params: Type.Object({
+            issueid: Type.Integer(),
+        }),
         description: 'Get a poll for a given issue',
         res: 'res.Poll.json'
     }, async (req, res) => {
@@ -44,7 +48,9 @@ export default async function router(schema, config) {
         name: 'Vote Poll',
         group: 'IssuePoll',
         auth: 'user',
-        ':issueid': 'integer',
+        params: Type.Object({
+            issueid: Type.Integer(),
+        }),
         description: 'Cast a vote in a poll',
         body: 'req.body.CreatePollVote.json',
         res: 'res.Standard.json'

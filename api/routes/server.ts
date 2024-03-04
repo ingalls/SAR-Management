@@ -1,8 +1,9 @@
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 
-export default async function router(schema, config: Config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.put('/server', {
         name: 'Put Meta',
         group: 'Server',
@@ -33,7 +34,9 @@ export default async function router(schema, config: Config) {
         group: 'Server',
         auth: 'admin',
         description: 'Get Server Metadata by key',
-        ':key': 'string',
+        params: Type.Object({
+            key: Type.String(),
+        }),
         res: 'server.json'
     }, async (req, res) => {
         try {
@@ -54,7 +57,9 @@ export default async function router(schema, config: Config) {
         group: 'Server',
         auth: 'admin',
         description: 'Delete Server Metadata by key',
-        ':key': 'string',
+        params: Type.Object({
+            key: Type.String(),
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {

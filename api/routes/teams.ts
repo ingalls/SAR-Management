@@ -2,8 +2,10 @@ import Err from '@openaddresses/batch-error';
 import Team from '../lib/types/team.js';
 import TeamView from '../lib/views/team.js';
 import Auth, { Permissions } from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config: Config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/iam', {
         name: 'Get IAM',
         group: 'IAM',
@@ -61,7 +63,9 @@ export default async function router(schema, config: Config) {
         name: 'Get Team',
         group: 'Teams',
         auth: 'user',
-        ':teamid': 'integer',
+        params: Type.Object({
+            teamid: Type.Integer(),
+        }),
         description: 'Return a team',
         res: 'res.Team.json'
     }, async (req, res) => {
@@ -78,7 +82,9 @@ export default async function router(schema, config: Config) {
         name: 'Update Team',
         group: 'Teams',
         auth: 'admin',
-        ':teamid': 'integer',
+        params: Type.Object({
+            teamid: Type.Integer(),
+        }),
         description: 'Update a team',
         body: 'req.body.PatchTeam.json',
         res: 'res.Team.json'
@@ -100,7 +106,9 @@ export default async function router(schema, config: Config) {
         name: 'Delete Team',
         group: 'Teams',
         auth: 'admin',
-        ':teamid': 'integer',
+        params: Type.Object({
+            teamid: Type.Integer(),
+        }),
         description: 'Delete a team',
         res: 'res.Standard.json'
     }, async (req, res) => {

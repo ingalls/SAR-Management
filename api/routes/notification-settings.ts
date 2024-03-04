@@ -2,8 +2,10 @@ import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import { Permissions } from '../lib/auth.js';
 import UserSetting from '../lib/types/user-setting.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/notification/settings', {
         name: 'Get Settings',
         group: 'NotificationSettings',

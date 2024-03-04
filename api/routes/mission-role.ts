@@ -1,8 +1,10 @@
 import Err from '@openaddresses/batch-error';
 import MissionRole from '../lib/types/mission-role.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission-role', {
         name: 'List Roles',
         group: 'MissionRole',
@@ -25,7 +27,9 @@ export default async function router(schema, config) {
         group: 'MissionRole',
         auth: 'user',
         description: 'Get a single mission role',
-        ':roleid': 'integer',
+        params: Type.Object({
+            roleid: Type.Integer(),
+        }),
         res: 'mission_role.json'
     }, async (req, res) => {
         try {
@@ -62,7 +66,9 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Update an existing mission role',
         body: 'req.body.PatchMissionRole.json',
-        ':roleid': 'integer',
+        params: Type.Object({
+            roleid: Type.Integer(),
+        }),
         res: 'mission_role.json'
     }, async (req, res) => {
         try {
@@ -81,7 +87,9 @@ export default async function router(schema, config) {
         group: 'MissionRole',
         auth: 'user',
         description: 'Remove an existing mission role',
-        ':roleid': 'integer',
+        params: Type.Object({
+            roleid: Type.Integer(),
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {

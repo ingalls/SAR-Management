@@ -2,8 +2,10 @@ import Err from '@openaddresses/batch-error';
 import Leadership from '../lib/types/leadership.js';
 import LeadershipView from '../lib/views/leadership.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/leadership', {
         name: 'List Leadership',
         group: 'Leadership',
@@ -48,7 +50,9 @@ export default async function router(schema, config) {
         group: 'Leadership',
         auth: 'admin',
         description: 'Update a leader',
-        ':leaderid': 'integer',
+        params: Type.Object({
+            leaderid: Type.Integer(),
+        }),
         body: 'req.body.PatchLeadership.json',
         res: 'res.Leadership.json'
     }, async (req, res) => {
@@ -68,7 +72,9 @@ export default async function router(schema, config) {
         group: 'Leadership',
         auth: 'admin',
         description: 'delete a leader',
-        ':leaderid': 'integer',
+        params: Type.Object({
+            leaderid: Type.Integer(),
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {

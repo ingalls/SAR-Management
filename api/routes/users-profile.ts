@@ -4,10 +4,12 @@ import busboy from 'busboy';
 import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import sharp from 'sharp';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
 const generic = fs.readFileSync(new URL('../lib/user.webp', import.meta.url));
 
-export default async function router(schema) {
+export default async function router(schema: Schema, config: Config) {
     const spaces = new Spaces();
 
     await schema.get('/user/:userid/profile', {
@@ -16,7 +18,9 @@ export default async function router(schema) {
         group: 'UserProfile',
         description: 'Get users profile picture',
         query: 'req.query.UserProfile.json',
-        ':userid': 'integer'
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
     }, async (req, res) => {
         try {
             await Auth.is_auth(req, true);
@@ -51,7 +55,9 @@ export default async function router(schema) {
         auth: 'user',
         group: 'Assets',
         description: 'Create a new profile pic',
-        ':userid': 'integer',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         let bb;

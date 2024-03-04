@@ -6,8 +6,10 @@ import Training from '../lib/views/training.js';
 import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
 import moment from 'moment';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/calendar', {
         name: 'List Calendar Layers',
         group: 'Calendar',
@@ -40,7 +42,9 @@ export default async function router(schema, config) {
         group: 'Calendar',
         auth: 'user',
         description: 'Query Events from a given calendar and return as ICAL',
-        ':calendar': 'string'
+        params: Type.Object({
+            calendar: Type.String()
+        }),
     }, async (req, res) => {
         try {
             await Auth.is_auth(req, true);
@@ -62,7 +66,9 @@ export default async function router(schema, config) {
         group: 'Calendar',
         auth: 'user',
         description: 'Query Events from a given calendar and return as ICAL',
-        ':calendar': 'string',
+        params: Type.Object({
+            calendar: Type.String()
+        }),
         query: 'req.query.ListEvents.json'
     }, async (req, res) => {
         try {
@@ -100,7 +106,9 @@ export default async function router(schema, config) {
         group: 'Calendar',
         auth: 'user',
         description: 'Query Events from a given calendar',
-        ':calendar': 'string',
+        params: Type.Object({
+            calendar: Type.String()
+        }),
         query: 'req.query.ListEvents.json'
     }, async (req, res) => {
         try {

@@ -1,14 +1,18 @@
 import Err from '@openaddresses/batch-error';
 import Cert from '../lib/types/cert.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/user/:userid/cert', {
         name: 'Get Certs',
         group: 'Cert',
         auth: 'user',
         description: 'Get all certs for the given user',
-        ':userid': 'integer',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
         query: 'req.query.ListCerts.json',
         res: 'res.ListCerts.json'
     }, async (req, res) => {
@@ -29,8 +33,10 @@ export default async function router(schema, config) {
         group: 'Cert',
         auth: 'user',
         description: 'Get all certs for the given user',
-        ':userid': 'integer',
-        ':certid': 'integer',
+        params: Type.Object({
+            userid: Type.Integer(),
+            certid: Type.Integer()
+        }),
         res: 'certs.json'
     }, async (req, res) => {
         try {
@@ -50,7 +56,9 @@ export default async function router(schema, config) {
         group: 'Cert',
         auth: 'user',
         description: 'Create a new Certificate',
-        ':userid': 'integer',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
         body: 'req.body.CreateCert.json',
         res: 'certs.json'
     }, async (req, res) => {

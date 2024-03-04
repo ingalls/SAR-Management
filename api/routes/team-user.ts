@@ -2,14 +2,18 @@ import Err from '@openaddresses/batch-error';
 import User from '../lib/types/user.js';
 import TeamUser from '../lib/types/team-user.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid/user', {
         name: 'List Users',
         group: 'TeamUsers',
         auth: 'user',
         description: 'Get all users that are part of a given team',
-        ':teamid': 'integer',
+        params: Type.Object({
+            teamid: Type.Integer(),
+        }),
         query: 'req.query.ListTeamUsers.json',
         res: 'res.ListTeamUsers.json'
     }, async (req, res) => {
@@ -30,8 +34,10 @@ export default async function router(schema, config) {
         group: 'TeamUsers',
         auth: 'user',
         description: 'Remove a user from a team',
-        ':teamid': 'integer',
-        ':userid': 'integer',
+        params: Type.Object({
+            teamid: Type.Integer(),
+            userid: Type.Integer()
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
@@ -53,7 +59,9 @@ export default async function router(schema, config) {
         group: 'TeamUsers',
         auth: 'user',
         description: 'Add a user to a team',
-        ':teamid': 'integer',
+        params: Type.Object({
+            teamid: Type.Integer(),
+        }),
         body: 'req.body.AddUID.json',
         res: 'res.Standard.json'
     }, async (req, res) => {

@@ -7,8 +7,10 @@ import TeamUser from '../lib/types/team-user.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import VCard from 'vcard-creator';
 import { phone } from 'phone';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
 
     await schema.get('/user', {
@@ -100,7 +102,9 @@ export default async function router(schema, config) {
         group: 'User',
         auth: 'admin',
         description: 'Update an existing user',
-        ':userid': 'integer',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
         body: 'req.body.PatchUser.json',
         res: 'res.User.json'
     }, async (req, res) => {
@@ -120,7 +124,9 @@ export default async function router(schema, config) {
         name: 'Create User',
         group: 'User',
         auth: 'user',
-        ':userid': 'integer',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
         description: 'Return a user',
         res: 'res.User.json'
     }, async (req, res) => {
@@ -137,7 +143,9 @@ export default async function router(schema, config) {
         name: 'Create User',
         group: 'User',
         auth: 'user',
-        ':userid': 'integer',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
         description: 'Return a user',
         res: 'res.User.json'
     }, async (req, res) => {

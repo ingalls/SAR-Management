@@ -1,8 +1,10 @@
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Notification from '../lib/types/notification.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/notification', {
         name: 'Get Notifications',
         group: 'Notifications',
@@ -47,7 +49,9 @@ export default async function router(schema, config) {
         group: 'Notifications',
         auth: 'user',
         description: 'Delete all notifications',
-        ':notificationid': 'integer',
+        params: Type.Object({
+            notificationid: Type.Integer(),
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {

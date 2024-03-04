@@ -32,7 +32,9 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'user',
         group: 'Assets',
         description: 'Get single asset',
-        ':assetid': 'integer',
+        params: Type.Object({
+            assetid: Type.Integer()
+        }),
         res: 'assets.json'
     }, async (req, res) => {
         try {
@@ -50,7 +52,9 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'user',
         group: 'Assets',
         description: 'Get single raw asset',
-        ':assetid': 'integer'
+        params: Type.Object({
+            assetid: Type.Integer()
+        }),
     }, async (req, res) => {
         try {
             await Auth.is_auth(req, true);
@@ -73,7 +77,9 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'user',
         group: 'Assets',
         description: 'Create a new asset',
-        ':assetid': 'integer',
+        params: Type.Object({
+            assetid: Type.Integer()
+        }),
         res: 'assets.json'
     }, async (req, res) => {
         let bb;
@@ -130,7 +136,9 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'user',
         group: 'Assets',
         description: 'Update Asset',
-        ':assetid': 'integer',
+        params: Type.Object({
+            assetid: Type.Integer()
+        }),
         body: 'req.body.PatchAsset.json',
         res: 'assets.json'
     }, async (req, res) => {
@@ -151,7 +159,9 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'user',
         group: 'Assets',
         description: 'Delete Asset',
-        ':assetid': 'integer',
+        params: Type.Object({
+            assetid: Type.Integer()
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         await Auth.is_auth(req);

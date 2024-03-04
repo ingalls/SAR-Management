@@ -2,13 +2,17 @@ import Err from '@openaddresses/batch-error';
 import TrainingAssigned from '../lib/types/training-assigned.js';
 import Training from '../lib/types/training.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/training/:trainingid/assigned', {
         name: 'Get Assigned',
         group: 'TrainingAssigned',
         auth: 'user',
-        ':trainingid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+        }),
         description: 'Get users assigned to a training',
         res: 'res.ListTrainingAssigned.json'
     }, async (req, res) => {
@@ -25,7 +29,9 @@ export default async function router(schema, config) {
         name: 'Add Assigned',
         group: 'TrainingAssigned',
         auth: 'user',
-        ':trainingid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+        }),
         description: 'Create an assignment',
         body: 'req.body.CreateTrainingAssigned.json',
         res: 'training_assigned.json'
@@ -46,7 +52,9 @@ export default async function router(schema, config) {
         name: 'Request Assignment',
         group: 'TrainingAssigned',
         auth: 'user',
-        ':trainingid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+        }),
         description: 'Request an assignment',
         res: 'training_assigned.json'
     }, async (req, res) => {
@@ -68,8 +76,10 @@ export default async function router(schema, config) {
         name: 'Update Assigned',
         group: 'TrainingAssigned',
         auth: 'user',
-        ':trainingid': 'integer',
-        ':assignedid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+            assignedid: Type.Integer()
+        }),
         description: 'Update a user in a training',
         body: 'req.body.PatchTrainingAssigned.json',
         res: 'training_assigned.json'
@@ -93,8 +103,10 @@ export default async function router(schema, config) {
         name: 'Remove Assigned',
         group: 'TrainingAssigned',
         auth: 'user',
-        ':trainingid': 'integer',
-        ':assignedid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+            assignedid: Type.Integer()
+        }),
         description: 'Remove a user from a training',
         res: 'res.Standard.json'
     }, async (req, res) => {

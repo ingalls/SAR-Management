@@ -4,8 +4,10 @@ import Schedule from '../lib/types/schedule.js';
 import ScheduleAssigned from '../lib/types/schedule-assigned.js';
 import ScheduleEvent from '../lib/types/schedule-event.js';
 import moment from 'moment';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/schedule', {
         name: 'List Schedules',
         auth: 'user',
@@ -60,7 +62,9 @@ export default async function router(schema, config) {
         auth: 'user',
         group: 'Schedules',
         description: 'Update Schedule',
-        ':scheduleid': 'integer',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+        }),
         body: 'req.body.PatchSchedule.json',
         res: 'schedule.json'
     }, async (req, res) => {
@@ -80,7 +84,9 @@ export default async function router(schema, config) {
         group: 'Schedules',
         auth: 'user',
         description: 'Create a new Schedule Event',
-        ':scheduleid': 'integer',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+        }),
         body: 'req.body.CreateScheduleEvent.json',
         res: 'schedules_event.json'
     }, async (req, res) => {
@@ -110,8 +116,10 @@ export default async function router(schema, config) {
         group: 'Schedules',
         auth: 'user',
         description: 'Update a Scheduled Event',
-        ':scheduleid': 'integer',
-        ':eventid': 'integer',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+            eventid: Type.Integer()
+        }),
         body: 'req.body.UpdateScheduleEvent.json',
         res: 'schedules_event.json'
     }, async (req, res) => {
@@ -141,8 +149,10 @@ export default async function router(schema, config) {
         group: 'Schedules',
         auth: 'user',
         description: 'Update a Scheduled Event',
-        ':scheduleid': 'integer',
-        ':eventid': 'integer',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+            eventid: Type.Integer()
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {
@@ -169,7 +179,9 @@ export default async function router(schema, config) {
         group: 'Schedules',
         auth: 'user',
         description: 'Query Events from a given schedule',
-        ':scheduleid': 'integer',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+        }),
         query: 'req.query.ListEvents.json',
         res: {
             type: 'array',
@@ -228,7 +240,9 @@ export default async function router(schema, config) {
         auth: 'user',
         group: 'Schedules',
         description: 'Get Schedule',
-        ':scheduleid': 'integer',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+        }),
         res: 'schedule.json'
     }, async (req, res) => {
         try {
@@ -245,7 +259,9 @@ export default async function router(schema, config) {
         auth: 'user',
         group: 'Schedules',
         description: 'Get Assigned',
-        ':scheduleid': 'integer',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+        }),
         query: 'req.query.ListScheduleAssigned.json',
         res: 'res.ListScheduleAssigned.json'
     }, async (req, res) => {

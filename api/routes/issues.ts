@@ -9,7 +9,7 @@ import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import Notify from '../lib/notify.js';
 import Config from '../lib/config.js';
 
-export default async function router(schema, config: Config) {
+export default async function router(schema: Schema, config: Config) {
     const notify = new Notify(config);
 
     await schema.get('/issue', {
@@ -102,7 +102,9 @@ export default async function router(schema, config: Config) {
         group: 'Issue',
         auth: 'user',
         description: 'Update an issue',
-        ':issueid': 'integer',
+        params: Type.Object({
+            issueid: Type.Integer(),
+        }),
         body: 'req.body.PatchIssue.json',
         res: 'view_issues.json'
     }, async (req: AuthRequest, res) => {
@@ -133,7 +135,9 @@ export default async function router(schema, config: Config) {
         name: 'Get Issue',
         group: 'Issue',
         auth: 'user',
-        ':issueid': 'integer',
+        params: Type.Object({
+            issueid: Type.Integer(),
+        }),
         description: 'Get an issue',
         res: 'view_issues.json'
     }, async (req: AuthRequest, res) => {

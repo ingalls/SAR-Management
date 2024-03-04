@@ -2,13 +2,14 @@ import Modeler from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Login from '../lib/login.js';
-import Config from '../lib/config.js';
 import Email from '../lib/email.js';
 import { AuthRequest } from '../lib/auth.js';
 import { Response } from 'express';
 import { sql } from 'slonik';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema: any, config: Config) {
+export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
 
     await schema.get('/login', {

@@ -4,6 +4,8 @@ import Spaces from '../lib/aws/spaces.js';
 import busboy from 'busboy';
 import API2PDF from 'api2pdf';
 import jwt from 'jsonwebtoken';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
 function prefix(req) {
     if (!req.query.prefix) req.query.prefix = '';
@@ -13,7 +15,7 @@ function prefix(req) {
     }
 }
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     const spaces = new Spaces();
     const convert = new API2PDF(process.env.API2PDF);
 

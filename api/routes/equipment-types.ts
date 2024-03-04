@@ -1,8 +1,10 @@
 import Err from '@openaddresses/batch-error';
 import EquipmentType from '../lib/types/equipment-type.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/equipment-type', {
         name: 'List Type',
         group: 'EquipmentType',
@@ -25,7 +27,9 @@ export default async function router(schema, config) {
         group: 'EquipmentType',
         auth: 'user',
         description: 'Get a single equipment type',
-        ':typeid': 'integer',
+        params: Type.Object({
+            typeid: Type.Integer()
+        }),
         res: 'equipment_types.json'
     }, async (req, res) => {
         try {
@@ -60,7 +64,9 @@ export default async function router(schema, config) {
         group: 'Equipment',
         auth: 'user',
         description: 'Update an existing type of equipment',
-        ':typeid': 'integer',
+        params: Type.Object({
+            typeid: Type.Integer()
+        }),
         body: 'req.body.PatchEquipmentType.json',
         res: 'equipment_types.json'
     }, async (req, res) => {

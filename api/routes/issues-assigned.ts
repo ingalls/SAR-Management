@@ -2,13 +2,17 @@ import Err from '@openaddresses/batch-error';
 import IssueAssigned from '../lib/types/issue-assigned.js';
 import Issue from '../lib/types/issue.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/assigned', {
         name: 'Get Assigned',
         group: 'IssueAssigned',
         auth: 'user',
-        ':issueid': 'integer',
+        params: Type.Object({
+            issueid: Type.String()
+        }),
         description: 'Get users assigned to an issue',
         res: 'res.ListIssueAssigned.json'
     }, async (req, res) => {
@@ -25,7 +29,9 @@ export default async function router(schema, config) {
         name: 'Add Assigned',
         group: 'IssueAssigned',
         auth: 'user',
-        ':issueid': 'integer',
+        params: Type.Object({
+            issueid: Type.String()
+        }),
         description: 'Remove an assignment',
         body: 'req.body.CreateIssueAssigned.json',
         res: 'issues_assigned.json'
@@ -46,8 +52,10 @@ export default async function router(schema, config) {
         name: 'Remove Assigned',
         group: 'IssueAssigned',
         auth: 'user',
-        ':issueid': 'integer',
-        ':assignedid': 'integer',
+        params: Type.Object({
+            issueid: Type.Integer()
+            assignedid: Type.Integer()
+        }),
         description: 'Remove a user from an issue',
         res: 'res.Standard.json'
     }, async (req, res) => {

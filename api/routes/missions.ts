@@ -5,8 +5,10 @@ import MissionTeam from '../lib/types/mission-team.js';
 import MissionAssigned from '../lib/types/mission-assigned.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission', {
         name: 'List Missions',
         group: 'Mission',
@@ -29,7 +31,9 @@ export default async function router(schema, config) {
         group: 'Mission',
         auth: 'user',
         description: 'Get a single mission',
-        ':missionid': 'integer',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
         res: 'view_mission.json'
     }, async (req, res) => {
         try {
@@ -103,7 +107,9 @@ export default async function router(schema, config) {
         auth: 'user',
         description: 'Update an existing mission',
         body: 'req.body.PatchMission.json',
-        ':missionid': 'integer',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
         res: 'missions.json'
     }, async (req, res) => {
         try {
@@ -145,7 +151,9 @@ export default async function router(schema, config) {
         group: 'Mission',
         auth: 'user',
         description: 'Remove an existing mission',
-        ':missionid': 'integer',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {

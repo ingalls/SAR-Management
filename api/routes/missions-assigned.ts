@@ -2,13 +2,17 @@ import Err from '@openaddresses/batch-error';
 import MissionAssigned from '../lib/types/mission-assigned.js';
 import Mission from '../lib/types/mission.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission/:missionid/assigned', {
         name: 'Get Assigned',
         group: 'MissionAssigned',
         auth: 'user',
-        ':missionid': 'integer',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
         description: 'Get users assigned to an mission',
         res: 'res.ListMissionAssigned.json'
     }, async (req, res) => {
@@ -25,7 +29,9 @@ export default async function router(schema, config) {
         name: 'Add Assigned',
         group: 'MissionAssigned',
         auth: 'user',
-        ':missionid': 'integer',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
         description: 'Remove an assignment',
         body: 'req.body.CreateMissionAssigned.json',
         res: 'missions_assigned.json'
@@ -46,8 +52,10 @@ export default async function router(schema, config) {
         name: 'Update Assigned',
         group: 'MissionAssigned',
         auth: 'user',
-        ':missionid': 'integer',
-        ':assignedid': 'integer',
+        params: Type.Object({
+            missionid: Type.Integer(),
+            assignedid: Type.Integer()
+        }),
         description: 'Update a user in a mission',
         body: 'req.body.PatchMissionAssigned.json',
         res: 'missions_assigned.json'
@@ -71,8 +79,10 @@ export default async function router(schema, config) {
         name: 'Remove Assigned',
         group: 'MissionAssigned',
         auth: 'user',
-        ':missionid': 'integer',
-        ':assignedid': 'integer',
+        params: Type.Object({
+            missionid: Type.Integer(),
+            assignedid: Type.Integer()
+        }),
         description: 'Remove a user from an mission',
         res: 'res.Standard.json'
     }, async (req, res) => {

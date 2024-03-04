@@ -5,8 +5,10 @@ import TrainingAssigned from '../lib/types/training-assigned.js';
 import TrainingTeam from '../lib/types/training-team.js';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/training', {
         name: 'List Trainings',
         group: 'Training',
@@ -31,7 +33,9 @@ export default async function router(schema, config) {
         group: 'Training',
         auth: 'user',
         description: 'Get a single Training',
-        ':trainingid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+        }),
         res: 'view_training.json'
     }, async (req, res) => {
         try {
@@ -103,7 +107,9 @@ export default async function router(schema, config) {
         group: 'Training',
         auth: 'user',
         description: 'Update an existing training',
-        ':trainingid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+        }),
         body: 'req.body.PatchTraining.json',
         res: 'training.json'
     }, async (req, res) => {
@@ -148,7 +154,9 @@ export default async function router(schema, config) {
         group: 'Training',
         auth: 'user',
         description: 'Remove an existing training',
-        ':trainingid': 'integer',
+        params: Type.Object({
+            trainingid: Type.Integer(),
+        }),
         res: 'res.Standard.json'
     }, async (req, res) => {
         try {

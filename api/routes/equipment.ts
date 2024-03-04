@@ -4,8 +4,10 @@ import ViewEquipment from '../lib/views/equipment.js';
 import EquipmentAssigned from '../lib/types/equipment-assigned.js';
 import Notify from '../lib/notify.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     const notify = new Notify(config);
 
     await schema.get('/equipment', {
@@ -30,7 +32,9 @@ export default async function router(schema, config) {
         group: 'Equipment',
         auth: 'user',
         description: 'Get a single equipment',
-        ':equipmentid': 'integer',
+        params: Type.Object({
+            equipmentid: Type.Integer()
+        }),
         res: 'equipment.json'
     }, async (req, res) => {
         try {
@@ -79,7 +83,9 @@ export default async function router(schema, config) {
         group: 'Equipment',
         auth: 'user',
         description: 'Update an existing piece of equipment',
-        ':equipmentid': 'integer',
+        params: Type.Object({
+            equipmentid: Type.Integer()
+        }),
         body: 'req.body.PatchEquipment.json',
         res: 'equipment.json'
     }, async (req, res) => {

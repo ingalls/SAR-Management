@@ -1,8 +1,10 @@
 import Err from '@openaddresses/batch-error';
 import KnownCert from '../lib/types/certs-known.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/certs', {
         name: 'Get Certs',
         group: 'KnownCerts',

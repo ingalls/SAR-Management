@@ -1,13 +1,17 @@
 import Err from '@openaddresses/batch-error';
 import TeamFieldability from '../lib/types/team-fieldability.js';
 import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
 
-export default async function router(schema, config) {
+export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid/fieldability', {
         name: 'List Fieldability',
         group: 'Teams',
         auth: 'user',
-        ':teamid': 'integer',
+        params: Type.Object({
+            teamid: Type.Integer(),
+        }),
         description: 'Return fieldability settings for a team',
         res: 'fieldability.json'
     }, async (req, res) => {
