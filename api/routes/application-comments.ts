@@ -1,8 +1,11 @@
 import Err from '@openaddresses/batch-error';
-import Auth, { AuthRequest } from '../lib/auth.js';
-import { Response } from 'express';
+import { Application } from '../lib/schema.js';
+import { Type } from '@sinclair/typebox';
+import Auth from '../lib/auth.js';
 import Config from '../lib/config.js';
 import { sql } from 'drizzle-orm';
+import { StandardResponse, ApplicationCommentResponse } from '../lib/types.js';
+import { GenericListOrder } from '@openaddresses/batch-generic';
 
 export default async function router(schema: any, config: Config) {
     await schema.get('/application/:applicationid/comment', {
@@ -10,18 +13,28 @@ export default async function router(schema: any, config: Config) {
         group: 'AppComments',
         auth: 'user',
         description: 'Get all comments for a given application',
-        ':applicationid': 'integer',
-        query: 'req.query.ListApplicationComments.json',
-        res: 'res.ListApplicationComments.json'
-    }, async (req: AuthRequest, res: Response) => {
+        params: Type.Object({
+            applicationid: Type.Integer()
+        }),
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Application)}))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(ApplicationCommentResponse)
+        })
+    }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Application:View');
 
             res.json(await config.models.ApplicationComment.augmented_list({
-                limit: Number(req.query.limit),
-                page: Number(req.query.page),
-                order: String(req.query.order),
-                sort: String(req.query.sort),
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
                 where: sql`
                     application ~* ${req.params.applicationid}
                 `
@@ -35,11 +48,13 @@ export default async function router(schema: any, config: Config) {
         name: 'Archive Comment',
         group: 'AppComments',
         auth: 'user',
-        ':applicationid': 'integer',
-        ':commentid': 'integer',
+        params: Type.Object({
+            applicationid: Type.Integer(),
+            commentid: Type.Integer()
+        }),
         description: 'Archive an application comment',
-        res: 'res.Standard.json'
-    }, async (req: AuthRequest, res: Response) => {
+        res: StandardResponse
+    }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Application:Manage');
 
@@ -63,12 +78,16 @@ export default async function router(schema: any, config: Config) {
         name: 'Update Comment',
         group: 'AppComments',
         auth: 'user',
-        ':applicationid': 'integer',
-        ':commentid': 'integer',
+        params: Type.Object({
+            applicationid: Type.Integer(),
+            commentid: Type.Integer()
+        }),
         description: 'Update an application comment',
-        body: 'req.body.PatchApplicationComment.json',
-        res: 'view_application_comments.json'
-    }, async (req: AuthRequest, res: Response) => {
+        body: Type.Object({
+            body: Type.Optional(Type.String())
+        }),
+        res: ApplicationCommentResponse
+    }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Issue:Manage');
 
@@ -92,11 +111,15 @@ export default async function router(schema: any, config: Config) {
         name: 'Create Comment',
         group: 'AppComments',
         auth: 'user',
-        ':applicationid': 'integer',
+        params: Type.Object({
+            applicationid: Type.Integer(),
+        }),
         description: 'Create a new application comment',
-        body: 'req.body.CreateApplicationComment.json',
-        res: 'view_application_comments.json'
-    }, async (req: AuthRequest, res: Response) => {
+        body: Type.Object({
+            body: Type.String()
+        }),
+        res: ApplicationCommentResponse
+    }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Application:Manage');
 

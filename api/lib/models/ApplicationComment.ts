@@ -1,23 +1,24 @@
 import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
+import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { ApplicationComment, User } from '../schema.js';
 import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
-export type AugmentedApplicationComment = {
-    id: number;
-    application: number;
-    created: Date;
-    updated: Date;
-    body: string;
-    author: number;
-    archived: boolean;
-    user: {
-        id: number;
-        fname: string;
-        lname: string;
-    }
-}
+export const AugmentedApplicationComment = Type.Object({
+    id: Type.Integer(),
+    application: Type.Integer(),
+    created: Type.String(),
+    updated: Type.String(),
+    body: Type.String(),
+    author: Type.Integer(),
+    archived: Type.Boolean(),
+    user: Type.Object({
+        id: Type.Integer(),
+        fname: Type.String(),
+        lname: Type.String()
+    })
+});
 
 export default class ApplicationCommentModel extends Modeler<typeof ApplicationComment> {
     constructor(
@@ -26,7 +27,7 @@ export default class ApplicationCommentModel extends Modeler<typeof ApplicationC
         super(pool, ApplicationComment);
     }
 
-    async augmented_list(query: GenericListInput = {}): Promise<GenericList<AugmentedApplicationComment>> {
+    async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedApplicationComment>>> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
@@ -61,13 +62,13 @@ export default class ApplicationCommentModel extends Modeler<typeof ApplicationC
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
                     delete t.count;
-                    return t as AugmentedApplicationComment
+                    return t as Static<typeof AugmentedApplicationComment>
                 })
             };
         }
     }
 
-    async augmented_from(id: unknown | SQL<unknown>): Promise<AugmentedApplicationComment> {
+    async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedApplicationComment>> {
         const pgres = await this.pool
             .select({
                 count: sql<string>`count(*) OVER()`.as('count'),
@@ -91,6 +92,6 @@ export default class ApplicationCommentModel extends Modeler<typeof ApplicationC
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
 
-        return pgres[0] as AugmentedApplicationComment;
+        return pgres[0] as Static<typeof AugmentedApplicationComment>;
     }
 }

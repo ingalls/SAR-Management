@@ -1,9 +1,0 @@
-{
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-        "body": {
-            "type": "string"
-        }
-    }
-}

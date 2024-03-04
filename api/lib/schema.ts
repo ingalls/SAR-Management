@@ -27,8 +27,8 @@ export const SpatialRefSys = pgTable('spatial_ref_sys', {
 
 export const User = pgTable('users', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     disabled: boolean('disabled').notNull().default(false),
     access: text('access').notNull().default('user'),
     username: text('username').notNull(),
@@ -45,7 +45,7 @@ export const User = pgTable('users', {
     address_city: text('address_city').notNull().default(''),
     address_state: text('address_state').notNull().default(''),
     address_zip: text('address_zip').notNull().default(''),
-    last_login: timestamp('last_login', { withTimezone: true })
+    last_login: timestamp('last_login', { withTimezone: true, mode: 'string' })
 });
 
 export const UserSetting = pgTable('user_settings', {
@@ -57,15 +57,15 @@ export const UserSetting = pgTable('user_settings', {
 
 export const UserReset = pgTable('users_reset', {
     uid: integer('uid').notNull().references(() => User.id),
-    expires: timestamp('expires').notNull(),
+    expires: timestamp('expires', { mode: 'string' }).notNull(),
     token: text('token').notNull(),
     action: text('action').notNull()
 });
 
 export const Team = pgTable('teams', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     public: boolean('public').notNull().default(true),
     name: text('name').notNull(),
     body: text('body').notNull().default(''),
@@ -82,8 +82,8 @@ export const UserTeam = pgTable('users_to_teams', {
 
 export const Application = pgTable('applications', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text('name').notNull(),
     phone: text('phone').notNull(),
     email: text('email').notNull(),
@@ -94,8 +94,8 @@ export const Application = pgTable('applications', {
 export const ApplicationComment = pgTable('application_comments', {
     id: serial('id').primaryKey(),
     application: integer('application').notNull().references(() => Application.id),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
     archived: boolean('archived').notNull().default(false)
@@ -103,34 +103,34 @@ export const ApplicationComment = pgTable('application_comments', {
 
 export const Asset = pgTable('assets', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text('name').notNull(),
     storage: boolean('storage').notNull().default(false)
 });
 
 export const CertKnown = pgTable('certs_known', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text('name').notNull()
 });
 
 export const Cert = pgTable('certs', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     uid: integer('uid').notNull().references(() => User.id),
     known: integer('known').references(() => CertKnown.id),
     name: text('name').notNull(),
-    expiry: timestamp('expiry'),
+    expiry: timestamp('expiry', { mode: 'string' }),
     asset: integer('asset').notNull().references(() => Asset.id)
 });
 
 export const Equipment = pgTable('equipment', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     status: text('status').notNull().default('open'),
     name: text('name').notNull(),
     description: text('description').notNull().default(''),
@@ -150,8 +150,8 @@ export const EquipmentAssigned = pgTable('equipment_assigned', {
 });
 export const EquipmentType = pgTable('equipment_types', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     type: text('type').notNull(),
     schema: json('schema')
 });
@@ -164,16 +164,16 @@ export const Fieldability = pgTable('fieldability', {
 
 export const Poll = pgTable('poll', {
     id: serial('id').primaryKey(),
-    expiry: timestamp('expiry', { withTimezone: true })
+    expiry: timestamp('expiry', { withTimezone: true, mode: 'string' })
 });
 
 export const Issue = pgTable('issues', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     status: text('status').notNull().default('open'),
-    start_ts: timestamp('start_ts'),
-    end_ts: timestamp('end_ts'),
+    start_ts: timestamp('start_ts', { mode: 'string' }),
+    end_ts: timestamp('end_ts', { mode: 'string' }),
     title: text('title').notNull(),
     body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
@@ -190,8 +190,8 @@ export const IssueAssigned = pgTable('issues_assigned', {
 export const IssueComment = pgTable('issues_comments', {
     id: serial('id').primaryKey(),
     issue: integer('issue').notNull().references(() => Issue.id),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
     archived: boolean('archived').notNull().default(false)
@@ -205,17 +205,17 @@ export const Leadership = pgTable('leadership', {
 
 export const MissionRole = pgTable('mission_role', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text('name').notNull()
 });
 
 export const Mission = pgTable('missions', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
-    start_ts: timestamp('start_ts').notNull(),
-    end_ts: timestamp('end_ts').notNull(),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    start_ts: timestamp('start_ts', { mode: 'string' }).notNull(),
+    end_ts: timestamp('end_ts', { mode: 'string' }).notNull(),
     status: text('status').notNull().default('open'),
     title: text('title').notNull(),
     body: text('body').notNull(),
@@ -241,8 +241,8 @@ export const MissionTeam = pgTable('missions_team', {
 
 export const Notification = pgTable('notifications', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     uid: integer('uid').notNull().references(() => User.id),
     text: text('text').notNull(),
     url: text('url')
@@ -262,8 +262,8 @@ export const PollVote = pgTable('poll_votes', {
 
 export const Schedule = pgTable('schedule', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text('name').notNull(),
     body: text('body').notNull().default(''),
     handoff: text('handoff').notNull().default('06:00')
@@ -279,8 +279,8 @@ export const ScheduleAssigned = pgTable('schedules_assigned', {
 export const ScheduleEvent = pgTable('schedules_event', {
     id: serial('id').primaryKey(),
     schedule_id: integer('schedule_id').notNull().references(() => Schedule.id),
-    start_ts: timestamp('start_ts').notNull(),
-    end_ts: timestamp('end_ts').notNull(),
+    start_ts: timestamp('start_ts', { mode: 'string' }).notNull(),
+    end_ts: timestamp('end_ts', { mode: 'string' }).notNull(),
     uid: integer('uid').notNull().references(() => User.id),
 });
 
@@ -292,11 +292,11 @@ export const Server = pgTable('server', {
 
 export const Training = pgTable('training', {
     id: serial('id').primaryKey(),
-    created: timestamp('created', { withTimezone: true }).notNull().default(sql`Now()`),
-    updated: timestamp('updated', { withTimezone: true }).notNull().default(sql`Now()`),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     author: integer('author').notNull().references(() => User.id),
-    start_ts: timestamp('start_ts').notNull(),
-    end_ts: timestamp('end_ts').notNull(),
+    start_ts: timestamp('start_ts', { mode: 'string' }).notNull(),
+    end_ts: timestamp('end_ts', { mode: 'string' }).notNull(),
     title: text('title').notNull(),
     body: text('body').notNull(),
     location: text('location').notNull().default(''),
