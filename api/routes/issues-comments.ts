@@ -5,6 +5,7 @@ import Auth from '../lib/auth.js';
 import { sql } from 'slonik';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/comment', {
@@ -36,7 +37,7 @@ export default async function router(schema: Schema, config: Config) {
             commentid: Type.Integer()
         }),
         description: 'Archive an issue comment',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Issue:Manage');

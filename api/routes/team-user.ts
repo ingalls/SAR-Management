@@ -4,6 +4,7 @@ import TeamUser from '../lib/types/team-user.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid/user', {
@@ -38,7 +39,7 @@ export default async function router(schema: Schema, config: Config) {
             teamid: Type.Integer(),
             userid: Type.Integer()
         }),
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Team:Manage');
@@ -63,7 +64,7 @@ export default async function router(schema: Schema, config: Config) {
             teamid: Type.Integer(),
         }),
         body: 'req.body.AddUID.json',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Team:Manage');

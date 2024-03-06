@@ -3,6 +3,7 @@ import MissionRole from '../lib/types/mission-role.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission-role', {
@@ -90,7 +91,7 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             roleid: Type.Integer(),
         }),
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Mission:Admin');

@@ -4,6 +4,7 @@ import TeamView from '../lib/views/team.js';
 import Auth, { Permissions } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/iam', {
@@ -110,7 +111,7 @@ export default async function router(schema: Schema, config: Config) {
             teamid: Type.Integer(),
         }),
         description: 'Delete a team',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Team:Admin');

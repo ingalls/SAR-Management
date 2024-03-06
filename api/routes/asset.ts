@@ -1,10 +1,12 @@
 import Err from '@openaddresses/batch-error';
+import { Type } from '@sinclair/typebox';
 import busboy from 'busboy';
 import Auth from '../lib/auth.js';
 import Asset from '../lib/types/asset.js';
 import Spaces from '../lib/aws/spaces.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     const spaces = new Spaces();
@@ -162,7 +164,7 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             assetid: Type.Integer()
         }),
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         await Auth.is_auth(req);
 

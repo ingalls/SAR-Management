@@ -6,6 +6,7 @@ import Spaces from '../lib/aws/spaces.js';
 import sharp from 'sharp';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 const generic = fs.readFileSync(new URL('../lib/user.webp', import.meta.url));
 
@@ -58,7 +59,7 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             userid: Type.Integer(),
         }),
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         let bb;
 

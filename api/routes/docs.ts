@@ -6,6 +6,7 @@ import API2PDF from 'api2pdf';
 import jwt from 'jsonwebtoken';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 function prefix(req) {
     if (!req.query.prefix) req.query.prefix = '';
@@ -167,7 +168,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Docs',
         description: 'Create a new folder',
         query: 'req.query.CreateDoc.json',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Doc:Manage');
@@ -194,7 +195,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Docs',
         description: 'Create a new doc',
         query: 'req.query.CreateDoc.json',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         await Auth.is_iam(req, 'Doc:Manage');
 
@@ -248,7 +249,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Docs',
         description: 'Delete Doc',
         query: 'req.query.DeleteDoc.json',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'Doc:Manage');

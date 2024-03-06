@@ -2,6 +2,7 @@ import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.put('/server', {
@@ -60,7 +61,7 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             key: Type.String(),
         }),
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_admin(req);

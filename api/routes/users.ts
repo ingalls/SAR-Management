@@ -1,6 +1,6 @@
 import Err from '@openaddresses/batch-error';
-import User from '../lib/types/user.js';
 import Auth from '../lib/auth.js';
+import { User } from '../lib/schema.js';
 import bcrypt from 'bcrypt';
 import Email from '../lib/email.js';
 import TeamUser from '../lib/types/team-user.js';
@@ -8,7 +8,10 @@ import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import VCard from 'vcard-creator';
 import { phone } from 'phone';
 import Schema from '@openaddresses/batch-schema';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import { UserResponse, User_EmergencyContact } from '../lib/types.js';
 import Config from '../lib/config.js';
+import { Type } from '@sinclair/typebox';
 
 export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
@@ -18,8 +21,21 @@ export default async function router(schema: Schema, config: Config) {
         group: 'User',
         auth: 'user',
         description: 'Get all users on the server',
-        query: 'req.query.ListUsers.json',
-        res: 'res.ListUsers.json'
+        query: Type.Object({
+            format: Type.Optional(Type.String({ enum: [ "csv", "json", "vcard" ] })),
+            fields: Type.Optional(Type.String({ enum: Object.keys(User) })),
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(User)})),
+            filter: Type.Optional(Type.String({ default: '' })),
+            disabled: Type.Optional(Type.Boolean({ default: false })),
+            team: Type.Optional(Type.Integer({ description: 'Only show users part of a specific team' })),
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(UserResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'User:View');
@@ -34,7 +50,7 @@ export default async function router(schema: Schema, config: Config) {
                     res.write(stringify([req.query.fields]));
                 }
 
-                (await User.stream(config.pool, req.query)).on('data', async (user) => {
+                (await config.models.User.stream(config.pool, req.query)).on('data', async (user) => {
                     if (req.query.format === 'vcard') {
                         const card = new VCard.default();
                         card.addName(user.lname, user.fname);
@@ -65,8 +81,22 @@ export default async function router(schema: Schema, config: Config) {
         group: 'User',
         auth: 'admin',
         description: 'Create a new user',
-        body: 'req.body.CreateUser.json',
-        res: 'res.User.json'
+        body: Type.Object({
+            username: Type.String(),
+            email: Type.String(),
+            phone: Type.String(),
+            fname: Type.String(),
+            lname: Type.String(),
+            teams: Type.Optional(Type.Array(Type.Integer())),
+            bday: Type.Optional(Type.String()),
+            start_year: Type.Optional(Type.String()),
+            emergency: Type.Optional(Type.Array(User_EmergencyContact)),
+            address_street: Type.Optional(Type.String()),
+            address_city: Type.Optional(Type.String()),
+            address_state: Type.Optional(Type.String()),
+            address_zip: Type.Optional(Type.String()),
+        }),
+        res: UserResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'User:Admin');
@@ -77,7 +107,7 @@ export default async function router(schema: Schema, config: Config) {
             const teams = req.body.teams;
             delete req.body.teams;
 
-            const user = await User.generate(config.pool, {
+            const user = await config.models.User.generate({
                 ...req.body,
                 password: await bcrypt.hash(req.body.password || (Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)), 10)
             });
@@ -85,7 +115,7 @@ export default async function router(schema: Schema, config: Config) {
             if (teams) {
                 const uid = user.id;
                 for (const tid of teams) {
-                    await TeamUser.generate(config.pool, { tid, uid });
+                    await config.models.TeamUser.generate({ tid, uid });
                 }
             }
 
@@ -105,8 +135,20 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             userid: Type.Integer(),
         }),
-        body: 'req.body.PatchUser.json',
-        res: 'res.User.json'
+            username: Type.Optional(Type.String()),
+            email: Type.Optional(Type.String()),
+            phone: Type.Optional(Type.String()),
+            fname: Type.Optional(Type.String()),
+            lname: Type.Optional(Type.String()),
+            teams: Type.Optional(Type.Array(Type.Integer())),
+            bday: Type.Optional(Type.String()),
+            start_year: Type.Optional(Type.String()),
+            emergency: Type.Optional(Type.Array(User_EmergencyContact)),
+            address_street: Type.Optional(Type.String()),
+            address_city: Type.Optional(Type.String()),
+            address_state: Type.Optional(Type.String()),
+            address_zip: Type.Optional(Type.String()),
+        res: UserResponse
     }, async (req, res) => {
         try {
             await Auth.is_own_or_iam(req, req.params.userid, 'Users:Admin');
@@ -114,21 +156,21 @@ export default async function router(schema: Schema, config: Config) {
             // Non-Admins can't upgrade their own accounts
             if (req.auth.access !== 'admin') delete req.body.access;
 
-            res.json(await User.commit(config.pool, req.params.userid, req.body));
+            res.json(await config.models.User.commit(req.params.userid, req.body));
         } catch (err) {
             return Err.respond(err, res);
         }
     });
 
     await schema.get('/user/:userid', {
-        name: 'Create User',
+        name: 'Get User',
         group: 'User',
         auth: 'user',
         params: Type.Object({
             userid: Type.Integer(),
         }),
         description: 'Return a user',
-        res: 'res.User.json'
+        res: UserResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'User:View');
@@ -140,22 +182,23 @@ export default async function router(schema: Schema, config: Config) {
     });
 
     await schema.delete('/user/:userid', {
-        name: 'Create User',
+        name: 'Delete User',
         group: 'User',
         auth: 'user',
         params: Type.Object({
             userid: Type.Integer(),
         }),
-        description: 'Return a user',
-        res: 'res.User.json'
+        description: 'Disable an existing user',
+        res: UserResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(req, 'User:Admin');
 
-            const user = await User.from(config.pool, req.params.userid);
+            const user = await config.models.user.from(req.params.userid);
 
             if (config.email) await email.user_disabled(user);
-            res.json(await user.commit({
+
+            res.json(await config.models.User.commit(req.params.userid, {
                 disabled: true
             }));
         } catch (err) {

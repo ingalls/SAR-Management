@@ -8,6 +8,7 @@ import { Response } from 'express';
 import { sql } from 'slonik';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { StandardResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
@@ -71,7 +72,7 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'public',
         description: 'Email verification of a new user',
         body: 'req.body.VerifyLogin.json',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req: Request, res: Response) => {
         try {
             await Login.verify(config.pool, req.body.token);
@@ -91,7 +92,7 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'public',
         description: 'If a user has forgotten their password, send a password reset link to their email',
         body: 'req.body.ForgotLogin.json',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req: Request, res: Response) => {
         try {
             const reset = await Login.forgot(config.pool, req.body.username); // Username or email
@@ -116,7 +117,7 @@ export default async function router(schema: Schema, config: Config) {
         auth: 'public',
         description: 'Once a user has obtained a password reset by email via the Forgot Login API, use the token to reset the password',
         body: 'req.body.ResetLogin.json',
-        res: 'res.Standard.json'
+        res: StandardResponse
     }, async (req: Request, res: Response) => {
         try {
             await Login.reset(config.pool, {

@@ -8,6 +8,32 @@ export const StandardResponse = Type.Object({
     message: Type.String()
 });
 
+export const User_EmergencyContact = Type.Object({
+    name: Type.String(),
+    phone: Type.String(),
+    relationship: Type.String()
+})
+
+export const UserResponse = Type.Object({
+    id: Type.Integer(),
+    access: Type.String(),
+    disabled: Type.Boolean(),
+    username: Type.String(),
+    created: Type.String(),
+    updated: Type.String(),
+    phone: Type.String(),
+    email: Type.String(),
+    lname: Type.String(),
+    fname: Type.String(),
+    start_year: Type.Integer(),
+    last_login: Type.String(),
+    emergency: User_EmergencyContact,
+    address_street: Type.String(),
+    address_city: Type.String(),
+    address_state: Type.String(),
+    address_zip: Type.String()
+})
+
 export const ApplicationResponse = AugmentedApplicationComment;
 
 export const ApplicationCommentResponse = createSelectSchema(schemas.ApplicationComment, {
