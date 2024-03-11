@@ -1,14 +1,13 @@
 import Modeler from '@openaddresses/batch-generic';
+import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Login from '../lib/login.js';
 import Email from '../lib/email.js';
-import { AuthRequest } from '../lib/auth.js';
-import { Response } from 'express';
 import { sql } from 'slonik';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, LoginResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
@@ -16,12 +15,11 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/login', {
         name: 'Session Info',
         group: 'Login',
-        auth: 'user',
         description: 'Return information about the currently logged in user',
-        res: 'res.Login.json'
-    }, async (req: AuthRequest, res: Response) => {
+        res: LoginResponse
+    }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            const auth = await Auth.is_auth(req);
 
             res.json({
                 id: req.auth.id,
@@ -39,11 +37,20 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/login', {
         name: 'Create Session',
         group: 'Login',
-        auth: 'user',
         description: 'Log a user into the service and create an auth cookie',
-        body: 'req.body.CreateLogin.json',
-        res: 'res.Login.json'
-    }, async (req: AuthRequest, res: Response) => {
+        body: Type.Object({
+            username: Type.String({
+                "minLength": 2,
+                "maxLength": 40, 
+                "description": "username"
+            }),
+            password: Type.String({
+                "minLength": 8,
+                "description": "password"
+            })
+        }),
+        res: LoginResponse
+    }, async (req, res) => {
         try {
             req.auth = await Login.attempt(config.pool, {
                 username: req.body.username.toLowerCase(),
@@ -69,11 +76,12 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/login/verify', {
         name: 'Verify User',
         group: 'Login',
-        auth: 'public',
         description: 'Email verification of a new user',
-        body: 'req.body.VerifyLogin.json',
+        body: Type.Object({
+            token: Type.String({ "description": "The validation token which was emailed to you" })
+        }),
         res: StandardResponse
-    }, async (req: Request, res: Response) => {
+    }, async (req, res) => {
         try {
             await Login.verify(config.pool, req.body.token);
 
@@ -89,11 +97,12 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/login/forgot', {
         name: 'Forgot Login',
         group: 'Login',
-        auth: 'public',
         description: 'If a user has forgotten their password, send a password reset link to their email',
-        body: 'req.body.ForgotLogin.json',
+        body: Type.Object({
+            username: Type.String({ "description": "username or email to reset password of" })
+        }),
         res: StandardResponse
-    }, async (req: Request, res: Response) => {
+    }, async (req, res) => {
         try {
             const reset = await Login.forgot(config.pool, req.body.username); // Username or email
 
@@ -114,11 +123,13 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/login/reset', {
         name: 'Reset Login',
         group: 'Login',
-        auth: 'public',
         description: 'Once a user has obtained a password reset by email via the Forgot Login API, use the token to reset the password',
-        body: 'req.body.ResetLogin.json',
+        body: Type.Object({
+            token: Type.String({ "description": "Email provided reset token" }),
+            password: Type.String({ "description": "The new user password" })
+        }),
         res: StandardResponse
-    }, async (req: Request, res: Response) => {
+    }, async (req, res) => {
         try {
             await Login.reset(config.pool, {
                 token: req.body.token,

@@ -167,7 +167,7 @@ export default class Auth {
     }
 }
 
-export function async authParse(req: AuthRequest, res: Response) => {
+export function async authParse(req, res) => {
     if (req.header('authorization')) {
         const authorization = req.header('authorization').split(' ');
 

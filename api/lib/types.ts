@@ -14,6 +14,16 @@ export const User_EmergencyContact = Type.Object({
     relationship: Type.String()
 })
 
+export const LoginResponse = Type.Object({
+    id: Type.Integer(),
+    username: Type.String(),
+    email: Type.String(),
+    access: Type.String(),
+    iam: Type.Any(),
+    validated: Type.Optional(Type.Boolean()),
+    token: Type.Optional(Type.String())
+});
+
 export const UserResponse = Type.Object({
     id: Type.Integer(),
     access: Type.String(),
