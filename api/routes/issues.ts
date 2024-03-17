@@ -1,4 +1,5 @@
 import Err from '@openaddresses/batch-error';
+import { Type } from '@sinclair/typebox';
 import Issue from '../lib/types/issue.js';
 import Poll from '../lib/types/poll.js';
 import PollQuestion from '../lib/types/poll-question.js';
@@ -6,6 +7,7 @@ import ViewIssue from '../lib/views/issue.js';
 import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth, { AuthRequest } from '../lib/auth.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
+import Schema from '@openaddresses/batch-schema';
 import Notify from '../lib/notify.js';
 import Config from '../lib/config.js';
 

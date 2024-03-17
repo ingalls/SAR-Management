@@ -1,5 +1,7 @@
 import { sql, eq } from 'drizzle-orm';
+import { Static } from '@sinclair/typebox';
 import { geometry, GeometryType } from '@openaddresses/batch-generic';
+import { Iam } from './auth.js';
 
 import {
     json,
@@ -69,7 +71,7 @@ export const Team = pgTable('teams', {
     public: boolean('public').notNull().default(true),
     name: text('name').notNull(),
     body: text('body').notNull().default(''),
-    iam: json('iam').notNull().default({}),
+    iam: json('iam').$type<Static<typeof Iam>>().notNull().default({}),
     colour_bg: text('colour_bg').notNull().default('#808080'),
     colour_txt: text('colour_txt').notNull().default('#000000'),
     fieldable: boolean('fieldable').notNull().default(true)

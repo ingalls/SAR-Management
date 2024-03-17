@@ -22,12 +22,12 @@ export default async function router(schema: Schema, config: Config) {
             const auth = await Auth.is_auth(req);
 
             res.json({
-                id: req.auth.id,
-                username: req.auth.username,
-                email: req.auth.email,
-                access: req.auth.access,
-                validated: req.auth.validated,
-                iam: req.auth.iam
+                id: auth.id,
+                username: auth.username,
+                email: auth.email,
+                access: auth.access,
+                validated: auth.validated,
+                iam: auth.iam
             });
         } catch (err) {
             return Err.respond(err, res);
@@ -52,21 +52,21 @@ export default async function router(schema: Schema, config: Config) {
         res: LoginResponse
     }, async (req, res) => {
         try {
-            req.auth = await Login.attempt(config.pool, {
+            const auth = await Login.attempt(config.pool, {
                 username: req.body.username.toLowerCase(),
                 password: req.body.password
             }, config.SigningSecret);
 
-            config.models.User.commit(req.auth.id, {
+            config.models.User.commit(auth.id, {
                 last_login: sql`Now()`
             });
 
             return res.json({
-                id: req.auth.id,
-                username: req.auth.username,
-                email: req.auth.email,
-                access: req.auth.access,
-                token: req.auth.token
+                id: auth.id,
+                username: auth.username,
+                email: auth.email,
+                access: auth.access,
+                token: auth.token
             });
         } catch (err) {
             return Err.respond(err, res);
