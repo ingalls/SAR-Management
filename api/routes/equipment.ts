@@ -19,7 +19,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListEquipment.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:View');
+            await Auth.is_iam(config, req, 'Equipment:View');
 
             res.json(await ViewEquipment.list(config.pool, req.query));
         } catch (err) {
@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'equipment.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:View');
+            await Auth.is_iam(config, req, 'Equipment:View');
 
             res.json(await Equipment.from(config.pool, req.params.equipmentid));
         } catch (err) {
@@ -55,7 +55,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'equipment.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:Manage');
+            await Auth.is_iam(config, req, 'Equipment:Manage');
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -90,7 +90,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'equipment.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:Manage');
+            await Auth.is_iam(config, req, 'Equipment:Manage');
 
             const equipment = await Equipment.from(config.pool, req.params.equipmentid);
 

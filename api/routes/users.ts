@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:View');
+            await Auth.is_iam(config, req, 'User:View');
 
             if (['vcard', 'csv'].includes(req.query.format)) {
                 if (req.query.format === 'vcard') {
@@ -99,7 +99,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:Admin');
+            await Auth.is_iam(config, req, 'User:Admin');
 
             req.body.email = req.body.email.toLowerCase();
             req.body.username = req.body.username.toLowerCase();
@@ -151,7 +151,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_own_or_iam(req, req.params.userid, 'Users:Admin');
+            await Auth.is_own_or_iam(config, req, req.params.userid, 'Users:Admin');
 
             // Non-Admins can't upgrade their own accounts
             if (req.auth.access !== 'admin') delete req.body.access;
@@ -173,7 +173,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:View');
+            await Auth.is_iam(config, req, 'User:View');
 
             res.json(await User.from(config.pool, req.params.userid));
         } catch (err) {
@@ -192,7 +192,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:Admin');
+            await Auth.is_iam(config, req, 'User:Admin');
 
             const user = await config.models.user.from(req.params.userid);
 

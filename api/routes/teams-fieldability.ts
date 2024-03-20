@@ -16,7 +16,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'fieldability.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Team:View');
+            await Auth.is_iam(config, req, 'Team:View');
 
             res.json(await TeamFieldability.list(config.pool, req.params.teamid, req.query));
         } catch (err) {

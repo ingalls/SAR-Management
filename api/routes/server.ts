@@ -14,7 +14,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'server.json'
     }, async (req, res) => {
         try {
-            await Auth.is_admin(req);
+            await Auth.is_admin(config, req);
 
             let server;
             try {
@@ -45,7 +45,7 @@ export default async function router(schema: Schema, config: Config) {
 
             if (server.public) return res.json(server);
 
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             return res.json(server);
         } catch (err) {
@@ -64,7 +64,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_admin(req);
+            await Auth.is_admin(config, req);
 
             await config.models.Server.delete(req.params.key);
 

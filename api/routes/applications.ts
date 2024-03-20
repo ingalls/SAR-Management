@@ -34,7 +34,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Application:View');
+            await Auth.is_iam(config, req, 'Application:View');
 
             const list = await config.models.Application.list({
                 limit: req.query.limit,
@@ -101,7 +101,7 @@ export default async function router(schema: Schema, config: Config) {
         res: Type.Unknown()
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Application:View');
+            await Auth.is_iam(config, req, 'Application:View');
 
             const app = await config.models.Application.from(req.params.applicationid);
             Object.assign(app, app.meta);
@@ -161,7 +161,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Application:Admin');
+            await Auth.is_iam(config, req, 'Application:Admin');
 
             await config.models.Application.delete(req.params.applicationid);
 

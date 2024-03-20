@@ -14,7 +14,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListNotificationSettings.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             const settingsMap = new Map();
             Object.keys(Permissions).forEach((setting) => {
@@ -52,7 +52,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListNotificationSettings.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             const known = Object.keys(Permissions);
 

@@ -15,7 +15,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListMissionRoles.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:View');
+            await Auth.is_iam(config, req, 'Mission:View');
 
             res.json(await MissionRole.list(config.pool, req.query));
         } catch (err) {
@@ -34,7 +34,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'mission_role.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:View');
+            await Auth.is_iam(config, req, 'Mission:View');
 
             res.json(await MissionRole.from(config.pool, req.params.roleid));
         } catch (err) {
@@ -51,7 +51,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'mission_role.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:Admin');
+            await Auth.is_iam(config, req, 'Mission:Admin');
 
             const role = await MissionRole.generate(config.pool, req.body);
 
@@ -73,7 +73,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'mission_role.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:Admin');
+            await Auth.is_iam(config, req, 'Mission:Admin');
 
             const role = await MissionRole.from(config.pool, req.params.roleid);
             await role.commit(req.body);
@@ -94,7 +94,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:Admin');
+            await Auth.is_iam(config, req, 'Mission:Admin');
 
             const role = await MissionRole.from(config.pool, req.params.roleid);
             await role.delete();

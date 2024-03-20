@@ -18,7 +18,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListSchedules.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Oncall:View');
+            await Auth.is_iam(config, req, 'Oncall:View');
 
             return res.json(await Schedule.list(config.pool, req.query));
         } catch (err) {
@@ -35,7 +35,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'schedule.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Oncall:Admin');
+            await Auth.is_iam(config, req, 'Oncall:Admin');
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -70,7 +70,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'schedule.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Oncall:Manage');
+            await Auth.is_iam(config, req, 'Oncall:Manage');
 
             const schedule = await Schedule.from(config.pool, req.params.scheduleid);
             await schedule.commit(req.body);
@@ -92,7 +92,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'schedules_event.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Schedule:View');
+            await Auth.is_iam(config, req, 'Schedule:View');
 
             await Schedule.from(config.pool, req.params.scheduleid);
             await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
@@ -125,7 +125,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'schedules_event.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Schedule:View');
+            await Auth.is_iam(config, req, 'Schedule:View');
 
             const schedule = await Schedule.from(config.pool, req.params.scheduleid);
             if (req.body.uid) await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
@@ -157,7 +157,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Schedule:View');
+            await Auth.is_iam(config, req, 'Schedule:View');
 
             const schedule = await Schedule.from(config.pool, req.params.scheduleid);
 
@@ -201,7 +201,7 @@ export default async function router(schema: Schema, config: Config) {
         }
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Schedule:View');
+            await Auth.is_iam(config, req, 'Schedule:View');
 
             const events = [];
 
@@ -247,7 +247,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'schedule.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Oncall:View');
+            await Auth.is_iam(config, req, 'Oncall:View');
 
             return res.json(await Schedule.from(config.pool, req.params.scheduleid));
         } catch (err) {
@@ -267,7 +267,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListScheduleAssigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Oncall:View');
+            await Auth.is_iam(config, req, 'Oncall:View');
 
             return res.json(await ScheduleAssigned.list(config.pool, req.params.scheduleid, req.query));
         } catch (err) {

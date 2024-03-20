@@ -13,7 +13,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListKnownCerts.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:View');
+            await Auth.is_iam(config, req, 'User:View');
 
             res.json(await KnownCert.list(config.pool, req.query));
         } catch (err) {

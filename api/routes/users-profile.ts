@@ -24,7 +24,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req, true);
+            await Auth.is_auth(config, req, true);
 
             try {
                 let Key = `users/${req.params.userid}/`;
@@ -64,7 +64,7 @@ export default async function router(schema: Schema, config: Config) {
         let bb;
 
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             if (req.auth.access !== 'admin' && req.auth.id !== req.params.userid) {
                 throw new Err(401, null, 'Cannot change anther User\'s profile');

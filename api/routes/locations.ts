@@ -14,8 +14,8 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListLocations.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:View');
-            await Auth.is_iam(req, 'Training:View');
+            await Auth.is_iam(config, req, 'Mission:View');
+            await Auth.is_iam(config, req, 'Training:View');
 
             res.json(await Location.list(config.pool, req.query));
         } catch (err) {

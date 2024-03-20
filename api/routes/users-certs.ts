@@ -17,7 +17,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListCerts.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:View');
+            await Auth.is_iam(config, req, 'User:View');
 
             res.json(await Cert.list(config.pool, {
                 uid: req.params.userid,
@@ -40,7 +40,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'certs.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:View');
+            await Auth.is_iam(config, req, 'User:View');
 
             const cert = await Cert.from(config.pool, req.params.certid);
             if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
@@ -63,7 +63,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'certs.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'User:View');
+            await Auth.is_iam(config, req, 'User:View');
 
             const cert = await Cert.generate(config.pool, {
                 uid: req.auth.id,

@@ -19,7 +19,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListTrainings.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Training:View');
+            await Auth.is_iam(config, req, 'Training:View');
 
             const list = await TrainingView.list(config.pool, req.query);
 
@@ -40,7 +40,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'view_training.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Training:View');
+            await Auth.is_iam(config, req, 'Training:View');
 
             const training = await TrainingView.from(config.pool, req.params.trainingid);
             if (!training.users) training.users = [];
@@ -59,7 +59,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'training.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Training:Manage');
+            await Auth.is_iam(config, req, 'Training:Manage');
 
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
@@ -115,7 +115,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'training.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Training:Manage');
+            await Auth.is_iam(config, req, 'Training:Manage');
 
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
@@ -161,7 +161,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Training:Admin');
+            await Auth.is_iam(config, req, 'Training:Admin');
 
             const training = await Training.from(config.pool, req.params.trainingid);
             await training.delete();

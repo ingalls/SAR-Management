@@ -19,7 +19,7 @@ export default async function router(schema: Schema, config: Config) {
         res: LoginResponse
     }, async (req, res) => {
         try {
-            const auth = await Auth.is_auth(req);
+            const auth = await Auth.is_auth(config, req);
 
             res.json({
                 id: auth.id,

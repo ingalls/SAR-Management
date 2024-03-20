@@ -19,7 +19,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListTeamUsers.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Team:View');
+            await Auth.is_iam(config, req, 'Team:View');
 
             req.query.team = req.params.teamid;
             const list = await User.list(config.pool, req.query);
@@ -42,7 +42,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Team:Manage');
+            await Auth.is_iam(config, req, 'Team:Manage');
 
             await TeamUser.remove(config.pool, req.params.teamid, req.params.userid);
 
@@ -67,7 +67,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Team:Manage');
+            await Auth.is_iam(config, req, 'Team:Manage');
 
             await TeamUser.generate(config.pool, {
                 tid: req.params.teamid,

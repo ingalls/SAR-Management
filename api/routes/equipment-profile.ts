@@ -24,7 +24,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req, true);
+            await Auth.is_auth(config, req, true);
 
             try {
                 let Key = `equipment/${req.params.equipmentid}/`;
@@ -64,7 +64,7 @@ export default async function router(schema: Schema, config: Config) {
         let bb;
 
         try {
-            await Auth.is_iam(req, 'Equipment:Manage');
+            await Auth.is_iam(config, req, 'Equipment:Manage');
 
             if (req.headers['content-type']) {
                 req.headers['content-type'] = req.headers['content-type'].split(',')[0];

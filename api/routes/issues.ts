@@ -23,7 +23,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListIssues.json'
     }, async (req: AuthRequest, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:View');
+            await Auth.is_iam(config, req, 'Issue:View');
 
             if (['csv'].includes(req.query.format)) {
                 if (req.query.format === 'csv') {
@@ -60,7 +60,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'view_issues.json'
     }, async (req: AuthRequest, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:Manage');
+            await Auth.is_iam(config, req, 'Issue:Manage');
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -111,7 +111,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'view_issues.json'
     }, async (req: AuthRequest, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:Manage');
+            await Auth.is_iam(config, req, 'Issue:Manage');
 
             const issue = await Issue.from(config.pool, req.params.issueid);
 
@@ -144,7 +144,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'view_issues.json'
     }, async (req: AuthRequest, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:View');
+            await Auth.is_iam(config, req, 'Issue:View');
 
             res.json(await ViewIssue.from(config.pool, req.params.issueid));
         } catch (err) {

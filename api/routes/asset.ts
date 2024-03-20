@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListAssets.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             const list = await Asset.list(config.pool, req.query);
             return res.json(list);
@@ -40,7 +40,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'assets.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             const asset = await Asset.from(config.pool, req.params.assetid);
             return res.json(asset.serialize());
@@ -59,7 +59,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req, true);
+            await Auth.is_auth(config, req, true);
 
             const asset = await Asset.from(config.pool, req.params.assetid);
 
@@ -87,7 +87,7 @@ export default async function router(schema: Schema, config: Config) {
         let bb;
 
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             if (req.headers['content-type']) {
                 req.headers['content-type'] = req.headers['content-type'].split(',')[0];
@@ -144,7 +144,7 @@ export default async function router(schema: Schema, config: Config) {
         body: 'req.body.PatchAsset.json',
         res: 'assets.json'
     }, async (req, res) => {
-        await Auth.is_auth(req);
+        await Auth.is_auth(config, req);
 
         try {
             const asset = await Asset.from(config.pool, req.params.assetid);
@@ -166,7 +166,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
         res: StandardResponse
     }, async (req, res) => {
-        await Auth.is_auth(req);
+        await Auth.is_auth(config, req);
 
         try {
             const asset = await Asset.from(config.pool, req.params.assetid);

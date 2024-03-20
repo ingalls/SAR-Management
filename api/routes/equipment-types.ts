@@ -14,7 +14,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListEquipmentTypes.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:View');
+            await Auth.is_iam(config, req, 'Equipment:View');
 
             res.json(await EquipmentType.list(config.pool, req.query));
         } catch (err) {
@@ -33,7 +33,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'equipment_types.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:View');
+            await Auth.is_iam(config, req, 'Equipment:View');
 
             res.json(await EquipmentType.from(config.pool, req.params.typeid));
         } catch (err) {
@@ -50,7 +50,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'equipment_types.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:Admin');
+            await Auth.is_iam(config, req, 'Equipment:Admin');
 
             const type = await EquipmentType.generate(config.pool, req.body);
             return res.json(type);
@@ -71,7 +71,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'equipment_types.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:Admin');
+            await Auth.is_iam(config, req, 'Equipment:Admin');
 
             const type = await EquipmentType.from(config.pool, req.params.typeid);
             await type.commit(req.body);

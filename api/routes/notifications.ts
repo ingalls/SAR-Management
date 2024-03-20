@@ -14,7 +14,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListNotifications.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             res.json(await Notification.list(config.pool, req.auth.id, req.query));
         } catch (err) {
@@ -30,7 +30,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             await Notification.delete(config.pool, req.auth.id, {
                 column: 'uid'
@@ -56,7 +56,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req);
+            await Auth.is_auth(config, req);
 
             const notification = await Notification.from(config.pool, req.params.notificationid);
 

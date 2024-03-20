@@ -18,7 +18,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListCalendarLayers.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Calendar:View');
+            await Auth.is_iam(config, req, 'Calendar:View');
 
             res.json({
                 layers: [{
@@ -47,8 +47,8 @@ export default async function router(schema: Schema, config: Config) {
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req, true);
-            await Auth.is_iam(req, 'Calendar:View');
+            await Auth.is_auth(config, req, true);
+            await Auth.is_iam(config, req, 'Calendar:View');
 
             const token = jwt.sign({
                 u: req.auth.id,
@@ -72,10 +72,10 @@ export default async function router(schema: Schema, config: Config) {
         query: 'req.query.ListEvents.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req, true);
-            await Auth.is_iam(req, 'Calendar:View');
+            await Auth.is_auth(config, req, true);
+            await Auth.is_iam(config, req, 'Calendar:View');
 
-            if (req.token) await Auth.is_scope(req, req.token.scopes);
+            if (req.token) await Auth.is_scope(config, req, req.token.scopes);
 
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
@@ -112,7 +112,7 @@ export default async function router(schema: Schema, config: Config) {
         query: 'req.query.ListEvents.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Calendar:View');
+            await Auth.is_iam(config, req, 'Calendar:View');
 
             const events = [];
 

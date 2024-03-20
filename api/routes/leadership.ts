@@ -15,7 +15,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListLeadership.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Leadership:View');
+            await Auth.is_iam(config, req, 'Leadership:View');
 
             const list = await LeadershipView.list(config.pool, req.query);
 
@@ -37,7 +37,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.Leadership.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Leadership:Admin');
+            await Auth.is_iam(config, req, 'Leadership:Admin');
 
             const leader = await Leadership.generate(config.pool, req.body);
             return res.json(await LeadershipView.from(config.pool, leader.id));
@@ -58,7 +58,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.Leadership.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Leadership:Admin');
+            await Auth.is_iam(config, req, 'Leadership:Admin');
 
             const leader = await Leadership.from(config.pool, req.params.leaderid);
             leader.commit(req.body);
@@ -79,7 +79,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Leadership:Admin');
+            await Auth.is_iam(config, req, 'Leadership:Admin');
 
             await Leadership.delete(config.pool, req.params.leaderid);
             return res.json({

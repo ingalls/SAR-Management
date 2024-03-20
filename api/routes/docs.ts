@@ -29,7 +29,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListDocs.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Doc:View');
+            await Auth.is_iam(config, req, 'Doc:View');
 
             prefix(req);
 
@@ -100,8 +100,8 @@ export default async function router(schema: Schema, config: Config) {
 
                 return file.Body.pipe(res);
             } else {
-                await Auth.is_auth(req, true);
-                await Auth.is_iam(req, 'Doc:Manage');
+                await Auth.is_auth(config, req, true);
+                await Auth.is_iam(config, req, 'Doc:Manage');
 
                 prefix(req);
 
@@ -140,8 +140,8 @@ export default async function router(schema: Schema, config: Config) {
         query: 'req.query.DownloadDoc.json'
     }, async (req, res) => {
         try {
-            await Auth.is_auth(req, true);
-            await Auth.is_iam(req, 'Doc:View');
+            await Auth.is_auth(config, req, true);
+            await Auth.is_iam(config, req, 'Doc:View');
 
             prefix(req);
 
@@ -171,7 +171,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Doc:Manage');
+            await Auth.is_iam(config, req, 'Doc:Manage');
 
             prefix(req);
 
@@ -197,7 +197,7 @@ export default async function router(schema: Schema, config: Config) {
         query: 'req.query.CreateDoc.json',
         res: StandardResponse
     }, async (req, res) => {
-        await Auth.is_iam(req, 'Doc:Manage');
+        await Auth.is_iam(config, req, 'Doc:Manage');
 
         prefix(req);
 
@@ -252,7 +252,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Doc:Manage');
+            await Auth.is_iam(config, req, 'Doc:Manage');
 
             req.query.file = 'documents/' + req.query.file;
 

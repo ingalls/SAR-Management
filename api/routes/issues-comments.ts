@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListIssueComments.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:View');
+            await Auth.is_iam(config, req, 'Issue:View');
 
             res.json(await ViewIssueComment.list(config.pool, req.params.issueid, req.query));
         } catch (err) {
@@ -40,12 +40,12 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:Manage');
+            await Auth.is_iam(config, req, 'Issue:Manage');
 
             const comment = await IssueComment.from(config.pool, req.params.commentid);
             if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
 
-            await Auth.is_own_or_iam(req, comment.author, 'Admin');
+            await Auth.is_own_or_iam(config, req, comment.author, 'Admin');
 
             await comment.delete();
 
@@ -71,12 +71,12 @@ export default async function router(schema: Schema, config: Config) {
         res: 'view_issues_comments.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:Manage');
+            await Auth.is_iam(config, req, 'Issue:Manage');
 
             const comment = await IssueComment.from(config.pool, req.params.commentid);
             if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
 
-            await Auth.is_own_or_iam(req, comment.author, 'Admin');
+            await Auth.is_own_or_iam(config, req, comment.author, 'Admin');
 
             await comment.commit({
                 updated: sql`Now()`,
@@ -101,7 +101,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'view_issues_comments.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:Manage');
+            await Auth.is_iam(config, req, 'Issue:Manage');
 
             const comment = await IssueComment.generate(config.pool, {
                 issue: req.params.issueid,

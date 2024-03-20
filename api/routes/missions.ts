@@ -19,7 +19,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListMissions.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:View');
+            await Auth.is_iam(config, req, 'Mission:View');
 
             res.json(await MissionView.list(config.pool, req.query));
         } catch (err) {
@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'view_mission.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:View');
+            await Auth.is_iam(config, req, 'Mission:View');
 
             const mission = await MissionView.from(config.pool, req.params.missionid);
             if (!mission.users) mission.users = [];
@@ -57,7 +57,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'missions.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:Manage');
+            await Auth.is_iam(config, req, 'Mission:Manage');
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -114,7 +114,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'missions.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:Manage');
+            await Auth.is_iam(config, req, 'Mission:Manage');
 
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
             else delete req.body.start_ts;
@@ -158,7 +158,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Mission:Admin');
+            await Auth.is_iam(config, req, 'Mission:Admin');
 
             const mission = await Mission.from(config.pool, req.params.missionid);
             await mission.delete();

@@ -19,7 +19,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.Poll.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:View');
+            await Auth.is_iam(config, req, 'Issue:View');
 
             const issue = await Issue.from(config.pool, req.params.issueid);
 
@@ -57,7 +57,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Issue:View');
+            await Auth.is_iam(config, req, 'Issue:View');
 
             const issue = await Issue.from(config.pool, req.params.issueid);
             if (!issue.poll_id) throw new Err(400, null, 'Issue does not have a poll');

@@ -16,7 +16,7 @@ export default async function router(schema: Schema, config: Config) {
         res: 'res.ListEquipmentAssigned.json'
     }, async (req, res) => {
         try {
-            await Auth.is_iam(req, 'Equipment:View');
+            await Auth.is_iam(config, req, 'Equipment:View');
 
             res.json(await EquipmentAssigned.list(config.pool, req.params.equipmentid, req.query));
         } catch (err) {
