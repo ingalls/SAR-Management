@@ -13,7 +13,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/asset', {
         name: 'List Assets',
-        auth: 'user',
         group: 'Assets',
         description: 'List Assets',
         query: 'req.query.ListAssets.json',
@@ -31,7 +30,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/asset/:assetid', {
         name: 'Get Asset',
-        auth: 'user',
         group: 'Assets',
         description: 'Get single asset',
         params: Type.Object({
@@ -51,7 +49,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/asset/:assetid/raw', {
         name: 'Raw Asset',
-        auth: 'user',
         group: 'Assets',
         description: 'Get single raw asset',
         params: Type.Object({
@@ -76,7 +73,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.post('/asset', {
         name: 'Create Asset',
-        auth: 'user',
         group: 'Assets',
         description: 'Create a new asset',
         params: Type.Object({
@@ -135,7 +131,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.patch('/asset/:assetid', {
         name: 'Update Asset',
-        auth: 'user',
         group: 'Assets',
         description: 'Update Asset',
         params: Type.Object({
@@ -158,7 +153,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.delete('/asset/:assetid', {
         name: 'Delete Asset',
-        auth: 'user',
         group: 'Assets',
         description: 'Delete Asset',
         params: Type.Object({

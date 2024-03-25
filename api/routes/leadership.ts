@@ -10,7 +10,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/leadership', {
         name: 'List Leadership',
         group: 'Leadership',
-        auth: 'user',
         description: 'Get all team leaders',
         res: 'res.ListLeadership.json'
     }, async (req, res) => {
@@ -31,7 +30,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/leadership', {
         name: 'Create Leadership',
         group: 'Leadership',
-        auth: 'admin',
         description: 'Create a new leader',
         body: 'req.body.CreateLeadership.json',
         res: 'res.Leadership.json'
@@ -49,7 +47,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/leadership/:leaderid', {
         name: 'Patch Leadership',
         group: 'Leadership',
-        auth: 'admin',
         description: 'Update a leader',
         params: Type.Object({
             leaderid: Type.Integer(),
@@ -71,7 +68,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/leadership/:leaderid', {
         name: 'Delete Leadership',
         group: 'Leadership',
-        auth: 'admin',
         description: 'delete a leader',
         params: Type.Object({
             leaderid: Type.Integer(),

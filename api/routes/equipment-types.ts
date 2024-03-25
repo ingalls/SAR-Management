@@ -8,7 +8,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/equipment-type', {
         name: 'List Type',
         group: 'EquipmentType',
-        auth: 'user',
         description: 'Get all equipment types in the Org',
         query: 'req.query.ListEquipmentTypes.json',
         res: 'res.ListEquipmentTypes.json'
@@ -25,7 +24,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/equipment-type/:typeid', {
         name: 'Get Type',
         group: 'EquipmentType',
-        auth: 'user',
         description: 'Get a single equipment type',
         params: Type.Object({
             typeid: Type.Integer()
@@ -44,7 +42,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/equipment-type', {
         name: 'Create Type',
         group: 'EquipmentType',
-        auth: 'user',
         description: 'Create a new type of equipment',
         body: 'req.body.CreateEquipmentType.json',
         res: 'equipment_types.json'
@@ -62,7 +59,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/equipment-type/:typeid', {
         name: 'Update Type',
         group: 'Equipment',
-        auth: 'user',
         description: 'Update an existing type of equipment',
         params: Type.Object({
             typeid: Type.Integer()

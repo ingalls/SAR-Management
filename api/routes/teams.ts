@@ -10,7 +10,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/iam', {
         name: 'Get IAM',
         group: 'IAM',
-        auth: 'user',
         description: 'Get all teams on the server',
         res: 'res.IAM.json'
     }, async (req, res) => {
@@ -24,7 +23,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/team', {
         name: 'Get Teams',
         group: 'Teams',
-        auth: 'user',
         description: 'Get all teams on the server',
         query: 'req.query.ListTeams.json',
         res: 'res.ListTeams.json'
@@ -46,7 +44,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/team', {
         name: 'Create Team',
         group: 'Teams',
-        auth: 'admin',
         description: 'Create a new team',
         body: 'req.body.CreateTeam.json',
         res: 'res.Team.json'
@@ -63,7 +60,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid', {
         name: 'Get Team',
         group: 'Teams',
-        auth: 'user',
         params: Type.Object({
             teamid: Type.Integer(),
         }),
@@ -82,7 +78,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/team/:teamid', {
         name: 'Update Team',
         group: 'Teams',
-        auth: 'admin',
         params: Type.Object({
             teamid: Type.Integer(),
         }),
@@ -106,7 +101,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/team/:teamid', {
         name: 'Delete Team',
         group: 'Teams',
-        auth: 'admin',
         params: Type.Object({
             teamid: Type.Integer(),
         }),

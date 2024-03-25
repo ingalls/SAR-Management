@@ -18,7 +18,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/application', {
         name: 'Get Applications',
         group: 'Applications',
-        auth: 'user',
         description: 'Get all applications',
         query: Type.Object({
             fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Application) }))),
@@ -54,7 +53,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/application', {
         name: 'Submit Application',
         group: 'Applications',
-        auth: 'user',
         description: 'Submit a new application for consideration',
         body: Type.Any(),
         res: ApplicationResponse
@@ -93,7 +91,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/application/:applicationid', {
         name: 'Get Application',
         group: 'Applications',
-        auth: 'user',
         params: Type.Object({
             applicationid: Type.Integer()
         }),
@@ -115,7 +112,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/application/:applicationid', {
         name: 'Update Application',
         group: 'Applications',
-        auth: 'user',
         params: Type.Object({
             applicationid: Type.Integer()
         }),
@@ -153,7 +149,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/application/:applicationid', {
         name: 'Delete Application',
         group: 'Applications',
-        auth: 'user',
         params: Type.Object({
             applicationid: Type.Integer()
         }),

@@ -17,7 +17,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue', {
         name: 'Get Issues',
         group: 'Issue',
-        auth: 'user',
         description: 'Get all issues for the Org',
         query: 'req.query.ListIssues.json',
         res: 'res.ListIssues.json'
@@ -54,7 +53,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/issue', {
         name: 'Create Issue',
         group: 'Issue',
-        auth: 'user',
         description: 'Create a new issue',
         body: 'req.body.CreateIssue.json',
         res: 'view_issues.json'
@@ -102,7 +100,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/issue/:issueid', {
         name: 'Upodate Issue',
         group: 'Issue',
-        auth: 'user',
         description: 'Update an issue',
         params: Type.Object({
             issueid: Type.Integer(),
@@ -136,7 +133,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid', {
         name: 'Get Issue',
         group: 'Issue',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.Integer(),
         }),

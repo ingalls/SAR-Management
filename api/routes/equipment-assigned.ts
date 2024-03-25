@@ -8,7 +8,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/equipment/:equipmentid/assigned', {
         name: 'Get Assigned',
         group: 'EquipmentAssigned',
-        auth: 'user',
         params: Type.Object({
             equipmentid: Type.Integer()
         }),

@@ -8,7 +8,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/user/:userid/cert', {
         name: 'Get Certs',
         group: 'Cert',
-        auth: 'user',
         description: 'Get all certs for the given user',
         params: Type.Object({
             userid: Type.Integer(),
@@ -31,7 +30,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/user/:userid/cert/:certid', {
         name: 'Get Certs',
         group: 'Cert',
-        auth: 'user',
         description: 'Get all certs for the given user',
         params: Type.Object({
             userid: Type.Integer(),
@@ -54,7 +52,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/user/:userid/cert', {
         name: 'Create Certs',
         group: 'Cert',
-        auth: 'user',
         description: 'Create a new Certificate',
         params: Type.Object({
             userid: Type.Integer(),

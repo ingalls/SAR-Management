@@ -8,7 +8,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.put('/server', {
         name: 'Put Meta',
         group: 'Server',
-        auth: 'admin',
         description: 'Create a new Server Metadata Record',
         body: 'req.body.CreateServer.json',
         res: 'server.json'
@@ -33,7 +32,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/server/:key', {
         name: 'Get Meta',
         group: 'Server',
-        auth: 'admin',
         description: 'Get Server Metadata by key',
         params: Type.Object({
             key: Type.String(),
@@ -56,7 +54,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/server/:key', {
         name: 'Delete Meta',
         group: 'Server',
-        auth: 'admin',
         description: 'Delete Server Metadata by key',
         params: Type.Object({
             key: Type.String(),

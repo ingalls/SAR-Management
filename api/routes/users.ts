@@ -19,7 +19,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/user', {
         name: 'Get Users',
         group: 'User',
-        auth: 'user',
         description: 'Get all users on the server',
         query: Type.Object({
             format: Type.Optional(Type.String({ enum: [ "csv", "json", "vcard" ] })),
@@ -79,7 +78,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/user', {
         name: 'Create User',
         group: 'User',
-        auth: 'admin',
         description: 'Create a new user',
         body: Type.Object({
             username: Type.String(),
@@ -130,7 +128,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/user/:userid', {
         name: 'Patch User',
         group: 'User',
-        auth: 'admin',
         description: 'Update an existing user',
         params: Type.Object({
             userid: Type.Integer(),
@@ -165,7 +162,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/user/:userid', {
         name: 'Get User',
         group: 'User',
-        auth: 'user',
         params: Type.Object({
             userid: Type.Integer(),
         }),
@@ -184,7 +180,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/user/:userid', {
         name: 'Delete User',
         group: 'User',
-        auth: 'user',
         params: Type.Object({
             userid: Type.Integer(),
         }),

@@ -9,7 +9,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission-role', {
         name: 'List Roles',
         group: 'MissionRole',
-        auth: 'user',
         description: 'Get all mission roles for the Org',
         query: 'req.query.ListMissionRoles.json',
         res: 'res.ListMissionRoles.json'
@@ -26,7 +25,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission-role/:roleid', {
         name: 'Get Role',
         group: 'MissionRole',
-        auth: 'user',
         description: 'Get a single mission role',
         params: Type.Object({
             roleid: Type.Integer(),
@@ -45,7 +43,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/mission-role', {
         name: 'Create Role',
         group: 'MissionRole',
-        auth: 'user',
         description: 'Create a new mission role',
         body: 'req.body.CreateMissionRole.json',
         res: 'mission_role.json'
@@ -64,7 +61,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/mission-role/:roleid', {
         name: 'Update Role',
         group: 'MissionRole',
-        auth: 'user',
         description: 'Update an existing mission role',
         body: 'req.body.PatchMissionRole.json',
         params: Type.Object({
@@ -86,7 +82,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/mission-role/:roleid', {
         name: 'Delete Rolej',
         group: 'MissionRole',
-        auth: 'user',
         description: 'Remove an existing mission role',
         params: Type.Object({
             roleid: Type.Integer(),

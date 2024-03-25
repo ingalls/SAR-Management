@@ -11,7 +11,6 @@ import { StandardResponse } from '../lib/types.js';
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/schedule', {
         name: 'List Schedules',
-        auth: 'user',
         group: 'Schedules',
         description: 'List Schedules',
         query: 'req.query.ListSchedules.json',
@@ -29,7 +28,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/schedule', {
         name: 'Create Schedule',
         group: 'Schedules',
-        auth: 'user',
         description: 'Create a new schedule',
         body: 'req.body.CreateSchedule.json',
         res: 'schedule.json'
@@ -60,7 +58,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.patch('/schedule/:scheduleid', {
         name: 'Update Schedule',
-        auth: 'user',
         group: 'Schedules',
         description: 'Update Schedule',
         params: Type.Object({
@@ -83,7 +80,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/schedule/:scheduleid/events', {
         name: 'Create Event',
         group: 'Schedules',
-        auth: 'user',
         description: 'Create a new Schedule Event',
         params: Type.Object({
             scheduleid: Type.Integer(),
@@ -115,7 +111,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/schedule/:scheduleid/events/:eventid', {
         name: 'Update Event',
         group: 'Schedules',
-        auth: 'user',
         description: 'Update a Scheduled Event',
         params: Type.Object({
             scheduleid: Type.Integer(),
@@ -148,7 +143,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/schedule/:scheduleid/events/:eventid', {
         name: 'Delete Event',
         group: 'Schedules',
-        auth: 'user',
         description: 'Update a Scheduled Event',
         params: Type.Object({
             scheduleid: Type.Integer(),
@@ -178,7 +172,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/schedule/:scheduleid/events', {
         name: 'List Events',
         group: 'Schedules',
-        auth: 'user',
         description: 'Query Events from a given schedule',
         params: Type.Object({
             scheduleid: Type.Integer(),
@@ -238,7 +231,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/schedule/:scheduleid', {
         name: 'Get Schedule',
-        auth: 'user',
         group: 'Schedules',
         description: 'Get Schedule',
         params: Type.Object({
@@ -257,7 +249,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/schedule/:scheduleid/assigned', {
         name: 'Get Assigned',
-        auth: 'user',
         group: 'Schedules',
         description: 'Get Assigned',
         params: Type.Object({

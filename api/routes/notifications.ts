@@ -9,7 +9,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/notification', {
         name: 'Get Notifications',
         group: 'Notifications',
-        auth: 'user',
         description: 'Get all notifications',
         res: 'res.ListNotifications.json'
     }, async (req, res) => {
@@ -25,7 +24,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/notification', {
         name: 'Delete Notifications',
         group: 'Notifications',
-        auth: 'user',
         description: 'Delete all notifications',
         res: StandardResponse
     }, async (req, res) => {
@@ -48,7 +46,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/notification/:notificationid', {
         name: 'Delete Notification',
         group: 'Notifications',
-        auth: 'user',
         description: 'Delete all notifications',
         params: Type.Object({
             notificationid: Type.Integer(),

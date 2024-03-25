@@ -15,7 +15,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/equipment/:equipmentid/profile', {
         name: 'Profile Pic',
-        auth: 'user',
         group: 'EquipmentProfile',
         description: 'Get a picture of equipment',
         query: 'req.query.EquipmentProfile.json',
@@ -53,7 +52,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.post('/equipment/:equipmentid/profile', {
         name: 'Create Profile',
-        auth: 'user',
         group: 'EquipmentProfile',
         description: 'Create a new profile pic',
         params: Type.Object({

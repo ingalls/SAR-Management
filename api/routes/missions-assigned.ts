@@ -10,7 +10,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission/:missionid/assigned', {
         name: 'Get Assigned',
         group: 'MissionAssigned',
-        auth: 'user',
         params: Type.Object({
             missionid: Type.Integer(),
         }),
@@ -29,7 +28,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/mission/:missionid/assigned', {
         name: 'Add Assigned',
         group: 'MissionAssigned',
-        auth: 'user',
         params: Type.Object({
             missionid: Type.Integer(),
         }),
@@ -52,7 +50,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/mission/:missionid/assigned/:assignedid', {
         name: 'Update Assigned',
         group: 'MissionAssigned',
-        auth: 'user',
         params: Type.Object({
             missionid: Type.Integer(),
             assignedid: Type.Integer()
@@ -79,7 +76,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/mission/:missionid/assigned/:assignedid', {
         name: 'Remove Assigned',
         group: 'MissionAssigned',
-        auth: 'user',
         params: Type.Object({
             missionid: Type.Integer(),
             assignedid: Type.Integer()

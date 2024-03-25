@@ -11,7 +11,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/poll', {
         name: 'Get Poll',
         group: 'IssuePoll',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.Integer(),
         }),
@@ -48,7 +47,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/issue/:issueid/poll', {
         name: 'Vote Poll',
         group: 'IssuePoll',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.Integer(),
         }),

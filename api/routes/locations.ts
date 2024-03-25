@@ -8,7 +8,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/location', {
         name: 'List Locations',
         group: 'Locations',
-        auth: 'user',
         description: 'Return a combined list of mission/training locations to populate the location search box',
         query: 'req.query.ListLocations.json',
         res: 'res.ListLocations.json'

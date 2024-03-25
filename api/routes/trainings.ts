@@ -13,7 +13,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/training', {
         name: 'List Trainings',
         group: 'Training',
-        auth: 'user',
         description: 'Get all trainings for the Org',
         query: 'req.query.ListTrainings.json',
         res: 'res.ListTrainings.json'
@@ -32,7 +31,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/training/:trainingid', {
         name: 'Get Training',
         group: 'Training',
-        auth: 'user',
         description: 'Get a single Training',
         params: Type.Object({
             trainingid: Type.Integer(),
@@ -53,7 +51,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/training', {
         name: 'Create Training',
         group: 'Training',
-        auth: 'user',
         description: 'Create a new training',
         body: 'req.body.CreateTraining.json',
         res: 'training.json'
@@ -106,7 +103,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/training/:trainingid', {
         name: 'Update Training',
         group: 'Training',
-        auth: 'user',
         description: 'Update an existing training',
         params: Type.Object({
             trainingid: Type.Integer(),
@@ -153,7 +149,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/training/:trainingid', {
         name: 'Delete Training',
         group: 'Training',
-        auth: 'user',
         description: 'Remove an existing training',
         params: Type.Object({
             trainingid: Type.Integer(),

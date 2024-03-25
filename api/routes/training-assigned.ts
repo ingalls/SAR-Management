@@ -10,7 +10,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/training/:trainingid/assigned', {
         name: 'Get Assigned',
         group: 'TrainingAssigned',
-        auth: 'user',
         params: Type.Object({
             trainingid: Type.Integer(),
         }),
@@ -29,7 +28,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/training/:trainingid/assigned', {
         name: 'Add Assigned',
         group: 'TrainingAssigned',
-        auth: 'user',
         params: Type.Object({
             trainingid: Type.Integer(),
         }),
@@ -52,7 +50,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/training/:trainingid/assigned/request', {
         name: 'Request Assignment',
         group: 'TrainingAssigned',
-        auth: 'user',
         params: Type.Object({
             trainingid: Type.Integer(),
         }),
@@ -76,7 +73,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/training/:trainingid/assigned/:assignedid', {
         name: 'Update Assigned',
         group: 'TrainingAssigned',
-        auth: 'user',
         params: Type.Object({
             trainingid: Type.Integer(),
             assignedid: Type.Integer()
@@ -103,7 +99,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/training/:trainingid/assigned/:assignedid', {
         name: 'Remove Assigned',
         group: 'TrainingAssigned',
-        auth: 'user',
         params: Type.Object({
             trainingid: Type.Integer(),
             assignedid: Type.Integer()

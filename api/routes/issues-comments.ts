@@ -11,7 +11,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/comment', {
         name: 'Get Comments',
         group: 'Comments',
-        auth: 'user',
         description: 'Get all comments for a given issue',
         params: Type.Object({
             issueid: Type.Integer()
@@ -31,7 +30,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/issue/:issueid/comment/:commentid', {
         name: 'Archive Comment',
         group: 'Comments',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.Integer(),
             commentid: Type.Integer()
@@ -61,7 +59,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/issue/:issueid/comment/:commentid', {
         name: 'Update Comment',
         group: 'Comments',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.Integer(),
             commentid: Type.Integer()
@@ -92,7 +89,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/issue/:issueid/comment', {
         name: 'Create Comment',
         group: 'Comments',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.Integer(),
         }),

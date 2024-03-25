@@ -13,7 +13,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/calendar', {
         name: 'List Calendar Layers',
         group: 'Calendar',
-        auth: 'user',
         description: 'Get all possible calendar layers',
         res: 'res.ListCalendarLayers.json'
     }, async (req, res) => {
@@ -40,7 +39,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/calendar/:calendar/ical', {
         name: 'Create ICal Events',
         group: 'Calendar',
-        auth: 'user',
         description: 'Query Events from a given calendar and return as ICAL',
         params: Type.Object({
             calendar: Type.String()
@@ -64,7 +62,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/calendar/:calendar/ical', {
         name: 'ICal Events',
         group: 'Calendar',
-        auth: 'user',
         description: 'Query Events from a given calendar and return as ICAL',
         params: Type.Object({
             calendar: Type.String()
@@ -104,7 +101,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/calendar/:calendar/events', {
         name: 'List Events',
         group: 'Calendar',
-        auth: 'user',
         description: 'Query Events from a given calendar',
         params: Type.Object({
             calendar: Type.String()

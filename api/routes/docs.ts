@@ -22,7 +22,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/doc', {
         name: 'List Docs',
-        auth: 'user',
         group: 'Docs',
         description: 'List Docs',
         query: 'req.query.ListDocs.json',
@@ -85,7 +84,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/doc/convert', {
         name: 'Convert Doc',
-        auth: 'user',
         group: 'Docs',
         description: 'Convert doc to a preview format',
         query: 'req.query.ConvertDoc.json'
@@ -134,7 +132,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/doc/download', {
         name: 'Download Doc',
-        auth: 'user',
         group: 'Docs',
         description: 'Download Doc',
         query: 'req.query.DownloadDoc.json'
@@ -164,7 +161,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.post('/doc/folder', {
         name: 'Create Folder',
-        auth: 'user',
         group: 'Docs',
         description: 'Create a new folder',
         query: 'req.query.CreateDoc.json',
@@ -191,7 +187,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.post('/doc', {
         name: 'Create Doc',
-        auth: 'user',
         group: 'Docs',
         description: 'Create a new doc',
         query: 'req.query.CreateDoc.json',
@@ -245,7 +240,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.delete('/doc', {
         name: 'Delete Doc',
-        auth: 'user',
         group: 'Docs',
         description: 'Delete Doc',
         query: 'req.query.DeleteDoc.json',

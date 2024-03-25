@@ -15,7 +15,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.get('/user/:userid/profile', {
         name: 'Profile Pic',
-        auth: 'user',
         group: 'UserProfile',
         description: 'Get users profile picture',
         query: 'req.query.UserProfile.json',
@@ -53,7 +52,6 @@ export default async function router(schema: Schema, config: Config) {
 
     await schema.post('/user/:userid/profile', {
         name: 'Create Profile',
-        auth: 'user',
         group: 'Assets',
         description: 'Create a new profile pic',
         params: Type.Object({

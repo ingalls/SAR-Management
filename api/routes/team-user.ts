@@ -10,7 +10,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid/user', {
         name: 'List Users',
         group: 'TeamUsers',
-        auth: 'user',
         description: 'Get all users that are part of a given team',
         params: Type.Object({
             teamid: Type.Integer(),
@@ -33,7 +32,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/team/:teamid/user/:userid', {
         name: 'Remove User',
         group: 'TeamUsers',
-        auth: 'user',
         description: 'Remove a user from a team',
         params: Type.Object({
             teamid: Type.Integer(),
@@ -58,7 +56,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/team/:teamid/user', {
         name: 'Add User',
         group: 'TeamUsers',
-        auth: 'user',
         description: 'Add a user to a team',
         params: Type.Object({
             teamid: Type.Integer(),

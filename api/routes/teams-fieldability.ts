@@ -8,7 +8,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid/fieldability', {
         name: 'List Fieldability',
         group: 'Teams',
-        auth: 'user',
         params: Type.Object({
             teamid: Type.Integer(),
         }),

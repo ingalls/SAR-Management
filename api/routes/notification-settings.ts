@@ -9,7 +9,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/notification/settings', {
         name: 'Get Settings',
         group: 'NotificationSettings',
-        auth: 'user',
         description: 'Get all notifications settings',
         res: 'res.ListNotificationSettings.json'
     }, async (req, res) => {
@@ -46,7 +45,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/notification/settings', {
         name: 'Update Settings',
         group: 'NotificationSettings',
-        auth: 'user',
         description: 'Get all notifications settings',
         body: 'req.body.UpdateNotificationSettings.json',
         res: 'res.ListNotificationSettings.json'

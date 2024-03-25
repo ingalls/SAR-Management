@@ -10,7 +10,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/assigned', {
         name: 'Get Assigned',
         group: 'IssueAssigned',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.String()
         }),
@@ -29,7 +28,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/issue/:issueid/assigned', {
         name: 'Add Assigned',
         group: 'IssueAssigned',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.String()
         }),
@@ -52,7 +50,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/issue/:issueid/assigned/:assignedid', {
         name: 'Remove Assigned',
         group: 'IssueAssigned',
-        auth: 'user',
         params: Type.Object({
             issueid: Type.Integer()
             assignedid: Type.Integer()

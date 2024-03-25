@@ -13,7 +13,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission', {
         name: 'List Missions',
         group: 'Mission',
-        auth: 'user',
         description: 'Get all missions for the Org',
         query: 'req.query.ListMissions.json',
         res: 'res.ListMissions.json'
@@ -30,7 +29,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission/:missionid', {
         name: 'Get Mission',
         group: 'Mission',
-        auth: 'user',
         description: 'Get a single mission',
         params: Type.Object({
             missionid: Type.Integer(),
@@ -51,7 +49,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.post('/mission', {
         name: 'Create Mission',
         group: 'Mission',
-        auth: 'user',
         description: 'Create a new mission',
         body: 'req.body.CreateMission.json',
         res: 'missions.json'
@@ -105,7 +102,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.patch('/mission/:missionid', {
         name: 'Update Mission',
         group: 'Mission',
-        auth: 'user',
         description: 'Update an existing mission',
         body: 'req.body.PatchMission.json',
         params: Type.Object({
@@ -150,7 +146,6 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/mission/:missionid', {
         name: 'Delete Mission',
         group: 'Mission',
-        auth: 'user',
         description: 'Remove an existing mission',
         params: Type.Object({
             missionid: Type.Integer(),
