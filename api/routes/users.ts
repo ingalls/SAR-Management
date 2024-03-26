@@ -24,7 +24,7 @@ export default async function router(schema: Schema, config: Config) {
             format: Type.Optional(Type.String({ enum: [ "csv", "json", "vcard" ] })),
             fields: Type.Optional(Type.String({ enum: Object.keys(User) })),
             limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(User)})),
             filter: Type.Optional(Type.String({ default: '' })),

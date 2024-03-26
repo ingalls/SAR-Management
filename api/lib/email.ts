@@ -1,8 +1,8 @@
 import formData from 'form-data';
 import Mailgun, { Interfaces } from 'mailgun.js';
 import Mailgen from 'mailgen';
-import Config from './config.js';
 import Err from '@openaddresses/batch-error';
+import Config from './config.js';
 import { Notification } from './schema.js';
 import { InferSelectModel } from 'drizzle-orm';
 
@@ -19,7 +19,7 @@ export default class Email {
     mg: Interfaces.IMailgunClient;
     mailGenerator: Mailgen;
 
-    constructor(config) {
+    constructor(config: Config) {
         this.config = config;
 
         this.mg = mailgun.client({

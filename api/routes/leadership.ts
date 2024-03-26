@@ -1,27 +1,28 @@
 import Err from '@openaddresses/batch-error';
+import { Type } from '@sinclair/typebox';
 import Leadership from '../lib/types/leadership.js';
 import LeadershipView from '../lib/views/leadership.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, LeadershipResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/leadership', {
         name: 'List Leadership',
         group: 'Leadership',
         description: 'Get all team leaders',
-        res: 'res.ListLeadership.json'
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(LeadershipResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Leadership:View');
 
-            const list = await LeadershipView.list(config.pool, req.query);
+            const list = await LeadershipView.list(config.pool);
 
-            return res.json({
-                total: list.total,
-                leadership: list.leaders_view
-            });
+            return res.json(list)
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -31,8 +32,11 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Leadership',
         group: 'Leadership',
         description: 'Create a new leader',
-        body: 'req.body.CreateLeadership.json',
-        res: 'res.Leadership.json'
+        body: Type.Object({
+            uid: Type.Integer(),
+            position: Type.String()
+        }),
+        res: LeadershipResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Leadership:Admin');
@@ -51,8 +55,11 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             leaderid: Type.Integer(),
         }),
-        body: 'req.body.PatchLeadership.json',
-        res: 'res.Leadership.json'
+        body: Type.Object({
+            uid: Type.Optional(Type.Integer()),
+            position: Type.Optional(Type.String())
+        }),
+        res: LeadershipResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Leadership:Admin');

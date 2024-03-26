@@ -1,5 +1,6 @@
 import Modeler, { Pool } from '@openaddresses/batch-generic';
 import NotificationModel from './models/Notification.js'
+import LeadershipModel from './models/Leadership.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
 import * as pgtypes from './schema.js';
 
@@ -21,7 +22,6 @@ export default class Models {
     Issue: Modeler<typeof pgtypes.Issue>;
     IssueAssigned: Modeler<typeof pgtypes.IssueAssigned>;
     IssueComment: Modeler<typeof pgtypes.IssueComment>;
-    Leadership: Modeler<typeof pgtypes.Leadership>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     Mission: Modeler<typeof pgtypes.Mission>;
     MissionAssigned: Modeler<typeof pgtypes.MissionAssigned>;
@@ -37,10 +37,12 @@ export default class Models {
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
     Notification: NotificationModel;
+    Leadership: LeadershipModel;
     ApplicationComment: ApplicationCommentModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
         this.Notification = new NotificationModel(pg);
+        this.Leadership = new LeadershipModel(pg);
         this.ApplicationComment = new ApplicationCommentModel(pg);
 
         this.User = new Modeler(pg, pgtypes.User);
@@ -60,7 +62,6 @@ export default class Models {
         this.Issue = new Modeler(pg, pgtypes.Issue);
         this.IssueAssigned = new Modeler(pg, pgtypes.IssueAssigned);
         this.IssueComment = new Modeler(pg, pgtypes.IssueComment);
-        this.Leadership = new Modeler(pg, pgtypes.Leadership);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.Mission = new Modeler(pg, pgtypes.Mission);
         this.MissionAssigned = new Modeler(pg, pgtypes.MissionAssigned);

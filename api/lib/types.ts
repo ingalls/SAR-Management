@@ -8,6 +8,18 @@ export const StandardResponse = Type.Object({
     message: Type.String()
 });
 
+export const MissionRoleResponse = createSelectSchema(schemas.MissionRole, {
+    id: Type.Integer()
+});
+
+
+export const LeadershipResponse = Type.Object({
+    id: Type.Integer(),
+    name: Type.String(),
+    position: Type.String(),
+    uid: Type.Integer()
+});
+
 export const User_EmergencyContact = Type.Object({
     name: Type.String(),
     phone: Type.String(),
