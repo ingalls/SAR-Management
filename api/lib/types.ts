@@ -57,3 +57,8 @@ export const UserResponse = Type.Object({
 })
 
 export const ApplicationCommentResponse = AugmentedApplicationComment;
+
+export const ApplicationResponse = createSelectSchema(schemas.Application, {
+    id: Type.Integer()
+});
+
