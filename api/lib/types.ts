@@ -56,9 +56,4 @@ export const UserResponse = Type.Object({
     address_zip: Type.String()
 })
 
-export const ApplicationResponse = AugmentedApplicationComment;
-
-export const ApplicationCommentResponse = createSelectSchema(schemas.ApplicationComment, {
-    id: Type.Integer(),
-    application: Type.Integer(),
-});
+export const ApplicationCommentResponse = AugmentedApplicationComment;

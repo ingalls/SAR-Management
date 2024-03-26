@@ -118,11 +118,11 @@ export default async function router(schema: Schema, config: Config) {
         res: ApplicationCommentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Application:Manage');
+            const user = await Auth.is_iam(config, req, 'Application:Manage');
 
             const comment = await config.models.ApplicationComment.generate({
                 application: req.params.applicationid,
-                author: req.auth.id,
+                author: user.id,
                 ...req.body
             });
 
