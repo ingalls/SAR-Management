@@ -48,8 +48,17 @@ export default async function router(schema: Schema, config: Config) {
                     res.set('Content-Disposition', 'attachment; filename="sar-users.csv"');
                     res.write(stringify([req.query.fields]));
                 }
-
-                (await config.models.User.stream(config.pool, req.query)).on('data', async (user) => {
+                (await config.models.User.stream({
+                    limit: req.query.limit,
+                    page: req.query.page,
+                    order: req.query.order,
+                    sort: req.query.sort,
+                    where: sql`
+                        (${req.query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${req.query.filter})
+                        AND (${req.query.team}::BIGINT IS NULL OR users_to_teams.tid = ${req.query.team})
+                        AND (${req.query.disabled}::BOOLEAN IS NULL OR users.disabled = ${req.query.disabled})
+                    `
+                })).on('data', async (user) => {
                     if (req.query.format === 'vcard') {
                         const card = new VCard.default();
                         card.addName(user.lname, user.fname);
@@ -68,7 +77,17 @@ export default async function router(schema: Schema, config: Config) {
                     res.end();
                 });
             } else {
-                res.json(await User.list(config.pool, req.query));
+                res.json(await config.models.User.list({
+                    limit: req.query.limit,
+                    page: req.query.page,
+                    order: req.query.order,
+                    sort: req.query.sort,
+                    where: sql`
+                        (${req.query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${req.query.filter})
+                        AND (${req.query.team}::BIGINT IS NULL OR utt.tid = ${req.query.team})
+                        AND (${req.query.disabled}::BOOLEAN IS NULL OR users.disabled = ${req.query.disabled})
+                    `
+                }));
             }
         } catch (err) {
             return Err.respond(err, res);
@@ -189,7 +208,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'User:Admin');
 
-            const user = await config.models.user.from(req.params.userid);
+            const user = await config.models.User.from(req.params.userid);
 
             if (config.email) await email.user_disabled(user);
 

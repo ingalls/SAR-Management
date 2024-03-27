@@ -3,11 +3,11 @@ import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
 import LeadershipModel from './models/Leadership.js'
 import MissionModel from './models/Mission.js'
+import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
-    User: Modeler<typeof pgtypes.User>;
     UserSetting: Modeler<typeof pgtypes.UserSetting>;
     UserReset: Modeler<typeof pgtypes.UserReset>;
     Team: Modeler<typeof pgtypes.Team>;
@@ -36,6 +36,7 @@ export default class Models {
     TrainingAssigned: Modeler<typeof pgtypes.TrainingAssigned>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
+    User: UserModel;
     Equipment: EquipmentModel;
     Mission: MissionModel;
     Notification: NotificationModel;
@@ -43,13 +44,13 @@ export default class Models {
     ApplicationComment: ApplicationCommentModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
+        this.User = new UserModel(pg);
         this.Notification = new NotificationModel(pg);
         this.Leadership = new LeadershipModel(pg);
         this.Equipment = new EquipmentModel(pg);
         this.ApplicationComment = new ApplicationCommentModel(pg);
         this.Mission = new MissionModel(pg);
 
-        this.User = new Modeler(pg, pgtypes.User);
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
         this.UserReset = new Modeler(pg, pgtypes.UserReset);
         this.Team = new Modeler(pg, pgtypes.Team);

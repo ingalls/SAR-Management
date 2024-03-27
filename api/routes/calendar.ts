@@ -1,7 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import Auth, { AuthUserType } from '../lib/auth.js';
-import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';
 import Training from '../lib/views/training.js';
 import jwt from 'jsonwebtoken';
@@ -142,10 +141,16 @@ export default async function router(schema: Schema, config: Config) {
                 }
 
                 for (const query of queries) {
-                    for (const user of (await User.list_bday(config.pool, {
-                        start_bday: query.start,
-                        end_bday: query.end
-                    })).users) {
+                    if (query.start_bday) query.start_bday = query.start_bday.split('T')[0]
+                    if (query.end_bday) query.end_bday = query.end_bday.split('T')[0]
+
+                    for (const user of (await config.models.User.list({
+                        where: sql`
+                            indexable_month_day(bday) >= indexable_month_day(${query.start_bday}::DATE)
+                            AND indexable_month_day(bday) <= indexable_month_day(${query.end_bday}::DATE)
+                            AND disabled IS False
+                        `
+                    })).items) {
                         events.push({
                             title: `${user.fname} ${user.lname.slice(0, 1)}'s B-Day`,
                             start: moment(query.start).year() + '-' + moment(user.bday).format('MM-DD'),

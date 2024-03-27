@@ -5,6 +5,7 @@ import User from './types/user.js';
 import UserReset from './types/user_reset.js';
 import { InferSelectModel } from 'drizzle-orm';
 import { Pool } from '@openaddresses/batch-generic';
+import { sql } from 'drizzle-orm';
 import * as pgtypes from './schema.js';
 
 /**
@@ -56,7 +57,7 @@ export default class Login {
      * @param {string}  username        username or email to reset
      * @param {string}  [action=reset]  'reset' or 'verify'
      */
-    static async forgot(pool: Pool<typeof pgtypes>, username, action = 'reset'): Promise<{
+    static async forgot(pool: Pool<typeof pgtypes>, username: string, action = 'reset'): Promise<{
         uid: number;
         username: string;
         email: string;
@@ -64,7 +65,11 @@ export default class Login {
     }> {
         if (!username || !username.length) throw new Err(400, null, 'username must not be empty');
 
-        const u = await User.from_username(pool, username.toLowerCase());
+        const u = await config.models.User.from(sql`
+            Lower(username) = ${username.toLowerCase()}
+            OR Lower(username) = ${username.toLowerCase()}
+        `);
+
         await UserReset.delete_all(pool, u.id);
 
         if (u.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
@@ -89,7 +94,10 @@ export default class Login {
         if (!body.username) throw new Err(400, null, 'username required');
         if (!body.password) throw new Err(400, null, 'password required');
 
-        const user = await User.from_username(pool, body.username);
+        const user = await config.models.User.from(sql`
+            Lower(username) = ${body.username.toLowerCase()}
+            OR Lower(username) = ${body.username.toLowerCase()}
+        `);
 
         if (!await bcrypt.compare(body.password, user.password)) {
             throw new Err(403, null, 'Invalid Username or Pass');
