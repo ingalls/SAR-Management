@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
+import { Type } from '@sinclair/typebox';
 import { Permissions } from '../lib/auth.js';
 import UserSetting from '../lib/types/user-setting.js';
 import Schema from '@openaddresses/batch-schema';
@@ -10,17 +11,23 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Get Settings',
         group: 'NotificationSettings',
         description: 'Get all notifications settings',
-        res: 'res.ListNotificationSettings.json'
+        res: Type.Object({
+            disabled: Type.Boolean(),
+            settings: Type.Array(Type.Object({
+                name: Type.String(),
+                value: Type.Boolean()
+            }))
+        })
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req);
+            const user = await Auth.is_auth(config, req);
 
             const settingsMap = new Map();
             Object.keys(Permissions).forEach((setting) => {
                 settingsMap.set(setting, { name: setting, value: true });
             });
 
-            const setting = (await UserSetting.from(config.pool, req.auth.id, 'notification')).value;
+            const setting = (await UserSetting.from(config.pool, user.id, 'notification')).value;
             if (!setting.disabled) setting.disabled = false;
             if (!setting.settings) {
                 setting.settings = [];
@@ -46,11 +53,23 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Update Settings',
         group: 'NotificationSettings',
         description: 'Get all notifications settings',
-        body: 'req.body.UpdateNotificationSettings.json',
-        res: 'res.ListNotificationSettings.json'
+        body: Type.Object({
+            disabled: Type.Boolean(),
+            settings: Type.Array(Type.Object({
+                name: Type.String(),
+                value: Type.Boolean()
+            }))
+        }),
+        res: Type.Object({
+            disabled: Type.Boolean(),
+            settings: Type.Array(Type.Object({
+                name: Type.String(),
+                value: Type.Boolean()
+            }))
+        })
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req);
+            const user = await Auth.is_auth(config, req);
 
             const known = Object.keys(Permissions);
 
@@ -64,11 +83,11 @@ export default async function router(schema: Schema, config: Config) {
                 value.settings[setting.name] = setting.value;
             }
 
-            const setting = await UserSetting.from(config.pool, req.auth.id, 'notification');
+            const setting = await UserSetting.from(config.pool, user.id, 'notification');
 
             if (!Object.keys(setting.value).length) {
                 await UserSetting.generate(config.pool, {
-                    uid: req.auth.id,
+                    uid: user.id,
                     key: 'notification',
                     value
                 });

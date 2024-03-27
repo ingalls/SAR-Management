@@ -12,6 +12,10 @@ export const MissionRoleResponse = createSelectSchema(schemas.MissionRole, {
     id: Type.Integer()
 });
 
+export const NotificationResponse = createSelectSchema(schemas.Notification, {
+    id: Type.Integer(),
+    uid: Type.Integer()
+})
 
 export const LeadershipResponse = Type.Object({
     id: Type.Integer(),

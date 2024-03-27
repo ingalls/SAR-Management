@@ -1,21 +1,27 @@
 import Err from '@openaddresses/batch-error';
+import { sql } from 'drizzle-orm';
+import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
-import Notification from '../lib/types/notification.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, NotificationResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/notification', {
         name: 'Get Notifications',
         group: 'Notifications',
         description: 'Get all notifications',
-        res: 'res.ListNotifications.json'
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(NotificationResponse)
+        })
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req);
+            const user = await Auth.is_auth(config, req);
 
-            res.json(await Notification.list(config.pool, req.auth.id, req.query));
+            res.json(await config.models.Notification.list({
+                where: sql`uid = ${user.id}`
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -28,11 +34,9 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req);
+            const user = await Auth.is_auth(config, req);
 
-            await Notification.delete(config.pool, req.auth.id, {
-                column: 'uid'
-            });
+            await config.models.Notification.delete(sql`uid = ${user.id}`);
 
             return res.json({
                 status: 200,
@@ -53,15 +57,15 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req);
+            const user = await Auth.is_auth(config, req);
 
-            const notification = await Notification.from(config.pool, req.params.notificationid);
+            const notification = await config.models.Notification.from(req.params.notificationid);
 
-            if (req.auth.id !== notification.uid) {
+            if (user.id !== notification.uid) {
                 throw new Err(400, null, 'Not your notification');
             }
 
-            await notification.delete();
+            await config.models.Notification.delete(req.params.notificationid);
 
             return res.json({
                 status: 200,

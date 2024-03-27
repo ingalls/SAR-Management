@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
-import Auth from '../lib/auth.js';
+import { Type } from '@sinclair/typebox';
+import Auth, { AuthUserType } from '../lib/auth.js';
 import User from '../lib/types/user.js';
 import Mission from '../lib/types/mission.js';
 import Training from '../lib/views/training.js';
@@ -14,7 +15,12 @@ export default async function router(schema: Schema, config: Config) {
         name: 'List Calendar Layers',
         group: 'Calendar',
         description: 'Get all possible calendar layers',
-        res: 'res.ListCalendarLayers.json'
+        res: Type.Object({
+            layers: Type.Array(Type.Object({
+                id: Type.String(),
+                name: Type.String()
+            }))
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Calendar:View');
@@ -43,13 +49,18 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             calendar: Type.String()
         }),
+        res: Type.Object({
+            token: Type.String()
+        })
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req, true);
+            const user = await Auth.is_auth(config, req, {
+                token: true
+            });
             await Auth.is_iam(config, req, 'Calendar:View');
 
             const token = jwt.sign({
-                u: req.auth.id,
+                u: user.id,
                 scopes: ['/calendar/training/ical']
             }, config.SigningSecret);
 
@@ -66,13 +77,18 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             calendar: Type.String()
         }),
-        query: 'req.query.ListEvents.json'
+        query: Type.Object({
+            start: Type.Optional(Type.String()),
+            end: Type.Optional(Type.String()),
+        })
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req, true);
+            const user = await Auth.is_auth(config, req, {
+                token: true
+            });
             await Auth.is_iam(config, req, 'Calendar:View');
 
-            if (req.token) await Auth.is_scope(config, req, req.token.scopes);
+            if (user.type === AuthUserType.TOKEN) await Auth.is_scope(config, req, user.scopes);
 
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
@@ -105,7 +121,10 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             calendar: Type.String()
         }),
-        query: 'req.query.ListEvents.json'
+        query: Type.Object({
+            start: Type.Optional(Type.String()),
+            end: Type.Optional(Type.String()),
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Calendar:View');
