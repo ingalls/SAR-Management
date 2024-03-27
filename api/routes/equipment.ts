@@ -1,11 +1,13 @@
 import Err from '@openaddresses/batch-error';
-import Equipment from '../lib/types/equipment.js';
-import ViewEquipment from '../lib/views/equipment.js';
-import EquipmentAssigned from '../lib/types/equipment-assigned.js';
+import { Type } from '@sinclair/typebox';
+import { sql } from 'drizzle-orm';
+import { GenericListOrder } from '@openaddresses/batch-generic';
 import Notify from '../lib/notify.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { EquipmentResponse } from '../lib/types.js';
+import { Equipment } from '../lib/schema.js';
 
 export default async function router(schema: Schema, config: Config) {
     const notify = new Notify(config);
@@ -14,13 +16,26 @@ export default async function router(schema: Schema, config: Config) {
         name: 'List Equipment',
         group: 'Equipment',
         description: 'Get all equipment in the Org',
-        query: 'req.query.ListEquipment.json',
-        res: 'res.ListEquipment.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            assigned: Type.Optional(Type.Integer()),
+            container: Type.Optional(Type.Boolean()),
+            archived: Type.Optional(Type.Boolean()),
+            parent: Type.Optional(Type.Integer({ "description": "By default all equipment regardless of container status is returned. Set to 0 for root containers or to the parent ID for items in a specific container" })),
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Equipment)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(EquipmentResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:View');
 
-            res.json(await ViewEquipment.list(config.pool, req.query));
+            res.json(await config.models.Equipment.augmented_list(req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -33,12 +48,12 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             equipmentid: Type.Integer()
         }),
-        res: 'equipment.json'
+        res: EquipmentResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:View');
 
-            res.json(await Equipment.from(config.pool, req.params.equipmentid));
+            res.json(await config.models.Equipment.augmented_from(req.params.equipmentid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -48,8 +63,18 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Equipment',
         group: 'Equipment',
         description: 'Create a new piece of equipment',
-        body: 'req.body.CreateEquipment.json',
-        res: 'equipment.json'
+        body: Type.Object({
+            name: Type.String(),
+            description: Type.String(),
+            type_id: Type.Optional(Type.Integer()),
+            container: Type.Optional(Type.Boolean()),
+            parent: Type.Optional(Type.Integer()),
+            quantity: Type.Optional(Type.Integer()),
+            value: Type.Optional(Type.Integer()),
+            meta: Type.Optional(Type.Any()),
+            assigned: Type.Optional(Type.Array(Type.Integer()))
+        }),
+        res: EquipmentResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:Manage');
@@ -57,11 +82,11 @@ export default async function router(schema: Schema, config: Config) {
             const assigned = req.body.assigned;
             delete req.body.assigned;
 
-            const equipment = await Equipment.generate(config.pool, req.body);
+            const equipment = await config.models.Equipment.generate(req.body);
 
             if (assigned) {
                 for (const uid of assigned) {
-                    await EquipmentAssigned.generate(config.pool, { equip_id: equipment.id, uid });
+                    await config.models.EquipmentAssigned.generate({ equip_id: equipment.id, uid });
                     await notify.generate('Equipment', uid, {
                         text: `Equipment: ${equipment.name} has been assigned to you`,
                         url: `/equipment/${equipment.id}`
@@ -69,7 +94,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(equipment);
+            return res.json(await config.models.Equipment.augmented_from(equipment.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -82,13 +107,24 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             equipmentid: Type.Integer()
         }),
-        body: 'req.body.PatchEquipment.json',
-        res: 'equipment.json'
+        body: Type.Object({
+            name: Type.Optional(Type.String()),
+            description: Type.Optional(Type.String()),
+            archived: Type.Optional(Type.Boolean()),
+            type_id: Type.Optional(Type.Integer()),
+            container: Type.Optional(Type.Boolean()),
+            parent: Type.Optional(Type.Integer()),
+            quantity: Type.Optional(Type.Integer()),
+            value: Type.Optional(Type.Integer()),
+            meta: Type.Optional(Type.Any()),
+            assigned: Type.Optional(Type.Array(Type.Integer()))
+        }),
+        res: EquipmentResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:Manage');
 
-            const equipment = await Equipment.from(config.pool, req.params.equipmentid);
+            const equipment = await config.models.Equipment.from(req.params.equipmentid);
 
             if (equipment.archived) {
                 throw new Err(400, null, 'Cannot modify archived equipment');
@@ -97,19 +133,17 @@ export default async function router(schema: Schema, config: Config) {
             const assigned = req.body.assigned;
             delete req.body.assigned;
 
-            const old_assigned = (await EquipmentAssigned.list(config.pool, equipment.id)).assigned.map((assigned) => {
+            const old_assigned = (await config.models.EquipmentAssigned.list(equipment.id)).items.map((assigned) => {
                 return assigned.uid;
             });
 
-            await equipment.commit(req.body);
+            await config.models.Equipment.commit(req.params.equipmentid, req.body);
 
             if (Array.isArray(assigned)) {
-                await EquipmentAssigned.delete(config.pool, equipment.id, {
-                    column: 'equip_id'
-                });
+                await config.models.EquipmentAssigned.delete(sql`equip_id = ${equipment.id}`);
 
                 for (const uid of assigned) {
-                    await EquipmentAssigned.generate(config.pool, {
+                    await config.models.EquipmentAssigned.generate({
                         equip_id: equipment.id, uid
                     });
 
@@ -131,7 +165,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(equipment);
+            return res.json(await config.models.Equipment.augmented_from(equipment.id));
         } catch (err) {
             return Err.respond(err, res);
         }

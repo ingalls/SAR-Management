@@ -1,7 +1,10 @@
 import { createSelectSchema } from 'drizzle-typebox';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
+import { AugmentedEquipment } from './models/Equipment.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
+
+export const EquipmentResponse = AugmentedEquipment;
 
 export const StandardResponse = Type.Object({
     status: Type.Integer(),

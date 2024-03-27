@@ -5,7 +5,7 @@ import {
 import * as pgtypes from './schema.js';
 import Email from './email.js';
 import { Permissions } from './auth.js';
-import { InferSelectModel } from 'drizzle-orm';
+import { InferInsertModel } from 'drizzle-orm';
 import Config from './config.js';
 import { sql } from 'drizzle-orm';
 
@@ -21,7 +21,10 @@ export default class Notify {
         }
     }
 
-    async generate(type: string, uid: number, notification: InferSelectModel<typeof Notification>) {
+    async generate(type: string, uid: number, notification: {
+        text: string;
+        url: string;
+    }) {
         const notify = await this.config.models.Notification.generate({
             ...notification,
             uid,

@@ -1,8 +1,8 @@
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
+import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import { Permissions } from '../lib/auth.js';
-import UserSetting from '../lib/types/user-setting.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 
@@ -27,7 +27,9 @@ export default async function router(schema: Schema, config: Config) {
                 settingsMap.set(setting, { name: setting, value: true });
             });
 
-            const setting = (await UserSetting.from(config.pool, user.id, 'notification')).value;
+            const setting: any = (await config.models.UserSetting.from(sql`
+                uid = ${user.id} AND key = 'notification'
+            `)).value;
             if (!setting.disabled) setting.disabled = false;
             if (!setting.settings) {
                 setting.settings = [];
@@ -83,16 +85,20 @@ export default async function router(schema: Schema, config: Config) {
                 value.settings[setting.name] = setting.value;
             }
 
-            const setting = await UserSetting.from(config.pool, user.id, 'notification');
+            const setting = await config.models.UserSetting.from(sql`
+                uid = ${user.id} AND key = 'notification'
+            `);
 
             if (!Object.keys(setting.value).length) {
-                await UserSetting.generate(config.pool, {
+                await config.models.UserSetting.generate({
                     uid: user.id,
                     key: 'notification',
                     value
                 });
             } else {
-                await setting.commit({ value });
+                await config.models.UserSetting.commit(sql`
+                    uid = ${user.id} AND key = 'notification'
+                `, { value });
             }
 
             res.json(req.body);
