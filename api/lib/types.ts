@@ -1,6 +1,7 @@
 import { createSelectSchema } from 'drizzle-typebox';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
 import { AugmentedEquipment } from './models/Equipment.js';
+import { AugmentedMission } from './models/Mission.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
 
@@ -12,6 +13,8 @@ export const AssetResponse = Type.Object({
     storage: Type.Boolean(),
     asset_url: Type.String()
 });
+
+export const MissionResponse = AugmentedMission;
 
 export const EquipmentResponse = AugmentedEquipment;
 
