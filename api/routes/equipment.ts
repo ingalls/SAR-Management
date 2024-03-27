@@ -35,7 +35,23 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Equipment:View');
 
-            res.json(await config.models.Equipment.augmented_list(req.query));
+            res.json(await config.models.Equipment.augmented_list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    (
+                        (${req.query.parent}::BIGINT IS NULL)
+                        OR (${req.query.parent}::BIGINT = 0 AND parent IS NULL)
+                        OR (${req.query.parent}::BIGINT IS NOT NULL AND parent = ${req.query.parent}::BIGINT)
+                    )
+                    AND (${req.query.container}::BOOLEAN IS NULL OR container = ${req.query.container})
+                    AND (${req.query.archived}::BOOLEAN IS NULL OR archived = ${req.query.archived})
+                    AND (${req.query.filter}::TEXT IS NULL OR name ~* ${req.query.filter})
+                    AND (${req.query.assigned}::BIGINT IS NULL OR equipment_assigned.uid = ${req.query.assigned})
+                `
+            }))
         } catch (err) {
             return Err.respond(err, res);
         }

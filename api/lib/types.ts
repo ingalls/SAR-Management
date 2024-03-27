@@ -4,6 +4,15 @@ import { AugmentedEquipment } from './models/Equipment.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
 
+export const AssetResponse = Type.Object({
+    id: Type.Integer(),
+    created: Type.String(),
+    updated: Type.String(),
+    name: Type.String(),
+    storage: Type.Boolean(),
+    asset_url: Type.String()
+});
+
 export const EquipmentResponse = AugmentedEquipment;
 
 export const StandardResponse = Type.Object({

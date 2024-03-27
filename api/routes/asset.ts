@@ -1,12 +1,15 @@
 import Err from '@openaddresses/batch-error';
+import { sql } from 'drizzle-orm';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import path from 'node:path';
 import { Type } from '@sinclair/typebox';
 import busboy from 'busboy';
 import Auth from '../lib/auth.js';
-import Asset from '../lib/types/asset.js';
 import Spaces from '../lib/aws/spaces.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { Asset } from '../lib/schema.js';
+import { StandardResponse, AssetResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     const spaces = new Spaces();
@@ -15,14 +18,37 @@ export default async function router(schema: Schema, config: Config) {
         name: 'List Assets',
         group: 'Assets',
         description: 'List Assets',
-        query: 'req.query.ListAssets.json',
-        res: 'res.ListAssets.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Asset)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(AssetResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_auth(config, req);
 
-            const list = await Asset.list(config.pool, req.query);
-            return res.json(list);
+            const list = await config.models.Asset.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    name ~* ${req.query.filter}
+                `
+            });
+
+            return res.json({
+                total: list.total,
+                items: list.items.map((asset) => {
+                    return { asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset };
+                })
+            });
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -35,13 +61,13 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             assetid: Type.Integer()
         }),
-        res: 'assets.json'
+        res: AssetResponse
     }, async (req, res) => {
         try {
             await Auth.is_auth(config, req);
 
-            const asset = await Asset.from(config.pool, req.params.assetid);
-            return res.json(asset.serialize());
+            const asset = await config.models.Asset.from(req.params.assetid);
+            return res.json({ asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset });
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -56,9 +82,9 @@ export default async function router(schema: Schema, config: Config) {
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req, true);
+            await Auth.is_auth(config, req, { token: true });
 
-            const asset = await Asset.from(config.pool, req.params.assetid);
+            const asset = await config.models.Asset.from(req.params.assetid);
 
             const raw = await spaces.get({
                 Key: `assets/${asset.id}-${asset.name}`
@@ -78,7 +104,7 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             assetid: Type.Integer()
         }),
-        res: 'assets.json'
+        res: AssetResponse
     }, async (req, res) => {
         let bb;
 
@@ -105,7 +131,7 @@ export default async function router(schema: Schema, config: Config) {
         let asset;
         const assets = [];
         bb.on('file', async (fieldname, file, blob) => {
-            asset = await Asset.generate(config.pool, {
+            asset = await config.models.Asset.generate({
                 name: blob.filename
             });
 
@@ -118,9 +144,9 @@ export default async function router(schema: Schema, config: Config) {
                 if (!assets.length) throw new Err(400, null, 'No Asset Provided');
 
                 await assets[0];
-                await asset.commit({ storage: true });
+                await config.models.Asset.commit(asset.id, { storage: true });
 
-                return res.json(asset.serialize());
+                return res.json({ asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset });
             } catch (err) {
                 Err.respond(err, res);
             }
@@ -136,16 +162,16 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             assetid: Type.Integer()
         }),
-        body: 'req.body.PatchAsset.json',
-        res: 'assets.json'
+        body: Type.Object({
+            name: Type.Optional(Type.String())
+        }),
+        res: AssetResponse
     }, async (req, res) => {
         await Auth.is_auth(config, req);
 
         try {
-            const asset = await Asset.from(config.pool, req.params.assetid);
-            await asset.commit(req.body);
-
-            return res.json(asset.serialize());
+            let asset = await config.models.Asset.commit(req.params.assetid, req.body);
+            return res.json({ asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset });
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -163,13 +189,13 @@ export default async function router(schema: Schema, config: Config) {
         await Auth.is_auth(config, req);
 
         try {
-            const asset = await Asset.from(config.pool, req.params.assetid);
+            const asset = await config.models.Asset.from(req.params.assetid);
 
             await spaces.delete({
                 Key: `assets/${asset.id}-${asset.name}`
             });
 
-            await asset.delete();
+            await await config.models.Asset.delete(req.params.assetid);
 
             return res.json({
                 status: 200,
