@@ -1,8 +1,7 @@
 import Err from '@openaddresses/batch-error';
+import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Auth, { AuthUserType } from '../lib/auth.js';
-import Mission from '../lib/types/mission.js';
-import Training from '../lib/views/training.js';
 import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
 import moment from 'moment';
@@ -91,7 +90,12 @@ export default async function router(schema: Schema, config: Config) {
 
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
-                (await Training.stream(config.pool, req.query)).on('data', (training) => {
+                (await config.models.Training.stream({
+                    where: sql`
+                        (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
+                        AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                    `
+                })).on('data', (training) => {
                     calendar.createEvent({
                         start: moment(training.start_ts),
                         end: moment(training.end_ts),
@@ -160,7 +164,12 @@ export default async function router(schema: Schema, config: Config) {
                     }
                 }
             } else if (req.params.calendar === 'mission') {
-                for (const mission of (await Mission.list(config.pool, req.query)).missions) {
+                for (const mission of (await config.models.Mission.list({
+                    where: sql`
+                        (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
+                        AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                    `
+                })).items) {
                     events.push({
                         title: mission.title,
                         start: mission.start_ts,
@@ -170,7 +179,12 @@ export default async function router(schema: Schema, config: Config) {
                     });
                 }
             } else if (req.params.calendar === 'training') {
-                for (const training of (await Training.list(config.pool, req.query)).training) {
+                for (const training of (await config.models.Training.list({
+                    where: sql`
+                        (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
+                        AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                    `
+                })).items) {
                     events.push({
                         title: training.title,
                         start: training.start_ts,
