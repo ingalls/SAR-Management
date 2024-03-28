@@ -3,6 +3,7 @@ import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
 import LeadershipModel from './models/Leadership.js'
 import MissionModel from './models/Mission.js'
+import TrainingModel from './models/Training.js'
 import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
 import * as pgtypes from './schema.js';
@@ -32,13 +33,13 @@ export default class Models {
     ScheduleAssigned: Modeler<typeof pgtypes.ScheduleAssigned>;
     ScheduleEvent: Modeler<typeof pgtypes.ScheduleEvent>;
     Server: Modeler<typeof pgtypes.Server>;
-    Training: Modeler<typeof pgtypes.Training>;
     TrainingAssigned: Modeler<typeof pgtypes.TrainingAssigned>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
     User: UserModel;
     Equipment: EquipmentModel;
     Mission: MissionModel;
+    Training: TrainingModel;
     Notification: NotificationModel;
     Leadership: LeadershipModel;
     ApplicationComment: ApplicationCommentModel;
@@ -50,6 +51,7 @@ export default class Models {
         this.Equipment = new EquipmentModel(pg);
         this.ApplicationComment = new ApplicationCommentModel(pg);
         this.Mission = new MissionModel(pg);
+        this.Training = new TrainingModel(pg);
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
         this.UserReset = new Modeler(pg, pgtypes.UserReset);
@@ -75,7 +77,6 @@ export default class Models {
         this.ScheduleAssigned = new Modeler(pg, pgtypes.ScheduleAssigned);
         this.ScheduleEvent = new Modeler(pg, pgtypes.ScheduleEvent);
         this.Server = new Modeler(pg, pgtypes.Server);
-        this.Training = new Modeler(pg, pgtypes.Training);
         this.TrainingAssigned = new Modeler(pg, pgtypes.TrainingAssigned);
         this.TrainingTeam = new Modeler(pg, pgtypes.TrainingTeam);
     }
