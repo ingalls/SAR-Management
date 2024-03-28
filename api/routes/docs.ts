@@ -1,4 +1,5 @@
 import Err from '@openaddresses/batch-error';
+import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import busboy from 'busboy';
@@ -6,14 +7,16 @@ import API2PDF from 'api2pdf';
 import jwt from 'jsonwebtoken';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, DocResponse } from '../lib/types.js';
 
-function prefix(req) {
-    if (!req.query.prefix) req.query.prefix = '';
+function prefix(prefix?: string): string {
+    if (!prefix) return '';
 
-    if (req.query.prefix && !req.query.prefix.endsWith('/')) {
-        req.query.prefix = req.query.prefix + '/';
+    if (prefix && !prefix.endsWith('/')) {
+        return prefix + '/';
     }
+
+    return prefix;
 }
 
 export default async function router(schema: Schema, config: Config) {
@@ -24,13 +27,19 @@ export default async function router(schema: Schema, config: Config) {
         name: 'List Docs',
         group: 'Docs',
         description: 'List Docs',
-        query: 'req.query.ListDocs.json',
-        res: 'res.ListDocs.json'
+        query: Type.Object({
+            prefix: Type.String({ default: '' }),
+            filter: Type.String({ default: '' })
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            documents: Type.Array(DocResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Doc:View');
 
-            prefix(req);
+            req.query.prefix = prefix(req.query.prefix);
 
             req.query.prefix = 'documents/' + req.query.prefix;
 
@@ -86,7 +95,11 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Convert Doc',
         group: 'Docs',
         description: 'Convert doc to a preview format',
-        query: 'req.query.ConvertDoc.json'
+        query: Type.Object({
+            access_token: Type.Optional(Type.String()),
+            prefix: Type.Optional(Type.String()),
+            file: Type.Optional(Type.String())
+        })
     }, async (req, res) => {
         try {
             if (req.query.access_token) {
@@ -98,13 +111,13 @@ export default async function router(schema: Schema, config: Config) {
 
                 return file.Body.pipe(res);
             } else {
-                await Auth.is_auth(config, req, true);
+                const user = await Auth.is_auth(config, req, { token: true });
                 await Auth.is_iam(config, req, 'Doc:Manage');
 
-                prefix(req);
+                req.query.prefix = prefix(req.query.prefix);
 
                 const token = jwt.sign({
-                    u: req.auth.id,
+                    u: user.id,
                     p: req.query.prefix,
                     f: req.query.file
                 }, config.SigningSecret, { expiresIn: '30m' });
@@ -134,13 +147,17 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Download Doc',
         group: 'Docs',
         description: 'Download Doc',
-        query: 'req.query.DownloadDoc.json'
+        query: Type.Object({
+            prefix: Type.String({ default: '' }),
+            file: Type.String({ default: '' }),
+            download: Type.Boolean({ default: true })
+        })
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req, true);
+            await Auth.is_auth(config, req, { token: true });
             await Auth.is_iam(config, req, 'Doc:View');
 
-            prefix(req);
+            req.query.prefix = prefix(req.query.prefix);
 
             const file = await spaces.get({
                 Key: `documents/${req.query.prefix}${req.query.file}`
@@ -163,13 +180,15 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Folder',
         group: 'Docs',
         description: 'Create a new folder',
-        query: 'req.query.CreateDoc.json',
+        query: Type.Object({
+            prefix: Type.String({ default: '' })
+        }),
         res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Doc:Manage');
 
-            prefix(req);
+            req.query.prefix = prefix(req.query.prefix);
 
             await spaces.upload({
                 Key: `documents/${req.query.prefix}`,
@@ -189,12 +208,14 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Doc',
         group: 'Docs',
         description: 'Create a new doc',
-        query: 'req.query.CreateDoc.json',
+        query: Type.Object({
+            prefix: Type.String({ default: '' })
+        }),
         res: StandardResponse
     }, async (req, res) => {
         await Auth.is_iam(config, req, 'Doc:Manage');
 
-        prefix(req);
+        req.query.prefix = prefix(req.query.prefix);
 
         if (req.headers['content-type']) {
             req.headers['content-type'] = req.headers['content-type'].split(',')[0];
@@ -242,7 +263,9 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Delete Doc',
         group: 'Docs',
         description: 'Delete Doc',
-        query: 'req.query.DeleteDoc.json',
+        query: Type.Object({
+            file: Type.String({ default: '' })
+        }),
         res: StandardResponse
     }, async (req, res) => {
         try {

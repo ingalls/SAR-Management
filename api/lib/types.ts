@@ -14,6 +14,13 @@ export const AssetResponse = Type.Object({
     asset_url: Type.String()
 });
 
+export const DocResponse = Type.Object({
+    key: Type.String(),
+    last_modified: Type.String(),
+    size: Type.Integer(),
+    type: Type.String({ enum: ["dir", "file" ] })
+});
+
 export const MissionResponse = AugmentedMission;
 
 export const EquipmentResponse = AugmentedEquipment;
