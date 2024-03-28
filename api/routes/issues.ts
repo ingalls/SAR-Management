@@ -18,8 +18,27 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Get Issues',
         group: 'Issue',
         description: 'Get all issues for the Org',
-        query: 'req.query.ListIssues.json',
-        res: 'res.ListIssues.json'
+        query: Type.Object({
+            format: Type.String({
+                default: 'json',
+                enum: ['csv', 'json', 'vcard']
+            }),
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            order:
+            assigned
+            fields
+            sort
+            status: Type.String({
+                default: 'open',
+                enum: ['open', 'closed']
+            }),
+            filter: Type.Optional(Type.String())
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(IssueResponse)
+        })
     }, async (req: AuthRequest, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:View');
