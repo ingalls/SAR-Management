@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import busboy from 'busboy';
 import Auth from '../lib/auth.js';
@@ -17,13 +18,18 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Profile Pic',
         group: 'EquipmentProfile',
         description: 'Get a picture of equipment',
-        query: 'req.query.EquipmentProfile.json',
+        query: Type.Object({
+            size: Type.String({
+                default: 'full',
+                enum: ['full', 'mini']
+            })
+        }),
         params: Type.Object({
             equipmentid: Type.Integer()
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req, true);
+            await Auth.is_auth(config, req, { token: true });
 
             try {
                 let Key = `equipment/${req.params.equipmentid}/`;
