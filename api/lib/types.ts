@@ -1,5 +1,6 @@
 import { createSelectSchema } from 'drizzle-typebox';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
+import { AugmentedEquipmentAssigned } from './models/EquipmentAssigned.js';
 import { AugmentedEquipment } from './models/Equipment.js';
 import { AugmentedMission } from './models/Mission.js';
 import { Type } from '@sinclair/typebox'
@@ -23,6 +24,7 @@ export const DocResponse = Type.Object({
 
 export const MissionResponse = AugmentedMission;
 
+export const EquipmentAssignedResponse = AugmentedEquipmentAssigned;
 export const EquipmentResponse = AugmentedEquipment;
 
 export const StandardResponse = Type.Object({

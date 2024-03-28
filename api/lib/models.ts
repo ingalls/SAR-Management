@@ -1,6 +1,7 @@
 import Modeler, { Pool } from '@openaddresses/batch-generic';
 import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
+import EquipmentAssignedModel from './models/EquipmentAssigned.js'
 import LeadershipModel from './models/Leadership.js'
 import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
@@ -17,7 +18,6 @@ export default class Models {
     Asset: Modeler<typeof pgtypes.Asset>;
     CertKnown: Modeler<typeof pgtypes.CertKnown>;
     Cert: Modeler<typeof pgtypes.Cert>;
-    EquipmentAssigned: Modeler<typeof pgtypes.EquipmentAssigned>;
     EquipmentType: Modeler<typeof pgtypes.EquipmentType>;
     Fieldability: Modeler<typeof pgtypes.Fieldability>;
     Poll: Modeler<typeof pgtypes.Poll>;
@@ -43,12 +43,14 @@ export default class Models {
     Notification: NotificationModel;
     Leadership: LeadershipModel;
     ApplicationComment: ApplicationCommentModel;
+    EquipmentAssigned: EquipmentAssignedModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
         this.User = new UserModel(pg);
         this.Notification = new NotificationModel(pg);
         this.Leadership = new LeadershipModel(pg);
         this.Equipment = new EquipmentModel(pg);
+        this.EquipmentAssigned = EquipmentAssignedModel(pg);
         this.ApplicationComment = new ApplicationCommentModel(pg);
         this.Mission = new MissionModel(pg);
         this.Training = new TrainingModel(pg);
@@ -61,7 +63,6 @@ export default class Models {
         this.Asset = new Modeler(pg, pgtypes.Asset);
         this.CertKnown = new Modeler(pg, pgtypes.CertKnown);
         this.Cert = new Modeler(pg, pgtypes.Cert);
-        this.EquipmentAssigned = new Modeler(pg, pgtypes.EquipmentAssigned);
         this.EquipmentType = new Modeler(pg, pgtypes.EquipmentType);
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
         this.Poll = new Modeler(pg, pgtypes.Poll);

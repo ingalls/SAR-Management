@@ -1,8 +1,10 @@
 import Err from '@openaddresses/batch-error';
-import EquipmentAssigned from '../lib/types/equipment-assigned.js';
+import { Type } from '@sinclair/typebox';
+import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { EquipmentAssignedResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/equipment/:equipmentid/assigned', {
@@ -12,12 +14,19 @@ export default async function router(schema: Schema, config: Config) {
             equipmentid: Type.Integer()
         }),
         description: 'Get users assigned to an mission',
-        res: 'res.ListEquipmentAssigned.json'
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(EquipmentAssignedResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:View');
 
-            res.json(await EquipmentAssigned.list(config.pool, req.params.equipmentid, req.query));
+            res.json(await config.models.EquipmentAssigned.augmented_list({
+                where: sql`
+                    equip_id = ${req.params.equipmentid}
+                `
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }

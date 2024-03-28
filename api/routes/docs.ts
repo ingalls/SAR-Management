@@ -33,7 +33,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
         res: Type.Object({
             total: Type.Integer(),
-            documents: Type.Array(DocResponse)
+            items: Type.Array(DocResponse)
         })
     }, async (req, res) => {
         try {
@@ -84,7 +84,7 @@ export default async function router(schema: Schema, config: Config) {
 
             return res.json({
                 total: documents.length,
-                documents
+                items: documents
             });
         } catch (err) {
             return Err.respond(err, res);

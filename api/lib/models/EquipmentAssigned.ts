@@ -2,27 +2,41 @@ import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/ba
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { User, UserTeam } from '../schema.js';
+import { User, EquipmentAssigned } from '../schema.js';
 import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
-export default class UserModel extends Modeler<typeof User> {
+export const AugmentedEquipmentAssigned = Type.Object({
+    id: Type.Integer(),
+    equip_id: Type.Integer(),
+    uid: Type.Integer(),
+    fname: Type.String(),
+    lname: Type.String(),
+    username: Type.String()
+})
+
+export default class EquipmentAssignedModel extends Modeler<typeof EquipmentAssigned> {
     constructor(
         pool: PostgresJsDatabase<any>,
     ) {
-        super(pool, User);
+        super(pool, EquipmentAssigned);
     }
 
-    async augmented_list(query: GenericListInput = {}): Promise<GenericList<InferSelectModel<typeof User>>> {
+    async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedEquipmentAssigned>>> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
         const pgres = await this.pool
             .select({
                 count: sql<string>`count(*) OVER()`.as('count'),
-                generic: this.generic
+                id: EquipmentAssigned.id,
+                equip_id: EquipmentAssigned.equip_id,
+                uid: EquipmentAssigned.uid,
+                fname: User.fname,
+                lname: User.lname,
+                username: User.username
             })
-            .from(User)
-            .leftJoin(UserTeam, eq(User.id, UserTeam.uid))
+            .from(EquipmentAssigned)
+            .leftJoin(User, eq(EquipmentAssigned.uid, User.id))
             .where(query.where)
             .orderBy(orderBy)
             .limit(query.limit || 10)
@@ -34,8 +48,9 @@ export default class UserModel extends Modeler<typeof User> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    return t.generic as InferSelectModel<typeof User>
-                })  
+                    delete t.count;
+                    return t as Static<typeof AugmentedEquipmentAssigned>
+                })
             };
         }
     }
