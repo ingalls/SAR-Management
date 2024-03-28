@@ -24,6 +24,10 @@ export const DocResponse = Type.Object({
 
 export const MissionResponse = AugmentedMission;
 
+export const EquipmentTypeResponse = createSelectSchema(schemas.EquipmentType, {
+    id: Type.Integer()
+});
+
 export const EquipmentAssignedResponse = AugmentedEquipmentAssigned;
 export const EquipmentResponse = AugmentedEquipment;
 

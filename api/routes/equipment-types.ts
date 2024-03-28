@@ -4,19 +4,27 @@ import EquipmentType from '../lib/types/equipment-type.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { EquipmentTypeResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/equipment-type', {
         name: 'List Type',
         group: 'EquipmentType',
         description: 'Get all equipment types in the Org',
-        query: 'req.query.ListEquipmentTypes.json',
-        res: 'res.ListEquipmentTypes.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            filter: Type.Optional(Type.String())
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(EquipmentTypeResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:View');
 
-            res.json(await EquipmentType.list(config.pool, req.query));
+            res.json(await config.models.EquipmentType.list(req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -29,12 +37,12 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             typeid: Type.Integer()
         }),
-        res: 'equipment_types.json'
+        res: EquipmentTypeResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:View');
 
-            res.json(await EquipmentType.from(config.pool, req.params.typeid));
+            res.json(await config.models.EquipmentType.from(req.params.typeid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -44,13 +52,16 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Type',
         group: 'EquipmentType',
         description: 'Create a new type of equipment',
-        body: 'req.body.CreateEquipmentType.json',
-        res: 'equipment_types.json'
+        body: Type.Object({
+            type: Type.String(),
+            schema: Type.Any()
+        }),
+        res: EquipmentTypeResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:Admin');
 
-            const type = await EquipmentType.generate(config.pool, req.body);
+            const type = await config.models.EquipmentType.generate(req.body);
             return res.json(type);
         } catch (err) {
             return Err.respond(err, res);
@@ -64,14 +75,16 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             typeid: Type.Integer()
         }),
-        body: 'req.body.PatchEquipmentType.json',
-        res: 'equipment_types.json'
+        body: Type.Object({
+            type: Type.Optional(Type.String()),
+            schema: Type.Optional(Type.Any())
+        }),
+        res: EquipmentTypeResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Equipment:Admin');
 
-            const type = await EquipmentType.from(config.pool, req.params.typeid);
-            await type.commit(req.body);
+            const type = await config.models.EquipmentType.commit(req.params.typeid, req.body);
             return res.json(type);
         } catch (err) {
             return Err.respond(err, res);
