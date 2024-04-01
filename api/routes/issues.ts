@@ -3,6 +3,7 @@ import { Type } from '@sinclair/typebox';
 import Issue from '../lib/types/issue.js';
 import Poll from '../lib/types/poll.js';
 import PollQuestion from '../lib/types/poll-question.js';
+import { GenericListOrder } from '@openaddresses/batch-generic';
 import ViewIssue from '../lib/views/issue.js';
 import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth, { AuthRequest } from '../lib/auth.js';
@@ -23,12 +24,11 @@ export default async function router(schema: Schema, config: Config) {
                 default: 'json',
                 enum: ['csv', 'json', 'vcard']
             }),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Application) }))),
             limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),
-            order:
-            assigned
-            fields
-            sort
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Application)})),
             status: Type.String({
                 default: 'open',
                 enum: ['open', 'closed']
