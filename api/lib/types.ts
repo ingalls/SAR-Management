@@ -1,10 +1,13 @@
 import { createSelectSchema } from 'drizzle-typebox';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
 import { AugmentedEquipmentAssigned } from './models/EquipmentAssigned.js';
+import { AugmentedIssueAssigned } from './models/IssueAssigned.js';
 import { AugmentedEquipment } from './models/Equipment.js';
 import { AugmentedMission } from './models/Mission.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
+
+export const IssueAssignedResponse = AugmentedIssueAssigned;
 
 export const AssetResponse = Type.Object({
     id: Type.Integer(),

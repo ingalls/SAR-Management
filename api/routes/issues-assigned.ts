@@ -1,25 +1,32 @@
 import Err from '@openaddresses/batch-error';
-import IssueAssigned from '../lib/types/issue-assigned.js';
-import Issue from '../lib/types/issue.js';
+import { Type } from '@sinclair/typebox';
+import { sql } from 'drizzle-orm'
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, IssueAssignedResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/assigned', {
         name: 'Get Assigned',
         group: 'IssueAssigned',
         params: Type.Object({
-            issueid: Type.String()
+            issueid: Type.Integer()
         }),
         description: 'Get users assigned to an issue',
-        res: 'res.ListIssueAssigned.json'
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(IssueAssignedResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:View');
 
-            res.json(await IssueAssigned.list(config.pool, req.params.issueid, req.query));
+            res.json(await config.models.IssueAssigned.augmented_list({
+                where: sql`
+                    issue_id = ${req.params.issueid}
+                `
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -29,19 +36,26 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Add Assigned',
         group: 'IssueAssigned',
         params: Type.Object({
-            issueid: Type.String()
+            issueid: Type.Integer()
         }),
         description: 'Remove an assignment',
-        body: 'req.body.CreateIssueAssigned.json',
-        res: 'issues_assigned.json'
+        body: Type.Object({
+            uid: Type.Integer()
+        }),
+        res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:Manage');
 
-            res.json(await IssueAssigned.generate(config.pool, {
+            const id = await config.models.IssueAssigned.generate({
                 issue_id: req.params.issueid,
                 uid: req.body.uid
-            }));
+            });
+
+            return {
+                status: 200,
+                message: 'User Assigned'
+            }
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -51,7 +65,7 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Remove Assigned',
         group: 'IssueAssigned',
         params: Type.Object({
-            issueid: Type.Integer()
+            issueid: Type.Integer(),
             assignedid: Type.Integer()
         }),
         description: 'Remove a user from an issue',
@@ -60,11 +74,11 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Issue:Manage');
 
-            const issue = await Issue.from(config.pool, req.params.issueid);
-            const assigned = await IssueAssigned.from(config.pool, req.params.assignedid);
-            if (assigned.issue_id !== issue.id) throw new Error(400, null, 'Assigned User does not belong to the Issue');
+            const issue = await config.models.Issue.from(req.params.issueid);
+            const assigned = await config.models.IssueAssigned.from(req.params.assignedid)
+            if (assigned.issue_id !== issue.id) throw new Err(400, null, 'Assigned User does not belong to the Issue');
 
-            await assigned.delete();
+            await config.models.IssueAssigned.delete(req.params.assignedid);
 
             return res.json({
                 status: 200,

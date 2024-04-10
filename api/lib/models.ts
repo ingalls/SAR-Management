@@ -2,6 +2,7 @@ import Modeler, { Pool } from '@openaddresses/batch-generic';
 import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
 import EquipmentAssignedModel from './models/EquipmentAssigned.js'
+import IssueAssignedModel from './models/IssueAssigned.js'
 import LeadershipModel from './models/Leadership.js'
 import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
@@ -22,7 +23,6 @@ export default class Models {
     Fieldability: Modeler<typeof pgtypes.Fieldability>;
     Poll: Modeler<typeof pgtypes.Poll>;
     Issue: Modeler<typeof pgtypes.Issue>;
-    IssueAssigned: Modeler<typeof pgtypes.IssueAssigned>;
     IssueComment: Modeler<typeof pgtypes.IssueComment>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     MissionAssigned: Modeler<typeof pgtypes.MissionAssigned>;
@@ -44,6 +44,7 @@ export default class Models {
     Leadership: LeadershipModel;
     ApplicationComment: ApplicationCommentModel;
     EquipmentAssigned: EquipmentAssignedModel;
+    IssueAssigned: IssueAssignedModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
         this.User = new UserModel(pg);
@@ -54,6 +55,7 @@ export default class Models {
         this.ApplicationComment = new ApplicationCommentModel(pg);
         this.Mission = new MissionModel(pg);
         this.Training = new TrainingModel(pg);
+        this.IssueAssigned = new IssueAssigned(pg);
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
         this.UserReset = new Modeler(pg, pgtypes.UserReset);
@@ -67,7 +69,6 @@ export default class Models {
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
         this.Poll = new Modeler(pg, pgtypes.Poll);
         this.Issue = new Modeler(pg, pgtypes.Issue);
-        this.IssueAssigned = new Modeler(pg, pgtypes.IssueAssigned);
         this.IssueComment = new Modeler(pg, pgtypes.IssueComment);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.MissionAssigned = new Modeler(pg, pgtypes.MissionAssigned);
