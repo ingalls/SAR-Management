@@ -5,7 +5,7 @@ import Auth from '../lib/auth.js';
 import { sql } from 'slonik';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, IssueCommentResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/comment', {
@@ -15,8 +15,15 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             issueid: Type.Integer()
         }),
-        query: 'req.query.ListIssueComments.json',
-        res: 'res.ListIssueComments.json'
+        query: Type.Object({
+            limit: Type.Integer(),
+            page: Type.Integer(),
+            filter: Type.String()
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(IssueCommentResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:View');
@@ -64,8 +71,10 @@ export default async function router(schema: Schema, config: Config) {
             commentid: Type.Integer()
         }),
         description: 'Update an issue comment',
-        body: 'req.body.PatchIssueComment.json',
-        res: 'view_issues_comments.json'
+        body: Type.Object({
+            body: Type.String()
+        }),
+        res: IssueCommentResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:Manage');
@@ -93,8 +102,10 @@ export default async function router(schema: Schema, config: Config) {
             issueid: Type.Integer(),
         }),
         description: 'Create a new issue comment',
-        body: 'req.body.CreateIssueComment.json',
-        res: 'view_issues_comments.json'
+        body: Type.Object({
+            body: Type.String()
+        }),
+        res: IssueCommentResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:Manage');

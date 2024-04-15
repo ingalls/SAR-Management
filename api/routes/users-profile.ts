@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import busboy from 'busboy';
 import Auth from '../lib/auth.js';
@@ -17,13 +18,20 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Profile Pic',
         group: 'UserProfile',
         description: 'Get users profile picture',
-        query: 'req.query.UserProfile.json',
+        query: Type.Object({
+            size: Type.String({
+                default: 'full',
+                enum: ['full', 'mini']
+            })
+        }),
         params: Type.Object({
             userid: Type.Integer(),
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req, true);
+            await Auth.is_auth(config, req, {
+                token: true
+            });
 
             try {
                 let Key = `users/${req.params.userid}/`;
@@ -62,9 +70,9 @@ export default async function router(schema: Schema, config: Config) {
         let bb;
 
         try {
-            await Auth.is_auth(config, req);
+            const user = await Auth.is_auth(config, req);
 
-            if (req.auth.access !== 'admin' && req.auth.id !== req.params.userid) {
+            if (user.access !== 'admin' && user.id !== req.params.userid) {
                 throw new Err(401, null, 'Cannot change anther User\'s profile');
             }
 
