@@ -1,8 +1,12 @@
 import Err from '@openaddresses/batch-error';
-import Cert from '../lib/types/cert.js';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import { Type } from '@sinclair/typebox';
+import { CertResponse } from '../lib/types.js';
+import { Cert } from '../lib/schema.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/user/:userid/cert', {
@@ -12,15 +16,30 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             userid: Type.Integer(),
         }),
-        query: 'req.query.ListCerts.json',
-        res: 'res.ListCerts.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Cert)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(CertResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'User:View');
 
-            res.json(await Cert.list(config.pool, {
-                uid: req.params.userid,
-                ...req.query
+            res.json(await config.models.Cert.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    uid = ${req.params.userid}
+                    AND name ~* ${req.query.filter}
+                `
             }));
         } catch (err) {
             return Err.respond(err, res);
@@ -35,12 +54,12 @@ export default async function router(schema: Schema, config: Config) {
             userid: Type.Integer(),
             certid: Type.Integer()
         }),
-        res: 'certs.json'
+        res: CertResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'User:View');
 
-            const cert = await Cert.from(config.pool, req.params.certid);
+            const cert = await config.models.Cert.from(req.params.certid);
             if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
 
             return res.json(cert);
@@ -56,14 +75,19 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             userid: Type.Integer(),
         }),
-        body: 'req.body.CreateCert.json',
-        res: 'certs.json'
+        body: Type.Object({
+            name: Type.String(),
+            asset: Type.Integer(),
+            known: Type.Optional(Type.Integer()),
+            expiry: Type.Optional(Type.String())
+        }),
+        res: CertResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'User:View');
+            const user = await Auth.is_iam(config, req, 'User:View');
 
-            const cert = await Cert.generate(config.pool, {
-                uid: req.auth.id,
+            const cert = await config.models.Cert.generate({
+                uid: user.id,
                 ...req.body
             });
 

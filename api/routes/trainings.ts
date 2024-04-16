@@ -3,6 +3,7 @@ import Training from '../lib/types/training.js';
 import TrainingView from '../lib/views/training.js';
 import TrainingAssigned from '../lib/types/training-assigned.js';
 import TrainingTeam from '../lib/types/training-team.js';
+import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';

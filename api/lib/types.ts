@@ -27,6 +27,13 @@ export const DocResponse = Type.Object({
 
 export const MissionResponse = AugmentedMission;
 
+export const CertResponse = createSelectSchema(schemas.Cert, {
+    id: Type.Integer(),
+    uid: Type.Integer(),
+    known: Type.Integer(),
+    asset: Type.Integer()
+});
+
 export const EquipmentTypeResponse = createSelectSchema(schemas.EquipmentType, {
     id: Type.Integer()
 });
