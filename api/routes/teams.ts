@@ -1,4 +1,5 @@
 import Err from '@openaddresses/batch-error';
+import { Type } from '@sinclair/typebox';
 import Team from '../lib/types/team.js';
 import TeamView from '../lib/views/team.js';
 import Auth, { Permissions } from '../lib/auth.js';
@@ -11,7 +12,7 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Get IAM',
         group: 'IAM',
         description: 'Get all teams on the server',
-        res: 'res.IAM.json'
+        res: Type.Any()
     }, async (req, res) => {
         try {
             return res.json(Permissions);
@@ -45,13 +46,20 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Team',
         group: 'Teams',
         description: 'Create a new team',
-        body: 'req.body.CreateTeam.json',
+        body: Type.Object({
+            name: Type.String(),
+            body: Type.String(),
+            public: Type.Optional(Type.Boolean()),
+            colour_bg: Type.Optional(Type.String()),
+            colour_txt: Type.Optional(Type.String()),
+            fieldable: Type.Optional(Type.Boolean())
+        }),
         res: 'res.Team.json'
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Team:Manage');
 
-            res.json(await Team.generate(config.pool, req.body));
+            res.json(await config.models.Team.generate(req.body));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -69,7 +77,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Team:View');
 
-            res.json(await Team.from(config.pool, req.params.teamid));
+            res.json(await config.models.Team.from(req.params.teamid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -82,7 +90,15 @@ export default async function router(schema: Schema, config: Config) {
             teamid: Type.Integer(),
         }),
         description: 'Update a team',
-        body: 'req.body.PatchTeam.json',
+        body: Type.Object({
+            name: Type.Optional(Type.String()),
+            body: Type.Optional(Type.String()),
+            iam: Type.Optional(Type.Any()),
+            public: Type.Optional(Type.Boolean()),
+            colour_bg: Type.Optional(Type.String()),
+            colour_txt: Type.Optional(Type.String()),
+            fieldable: Type.Optional(Type.Boolean())
+        }),
         res: 'res.Team.json'
     }, async (req, res) => {
         try {
@@ -92,7 +108,7 @@ export default async function router(schema: Schema, config: Config) {
                 delete req.body.iam;
             }
 
-            res.json(await Team.commit(config.pool, req.params.teamid, req.body));
+            res.json(await config.models.Team.commit(req.params.teamid, req.body));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -110,7 +126,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Team:Admin');
 
-            await Team.delete(config.pool, req.params.teamid);
+            await config.models.Team.delete(req.params.teamid);
 
             return res.json({
                 status: 200,

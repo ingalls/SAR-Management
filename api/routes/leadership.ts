@@ -1,6 +1,5 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
-import Leadership from '../lib/types/leadership.js';
 import LeadershipView from '../lib/views/leadership.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
@@ -41,7 +40,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Leadership:Admin');
 
-            const leader = await Leadership.generate(config.pool, req.body);
+            const leader = await config.models.Leadership.generate(req.body);
             return res.json(await LeadershipView.from(config.pool, leader.id));
         } catch (err) {
             return Err.respond(err, res);
@@ -64,8 +63,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Leadership:Admin');
 
-            const leader = await Leadership.from(config.pool, req.params.leaderid);
-            leader.commit(req.body);
+            const leader = await config.models.Leadership.commit(req.params.leaderid, req.body);
             return res.json(leader);
         } catch (err) {
             return Err.respond(err, res);
@@ -84,7 +82,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Leadership:Admin');
 
-            await Leadership.delete(config.pool, req.params.leaderid);
+            await config.models.Leadership.delete(req.params.leaderid);
             return res.json({
                 status: 200,
                 message: 'Leader Deleted'
