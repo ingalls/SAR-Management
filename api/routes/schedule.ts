@@ -1,25 +1,45 @@
 import Err from '@openaddresses/batch-error';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import { Type } from '@sinclair/typebox';
+import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
-import Schedule from '../lib/types/schedule.js';
-import ScheduleAssigned from '../lib/types/schedule-assigned.js';
-import ScheduleEvent from '../lib/types/schedule-event.js';
 import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { Schedule, ScheduleAssigned } from '../lib/schema.js';
+import { StandardResponse, ScheduleResponse, ScheduleAssignedResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/schedule', {
         name: 'List Schedules',
         group: 'Schedules',
         description: 'List Schedules',
-        query: 'req.query.ListSchedules.json',
-        res: 'res.ListSchedules.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Schedule)})),
+            disabled: Type.Optional(Type.Boolean({ default: false })),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(ScheduleResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
 
-            return res.json(await Schedule.list(config.pool, req.query));
+            return res.json(await config.models.Schedule.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    name ~* ${req.query.filter}
+                    AND (${req.query.disabled} IS NULL OR disabled = ${req.query.disabled})
+                `
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -29,8 +49,13 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Schedule',
         group: 'Schedules',
         description: 'Create a new schedule',
-        body: 'req.body.CreateSchedule.json',
-        res: 'schedule.json'
+        body: Type.Object({
+            name: Type.String(),
+            body: Type.String(),
+            handoff: Type.Optional(Type.String()),
+            assigned: Type.Optional(Type.Array(ScheduleAssignedResponse))
+        }),
+        res: ScheduleResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Oncall:Admin');
@@ -38,11 +63,11 @@ export default async function router(schema: Schema, config: Config) {
             const assigned = req.body.assigned;
             delete req.body.assigned;
 
-            const schedule = await Schedule.generate(config.pool, req.body);
+            const schedule = await config.models.Schedule.generate(req.body);
 
             if (assigned) {
                 for (const a of assigned) {
-                    await ScheduleAssigned.generate(config.pool, {
+                    await config.models.ScheduleAssigned.generate({
                         schedule_id: schedule.id,
                         role: a.role,
                         uid: a.uid
@@ -63,14 +88,17 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             scheduleid: Type.Integer(),
         }),
-        body: 'req.body.PatchSchedule.json',
-        res: 'schedule.json'
+        body: Type.Object({
+            name: Type.Optional(Type.String()),
+            body: Type.Optional(Type.String()),
+            handoff: Type.Optional(Type.String()),
+        }),
+        res: ScheduleResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Oncall:Manage');
 
-            const schedule = await Schedule.from(config.pool, req.params.scheduleid);
-            await schedule.commit(req.body);
+            const schedule = await config.models.Schedule.commit(req.params.scheduleid, req.body);
             return res.json(schedule);
         } catch (err) {
             return Err.respond(err, res);
@@ -84,13 +112,17 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             scheduleid: Type.Integer(),
         }),
-        body: 'req.body.CreateScheduleEvent.json',
-        res: 'schedules_event.json'
+        body: Type.Object({
+            start_ts: Type.String(),
+            end_ts: Type.String(),
+            uid: Type.Integer(),
+        }),
+        res: ScheduleEventResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Schedule:View');
 
-            await Schedule.from(config.pool, req.params.scheduleid);
+            await config.models.Schedule.from(req.params.scheduleid);
             await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
 
             // TODO: Generic should handle this
@@ -116,20 +148,24 @@ export default async function router(schema: Schema, config: Config) {
             scheduleid: Type.Integer(),
             eventid: Type.Integer()
         }),
-        body: 'req.body.UpdateScheduleEvent.json',
-        res: 'schedules_event.json'
+        body: Type.Object({
+            start_ts: Type.Optional(Type.String()),
+            end_ts: Type.Optional(Type.String()),
+            uid: Type.Optional(Type.Integer()),
+        }),
+        res: ScheduleEventResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Schedule:View');
 
-            const schedule = await Schedule.from(config.pool, req.params.scheduleid);
+            const schedule = await config.models.Schedule.from(req.params.scheduleid);
             if (req.body.uid) await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
 
             // TODO: Generic should handle this
             if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
             if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
 
-            const event = await ScheduleEvent.from(config.pool, req.params.eventid);
+            const event = await config.models.ScheduleEvent.from(req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
 
             await event.commit(req.body);
@@ -153,9 +189,9 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Schedule:View');
 
-            const schedule = await Schedule.from(config.pool, req.params.scheduleid);
+            const schedule = await config.models.Schedule.from(req.params.scheduleid);
 
-            const event = await ScheduleEvent.from(config.pool, req.params.eventid);
+            const event = await config.models.ScheduleEvent.from(req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
 
             await event.delete();
@@ -176,22 +212,18 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             scheduleid: Type.Integer(),
         }),
-        query: 'req.query.ListEvents.json',
-        res: {
-            type: 'array',
-            items: {
-                type: 'object',
-                required: ['title', 'imageurl', 'start', 'end', 'uid', 'id'],
-                properties: {
-                    title: { type: 'string' },
-                    imageurl: { type: 'string' },
-                    start: { type: 'string' },
-                    end: { type: 'string' },
-                    uid: { type: 'integer' },
-                    id: { type: 'integer' }
-                }
-            }
-        }
+        query: Type.Object({
+            start: Type.String(),
+            end: Type.String(),
+        }),
+        res: Type.Array(Type.Object({
+            title: Type.String(),
+            imageurl: Type.String(),
+            start: Type.String(),
+            end: Type.String(),
+            uid: Type.Integer(),
+            id: Type.Integer()
+        }))
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Schedule:View');
@@ -236,7 +268,7 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             scheduleid: Type.Integer(),
         }),
-        res: 'schedule.json'
+        res: ScheduleResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
@@ -254,13 +286,31 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             scheduleid: Type.Integer(),
         }),
-        query: 'req.query.ListScheduleAssigned.json',
-        res: 'res.ListScheduleAssigned.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(ScheduleAssigned)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(ScheduleAssignedResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
 
-            return res.json(await ScheduleAssigned.list(config.pool, req.params.scheduleid, req.query));
+            return res.json(await config.models.ScheduleAssigned.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    name ~* ${req.query.filter}
+                    AND schedule_id = ${req.params.scheduleid}
+                `
+            });
         } catch (err) {
             return Err.respond(err, res);
         }

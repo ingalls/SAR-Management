@@ -9,6 +9,22 @@ import * as schemas from './schema.js';
 
 export const IssueAssignedResponse = AugmentedIssueAssigned;
 
+export const ScheduleEventResponse = createSelectSchema(schemas.ScheduleEvent, {
+    id: Type.Integer(),
+    schedule_id: Type.Integer(),
+    uid: Type.Integer()
+});
+
+export const ScheduleAssignedResponse = createSelectSchema(schemas.ScheduleAssigned, {
+    id: Type.Integer(),
+    schedule_id: Type.Integer(),
+    uid: Type.Integer(),
+});
+
+export const ScheduleResponse = createSelectSchema(schemas.Schedule, {
+    id: Type.Integer(),
+});
+
 export const AssetResponse = Type.Object({
     id: Type.Integer(),
     created: Type.String(),
