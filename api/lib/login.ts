@@ -4,9 +4,8 @@ import jwt from 'jsonwebtoken';
 import User from './types/user.js';
 import UserReset from './types/user_reset.js';
 import { InferSelectModel } from 'drizzle-orm';
-import { Pool } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
-import * as pgtypes from './schema.js';
+import Config from './config.js';
 
 /**
  * @class
@@ -15,16 +14,15 @@ export default class Login {
     /**
      * Verify a password reset token
      *
-     * @param {Pool}    pool            Instantiated Postgres Pool
      * @param {String}  token           Password reset token
      */
-    static async verify(pool: Pool<typeof pgtypes>, token): Promise<InferSelectModel<typeof User>> {
+    static async verify(config: Config, token: string): Promise<InferSelectModel<typeof User>> {
         if (!token) throw new Err(400, null, 'token required');
 
-        const reset = await UserReset.from(pool, token, 'verify');
-        await UserReset.delete_all(pool, reset.uid);
+        const reset = await config.models.UserReset.from(token, 'verify');
+        await config.models.UserReset.delete_all(reset.uid);
 
-        const user = await User.from(pool, reset.uid);
+        const user = await config.model.User.from(reset.uid);
 
         if (user.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
 
@@ -33,14 +31,14 @@ export default class Login {
         });
     }
 
-    static async reset(pool: Pool<typeof pgtypes>, body): Promise<InferSelectModel<typeof User>> {
+    static async reset(config: Config, body): Promise<InferSelectModel<typeof User>> {
         if (!body.token) throw new Err(400, null, 'token required');
         if (!body.password) throw new Err(400, null, 'password required');
 
-        const reset = await UserReset.from(pool, body.token, 'reset');
-        await UserReset.delete_all(pool, reset.uid);
+        const reset = await config.models.UserReset.from(body.token, 'reset');
+        await config.models.UserReset.delete_all(reset.uid);
 
-        const user = await User.from(pool, reset.uid);
+        const user = await config.models.User.from(reset.uid);
 
         if (user.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
 
@@ -53,11 +51,10 @@ export default class Login {
     /**
      * Given a username or email, generate a password reset or validation email
      *
-     * @param {Pool}    pool            Instantiated Postgres Pool
      * @param {string}  username        username or email to reset
      * @param {string}  [action=reset]  'reset' or 'verify'
      */
-    static async forgot(pool: Pool<typeof pgtypes>, username: string, action = 'reset'): Promise<{
+    static async forgot(config: Config, username: string, action = 'reset'): Promise<{
         uid: number;
         username: string;
         email: string;
@@ -70,11 +67,11 @@ export default class Login {
             OR Lower(username) = ${username.toLowerCase()}
         `);
 
-        await UserReset.delete_all(pool, u.id);
+        await config.models.UserReset.delete_all(u.id);
 
         if (u.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
 
-        const reset = await UserReset.generate(pool, u.id, action);
+        const reset = await config.models.UserReset.generate(u.id, action);
 
         return {
             uid: u.id,
@@ -84,7 +81,7 @@ export default class Login {
         };
     }
 
-    static async attempt(pool, body, secret): Promise<{
+    static async attempt(config: Config, body, secret): Promise<{
         id: number;
         username: string;
         access: string;

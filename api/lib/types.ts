@@ -25,6 +25,11 @@ export const PollResponse = Type.Object({
 
 export const IssueAssignedResponse = AugmentedIssueAssigned;
 
+export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
+    id: Type.Integer(),
+    team: Type.Integer()
+});
+
 export const ScheduleEventResponse = createSelectSchema(schemas.ScheduleEvent, {
     id: Type.Integer(),
     schedule_id: Type.Integer(),

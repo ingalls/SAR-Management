@@ -1,7 +1,7 @@
 import Modeler from '@openaddresses/batch-generic';
 import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
-import Auth from '../lib/auth.js';
+import Auth, { AuthAugment } from '../lib/auth.js';
 import Login from '../lib/login.js';
 import Email from '../lib/email.js';
 import { sql } from 'slonik';
@@ -66,7 +66,8 @@ export default async function router(schema: Schema, config: Config) {
                 username: auth.username,
                 email: auth.email,
                 access: auth.access,
-                token: auth.token
+                token: auth.token,
+                iam: await AuthAugment.iam(config.pool, auth.id)
             });
         } catch (err) {
             return Err.respond(err, res);
@@ -83,7 +84,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Login.verify(config.pool, req.body.token);
+            await Login.verify(config, req.body.token);
 
             return res.json({
                 status: 200,
