@@ -52,7 +52,7 @@ export default async function router(schema: Schema, config: Config) {
                 ...req.body
             });
 
-            return res.json(config.models.MissionAssigned.augmented_from(assigned.id))
+            return res.json(await config.models.MissionAssigned.augmented_from(assigned.id))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -81,7 +81,7 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.MissionAssigned.commit(req.params.assignedid, req.body);
 
-            return res.json(config.models.MissionAssigned.augmented_from(assigned.id))
+            return res.json(await config.models.MissionAssigned.augmented_from(assigned.id))
         } catch (err) {
             return Err.respond(err, res);
         }

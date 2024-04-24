@@ -1,10 +1,10 @@
 import Err from '@openaddresses/batch-error';
-import TrainingAssigned from '../lib/types/training-assigned.js';
-import Training from '../lib/types/training.js';
+import { Type } from '@sinclair/typebox';
+import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, TrainingAssignedResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/training/:trainingid/assigned', {
@@ -14,12 +14,17 @@ export default async function router(schema: Schema, config: Config) {
             trainingid: Type.Integer(),
         }),
         description: 'Get users assigned to a training',
-        res: 'res.ListTrainingAssigned.json'
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(TrainingAssignedResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:View');
 
-            res.json(await TrainingAssigned.list(config.pool, req.params.trainingid, req.query));
+            res.json(await config.models.TrainingAssigned.augmented_list({
+                where: sql`training_id = ${req.params.trainingid}`
+            }))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -32,16 +37,22 @@ export default async function router(schema: Schema, config: Config) {
             trainingid: Type.Integer(),
         }),
         description: 'Create an assignment',
-        body: 'req.body.CreateTrainingAssigned.json',
-        res: 'training_assigned.json'
+        body: Type.Object({
+            uid: Type.Integer(),
+            confirmed: Type.Boolean({ default: true }),
+            role: Type.String({ default: 'Present' })
+        }),
+        res: TrainingAssignedResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:Manage');
 
-            res.json(await TrainingAssigned.generate(config.pool, {
+            const assigned = await config.models.TrainingAssigned.generate({
                 training_id: req.params.trainingid,
                 ...req.body
-            }));
+            });
+
+            return res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -54,17 +65,19 @@ export default async function router(schema: Schema, config: Config) {
             trainingid: Type.Integer(),
         }),
         description: 'Request an assignment',
-        res: 'training_assigned.json'
+        res: TrainingAssignedResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:View');
+            const user = await Auth.is_iam(config, req, 'Training:View');
 
-            res.json(await TrainingAssigned.generate(config.pool, {
+            const assigned = await config.models.TrainingAssigned.generate({
                 training_id: req.params.trainingid,
-                uid: req.auth.id,
+                uid: user.id,
                 role: 'Present',
                 confirmed: false
-            }));
+            });
+
+            return res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -78,19 +91,22 @@ export default async function router(schema: Schema, config: Config) {
             assignedid: Type.Integer()
         }),
         description: 'Update a user in a training',
-        body: 'req.body.PatchTrainingAssigned.json',
-        res: 'training_assigned.json'
+        body: Type.Object({
+            confirmed: Type.Boolean(),
+            role: Type.String()
+        }),
+        res: TrainingAssignedResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:Manage');
 
-            const training = await Training.from(config.pool, req.params.trainingid);
-            const assigned = await TrainingAssigned.from(config.pool, req.params.assignedid);
+            const training = await config.models.Training.from(req.params.trainingid);
+            const assigned = await config.models.TrainingAssigned.from(req.params.assignedid);
             if (assigned.training_id !== training.id) throw new Err(400, null, 'Assigned User does not belong to the Training');
 
-            await assigned.commit(req.body);
+            await config.models.TrainingAssigned.commit(req.params.trainingid, req.body);
 
-            return res.json(assigned);
+            return res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -109,11 +125,11 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Training:Manage');
 
-            const training = await Training.from(config.pool, req.params.trainingid);
-            const assigned = await TrainingAssigned.from(config.pool, req.params.assignedid);
+            const training = await config.models.Training.from(req.params.trainingid);
+            const assigned = await config.models.TrainingAssigned.from(req.params.assignedid);
             if (assigned.training_id !== training.id) throw new Err(400, null, 'Assigned User does not belong to the Training');
 
-            await assigned.delete();
+            await config.models.TrainingAssigned.delete(req.params.trainingid);
 
             return res.json({
                 status: 200,
