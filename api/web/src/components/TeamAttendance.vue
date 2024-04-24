@@ -182,8 +182,8 @@ export default {
         },
         fetchTrainings: async function() {
             const url = await window.stdurl(`/api/training`);
-            url.searchParams.append('start', +new Date(this.filter.start));
-            url.searchParams.append('end', +new Date(this.filter.end));
+            url.searchParams.append('start', new Date(this.filter.start).toISOString());
+            url.searchParams.append('end', new Date(this.filter.end).toISOString());
             url.searchParams.append('team', this.team.id);
             const list = await window.std(url);
             this.trainings = list.training;
