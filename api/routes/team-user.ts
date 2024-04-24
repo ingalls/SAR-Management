@@ -1,10 +1,12 @@
 import Err from '@openaddresses/batch-error';
-import User from '../lib/types/user.js';
-import TeamUser from '../lib/types/team-user.js';
+import { Type } from '@sinclair/typebox';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
+import { User } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, UserResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid/user', {
@@ -14,14 +16,30 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             teamid: Type.Integer(),
         }),
-        query: 'req.query.ListTeamUsers.json',
-        res: 'res.ListTeamUsers.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(User)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(UserResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Team:View');
 
-            req.query.team = req.params.teamid;
-            const list = await User.list(config.pool, req.query);
+            const list = await config.models.User.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    team = ${req.params.teamid}
+                `
+            });
 
             return res.json(list);
         } catch (err) {
@@ -42,7 +60,10 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Team:Manage');
 
-            await TeamUser.remove(config.pool, req.params.teamid, req.params.userid);
+            await config.models.UserTeam.delete(sql`
+                tid = ${req.params.teamid}
+                AND uid = ${req.params.userid}
+            `);
 
             return res.json({
                 status: 200,
@@ -60,13 +81,15 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             teamid: Type.Integer(),
         }),
-        body: 'req.body.AddUID.json',
+        body: Type.Object({
+            uid: Type.Integer()
+        }),
         res: StandardResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Team:Manage');
 
-            await TeamUser.generate(config.pool, {
+            await config.models.UserTeam.generate({
                 tid: req.params.teamid,
                 uid: req.body.uid
             });
