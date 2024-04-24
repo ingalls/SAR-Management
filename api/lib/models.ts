@@ -9,12 +9,12 @@ import TrainingModel from './models/Training.js'
 import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
 import IssueCommentModel from './models/IssueComment.js'
+import TeamModel from './models/Team.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
     UserSetting: Modeler<typeof pgtypes.UserSetting>;
     UserReset: Modeler<typeof pgtypes.UserReset>;
-    Team: Modeler<typeof pgtypes.Team>;
     UserTeam: Modeler<typeof pgtypes.UserTeam>;
     Application: Modeler<typeof pgtypes.Application>;
     Asset: Modeler<typeof pgtypes.Asset>;
@@ -36,6 +36,7 @@ export default class Models {
     TrainingAssigned: Modeler<typeof pgtypes.TrainingAssigned>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
+    Team: TeamModel;
     User: UserModel;
     Equipment: EquipmentModel;
     Mission: MissionModel;
@@ -52,16 +53,16 @@ export default class Models {
         this.Notification = new NotificationModel(pg);
         this.Leadership = new LeadershipModel(pg);
         this.Equipment = new EquipmentModel(pg);
-        this.EquipmentAssigned = EquipmentAssignedModel(pg);
+        this.EquipmentAssigned = new EquipmentAssignedModel(pg);
         this.ApplicationComment = new ApplicationCommentModel(pg);
         this.IssueComment = new IssueCommentModel(pg);
         this.Mission = new MissionModel(pg);
         this.Training = new TrainingModel(pg);
-        this.IssueAssigned = new IssueAssigned(pg);
+        this.IssueAssigned = new IssueAssignedModel(pg);
+        this.Team = new TeamModel(pg);
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
         this.UserReset = new Modeler(pg, pgtypes.UserReset);
-        this.Team = new Modeler(pg, pgtypes.Team);
         this.UserTeam = new Modeler(pg, pgtypes.UserTeam);
         this.Application = new Modeler(pg, pgtypes.Application);
         this.Asset = new Modeler(pg, pgtypes.Asset);

@@ -1,11 +1,12 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
-import Team from '../lib/types/team.js';
-import TeamView from '../lib/views/team.js';
+import { Team } from '../lib/schema.js';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import { sql } from 'drizzle-orm';
 import Auth, { Permissions } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, TeamResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/iam', {
@@ -25,18 +26,37 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Get Teams',
         group: 'Teams',
         description: 'Get all teams on the server',
-        query: 'req.query.ListTeams.json',
-        res: 'res.ListTeams.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Team)})),
+            filter: Type.Optional(Type.String({ default: '' })),
+            fieldable: Type.Boolean(),
+            userid: Type.Integer()
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(TeamResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Team:View');
 
-            const list = await TeamView.list(config.pool, req.query);
+            const list = await config.models.Team.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    name ~* ${req.query.filter}
+                    AND (${req.query.userid} IS NULL OR user_to_team.uid = ${req.query.userid})
+                    AND (${req.query.fieldable} IS NULL OR fieldable = ${req.query.fieldable})
+                `
 
-            return res.json({
-                total: list.total,
-                teams: list.view_teams
             });
+
+            return res.json(list)
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -54,7 +74,7 @@ export default async function router(schema: Schema, config: Config) {
             colour_txt: Type.Optional(Type.String()),
             fieldable: Type.Optional(Type.Boolean())
         }),
-        res: 'res.Team.json'
+        res: TeamResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Team:Manage');
@@ -72,7 +92,7 @@ export default async function router(schema: Schema, config: Config) {
             teamid: Type.Integer(),
         }),
         description: 'Return a team',
-        res: 'res.Team.json'
+        res: TeamResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Team:View');
@@ -99,12 +119,12 @@ export default async function router(schema: Schema, config: Config) {
             colour_txt: Type.Optional(Type.String()),
             fieldable: Type.Optional(Type.Boolean())
         }),
-        res: 'res.Team.json'
+        res: TeamResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:Manage');
+            const user = await Auth.is_iam(config, req, 'Team:Manage');
 
-            if (req.auth.access !== 'admin') {
+            if (user.access !== 'admin') {
                 delete req.body.iam;
             }
 

@@ -1,4 +1,5 @@
 import { createSelectSchema } from 'drizzle-typebox';
+import { AugmentedTeam } from './models/Team.js';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
 import { AugmentedIssueComment } from './models/IssueComment.js';
 import { AugmentedEquipmentAssigned } from './models/EquipmentAssigned.js';
@@ -23,6 +24,7 @@ export const PollResponse = Type.Object({
     })),
 });
 
+export const TeamResponse = AugmentedTeam;
 export const IssueAssignedResponse = AugmentedIssueAssigned;
 
 export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
