@@ -31,7 +31,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Team:View');
 
-            const list = await config.models.User.list({
+            const list = await config.models.User.augmented_list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,

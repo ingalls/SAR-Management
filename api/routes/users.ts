@@ -77,7 +77,7 @@ export default async function router(schema: Schema, config: Config) {
                     res.end();
                 });
             } else {
-                res.json(await config.models.User.list({
+                res.json(await config.models.User.augmented_list({
                     limit: req.query.limit,
                     page: req.query.page,
                     order: req.query.order,

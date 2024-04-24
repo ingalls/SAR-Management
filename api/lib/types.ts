@@ -7,6 +7,7 @@ import { AugmentedMissionAssigned } from './models/MissionAssigned.js';
 import { AugmentedTrainingAssigned } from './models/TrainingAssigned.js';
 import { AugmentedIssueAssigned } from './models/IssueAssigned.js';
 import { AugmentedEquipment } from './models/Equipment.js';
+import { AugmentedUser } from './models/User.js';
 import { AugmentedMission } from './models/Mission.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
@@ -24,6 +25,10 @@ export const PollResponse = Type.Object({
         question_id: Type.Integer(),
         votes: Type.Integer()
     })),
+});
+
+export const ServerResponse = createSelectSchema(schemas.Server, {
+    public: Type.Boolean()
 });
 
 export const TeamResponse = AugmentedTeam;
@@ -109,11 +114,6 @@ export const LeadershipResponse = Type.Object({
     uid: Type.Integer()
 });
 
-export const User_EmergencyContact = Type.Object({
-    name: Type.String(),
-    phone: Type.String(),
-    relationship: Type.String()
-})
 
 export const LoginResponse = Type.Object({
     id: Type.Integer(),
@@ -125,26 +125,7 @@ export const LoginResponse = Type.Object({
     token: Type.Optional(Type.String())
 });
 
-export const UserResponse = Type.Object({
-    id: Type.Integer(),
-    access: Type.String(),
-    disabled: Type.Boolean(),
-    username: Type.String(),
-    created: Type.String(),
-    updated: Type.String(),
-    phone: Type.String(),
-    email: Type.String(),
-    lname: Type.String(),
-    fname: Type.String(),
-    start_year: Type.Integer(),
-    last_login: Type.String(),
-    emergency: User_EmergencyContact,
-    address_street: Type.String(),
-    address_city: Type.String(),
-    address_state: Type.String(),
-    address_zip: Type.String()
-})
-
+export const UserResponse = AugmentedUser;
 export const IssueCommentResponse = AugmentedIssueComment;
 export const ApplicationCommentResponse = AugmentedApplicationComment;
 
