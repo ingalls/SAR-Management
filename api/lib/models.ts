@@ -8,6 +8,7 @@ import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
 import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
+import IssueCommentModel from './models/IssueComment.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
@@ -23,7 +24,6 @@ export default class Models {
     Fieldability: Modeler<typeof pgtypes.Fieldability>;
     Poll: Modeler<typeof pgtypes.Poll>;
     Issue: Modeler<typeof pgtypes.Issue>;
-    IssueComment: Modeler<typeof pgtypes.IssueComment>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     MissionAssigned: Modeler<typeof pgtypes.MissionAssigned>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
@@ -43,6 +43,7 @@ export default class Models {
     Notification: NotificationModel;
     Leadership: LeadershipModel;
     ApplicationComment: ApplicationCommentModel;
+    IssueComment: IssueCommentModel;
     EquipmentAssigned: EquipmentAssignedModel;
     IssueAssigned: IssueAssignedModel;
 
@@ -53,6 +54,7 @@ export default class Models {
         this.Equipment = new EquipmentModel(pg);
         this.EquipmentAssigned = EquipmentAssignedModel(pg);
         this.ApplicationComment = new ApplicationCommentModel(pg);
+        this.IssueComment = new IssueCommentModel(pg);
         this.Mission = new MissionModel(pg);
         this.Training = new TrainingModel(pg);
         this.IssueAssigned = new IssueAssigned(pg);
@@ -69,7 +71,6 @@ export default class Models {
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
         this.Poll = new Modeler(pg, pgtypes.Poll);
         this.Issue = new Modeler(pg, pgtypes.Issue);
-        this.IssueComment = new Modeler(pg, pgtypes.IssueComment);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.MissionAssigned = new Modeler(pg, pgtypes.MissionAssigned);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);

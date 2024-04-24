@@ -1,5 +1,5 @@
 import Err from '@openaddresses/batch-error';
-import { Application } from '../lib/schema.js';
+import { ApplicationComment } from '../lib/schema.js';
 import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
 import { sql } from 'drizzle-orm';
@@ -18,9 +18,9 @@ export default async function router(schema: Schema, config: Config) {
         }),
         query: Type.Object({
             limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
-            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Application)}))
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(ApplicationComment)}))
         }),
         res: Type.Object({
             total: Type.Integer(),

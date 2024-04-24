@@ -1,5 +1,6 @@
 import { createSelectSchema } from 'drizzle-typebox';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
+import { AugmentedIssueComment } from './models/IssueComment.js';
 import { AugmentedEquipmentAssigned } from './models/EquipmentAssigned.js';
 import { AugmentedIssueAssigned } from './models/IssueAssigned.js';
 import { AugmentedEquipment } from './models/Equipment.js';
@@ -118,6 +119,7 @@ export const UserResponse = Type.Object({
     address_zip: Type.String()
 })
 
+export const IssueCommentResponse = AugmentedIssueComment;
 export const ApplicationCommentResponse = AugmentedApplicationComment;
 
 export const ApplicationResponse = createSelectSchema(schemas.Application, {
