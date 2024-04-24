@@ -8,6 +8,21 @@ import { AugmentedMission } from './models/Mission.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
 
+export const PollQuestionResponse = createSelectSchema(schemas.PollQuestion, {
+    id: Type.Integer(),
+    poll_id: Type.Integer(),
+});
+
+export const PollResponse = Type.Object({
+    id: Type.Integer(),
+    questions: Type.Array(PollQuestionResponse),
+    vote: Type.Union([Type.Integer(), Type.Null()]),
+    votes: Type.Array(Type.Object({
+        question_id: Type.Integer(),
+        votes: Type.Integer()
+    })),
+});
+
 export const IssueAssignedResponse = AugmentedIssueAssigned;
 
 export const ScheduleEventResponse = createSelectSchema(schemas.ScheduleEvent, {

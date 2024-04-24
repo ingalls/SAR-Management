@@ -1,4 +1,7 @@
 import Err from '@openaddresses/batch-error';
+import { Type } from '@sinclair/typebox';
+import { PollResponse } from '../lib/types.js';
+
 import Issue from '../lib/types/issue.js';
 import Poll from '../lib/types/poll.js';
 import PollVote from '../lib/types/poll-vote.js';
@@ -15,20 +18,22 @@ export default async function router(schema: Schema, config: Config) {
             issueid: Type.Integer(),
         }),
         description: 'Get a poll for a given issue',
-        res: 'res.Poll.json'
+        res: PollResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:View');
+            const user = await Auth.is_iam(config, req, 'Issue:View');
 
-            const issue = await Issue.from(config.pool, req.params.issueid);
+            const issue = await config.models.Issue.from(req.params.issueid);
 
             if (!issue.poll_id) throw new Err(400, null, 'Issue does not have a poll');
 
-            const poll = await Poll.from(config.pool, issue.poll_id);
+            const poll = await config.models.Poll.from(issue.poll_id);
 
             let vote;
             try {
-                vote = await PollVote.from(config.pool, req.auth.id, poll.id);
+                vote = await config.models.PollVote.from(sql`
+                    uid = ${user.id} AND poll_id = ${poll.id}
+                `);
             } catch (err) {
                 vote = null;
             }
@@ -51,21 +56,23 @@ export default async function router(schema: Schema, config: Config) {
             issueid: Type.Integer(),
         }),
         description: 'Cast a vote in a poll',
-        body: 'req.body.CreatePollVote.json',
+        body: Type.Object({
+            question: Type.Integer()
+        }),
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:View');
+            const user = await Auth.is_iam(config, req, 'Issue:View');
 
-            const issue = await Issue.from(config.pool, req.params.issueid);
+            const issue = await config.models.Issue.from(req.params.issueid);
             if (!issue.poll_id) throw new Err(400, null, 'Issue does not have a poll');
 
-            const poll = await Poll.from(config.pool, issue.poll_id);
+            const poll = await config.models.Poll.from(issue.poll_id);
             const questions = poll.questions.map((question) => question.id);
             if (!questions.includes(req.body.question)) throw new Err(400, null, 'Question does not belong to this poll');
 
-            await PollVote.generate(config.pool, {
-                uid: req.auth.id,
+            await config.models.PollVote.generate({
+                uid: user.id,
                 poll_id: poll.id,
                 question_id: req.body.question
             });
