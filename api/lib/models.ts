@@ -3,6 +3,8 @@ import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
 import EquipmentAssignedModel from './models/EquipmentAssigned.js'
 import IssueAssignedModel from './models/IssueAssigned.js'
+import MissionAssignedModel from './models/MissionAssigned.js'
+import TrainingAssignedModel from './models/TrainingAssigned.js'
 import LeadershipModel from './models/Leadership.js'
 import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
@@ -25,7 +27,6 @@ export default class Models {
     Poll: Modeler<typeof pgtypes.Poll>;
     Issue: Modeler<typeof pgtypes.Issue>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
-    MissionAssigned: Modeler<typeof pgtypes.MissionAssigned>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
     PollVote: Modeler<typeof pgtypes.PollVote>;
@@ -33,14 +34,15 @@ export default class Models {
     ScheduleAssigned: Modeler<typeof pgtypes.ScheduleAssigned>;
     ScheduleEvent: Modeler<typeof pgtypes.ScheduleEvent>;
     Server: Modeler<typeof pgtypes.Server>;
-    TrainingAssigned: Modeler<typeof pgtypes.TrainingAssigned>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
     Team: TeamModel;
     User: UserModel;
     Equipment: EquipmentModel;
     Mission: MissionModel;
+    MissionAssigned: MissionAssigned;
     Training: TrainingModel;
+    TrainingAssigned: TrainingAssignedModel;
     Notification: NotificationModel;
     Leadership: LeadershipModel;
     ApplicationComment: ApplicationCommentModel;
@@ -59,6 +61,8 @@ export default class Models {
         this.Mission = new MissionModel(pg);
         this.Training = new TrainingModel(pg);
         this.IssueAssigned = new IssueAssignedModel(pg);
+        this.IssueAssigned = new TrainingAssignedModel(pg);
+        this.MissionAssigned = new MissionAssignedModel(pg);
         this.Team = new TeamModel(pg);
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
@@ -73,7 +77,6 @@ export default class Models {
         this.Poll = new Modeler(pg, pgtypes.Poll);
         this.Issue = new Modeler(pg, pgtypes.Issue);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
-        this.MissionAssigned = new Modeler(pg, pgtypes.MissionAssigned);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);
         this.PollQuestion = new Modeler(pg, pgtypes.PollQuestion);
         this.PollVote = new Modeler(pg, pgtypes.PollVote);
@@ -81,7 +84,6 @@ export default class Models {
         this.ScheduleAssigned = new Modeler(pg, pgtypes.ScheduleAssigned);
         this.ScheduleEvent = new Modeler(pg, pgtypes.ScheduleEvent);
         this.Server = new Modeler(pg, pgtypes.Server);
-        this.TrainingAssigned = new Modeler(pg, pgtypes.TrainingAssigned);
         this.TrainingTeam = new Modeler(pg, pgtypes.TrainingTeam);
     }
 }

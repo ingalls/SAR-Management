@@ -3,6 +3,8 @@ import { AugmentedTeam } from './models/Team.js';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
 import { AugmentedIssueComment } from './models/IssueComment.js';
 import { AugmentedEquipmentAssigned } from './models/EquipmentAssigned.js';
+import { AugmentedMissionAssigned } from './models/MissionAssigned.js';
+import { AugmentedTrainingAssigned } from './models/TrainingAssigned.js';
 import { AugmentedIssueAssigned } from './models/IssueAssigned.js';
 import { AugmentedEquipment } from './models/Equipment.js';
 import { AugmentedMission } from './models/Mission.js';
@@ -26,6 +28,8 @@ export const PollResponse = Type.Object({
 
 export const TeamResponse = AugmentedTeam;
 export const IssueAssignedResponse = AugmentedIssueAssigned;
+export const MissionAssignedResponse = AugmentedMissionAssigned;
+export const TrainingAssignedResponse = AugmentedTrainingAssigned;
 
 export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
     id: Type.Integer(),

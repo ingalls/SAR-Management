@@ -2,9 +2,10 @@ import Err from '@openaddresses/batch-error';
 import MissionAssigned from '../lib/types/mission-assigned.js';
 import Mission from '../lib/types/mission.js';
 import Auth from '../lib/auth.js';
+import { Type } from '@sinclair/typebox';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, MissionAssignedResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission/:missionid/assigned', {
@@ -14,7 +15,10 @@ export default async function router(schema: Schema, config: Config) {
             missionid: Type.Integer(),
         }),
         description: 'Get users assigned to an mission',
-        res: 'res.ListMissionAssigned.json'
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(MissionAssignedResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Mission:View');
