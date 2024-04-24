@@ -1,7 +1,6 @@
 import Err from '@openaddresses/batch-error';
-import MissionAssigned from '../lib/types/mission-assigned.js';
-import Mission from '../lib/types/mission.js';
 import Auth from '../lib/auth.js';
+import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
@@ -23,7 +22,9 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Mission:View');
 
-            res.json(await MissionAssigned.list(config.pool, req.params.missionid, req.query));
+            res.json(await config.models.MissionAssigned.augmented_list({
+                where: sql`mission_id = ${req.params.missionid}`
+            }))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -35,17 +36,23 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             missionid: Type.Integer(),
         }),
-        description: 'Remove an assignment',
-        body: 'req.body.CreateMissionAssigned.json',
-        res: 'missions_assigned.json'
+        description: 'Create an assignment',
+        body: Type.Object({
+            uid: Type.Integer(),
+            confirmed: Type.Boolean({ default: true }),
+            role: Type.String({ default: 'Present' })
+        }),
+        res: MissionAssignedResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Mission:Manage');
 
-            res.json(await MissionAssigned.generate(config.pool, {
+            const assigned = await config.models.MissionAssigned.generate({
                 mission_id: req.params.missionid,
                 ...req.body
-            }));
+            });
+
+            return res.json(config.models.MissionAssigned.augmented_from(assigned.id))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -59,19 +66,22 @@ export default async function router(schema: Schema, config: Config) {
             assignedid: Type.Integer()
         }),
         description: 'Update a user in a mission',
-        body: 'req.body.PatchMissionAssigned.json',
-        res: 'missions_assigned.json'
+        body: Type.Object({
+            confirmed: Type.Boolean(),
+            role: Type.String()
+        }),
+        res: MissionAssignedResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Mission:Manage');
 
-            const mission = await Mission.from(config.pool, req.params.missionid);
-            const assigned = await MissionAssigned.from(config.pool, req.params.assignedid);
+            const mission = await config.models.Mission.from(req.params.missionid);
+            const assigned = await config.models.MissionAssigned.from(req.params.assignedid);
             if (assigned.mission_id !== mission.id) throw new Err(400, null, 'Assigned User does not belong to the Mission');
 
-            await assigned.commit(req.body);
+            await config.models.MissionAssigned.commit(req.params.assignedid, req.body);
 
-            return res.json(assigned);
+            return res.json(config.models.MissionAssigned.augmented_from(assigned.id))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -90,11 +100,11 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Mission:Manage');
 
-            const mission = await Mission.from(config.pool, req.params.missionid);
-            const assigned = await MissionAssigned.from(config.pool, req.params.assignedid);
+            const mission = await config.models.Mission.from(req.params.missionid);
+            const assigned = await config.models.MissionAssigned.from(req.params.assignedid);
             if (assigned.mission_id !== mission.id) throw new Err(400, null, 'Assigned User does not belong to the Mission');
 
-            await assigned.delete();
+            await config.models.MissionAssigned.delete(req.params.missionid);
 
             return res.json({
                 status: 200,
