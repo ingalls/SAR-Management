@@ -2,7 +2,9 @@ import Modeler, { Pool } from '@openaddresses/batch-generic';
 import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
 import EquipmentAssignedModel from './models/EquipmentAssigned.js'
+import IssueModel from './models/Issue.js'
 import IssueAssignedModel from './models/IssueAssigned.js'
+import IssueCommentModel from './models/IssueComment.js'
 import MissionAssignedModel from './models/MissionAssigned.js'
 import TrainingAssignedModel from './models/TrainingAssigned.js'
 import LeadershipModel from './models/Leadership.js'
@@ -10,7 +12,6 @@ import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
 import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
-import IssueCommentModel from './models/IssueComment.js'
 import TeamModel from './models/Team.js'
 import * as pgtypes from './schema.js';
 
@@ -25,7 +26,6 @@ export default class Models {
     EquipmentType: Modeler<typeof pgtypes.EquipmentType>;
     Fieldability: Modeler<typeof pgtypes.Fieldability>;
     Poll: Modeler<typeof pgtypes.Poll>;
-    Issue: Modeler<typeof pgtypes.Issue>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
@@ -38,9 +38,10 @@ export default class Models {
 
     Team: TeamModel;
     User: UserModel;
+    Issue: IssueModel;
     Equipment: EquipmentModel;
     Mission: MissionModel;
-    MissionAssigned: MissionAssigned;
+    MissionAssigned: MissionAssignedModel;
     Training: TrainingModel;
     TrainingAssigned: TrainingAssignedModel;
     Notification: NotificationModel;
@@ -60,8 +61,9 @@ export default class Models {
         this.IssueComment = new IssueCommentModel(pg);
         this.Mission = new MissionModel(pg);
         this.Training = new TrainingModel(pg);
+        this.Issue = new IssueModel(pg);
         this.IssueAssigned = new IssueAssignedModel(pg);
-        this.IssueAssigned = new TrainingAssignedModel(pg);
+        this.TrainingAssigned = new TrainingAssignedModel(pg);
         this.MissionAssigned = new MissionAssignedModel(pg);
         this.Team = new TeamModel(pg);
 
@@ -75,7 +77,6 @@ export default class Models {
         this.EquipmentType = new Modeler(pg, pgtypes.EquipmentType);
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
         this.Poll = new Modeler(pg, pgtypes.Poll);
-        this.Issue = new Modeler(pg, pgtypes.Issue);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);
         this.PollQuestion = new Modeler(pg, pgtypes.PollQuestion);

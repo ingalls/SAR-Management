@@ -1,14 +1,11 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
-import Issue from '../lib/types/issue.js';
-import Poll from '../lib/types/poll.js';
-import PollQuestion from '../lib/types/poll-question.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
-import ViewIssue from '../lib/views/issue.js';
-import IssueAssigned from '../lib/types/issue-assigned.js';
 import Auth, { AuthRequest } from '../lib/auth.js';
+import { IssueResponse } from '../lib/types.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import Schema from '@openaddresses/batch-schema';
+import { Issue } from '../lib/schema.js';
 import Notify from '../lib/notify.js';
 import Config from '../lib/config.js';
 
@@ -24,11 +21,11 @@ export default async function router(schema: Schema, config: Config) {
                 default: 'json',
                 enum: ['csv', 'json', 'vcard']
             }),
-            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Application) }))),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Issue) }))),
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
             order: Type.Optional(Type.Enum(GenericListOrder)),
-            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Application)})),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Issue)})),
             status: Type.String({
                 default: 'open',
                 enum: ['open', 'closed']
@@ -50,7 +47,7 @@ export default async function router(schema: Schema, config: Config) {
                     res.write(stringify([req.query.fields]));
                 }
 
-                (await ViewIssue.stream(config.pool, req.query)).on('data', async (issue) => {
+                (await config.models.Issue.stream(req.query)).on('data', async (issue) => {
                     if (req.query.format === 'csv') {
                         const line = [];
                         for (const field of req.query.fields) {
@@ -62,7 +59,7 @@ export default async function router(schema: Schema, config: Config) {
                     res.end();
                 });
             } else {
-                res.json(await ViewIssue.list(config.pool, req.query));
+                res.json(await config.models.Issue.augmented_list(req.query));
             }
         } catch (err) {
             return Err.respond(err, res);
@@ -73,44 +70,54 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Issue',
         group: 'Issue',
         description: 'Create a new issue',
-        body: 'req.body.CreateIssue.json',
-        res: 'view_issues.json'
+        body: Type.Object({
+            title: Type.String(),
+            body: Type.String(),
+            assigned: Type.Optional(Type.Array(Type.Integer())),
+            poll: Type.Optional(Type.Object({
+                expiry: Type.Optional(Type.String()),
+                questions: Type.Array(Type.Object({
+                    name: Type.String()
+                }))
+            }))
+        }),
+        res: IssueResponse
     }, async (req: AuthRequest, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:Manage');
+            const user = await Auth.is_iam(config, req, 'Issue:Manage');
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
             const poll = req.body.poll;
             delete req.body.poll;
 
-            const issue = await Issue.generate(config.pool, {
+            const issue = await config.models.Issue.generate({
                 ...req.body,
-                author: req.auth.id
+                author: user.id
             });
 
             if (poll) {
-                const p = await Poll.generate(config.pool, {
+                const p = await config.models.Poll.generate({
                     expiry: poll.expiry
                 });
 
                 for (const question of poll.questions) {
-                    await PollQuestion.generate(config.pool, { poll_id: p.id, question });
+                    await config.models.PollQuestion.generate({ poll_id: p.id, question });
                 }
 
-                await issue.commit({ poll_id: p.id });
+                await config.models.Issue.commit(issue.id, { poll_id: p.id });
             }
 
             if (assigned) {
                 for (const uid of assigned) {
-                    IssueAssigned.generate(config.pool, {
+                    await config.models.IssueAssigned.generate({
                         issue_id: issue.id,
                         uid: uid
                     });
                 }
             }
 
-            res.json(await ViewIssue.from(config.pool, issue.id));
+            res.json(await config.models.Issue.augmented_from(issue.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -123,27 +130,31 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             issueid: Type.Integer(),
         }),
-        body: 'req.body.PatchIssue.json',
-        res: 'view_issues.json'
+        body: Type.Object({
+            title: Type.Optional(Type.String()),
+            body: Type.Optional(Type.String()),
+            status: Type.Optional(Type.String())
+        }),
+        res: IssueResponse
     }, async (req: AuthRequest, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:Manage');
+            const user = await Auth.is_iam(config, req, 'Issue:Manage');
 
-            const issue = await Issue.from(config.pool, req.params.issueid);
+            const issue = await config.models.Issue.from(req.params.issueid);
 
-            if (req.auth.id !== issue.author && req.auth.access !== 'admin') {
+            if (user.id !== issue.author && user.access !== 'admin') {
                 if (req.body.status !== undefined) {
-                    await issue.commit({
+                    await config.models.Issue.commit(issue.id, {
                         status: req.body.status
                     });
                 } else {
                     throw new Err(401, null, 'Cannot edit another\'s issue');
                 }
             } else {
-                await issue.commit(req.body);
+                await config.models.Issue.commit(issue.id, req.body);
             }
 
-            res.json(await ViewIssue.from(config.pool, issue.id));
+            res.json(await config.models.Issue.augmented_from(issue.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -156,12 +167,12 @@ export default async function router(schema: Schema, config: Config) {
             issueid: Type.Integer(),
         }),
         description: 'Get an issue',
-        res: 'view_issues.json'
+        res: IssueResponse
     }, async (req: AuthRequest, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:View');
 
-            res.json(await ViewIssue.from(config.pool, req.params.issueid));
+            res.json(await config.models.Issue.augmented_from(req.params.issueid));
         } catch (err) {
             return Err.respond(err, res);
         }
