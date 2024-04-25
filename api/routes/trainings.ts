@@ -1,4 +1,5 @@
 import Err from '@openaddresses/batch-error';
+import { sql } from 'drizzl-orm';
 import Training from '../lib/types/training.js';
 import TrainingView from '../lib/views/training.js';
 import TrainingAssigned from '../lib/types/training-assigned.js';
@@ -8,22 +9,47 @@ import Auth from '../lib/auth.js';
 import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, TrainingResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/training', {
         name: 'List Trainings',
         group: 'Training',
         description: 'Get all trainings for the Org',
-        query: 'req.query.ListTrainings.json',
-        res: 'res.ListTrainings.json'
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            start: Type.Optional(Type.String()),
+            end: Type.Optional(Type.String()),
+            assigned: Type.Optional(Type.Integer()),
+            required: Type.Optional(Type.Boolean()),
+            team: Type.Optional(Type.Integer()),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Mission)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(TrainingResponse)
+        })
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:View');
 
-            const list = await TrainingView.list(config.pool, req.query);
-
-            return res.json(list);
+            res.json(await config.models.Training.augmented_list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
+                    AND (${req.query.assigned}::BIGINT IS NULL OR users @> ARRAY[${req.query.assigned}::BIGINT])
+                    AND (${req.query.team}::BIGINT IS NULL OR teams_id @> ARRAY[${req.query.team}::BIGINT])
+                    AND (${req.query.required}::BOOLEAN IS NULL OR required = ${req.query.required})
+                    AND (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
+                    AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                `
+            }))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -36,7 +62,7 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             trainingid: Type.Integer(),
         }),
-        res: 'view_training.json'
+        res: TrainingResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:View');
@@ -54,7 +80,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Training',
         description: 'Create a new training',
         body: 'req.body.CreateTraining.json',
-        res: 'training.json'
+        res: TrainingResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:Manage');
@@ -70,14 +96,14 @@ export default async function router(schema: Schema, config: Config) {
             const teams = req.body.teams;
             delete req.body.teams;
 
-            const training = await Training.generate(config.pool, {
+            const training = await config.models.Training.generate({
                 ...req.body,
                 author: req.auth.id
             });
 
             if (assigned) {
                 for (const a of assigned) {
-                    await TrainingAssigned.generate(config.pool, {
+                    await config.models.TrainingAssigned.generate({
                         training_id: training.id,
                         role: a.role,
                         confirmed: a.confirmed,
@@ -88,7 +114,7 @@ export default async function router(schema: Schema, config: Config) {
 
             if (teams) {
                 for (const a of teams) {
-                    await TrainingTeam.generate(config.pool, {
+                    await config.models.TrainingTeam.generate({
                         training_id: training.id,
                         team_id: a
                     });
@@ -109,7 +135,7 @@ export default async function router(schema: Schema, config: Config) {
             trainingid: Type.Integer(),
         }),
         body: 'req.body.PatchTraining.json',
-        res: 'training.json'
+        res: TrainingResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:Manage');
@@ -124,17 +150,13 @@ export default async function router(schema: Schema, config: Config) {
             const teams = req.body.teams;
             delete req.body.teams;
 
-            const training = await Training.from(config.pool, req.params.trainingid);
-
-            await training.commit(req.body);
+            await config.models.Training.commit(req.params.trainingid, req.body);
 
             if (teams) {
-                await TrainingTeam.delete(config.pool, training.id, {
-                    column: 'training_id'
-                });
+                await config.models.TrainingTeam.delete(sql`training_id = ${training.id}`)
 
                 for (const a of teams) {
-                    await TrainingTeam.generate(config.pool, {
+                    await config.models.TrainingTeam.generate({
                         training_id: training.id,
                         team_id: a
                     });
@@ -159,8 +181,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Training:Admin');
 
-            const training = await Training.from(config.pool, req.params.trainingid);
-            await training.delete();
+            await config.models.Training.delete(req.params.trainingid);
 
             return res.json({
                 status: 200,

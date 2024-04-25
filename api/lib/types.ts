@@ -9,6 +9,7 @@ import { AugmentedTrainingAssigned } from './models/TrainingAssigned.js';
 import { AugmentedIssueAssigned } from './models/IssueAssigned.js';
 import { AugmentedEquipment } from './models/Equipment.js';
 import { AugmentedUser } from './models/User.js';
+import { AugmentedTraining } from './models/Training.js';
 import { AugmentedMission } from './models/Mission.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
@@ -75,6 +76,7 @@ export const DocResponse = Type.Object({
     type: Type.String({ enum: ["dir", "file" ] })
 });
 
+export const TrainingResponse = AugmentedTraining;
 export const MissionResponse = AugmentedMission;
 
 export const CertKnownResponse = createSelectSchema(schemas.CertKnown, {
