@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import { Type } from '@sinclair/typebox';
-import { Mission } from '../lib/types.js';
+import { Mission } from '../lib/schema.js';
 import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
@@ -121,7 +121,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(mission);
+            res.json(await config.models.Mission.augmented_from(mission.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -165,7 +165,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(mission);
+            res.json(await config.models.Mission.augmented_from(req.params.missionid));
         } catch (err) {
             return Err.respond(err, res);
         }
