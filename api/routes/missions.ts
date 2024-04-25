@@ -83,7 +83,11 @@ export default async function router(schema: Schema, config: Config) {
             end_ts: Type.String(),
             location: Type.String(),
             location_geom: Type.Optional(Type.Any()),
-            assigned: Type.Optional(Type.Array(Type.Integer())),
+            assigned: Type.Optional(Type.Array(Type.Object({
+                role: Type.String(),
+                confirmed: Type.Boolean(),
+                uid: Type.Integer()
+            }))),
             teams: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: MissionResponse
