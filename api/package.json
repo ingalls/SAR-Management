@@ -54,7 +54,7 @@
         "swagger-ui-express": "^5.0.0",
         "ts-node": "^10.9.2",
         "typescript-eslint": "^7.7.0",
-        "vcard-creator": "^0.6.0"
+        "vcard-creator": "^0.7.0"
     },
     "devDependencies": {
         "@types/express": "^4.17.21",

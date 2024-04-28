@@ -71,7 +71,6 @@ export default class ApplicationCommentModel extends Modeler<typeof ApplicationC
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedApplicationComment>> {
         const pgres = await this.pool
             .select({
-                count: sql<string>`count(*) OVER()`.as('count'),
                 id: ApplicationComment.id,
                 application: ApplicationComment.application,
                 created: ApplicationComment.created,

@@ -1,15 +1,16 @@
 import Err from '@openaddresses/batch-error';
+import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import { User } from '../lib/schema.js';
 import bcrypt from 'bcrypt';
 import Email from '../lib/email.js';
-import TeamUser from '../lib/types/team-user.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import VCard from 'vcard-creator';
 import { phone } from 'phone';
 import Schema from '@openaddresses/batch-schema';
 import { GenericListOrder } from '@openaddresses/batch-generic';
-import { UserResponse, User_EmergencyContact } from '../lib/types.js';
+import { UserResponse } from '../lib/types.js';
+import { User_EmergencyContact } from '../lib/models/User.js';
 import Config from '../lib/config.js';
 import { Type } from '@sinclair/typebox';
 
@@ -49,10 +50,6 @@ export default async function router(schema: Schema, config: Config) {
                     res.write(stringify([req.query.fields]));
                 }
                 (await config.models.User.stream({
-                    limit: req.query.limit,
-                    page: req.query.page,
-                    order: req.query.order,
-                    sort: req.query.sort,
                     where: sql`
                         (${req.query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${req.query.filter})
                         AND (${req.query.team}::BIGINT IS NULL OR users_to_teams.tid = ${req.query.team})
@@ -60,7 +57,7 @@ export default async function router(schema: Schema, config: Config) {
                     `
                 })).on('data', async (user) => {
                     if (req.query.format === 'vcard') {
-                        const card = new VCard.default();
+                        const card = new VCard();
                         card.addName(user.lname, user.fname);
                         card.addCompany('MesaSAR');
                         card.addEmail(user.email);
@@ -101,12 +98,13 @@ export default async function router(schema: Schema, config: Config) {
         body: Type.Object({
             username: Type.String(),
             email: Type.String(),
+            password: Type.Optional(Type.String()),
             phone: Type.String(),
             fname: Type.String(),
             lname: Type.String(),
             teams: Type.Optional(Type.Array(Type.Integer())),
             bday: Type.Optional(Type.String()),
-            start_year: Type.Optional(Type.String()),
+            start_year: Type.Optional(Type.Integer()),
             emergency: Type.Optional(Type.Array(User_EmergencyContact)),
             address_street: Type.Optional(Type.String()),
             address_city: Type.Optional(Type.String()),
@@ -132,13 +130,13 @@ export default async function router(schema: Schema, config: Config) {
             if (teams) {
                 const uid = user.id;
                 for (const tid of teams) {
-                    await config.models.TeamUser.generate({ tid, uid });
+                    await config.models.UserTeam.generate({ tid, uid });
                 }
             }
 
             if (config.email) await email.newuser(user);
 
-            return res.json(user);
+            return res.json(await config.models.User.augmented_from(user.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -151,28 +149,33 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             userid: Type.Integer(),
         }),
+        body: Type.Object({
             username: Type.Optional(Type.String()),
+            access: Type.Optional(Type.String()),
             email: Type.Optional(Type.String()),
             phone: Type.Optional(Type.String()),
             fname: Type.Optional(Type.String()),
             lname: Type.Optional(Type.String()),
             teams: Type.Optional(Type.Array(Type.Integer())),
             bday: Type.Optional(Type.String()),
-            start_year: Type.Optional(Type.String()),
+            start_year: Type.Optional(Type.Integer()),
             emergency: Type.Optional(Type.Array(User_EmergencyContact)),
             address_street: Type.Optional(Type.String()),
             address_city: Type.Optional(Type.String()),
             address_state: Type.Optional(Type.String()),
             address_zip: Type.Optional(Type.String()),
+        }),
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_own_or_iam(config, req, req.params.userid, 'Users:Admin');
+            const user = await Auth.is_own_or_iam(config, req, req.params.userid, 'Users:Admin');
 
             // Non-Admins can't upgrade their own accounts
-            if (req.auth.access !== 'admin') delete req.body.access;
+            if (user.access !== 'admin') delete req.body.access;
 
-            res.json(await config.models.User.commit(req.params.userid, req.body));
+            await config.models.User.commit(req.params.userid, req.body);
+
+            return res.json(await config.models.User.augmented_from(req.params.userid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -190,7 +193,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'User:View');
 
-            res.json(await User.from(config.pool, req.params.userid));
+            return res.json(await config.models.User.augmented_from(req.params.userid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -208,13 +211,13 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'User:Admin');
 
-            const user = await config.models.User.from(req.params.userid);
+            const user = await config.models.User.commit(req.params.userid, {
+                disabled: true
+            });
 
             if (config.email) await email.user_disabled(user);
 
-            res.json(await config.models.User.commit(req.params.userid, {
-                disabled: true
-            }));
+            return res.json(await config.models.User.augmented_from(req.params.userid));
         } catch (err) {
             return Err.respond(err, res);
         }
