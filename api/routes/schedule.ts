@@ -129,7 +129,7 @@ export default async function router(schema: Schema, config: Config) {
             req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
             req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
 
-            const event = await ScheduleEvent.generate(config.pool, {
+            const event = await config.models.ScheduleEvent.generate({
                 ...req.body,
                 schedule_id: req.params.scheduleid
             });
@@ -240,7 +240,7 @@ export default async function router(schema: Schema, config: Config) {
             }
 
             for (const query of queries) {
-                for (const event of (await ScheduleEvent.list(config.pool, req.params.scheduleid, {
+                for (const event of (await config.models.ScheduleEvent.list(req.params.scheduleid, {
                     start_ts: query.start,
                     end_ts: query.end
                 })).events) {
@@ -273,7 +273,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
 
-            return res.json(await Schedule.from(config.pool, req.params.scheduleid));
+            return res.json(await config.models.Schedule.from(req.params.scheduleid));
         } catch (err) {
             return Err.respond(err, res);
         }

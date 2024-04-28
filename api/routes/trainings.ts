@@ -1,12 +1,10 @@
 import Err from '@openaddresses/batch-error';
-import { sql } from 'drizzl-orm';
-import Training from '../lib/types/training.js';
-import TrainingView from '../lib/views/training.js';
-import TrainingAssigned from '../lib/types/training-assigned.js';
-import TrainingTeam from '../lib/types/training-team.js';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
+import { Training } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, TrainingResponse } from '../lib/types.js';
@@ -25,7 +23,7 @@ export default async function router(schema: Schema, config: Config) {
             assigned: Type.Optional(Type.Integer()),
             required: Type.Optional(Type.Boolean()),
             team: Type.Optional(Type.Integer()),
-            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Mission)})),
+            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Training)})),
             filter: Type.Optional(Type.String({ default: '' }))
         }),
         res: Type.Object({
@@ -67,7 +65,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Training:View');
 
-            const training = await TrainingView.from(config.pool, req.params.trainingid);
+            const training = await config.models.Training.augmented_from(req.params.trainingid);
             if (!training.users) training.users = [];
             return res.json(training);
         } catch (err) {
@@ -79,17 +77,25 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Training',
         group: 'Training',
         description: 'Create a new training',
-        body: 'req.body.CreateTraining.json',
+        body: Type.Object({
+            title: Type.String(),
+            body: Type.String(),
+            start_ts: Type.String(),
+            end_ts: Type.String(),
+            location: Type.String(),
+            location_geom: Type.Optional(Type.Any()),
+            required: Type.Boolean({ default: false }),
+            assigned: Type.Optional(Type.Array(Type.Object({
+                role: Type.String(),
+                confirmed: Type.Boolean(),
+                uid: Type.Integer()
+            }))),
+            teams: Type.Optional(Type.Array(Type.Integer()))
+        }),
         res: TrainingResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:Manage');
-
-            // TODO: Generic should handle this
-            if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
-            else delete req.body.start_ts;
-            if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
-            else delete req.body.end_ts;
+            const user = await Auth.is_iam(config, req, 'Training:Manage');
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -98,7 +104,7 @@ export default async function router(schema: Schema, config: Config) {
 
             const training = await config.models.Training.generate({
                 ...req.body,
-                author: req.auth.id
+                author: user.id
             });
 
             if (assigned) {
@@ -121,7 +127,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(training);
+            return res.json(await config.models.Training.augmented_from(training.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -134,18 +140,20 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             trainingid: Type.Integer(),
         }),
-        body: 'req.body.PatchTraining.json',
+        body: Type.Object({
+            title: Type.Optional(Type.String()),
+            body: Type.Optional(Type.String()),
+            required: Type.Optional(Type.Boolean()),
+            start_ts: Type.Optional(Type.String()),
+            end_ts: Type.Optional(Type.String()),
+            location: Type.Optional(Type.String()),
+            location_geom: Type.Optional(Type.Any()),
+            teams: Type.Optional(Type.Array(Type.Integer()))
+        }),
         res: TrainingResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:Manage');
-
-            // TODO: Generic should handle this
-            if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
-            else delete req.body.start_ts;
-
-            if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
-            else delete req.body.end_ts;
 
             const teams = req.body.teams;
             delete req.body.teams;
@@ -153,17 +161,17 @@ export default async function router(schema: Schema, config: Config) {
             await config.models.Training.commit(req.params.trainingid, req.body);
 
             if (teams) {
-                await config.models.TrainingTeam.delete(sql`training_id = ${training.id}`)
+                await config.models.TrainingTeam.delete(sql`training_id = ${req.params.trainingid}`)
 
                 for (const a of teams) {
                     await config.models.TrainingTeam.generate({
-                        training_id: training.id,
+                        training_id: req.params.trainingid,
                         team_id: a
                     });
                 }
             }
 
-            return res.json(training);
+            return res.json(await config.models.Training.augmented_from(req.params.trainingid));
         } catch (err) {
             return Err.respond(err, res);
         }
