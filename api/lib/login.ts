@@ -1,7 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from './types/user.js';
 import UserReset from './types/user_reset.js';
 import { InferSelectModel } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';

@@ -4,7 +4,7 @@ import Err from '@openaddresses/batch-error';
 import Auth, { AuthAugment } from '../lib/auth.js';
 import Login from '../lib/login.js';
 import Email from '../lib/email.js';
-import { sql } from 'slonik';
+import { sql } from 'drizzle-orm';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, LoginResponse } from '../lib/types.js';
@@ -52,7 +52,7 @@ export default async function router(schema: Schema, config: Config) {
         res: LoginResponse
     }, async (req, res) => {
         try {
-            const auth = await Login.attempt(config.pool, {
+            const auth = await Login.attempt(config, {
                 username: req.body.username.toLowerCase(),
                 password: req.body.password
             }, config.SigningSecret);
@@ -105,7 +105,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            const reset = await Login.forgot(config.pool, req.body.username); // Username or email
+            const reset = await Login.forgot(config, req.body.username); // Username or email
 
             if (config.email) {
                 await email.forgot(reset);
@@ -132,7 +132,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Login.reset(config.pool, {
+            await Login.reset(config, {
                 token: req.body.token,
                 password: req.body.password
             });
