@@ -1,10 +1,15 @@
 import Err from '@openaddresses/batch-error';
+import moment from 'moment';
+import { sql } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import UserReset from './types/user_reset.js';
+import { User } from './schema.js';
 import { InferSelectModel } from 'drizzle-orm';
-import { sql } from 'drizzle-orm';
 import Config from './config.js';
+import { promisify } from 'util';
+import crypto from 'crypto';
+
+const randomBytes = promisify(crypto.randomBytes)
 
 /**
  * @class
@@ -18,14 +23,18 @@ export default class Login {
     static async verify(config: Config, token: string): Promise<InferSelectModel<typeof User>> {
         if (!token) throw new Err(400, null, 'token required');
 
-        const reset = await config.models.UserReset.from(token, 'verify');
-        await config.models.UserReset.delete_all(reset.uid);
+        const reset = await config.models.UserReset.from(sql`
+            expires > Now()
+            AND token = ${token}
+            AND action = ${'verify'}
+        `);
+        await config.models.UserReset.delete(sql`uid = ${reset.uid}`);
 
-        const user = await config.model.User.from(reset.uid);
+        const user = await config.models.User.from(reset.uid);
 
         if (user.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
 
-        return await user.commit({
+        return await config.models.User.commit(reset.uid, {
             validated: true
         });
     }
@@ -34,14 +43,18 @@ export default class Login {
         if (!body.token) throw new Err(400, null, 'token required');
         if (!body.password) throw new Err(400, null, 'password required');
 
-        const reset = await config.models.UserReset.from(body.token, 'reset');
-        await config.models.UserReset.delete_all(reset.uid);
+        const reset = await config.models.UserReset.from(sql`
+            expires > Now()
+            AND token = ${body.token}
+            AND action = ${'reset'}
+        `);
+        await config.models.UserReset.delete(sql`uid = ${reset.uid}`);
 
         const user = await config.models.User.from(reset.uid);
 
         if (user.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
 
-        return await user.commit({
+        return await config.models.User.commit(reset.uid, {
             validated: true,
             password: await bcrypt.hash(body.password, 10)
         });
@@ -66,11 +79,16 @@ export default class Login {
             OR Lower(username) = ${username.toLowerCase()}
         `);
 
-        await config.models.UserReset.delete_all(u.id);
+        await config.models.UserReset.delete(sql`uid = ${u.id}`);
 
         if (u.disabled) throw new Err(403, null, 'Account Disabled - Please Contact Us');
 
-        const reset = await config.models.UserReset.generate(u.id, action);
+        const reset = await config.models.UserReset.generate({
+            uid: u.id,
+            expires: moment().add(1, 'hour').toISOString(),
+            token: (await randomBytes(40)).toString('hex'),
+            action: action
+        });
 
         return {
             uid: u.id,
