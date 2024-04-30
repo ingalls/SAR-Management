@@ -7,6 +7,8 @@ import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
 export const AugmentedScheduleEvent = Type.Object({
     id: Type.Integer(),
+    fname: Type.String(),
+    lname: Type.String(),
     schedule_id: Type.Integer(),
     start_ts: Type.String(),
     end_ts: Type.String(),
@@ -27,7 +29,13 @@ export default class ScheduleEventModel extends Modeler<typeof ScheduleEvent> {
         const pgres = await this.pool
             .select({
                 count: sql<string>`count(*) OVER()`.as('count'),
-                generic: this.generic
+                id: ScheduleEvent.id,
+                fname: User.fname,
+                lname: User.lname,
+                schedule_id: ScheduleEvent.schedule_id,
+                start_ts: ScheduleEvent.start_ts,
+                end_ts: ScheduleEvent.end_ts,
+                uid: ScheduleEvent.uid
             })
             .from(ScheduleEvent)
             .leftJoin(User, eq(User.id, ScheduleEvent.uid))
@@ -42,7 +50,7 @@ export default class ScheduleEventModel extends Modeler<typeof ScheduleEvent> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    return t.generic as Static<typeof AugmentedScheduleEvent>
+                    return t as Static<typeof AugmentedScheduleEvent>
                 })
             };
         }
@@ -51,7 +59,13 @@ export default class ScheduleEventModel extends Modeler<typeof ScheduleEvent> {
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedScheduleEvent>> {
         const pgres = await this.pool
             .select({
-                generic: this.generic
+                id: ScheduleEvent.id,
+                fname: User.fname,
+                lname: User.lname,
+                schedule_id: ScheduleEvent.schedule_id,
+                start_ts: ScheduleEvent.start_ts,
+                end_ts: ScheduleEvent.end_ts,
+                uid: ScheduleEvent.uid
             })
             .from(ScheduleEvent)
             .leftJoin(User, eq(User.id, ScheduleEvent.uid))
@@ -60,6 +74,6 @@ export default class ScheduleEventModel extends Modeler<typeof ScheduleEvent> {
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
 
-        return pgres[0].generic as Static<typeof AugmentedScheduleEvent>;
+        return pgres[0] as Static<typeof AugmentedScheduleEvent>;
     }
 }
