@@ -7,7 +7,12 @@ import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { Schedule, ScheduleAssigned } from '../lib/schema.js';
-import { StandardResponse, ScheduleResponse, ScheduleAssignedResponse } from '../lib/types.js';
+import {
+    StandardResponse,
+    ScheduleResponse,
+    ScheduleEventResponse,
+    ScheduleAssignedResponse 
+} from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/schedule', {
@@ -125,10 +130,6 @@ export default async function router(schema: Schema, config: Config) {
             await config.models.Schedule.from(req.params.scheduleid);
             await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
 
-            // TODO: Generic should handle this
-            req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
-            req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
-
             const event = await config.models.ScheduleEvent.generate({
                 ...req.body,
                 schedule_id: req.params.scheduleid
@@ -161,14 +162,10 @@ export default async function router(schema: Schema, config: Config) {
             const schedule = await config.models.Schedule.from(req.params.scheduleid);
             if (req.body.uid) await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
 
-            // TODO: Generic should handle this
-            if (req.body.start_ts) req.body.start_ts = moment(req.body.start_ts).unix() * 1000;
-            if (req.body.end_ts) req.body.end_ts = moment(req.body.end_ts).unix() * 1000;
-
             const event = await config.models.ScheduleEvent.from(req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
 
-            await event.commit(req.body);
+            await config.models.ScheduleEvent.commit(req.params.eventid, req.body);
 
             res.json(event);
         } catch (err) {
@@ -194,7 +191,7 @@ export default async function router(schema: Schema, config: Config) {
             const event = await config.models.ScheduleEvent.from(req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
 
-            await event.delete();
+            await config.models.ScheduleEvent.delete(req.params.eventid);
 
             res.json({
                 status: 200,
@@ -240,10 +237,13 @@ export default async function router(schema: Schema, config: Config) {
             }
 
             for (const query of queries) {
-                for (const event of (await config.models.ScheduleEvent.list(req.params.scheduleid, {
-                    start_ts: query.start,
-                    end_ts: query.end
-                })).events) {
+                for (const event of (await config.models.ScheduleEvent.list({
+                    where: sql`
+                        schedule_id = ${req.params.scheduleid}
+                        AND start_ts >= ${query.start}
+                        AND end_ts <= ${query.end}
+                    `
+                })).items) {
                     events.push({
                         id: event.id,
                         uid: event.uid,

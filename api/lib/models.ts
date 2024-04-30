@@ -1,6 +1,7 @@
 import Modeler, { Pool } from '@openaddresses/batch-generic';
 import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
+import ScheduleEventModel from './models/ScheduleEvent.js'
 import EquipmentAssignedModel from './models/EquipmentAssigned.js'
 import IssueModel from './models/Issue.js'
 import IssueAssignedModel from './models/IssueAssigned.js'
@@ -32,7 +33,6 @@ export default class Models {
     PollVote: Modeler<typeof pgtypes.PollVote>;
     Schedule: Modeler<typeof pgtypes.Schedule>;
     ScheduleAssigned: Modeler<typeof pgtypes.ScheduleAssigned>;
-    ScheduleEvent: Modeler<typeof pgtypes.ScheduleEvent>;
     Server: Modeler<typeof pgtypes.Server>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
@@ -50,6 +50,7 @@ export default class Models {
     IssueComment: IssueCommentModel;
     EquipmentAssigned: EquipmentAssignedModel;
     IssueAssigned: IssueAssignedModel;
+    ScheduleEvent: ScheduleEventModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
         this.User = new UserModel(pg);
@@ -61,6 +62,7 @@ export default class Models {
         this.IssueComment = new IssueCommentModel(pg);
         this.Mission = new MissionModel(pg);
         this.Training = new TrainingModel(pg);
+        this.ScheduleEvent = new ScheduleEventModel(pg);
         this.Issue = new IssueModel(pg);
         this.IssueAssigned = new IssueAssignedModel(pg);
         this.TrainingAssigned = new TrainingAssignedModel(pg);
@@ -83,7 +85,6 @@ export default class Models {
         this.PollVote = new Modeler(pg, pgtypes.PollVote);
         this.Schedule = new Modeler(pg, pgtypes.Schedule);
         this.ScheduleAssigned = new Modeler(pg, pgtypes.ScheduleAssigned);
-        this.ScheduleEvent = new Modeler(pg, pgtypes.ScheduleEvent);
         this.Server = new Modeler(pg, pgtypes.Server);
         this.TrainingTeam = new Modeler(pg, pgtypes.TrainingTeam);
     }
