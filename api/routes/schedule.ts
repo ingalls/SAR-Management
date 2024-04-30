@@ -135,7 +135,7 @@ export default async function router(schema: Schema, config: Config) {
                 schedule_id: req.params.scheduleid
             });
 
-            res.json(event);
+            return res.json(await config.models.ScheduleEvent.augmented_from(event.id))
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -167,7 +167,7 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.ScheduleEvent.commit(req.params.eventid, req.body);
 
-            res.json(event);
+            return res.json(await config.models.ScheduleEvent.augmented_from(req.params.eventid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -237,7 +237,7 @@ export default async function router(schema: Schema, config: Config) {
             }
 
             for (const query of queries) {
-                for (const event of (await config.models.ScheduleEvent.list({
+                for (const event of (await config.models.ScheduleEvent.augmented_list({
                     where: sql`
                         schedule_id = ${req.params.scheduleid}
                         AND start_ts >= ${query.start}
@@ -310,7 +310,7 @@ export default async function router(schema: Schema, config: Config) {
                     name ~* ${req.query.filter}
                     AND schedule_id = ${req.params.scheduleid}
                 `
-            });
+            }));
         } catch (err) {
             return Err.respond(err, res);
         }
