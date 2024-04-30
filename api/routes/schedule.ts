@@ -128,7 +128,15 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Schedule:View');
 
             await config.models.Schedule.from(req.params.scheduleid);
-            await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
+
+            try {
+                await config.models.ScheduleAssigned.from(sql`
+                    schedule_id = ${req.params.scheduleid}
+                    AND uid = ${req.body.uid}
+                `);
+            } catch (err) {
+                throw new Error('User is not part of On-Call Schedule')
+            }
 
             const event = await config.models.ScheduleEvent.generate({
                 ...req.body,
@@ -160,7 +168,16 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Schedule:View');
 
             const schedule = await config.models.Schedule.from(req.params.scheduleid);
-            if (req.body.uid) await ScheduleAssigned.is_user(config.pool, req.params.scheduleid, req.body.uid);
+            if (req.body.uid) {
+                try {
+                    await config.models.ScheduleAssigned.from(sql`
+                        schedule_id = ${req.params.scheduleid}
+                        AND uid = ${req.body.uid}
+                    `);
+                } catch (err) {
+                    throw new Error('User is not part of On-Call Schedule')
+                }
+            }
 
             const event = await config.models.ScheduleEvent.from(req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
