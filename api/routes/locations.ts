@@ -1,4 +1,5 @@
 import { union } from 'drizzle-orm/pg-core'
+import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import Location from '../lib/views/location.js';
 import Auth from '../lib/auth.js';
