@@ -1,9 +1,9 @@
 import { union } from 'drizzle-orm/pg-core'
 import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
-import Location from '../lib/views/location.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
+import { GenericListOrder } from '@openaddresses/batch-generic';
 import Config from '../lib/config.js';
 import * as schemas from './schema.js';
 
