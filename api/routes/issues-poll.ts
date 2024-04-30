@@ -1,14 +1,10 @@
 import Err from '@openaddresses/batch-error';
+import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
-import { PollResponse } from '../lib/types.js';
-
-import Issue from '../lib/types/issue.js';
-import Poll from '../lib/types/poll.js';
-import PollVote from '../lib/types/poll-vote.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { StandardResponse } from '../lib/types.js';
+import { StandardResponse, PollResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/issue/:issueid/poll', {
@@ -39,7 +35,7 @@ export default async function router(schema: Schema, config: Config) {
             }
 
             return res.json({
-                ...poll.serialize(),
+                ...poll,
                 questions: poll.questions,
                 vote: vote ? vote.question_id : null,
                 votes: poll.votes
