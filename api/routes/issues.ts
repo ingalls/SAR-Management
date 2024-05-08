@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { GenericListOrder } from '@openaddresses/batch-generic';
-import Auth, { AuthRequest } from '../lib/auth.js';
+import Auth from '../lib/auth.js';
 import { IssueResponse } from '../lib/types.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import Schema from '@openaddresses/batch-schema';
@@ -36,7 +36,7 @@ export default async function router(schema: Schema, config: Config) {
             total: Type.Integer(),
             items: Type.Array(IssueResponse)
         })
-    }, async (req: AuthRequest, res) => {
+    }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:View');
 
@@ -82,7 +82,7 @@ export default async function router(schema: Schema, config: Config) {
             }))
         }),
         res: IssueResponse
-    }, async (req: AuthRequest, res) => {
+    }, async (req, res) => {
         try {
             const user = await Auth.is_iam(config, req, 'Issue:Manage');
 
@@ -136,7 +136,7 @@ export default async function router(schema: Schema, config: Config) {
             status: Type.Optional(Type.String())
         }),
         res: IssueResponse
-    }, async (req: AuthRequest, res) => {
+    }, async (req, res) => {
         try {
             const user = await Auth.is_iam(config, req, 'Issue:Manage');
 
@@ -168,7 +168,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
         description: 'Get an issue',
         res: IssueResponse
-    }, async (req: AuthRequest, res) => {
+    }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Issue:View');
 

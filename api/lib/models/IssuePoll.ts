@@ -27,7 +27,7 @@ export default class IssueCommentModel extends Modeler<typeof IssueComment> {
         super(pool, IssueComment);
     }
 
-    async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedIssueComment>>> {
+    async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedPoll>>> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
@@ -62,13 +62,13 @@ export default class IssueCommentModel extends Modeler<typeof IssueComment> {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
                     delete t.count;
-                    return t as Static<typeof AugmentedIssueComment>
+                    return t as Static<typeof AugmentedPoll>
                 })
             };
         }
     }
 
-    async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedIssueComment>> {
+    async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedPoll>> {
         const pgres = await this.pool
             .select({
                 id: IssueComment.id,
@@ -91,6 +91,6 @@ export default class IssueCommentModel extends Modeler<typeof IssueComment> {
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
 
-        return pgres[0] as Static<typeof AugmentedIssueComment>;
+        return pgres[0] as Static<typeof AugmentedPoll>;
     }
 }

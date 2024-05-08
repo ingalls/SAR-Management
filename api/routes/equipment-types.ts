@@ -1,6 +1,5 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
-import EquipmentType from '../lib/types/equipment-type.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';

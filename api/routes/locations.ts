@@ -1,11 +1,12 @@
 import { union } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import Config from '../lib/config.js';
-import * as schemas from './schema.js';
+import { Training, Mission } from '../lib/schema.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/location', {
@@ -14,12 +15,10 @@ export default async function router(schema: Schema, config: Config) {
         description: 'Return a combined list of mission/training locations to populate the location search box',
         query: Type.Object({
             limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
-            order: Type.Optional(Type.Enum(GenericListOrder)),
-            sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Application)})),
+            page: Type.Optional(Type.Integer()),
             filter: Type.Optional(Type.String({ default: '' }))
         }),
-        res: 'res.ListLocations.json'
+        res: Type.Any()
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Mission:View');
@@ -32,32 +31,32 @@ export default async function router(schema: Schema, config: Config) {
                         location: Training.location,
                         location_geom: Training.location_geom
                     })
-                    .from(schemas.Training),
+                    .from(Training),
                 config.pool
                     .select({
                         location: Mission.location,
                         location_geom: Mission.location_geom
                     })
-                    .from(schemas.Mission),
+                    .from(Mission),
             )
-                .where(query.where)
-                .orderBy(orderBy)
-                .limit(query.limit || 10)
-                .offset((query.page || 0) * (query.limit || 10))
+                .where(sql`
+                    name ~* ${req.query.filter}
+                `)
+                .limit(req.query.limit || 10)
+                .offset((req.query.page || 0) * (req.query.limit || 10))
 
-        if (pgres.length === 0) {
-            return { total: 0, items: [] };
-        } else {
-            return {
-                total: parseInt(pgres[0].count),
-                items: pgres.map((t) => {
-                    delete t.count;
-                    return t as Static<typeof AugmentedEquipment>
-                })
-            };
-        }
+            if (pgres.length === 0) {
+                return res.json({ total: 0, items: [] });
+            } else {
+                return res.json({
+                    total: parseInt(pgres[0].count),
+                    items: pgres.map((t) => {
+                        delete t.count;
+                        return t
+                    })
+                });
+            }
 
-            res.json(await Location.list(config.pool, req.query));
         } catch (err) {
             return Err.respond(err, res);
         }
