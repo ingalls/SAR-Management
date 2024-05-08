@@ -47,7 +47,7 @@ export default async function router(schema: Schema, config: Config) {
                     res.write(stringify([req.query.fields]));
                 }
 
-                (await config.models.Issue.stream(req.query)).on('data', async (issue) => {
+                (await config.models.Issue.stream()).on('data', async (issue) => {
                     if (req.query.format === 'csv') {
                         const line = [];
                         for (const field of req.query.fields) {
