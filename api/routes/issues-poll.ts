@@ -34,9 +34,19 @@ export default async function router(schema: Schema, config: Config) {
                 vote = null;
             }
 
+            const questions = await config.models.PollQuestion.list({
+                where: sql`poll_id = ${poll.id}`,
+                limit: 1000
+            });
+
+            const votes = await config.models.PollVote.list({
+                where: sql`poll_id = ${poll.id}`,
+                limit: 1000
+            });
+
             return res.json({
                 ...poll,
-                questions: poll.questions,
+                questions: questions.items,
                 vote: vote ? vote.question_id : null,
                 votes: poll.votes
             });
@@ -64,8 +74,8 @@ export default async function router(schema: Schema, config: Config) {
             if (!issue.poll_id) throw new Err(400, null, 'Issue does not have a poll');
 
             const poll = await config.models.Poll.from(issue.poll_id);
-            const questions = poll.questions.map((question) => question.id);
-            if (!questions.includes(req.body.question)) throw new Err(400, null, 'Question does not belong to this poll');
+            const question = await config.models.PollQuestion.from(req.body.question);
+            if (question.poll_id !== poll.id) throw new Err(400, null, 'Question does not belong to this poll');
 
             await config.models.PollVote.generate({
                 uid: user.id,
