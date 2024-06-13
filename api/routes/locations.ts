@@ -24,24 +24,22 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Mission:View');
             await Auth.is_iam(config, req, 'Training:View');
 
-            //count: sql<string>`count(*) OVER()`.as('count'),
-            const pgres = await union(
-                config.pool
-                    .select({
-                        location: Training.location,
-                        location_geom: Training.location_geom
-                    })
-                    .from(Training),
-                config.pool
+            const pgres = await config.pool
+                .select({
+                    location: Training.location,
+                    location_geom: Training.location_geom
+                })
+                .from(Training)
+                .where(sql`name ~* ${req.query.filter}`)
+                .union(
+                    config.pool
                     .select({
                         location: Mission.location,
                         location_geom: Mission.location_geom
                     })
-                    .from(Mission),
-            )
-                .where(sql`
-                    name ~* ${req.query.filter}
-                `)
+                    .from(Mission)
+                    .where(sql`name ~* ${req.query.filter}`)
+                )
                 .limit(req.query.limit || 10)
                 .offset((req.query.page || 0) * (req.query.limit || 10))
 
@@ -49,11 +47,8 @@ export default async function router(schema: Schema, config: Config) {
                 return res.json({ total: 0, items: [] });
             } else {
                 return res.json({
-                    total: parseInt(pgres[0].count),
-                    items: pgres.map((t) => {
-                        delete t.count;
-                        return t
-                    })
+                    total: pgres.length,
+                    items: pgres
                 });
             }
 
