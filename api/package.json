@@ -52,11 +52,11 @@
         "phone": "^3.1.37",
         "sharp": "^0.33.2",
         "swagger-ui-express": "^5.0.0",
-        "ts-node": "^10.9.2",
-        "typescript-eslint": "^7.7.0",
         "vcard-creator": "^0.7.0"
     },
     "devDependencies": {
+        "tsx": "^4.15.6",
+        "typescript-eslint": "^7.7.0",
         "@types/express": "^4.17.21",
         "@types/geojson": "^7946.0.14",
         "@types/swagger-ui-express": "^4.1.3",
