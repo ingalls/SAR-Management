@@ -8,6 +8,7 @@ import IssueAssignedModel from './models/IssueAssigned.js'
 import IssueCommentModel from './models/IssueComment.js'
 import MissionAssignedModel from './models/MissionAssigned.js'
 import TrainingAssignedModel from './models/TrainingAssigned.js'
+import PollModel from './models/IssuePoll.js'
 import LeadershipModel from './models/Leadership.js'
 import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
@@ -26,7 +27,6 @@ export default class Models {
     Cert: Modeler<typeof pgtypes.Cert>;
     EquipmentType: Modeler<typeof pgtypes.EquipmentType>;
     Fieldability: Modeler<typeof pgtypes.Fieldability>;
-    Poll: Modeler<typeof pgtypes.Poll>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
@@ -36,6 +36,7 @@ export default class Models {
     Server: Modeler<typeof pgtypes.Server>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
 
+    Poll: PollModel;
     Team: TeamModel;
     User: UserModel;
     Issue: IssueModel;
@@ -53,6 +54,7 @@ export default class Models {
     ScheduleEvent: ScheduleEventModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
+        this.Poll = new PollModel(pg);
         this.User = new UserModel(pg);
         this.Notification = new NotificationModel(pg);
         this.Leadership = new LeadershipModel(pg);
@@ -78,7 +80,6 @@ export default class Models {
         this.Cert = new Modeler(pg, pgtypes.Cert);
         this.EquipmentType = new Modeler(pg, pgtypes.EquipmentType);
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
-        this.Poll = new Modeler(pg, pgtypes.Poll);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);
         this.PollQuestion = new Modeler(pg, pgtypes.PollQuestion);

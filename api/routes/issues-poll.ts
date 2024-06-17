@@ -23,7 +23,7 @@ export default async function router(schema: Schema, config: Config) {
 
             if (!issue.poll_id) throw new Err(400, null, 'Issue does not have a poll');
 
-            const poll = await config.models.Poll.from(issue.poll_id);
+            const poll = await config.models.Poll.augmented_from(issue.poll_id);
 
             let vote;
             try {
@@ -34,22 +34,7 @@ export default async function router(schema: Schema, config: Config) {
                 vote = null;
             }
 
-            const questions = await config.models.PollQuestion.list({
-                where: sql`poll_id = ${poll.id}`,
-                limit: 1000
-            });
-
-            const votes = await config.models.PollVote.list({
-                where: sql`poll_id = ${poll.id}`,
-                limit: 1000
-            });
-
-            return res.json({
-                ...poll,
-                questions: questions.items,
-                vote: vote ? vote.question_id : null,
-                votes: poll.votes
-            });
+            return res.json({ ...poll, vote })
         } catch (err) {
             return Err.respond(err, res);
         }

@@ -22,6 +22,7 @@ export const PollQuestionResponse = createSelectSchema(schemas.PollQuestion, {
 
 export const PollResponse = Type.Object({
     id: Type.Integer(),
+    expiry: Type.String(),
     questions: Type.Array(PollQuestionResponse),
     vote: Type.Union([Type.Integer(), Type.Null()]),
     votes: Type.Array(Type.Object({

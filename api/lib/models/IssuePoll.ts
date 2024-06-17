@@ -1,96 +1,58 @@
-import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/batch-generic';
+import Modeler from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { IssueComment, User } from '../schema.js';
-import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { Poll, PollQuestion, PollVote, User } from '../schema.js';
+import { InferSelectModel, sql, eq, is, SQL } from 'drizzle-orm';
+import * as Types from '../types.js';
+
+const AugmentedPollQuestion = Type.Object({
+    id: Type.Integer(),
+    poll_id: Type.Integer(),
+    question: Type.String()
+})
 
 export const AugmentedPoll = Type.Object({
     id: Type.Integer(),
-    issue: Type.Integer(),
-    created: Type.String(),
-    updated: Type.String(),
-    body: Type.String(),
-    author: Type.Integer(),
-    archived: Type.Boolean(),
-    user: Type.Object({
-        id: Type.Integer(),
-        fname: Type.String(),
-        lname: Type.String()
-    })
+    expiry: Type.String(),
+    questions: Type.Array(AugmentedPollQuestion),
+    votes: Type.Array(Type.Object({
+        question_id: Type.Integer(),
+        votes: Type.Integer()
+    }))
 });
 
-export default class IssueCommentModel extends Modeler<typeof IssueComment> {
+export default class PollModel extends Modeler<typeof Poll> {
     constructor(
         pool: PostgresJsDatabase<any>,
     ) {
-        super(pool, IssueComment);
-    }
-
-    async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedPoll>>> {
-        const order = query.order && query.order === 'desc' ? desc : asc;
-        const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
-
-
-        const pgres = await this.pool
-            .select({
-                count: sql<string>`count(*) OVER()`.as('count'),
-                id: IssueComment.id,
-                issue: IssueComment.issue,
-                created: IssueComment.created,
-                updated: IssueComment.updated,
-                body: IssueComment.body,
-                author: IssueComment.author,
-                archived: IssueComment.archived,
-                user: sql<{
-                    id: number;
-                    fname: string;
-                    lname: string;
-                }>`json_build_object('id', users.id, 'fname', users.fname, 'lname', users.lname)`.as('user')
-            })
-            .from(IssueComment)
-            .leftJoin(User, eq(User.id, IssueComment.author))
-            .where(query.where)
-            .orderBy(orderBy)
-            .limit(query.limit || 10)
-            .offset((query.page || 0) * (query.limit || 10))
-
-        if (pgres.length === 0) {
-            return { total: 0, items: [] };
-        } else {
-            return {
-                total: parseInt(pgres[0].count),
-                items: pgres.map((t) => {
-                    delete t.count;
-                    return t as Static<typeof AugmentedPoll>
-                })
-            };
-        }
+        super(pool, Poll);
     }
 
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedPoll>> {
         const pgres = await this.pool
             .select({
-                id: IssueComment.id,
-                issue: IssueComment.issue,
-                created: IssueComment.created,
-                updated: IssueComment.updated,
-                body: IssueComment.body,
-                author: IssueComment.author,
-                archived: IssueComment.archived,
-                user: sql<{
-                    id: number;
-                    fname: string;
-                    lname: string;
-                }>`json_build_object('id', users.id, 'fname', users.fname, 'lname', users.lname)`.as('user')
+                id: Poll.id,
+                expiry: Poll.expiry,
+                questions: sql<Array<Static<typeof AugmentedPollQuestion>>>`JSON_AGG(ROW_TO_JSON(poll_questions.*))`.as('questions'),
+                votes: PollVote
             })
-            .from(IssueComment)
-            .leftJoin(User, eq(User.id, IssueComment.author))
+            .from(Poll)
+            .leftJoin(PollVote, eq(Poll.id, PollVote.poll_id))
+            .leftJoin(PollQuestion, eq(Poll.id, PollVote.poll_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
-            .limit(1);
+            .groupBy(PollVote.question_id);
 
-        if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
+        if (pgres.length === 0) {
+            throw new Err(404, null, 'Poll Not Found');
+        }
 
-        return pgres[0] as Static<typeof AugmentedPoll>;
+        // TODO Add Vote info
+        return {
+            id: pgres[0].id,
+            expiry: pgres[0].expiry,
+            questions: pgres[0].questions,
+            votes: []
+        }
     }
 }
