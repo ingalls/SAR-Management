@@ -23,8 +23,8 @@
                                 <div class='col d-flex'>
                                     <h1 class='card-title'>Notifications</h1>
                                     <div class='ms-auto btn-list'>
-                                        <TrashIcon @click='clearNotifications' class='cursor-pointer'/>
-                                        <SettingsIcon @click='$router.push("/notification/settings")' class='cursor-pointer'/>
+                                        <IconTrash v-if='list.total' @click='clearNotifications' class='cursor-pointer' size='32'/>
+                                        <IconSettings @click='$router.push("/notification/settings")' class='cursor-pointer' size='32'/>
                                     </div>
                                 </div>
                             </div>
@@ -33,12 +33,12 @@
                                     <TablerNone label='Notifications' :create='false'/>
                                 </template>
                                 <template v-else>
-                                    <div :key='notify.id' v-for='notify in list.notifications'  class='col py-2 d-flex align-items-center hover-light rounded'>
-                                        <CircleDotIcon class='mx-2' />
+                                    <div :key='notify.id' v-for='notify in list.items'  class='col py-2 d-flex align-items-center hover-light rounded'>
+                                        <IconCircleDot class='mx-2' size='32'/>
                                         <span v-if='!notify.url' v-text='notify.text'/>
                                         <a v-else :href='notify.url' v-text='notify.text'/>
                                         <div class='ms-auto btn-list mx-2'>
-                                            <TrashIcon @click='clearNotifications(notify)' class='cursor-pointer'/>
+                                            <IconTrash @click='clearNotifications(notify)' class='cursor-pointer' size='32'/>
                                         </div>
                                     </div>
                                 </template>
@@ -59,10 +59,10 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    SettingsIcon,
-    CircleDotIcon,
-    TrashIcon
-} from 'vue-tabler-icons';
+    IconSettings,
+    IconCircleDot,
+    IconTrash
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Notifications',
@@ -73,7 +73,7 @@ export default {
             },
             list: {
                 total: 0,
-                notifications: []
+                items: []
             }
         }
     },
@@ -106,10 +106,10 @@ export default {
     },
     components: {
         TablerNone,
-        SettingsIcon,
-        CircleDotIcon,
+        IconTrash,
+        IconSettings,
+        IconCircleDot,
         TablerLoading,
-        TrashIcon,
         TablerBreadCrumb
     }
 }
