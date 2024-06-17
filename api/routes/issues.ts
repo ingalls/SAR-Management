@@ -6,11 +6,9 @@ import { IssueResponse } from '../lib/types.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import Schema from '@openaddresses/batch-schema';
 import { Issue } from '../lib/schema.js';
-import Notify from '../lib/notify.js';
 import Config from '../lib/config.js';
 
 export default async function router(schema: Schema, config: Config) {
-    const notify = new Notify(config);
 
     await schema.get('/issue', {
         name: 'Get Issues',

@@ -1,10 +1,9 @@
-import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/batch-generic';
+import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-generic';
 import { Iam } from '../auth.js';
-import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Team, UserTeam, User } from '../schema.js';
-import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { sql, eq, asc, desc } from 'drizzle-orm';
 
 export const AugmentedTeam = Type.Object({
     id: Type.Integer(),
@@ -22,7 +21,7 @@ export const AugmentedTeam = Type.Object({
 
 export default class TeamModel extends Modeler<typeof Team> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, Team);
     }

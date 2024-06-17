@@ -1,4 +1,4 @@
-import Modeler, { Param } from '@openaddresses/batch-generic';
+import Modeler from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
@@ -19,7 +19,7 @@ export const LeaderList = Type.Object({
 
 export default class LeadershipModel extends Modeler<typeof pgschema.Leadership> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, pgschema.Leadership);
     }

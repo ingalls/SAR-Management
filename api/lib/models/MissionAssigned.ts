@@ -1,9 +1,9 @@
-import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/batch-generic';
+import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { User, MissionAssigned } from '../schema.js';
-import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
 export const AugmentedMissionAssigned = Type.Object({
     id: Type.Integer(),
@@ -18,7 +18,7 @@ export const AugmentedMissionAssigned = Type.Object({
 
 export default class MissionAssignedModel extends Modeler<typeof MissionAssigned> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, MissionAssigned);
     }

@@ -170,7 +170,7 @@ export default async function router(schema: Schema, config: Config) {
         await Auth.is_auth(config, req);
 
         try {
-            let asset = await config.models.Asset.commit(req.params.assetid, req.body);
+            const asset = await config.models.Asset.commit(req.params.assetid, req.body);
             return res.json({ asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset });
         } catch (err) {
             return Err.respond(err, res);

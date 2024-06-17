@@ -1,9 +1,9 @@
-import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/batch-generic';
+import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Training, TrainingTeam, TrainingAssigned, Team } from '../schema.js';
-import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { sql, eq, is, asc, desc, max, SQL, count } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
     id: Type.Integer(),
@@ -34,7 +34,7 @@ export const AugmentedTraining = Type.Object({
 
 export default class TrainingModel extends Modeler<typeof Training> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, Training);
     }
@@ -43,10 +43,26 @@ export default class TrainingModel extends Modeler<typeof Training> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
-
-        const pgres = await this.pool
+        const RootTeams = this.pool
             .select({
-                count: sql<string>`count(*) OVER()`.as('count'),
+                training_id: max(TrainingTeam.training_id),
+                teams_id: sql<Array<number>>`json_agg(teams.id)`.as('teams_id'),
+                teams: sql<Array<Static<typeof PartialTeam>>>`json_agg(json_build_object(
+                    'id', teams.id,
+                    'created', teams.created,
+                    'updated', teams.updated,
+                    'public', teams.public,
+                    'colour_bg', teams.colour_bg,
+                    'colour_txt', teams.colour_txt,
+                    'fieldable', teams.fieldable
+                ))`.as('teams'),
+            })
+            .from(TrainingTeam)
+            .leftJoin(Team, eq(Team.id, TrainingTeam.team_id))
+            .groupBy(TrainingTeam.training_id);
+
+        const Root = this.pool
+            .select({
                 id: Training.id,
                 created: Training.created,
                 updated: Training.updated,
@@ -58,22 +74,23 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 location: Training.location,
                 location_geom: Training.location_geom,
                 required: Training.required,
-                users: sql<Array<number>>`json_agg(training_assigned.uid)`.as('users'),
-                teams: sql<Array<Static<typeof PartialTeam>>>`json_agg(json_build_object(
-                    'id', teams.id,
-                    'created', teams.created,
-                    'updated', teams.updated,
-                    'public', teams.public,
-                    'colour_bg', teams.colour_bg,
-                    'colour_txt', teams.colour_txt,
-                    'fieldable', teams.fieldable
-                ))`.as('teams'),
-                teams_id: sql<Array<number>>`json_agg(teams.id)`
+                teams: RootTeams._.selectedFields.teams,
+                teams_id: RootTeams._.selectedFields.teams_id,
+                users: sql<Array<number>>`json_agg(trainings_assigned.uid)`.as('users'),
             })
             .from(Training)
-            .leftJoin(TrainingTeam, eq(Training.id, TrainingTeam.training_id))
-            .leftJoin(Team, eq(Team.id, TrainingTeam.team_id))
+            .leftJoin(RootTeams, eq(Training.id, RootTeams._.selectedFields.training_id))
             .leftJoin(TrainingAssigned, eq(TrainingAssigned.training_id, Training.id))
+
+        console.error('PRE')
+        console.error(await Root);
+        console.error('POST')
+
+        const pgres = await this.pool.select({
+            count: count(),
+            Root
+        })
+            .from(Root)
             .where(query.where)
             .orderBy(orderBy)
             .limit(query.limit || 10)

@@ -1,22 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
-import {
-    AuthUserType
-} from './lib/auth.js';
-import express, {
-    Request,
-    Response,
-    NextFunction
-} from 'express';
 import minify from 'express-minify';
 import history from 'connect-history-api-fallback';
+import express from 'express';
 import Schema from '@openaddresses/batch-schema';
 import { Pool } from '@openaddresses/batch-generic';
 import minimist from 'minimist';
-import jwt from 'jsonwebtoken';
-import Err from '@openaddresses/batch-error';
-import { AuthAugment } from './lib/auth.js';
 import SwaggerUI from 'swagger-ui-express';
 import Models from './lib/models.js';
 
@@ -145,7 +135,7 @@ export default async function server(config) {
 
     app.use(express.static('web/dist'));
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const srv = app.listen(4999, () => {
             if (!config.silent) console.log('ok - http://localhost:4999');
             resolve(srv);

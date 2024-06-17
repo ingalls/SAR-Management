@@ -13,7 +13,7 @@
     <template v-else-if='loading'>
         <TablerLoading desc='Loading Issues'/>
     </template>
-    <template v-else-if='!list.issues.length'>
+    <template v-else-if='!list.items.length'>
         <TablerNone :create='false' label='Assigned Issues'/>
     </template>
     <template v-else>
@@ -27,7 +27,7 @@
                     @export='exportIssues("csv")'
                 />
                 <tbody>
-                    <tr @click='$router.push(`/issue/${issue.id}`)' :key='issue.id' v-for='(issue, issue_it) in list.issues' class='cursor-pointer'>
+                    <tr @click='$router.push(`/issue/${issue.id}`)' :key='issue.id' v-for='(issue, issue_it) in list.items' class='cursor-pointer'>
                         <template v-for='h in header'>
                             <template v-if='h.display'>
                                 <td v-if='["updated", "created"].includes(h.name)'>
@@ -112,7 +112,7 @@ export default {
             },
             list: {
                 total: 0,
-                issues: []
+                items: []
             }
         }
     },

@@ -2,9 +2,8 @@ import Modeler from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Poll, PollQuestion, PollVote, User } from '../schema.js';
-import { InferSelectModel, sql, eq, is, SQL } from 'drizzle-orm';
-import * as Types from '../types.js';
+import { Poll, PollQuestion, PollVote } from '../schema.js';
+import { sql, eq, is, SQL } from 'drizzle-orm';
 
 const AugmentedPollQuestion = Type.Object({
     id: Type.Integer(),
@@ -24,7 +23,7 @@ export const AugmentedPoll = Type.Object({
 
 export default class PollModel extends Modeler<typeof Poll> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, Poll);
     }

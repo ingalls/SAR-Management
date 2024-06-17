@@ -114,7 +114,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Mission:Admin');
 
-            const role = await config.models.MissionRole.delete(req.params.roleid);
+            await config.models.MissionRole.delete(req.params.roleid);
 
             return res.json({
                 status: 200,

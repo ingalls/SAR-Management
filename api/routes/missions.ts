@@ -4,7 +4,6 @@ import { Type } from '@sinclair/typebox';
 import { Mission } from '../lib/schema.js';
 import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
-import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, MissionResponse } from '../lib/types.js';
@@ -187,7 +186,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Mission:Admin');
 
-            const mission = await config.models.Mission.delete(req.params.missionid);
+            await config.models.Mission.delete(req.params.missionid);
 
             return res.json({
                 status: 200,

@@ -1,4 +1,4 @@
-import Modeler, { Param } from '@openaddresses/batch-generic';
+import Modeler from '@openaddresses/batch-generic';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Notification, User, UserTeam, Team } from '../schema.js';
 import { sql, eq } from 'drizzle-orm';
@@ -17,7 +17,7 @@ export type UserList = {
 
 export default class NotificationModel extends Modeler<typeof Notification> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, Notification);
     }

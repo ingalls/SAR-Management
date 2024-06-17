@@ -1,9 +1,9 @@
-import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/batch-generic';
+import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Mission, MissionTeam, MissionAssigned, Team, User } from '../schema.js';
-import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { Mission, MissionTeam, MissionAssigned, Team } from '../schema.js';
+import { sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
     id: Type.Integer(),
@@ -35,7 +35,7 @@ export const AugmentedMission = Type.Object({
 
 export default class MissionModel extends Modeler<typeof Mission> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, Mission);
     }

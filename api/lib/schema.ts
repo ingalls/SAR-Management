@@ -1,4 +1,4 @@
-import { sql, eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { Static } from '@sinclair/typebox';
 import { geometry, GeometryType } from '@openaddresses/batch-generic';
 import { Iam } from './auth.js';
@@ -9,7 +9,6 @@ import {
     integer,
     timestamp,
     pgTable,
-    pgView,
     serial,
     varchar,
     text,

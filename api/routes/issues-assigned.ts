@@ -47,7 +47,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Issue:Manage');
 
-            const id = await config.models.IssueAssigned.generate({
+            await config.models.IssueAssigned.generate({
                 issue_id: req.params.issueid,
                 uid: req.body.uid
             });

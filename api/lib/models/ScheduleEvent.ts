@@ -1,9 +1,9 @@
-import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/batch-generic';
+import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { User, ScheduleEvent } from '../schema.js';
-import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
 export const AugmentedScheduleEvent = Type.Object({
     id: Type.Integer(),
@@ -17,7 +17,7 @@ export const AugmentedScheduleEvent = Type.Object({
 
 export default class ScheduleEventModel extends Modeler<typeof ScheduleEvent> {
     constructor(
-        pool: PostgresJsDatabase<any>,
+        pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, ScheduleEvent);
     }

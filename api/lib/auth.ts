@@ -1,10 +1,9 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { Pool } from '@openaddresses/batch-generic';
-import { sql, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import jwt from 'jsonwebtoken';
 import Config from './config.js';
-import { InferSelectModel } from 'drizzle-orm';
 import { Request } from 'express';
 import * as pgschema from './schema.js';
 

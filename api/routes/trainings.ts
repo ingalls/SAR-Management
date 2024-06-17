@@ -3,7 +3,6 @@ import { GenericListOrder, Param } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
-import moment from 'moment';
 import { Training } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';

@@ -1,4 +1,3 @@
-import Modeler from '@openaddresses/batch-generic';
 import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import Auth, { AuthAugment } from '../lib/auth.js';
