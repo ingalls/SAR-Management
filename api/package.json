@@ -10,7 +10,7 @@
         "lint": "eslint index.ts routes/**.ts lib/**.ts test/**.ts",
         "loaddb": "echo 'DROP DATABASE sar' | psql && echo 'CREATE DATABASE sar' | psql && psql sar < sar-latest.dump && echo \"UPDATE users SET email = username || '@ingalls.ca'\" | psql sar",
         "prod": "node dist/index.js",
-        "dev": "StackName=test tsx --ignore web/ index.ts"
+        "dev": "StackName=test tsx watch --ignore web/ index.ts"
     },
     "repository": {
         "type": "git",

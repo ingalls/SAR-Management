@@ -1,5 +1,5 @@
 import Err from '@openaddresses/batch-error';
-import { GenericListOrder } from '@openaddresses/batch-generic';
+import { GenericListOrder, Param } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
@@ -41,11 +41,11 @@ export default async function router(schema: Schema, config: Config) {
                 sort: req.query.sort,
                 where: sql`
                     (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
-                    AND (${req.query.assigned}::BIGINT IS NULL OR users @> ARRAY[${req.query.assigned}::BIGINT])
-                    AND (${req.query.team}::BIGINT IS NULL OR teams_id @> ARRAY[${req.query.team}::BIGINT])
-                    AND (${req.query.required}::BOOLEAN IS NULL OR required = ${req.query.required})
-                    AND (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
-                    AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                    AND (${Param(req.query.assigned)}::BIGINT IS NULL OR users @> ARRAY[${Param(req.query.assigned)}::BIGINT])
+                    AND (${Param(req.query.team)}::BIGINT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::BIGINT])
+                    AND (${Param(req.query.required)}::BOOLEAN IS NULL OR required = ${Param(req.query.required)})
+                    AND (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
+                    AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
                 `
             }))
         } catch (err) {

@@ -2,7 +2,7 @@ import Modeler, { Param, GenericList, GenericListInput } from '@openaddresses/ba
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Training, TrainingTeam, TrainingAssigned, Team, User } from '../schema.js';
+import { Training, TrainingTeam, TrainingAssigned, Team } from '../schema.js';
 import { InferSelectModel, sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
@@ -58,7 +58,7 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 location: Training.location,
                 location_geom: Training.location_geom,
                 required: Training.required,
-                users: sql<Array<number>>`json_agg(users.id)`,
+                users: sql<Array<number>>`json_agg(training_assigned.uid)`.as('users'),
                 teams: sql<Array<Static<typeof PartialTeam>>>`json_agg(json_build_object(
                     'id', teams.id,
                     'created', teams.created,
@@ -66,9 +66,9 @@ export default class TrainingModel extends Modeler<typeof Training> {
                     'public', teams.public,
                     'colour_bg', teams.colour_bg,
                     'colour_txt', teams.colour_txt,
-                    'fieldable', teams.fieldable,
+                    'fieldable', teams.fieldable
                 ))`.as('teams'),
-                teams_id: sql<Array<number>>`json_agg(teams.id)`,
+                teams_id: sql<Array<number>>`json_agg(teams.id)`
             })
             .from(Training)
             .leftJoin(TrainingTeam, eq(Training.id, TrainingTeam.training_id))
@@ -106,7 +106,7 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 location: Training.location,
                 location_geom: Training.location_geom,
                 required: Training.required,
-                users: sql<Array<number>>`json_agg(users.id)`,
+                users: sql<Array<number>>`json_agg(training_assigned.uid)`.as('users'),
                 teams: sql<Array<Static<typeof PartialTeam>>>`json_agg(json_build_object(
                     'id', teams.id,
                     'created', teams.created,
@@ -114,7 +114,7 @@ export default class TrainingModel extends Modeler<typeof Training> {
                     'public', teams.public,
                     'colour_bg', teams.colour_bg,
                     'colour_txt', teams.colour_txt,
-                    'fieldable', teams.fieldable,
+                    'fieldable', teams.fieldable
                 ))`.as('teams'),
                 teams_id: sql<Array<number>>`json_agg(teams.id)`,
             })

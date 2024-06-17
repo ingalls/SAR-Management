@@ -13,7 +13,7 @@
             <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
                     <button class="btn btn-dark dropdown-toggle d-md-none" type='button' data-bs-toggle="dropdown" aria-expanded="false">
-                        <MenuIcon/>
+                        <MenuIcon size='32'/>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a @click='$router.push("/")' class="dropdown-item">Home</a>
@@ -30,13 +30,13 @@
 
 
                     <a @click='$router.push("/notification")' class="btn btn-dark" target="_blank" rel="noreferrer">
-                        <BellIcon/>
+                        <BellIcon size='32'/>
                         <span v-if='notifications' class="badge bg-red"></span>
                     </a>
 
                     <div class='dropdown'>
                         <div type="button" id="userProfileButton" data-bs-toggle="dropdown" aria-expanded="false" class='btn btn-dark'>
-                            <UserIcon/>
+                            <UserIcon size='32'/>
                         </div>
                         <ul class="dropdown-menu" aria-labelledby='userProfileButton'>
                             <a @click='$router.push("/profile")' class="cursor-pointer dropdown-item">Profile</a>
@@ -55,7 +55,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <HomeIcon/>
+                                    <HomeIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Home</span>
                             </a>
@@ -63,7 +63,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/issue")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <BugIcon/>
+                                    <BugIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Issues</span>
                             </a>
@@ -71,7 +71,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/equipment")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <ShovelIcon/>
+                                    <ShovelIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Equipment</span>
                             </a>
@@ -79,7 +79,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/doc")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <NotebookIcon/>
+                                    <NotebookIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Docs</span>
                             </a>
@@ -87,7 +87,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/training")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <TruckIcon/>
+                                    <TruckIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Training</span>
                             </a>
@@ -95,7 +95,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/mission")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <AmbulanceIcon/>
+                                    <AmbulanceIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Missions</span>
                             </a>
@@ -103,7 +103,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/team")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <UsersIcon/>
+                                    <UsersIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Team</span>
                             </a>
@@ -111,7 +111,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/calendar")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <CalendarIcon/>
+                                    <CalendarIcon size='32'/>
                                 </span>
                                 <span class="nav-link-title">Calendar</span>
                             </a>
@@ -121,7 +121,7 @@
                                 <template #default>
                                     <a class="nav-link cursor-pointer">
                                         <span class="nav-link-icon">
-                                            <CaretDownIcon/>
+                                            <CaretDownIcon size='32'/>
                                         </span>
                                         <span class="nav-link-title">More</span>
                                     </a>
@@ -129,13 +129,13 @@
                                 <template #dropdown>
                                     <a class="nav-link cursor-pointer" @click='$router.push("/schedule")'>
                                         <span class="nav-link-icon">
-                                            <CalendarTimeIcon/>
+                                            <CalendarTimeIcon size='32'/>
                                         </span>
                                         <span class="nav-link-title">On-Call</span>
                                     </a>
                                     <a class="nav-link cursor-pointer" @click='$router.push("/application")'>
                                         <span class="nav-link-icon">
-                                            <UserPlusIcon/>
+                                            <UserPlusIcon size='32'/>
                                         </span>
                                         <span class="nav-link-title">Applications</span>
                                     </a>
@@ -148,7 +148,7 @@
                             <li class="nav-item">
                                 <a class="nav-link cursor-pointer" @click='$router.push("/admin")'>
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                        <AdjustmentsIcon/>
+                                        <AdjustmentsIcon size='32'/>
                                     </span>
                                     <span class="nav-link-title">Admin</span>
                                 </a>
@@ -190,23 +190,22 @@ import {
 } from '@tak-ps/vue-tabler'
 
 import {
-    UserIcon,
-    BellIcon,
-    HomeIcon,
-    PlusIcon,
-    UserPlusIcon,
-    TruckIcon,
-    UsersIcon,
-    MenuIcon,
-    ShovelIcon,
-    BugIcon,
-    CaretDownIcon,
-    NotebookIcon,
-    AmbulanceIcon,
-    CalendarIcon,
-    CalendarTimeIcon,
-    AdjustmentsIcon
-} from 'vue-tabler-icons';
+    IconBug,
+    IconHome,
+    IconUserPlus,
+    IconMenu,
+    IconUsers,
+    IconUser,
+    IconBell,
+    IconShovel,
+    IconNotebook,
+    IconCalendar,
+    IconCalendarTime,
+    IconTruck,
+    IconAmbulance,
+    IconAdjustments,
+    IconCaretDown,
+} from '@tabler/icons-vue';
 
 export default {
     name: 'SearchAndRescue',
@@ -248,10 +247,12 @@ export default {
             this.err = evt;
         });
 
-        await this.getIAM();
         await this.fetchName();
-        await this.fetchNotify();
-        if (localStorage.token) return await this.getUser();
+        if (localStorage.token) {
+            await this.getUser();
+            await this.getIAM();
+            await this.fetchNotify();
+        }
     },
     methods: {
         fetchName: async function() {
@@ -283,21 +284,21 @@ export default {
         }
     },
     components: {
-        BugIcon,
-        HomeIcon,
-        UserPlusIcon,
-        MenuIcon,
-        UsersIcon,
-        UserIcon,
-        BellIcon,
-        ShovelIcon,
-        NotebookIcon,
-        CalendarIcon,
-        CalendarTimeIcon,
-        TruckIcon,
-        AmbulanceIcon,
-        AdjustmentsIcon,
-        CaretDownIcon,
+        IconBug,
+        IconHome,
+        IconUserPlus,
+        IconMenu,
+        IconUsers,
+        IconUser,
+        IconBell,
+        IconShovel,
+        IconNotebook,
+        IconCalendar,
+        IconCalendarTime,
+        IconTruck,
+        IconAmbulance,
+        IconAdjustments,
+        IconCaretDown,
         TablerError,
         TablerDropdown,
         TablerLoading,

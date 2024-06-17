@@ -68,7 +68,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
                     'public', teams.public,
                     'colour_bg', teams.colour_bg,
                     'colour_txt', teams.colour_txt,
-                    'fieldable', teams.fieldable,
+                    'fieldable', teams.fieldable
                 ))`.as('teams'),
                 teams_id: sql<Array<number>>`json_agg(teams.id)`,
             })

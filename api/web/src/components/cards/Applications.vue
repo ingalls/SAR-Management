@@ -1,12 +1,12 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' size='32'/>
         <h3 class="card-title"><a @click='$router.push("/application")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <PlusIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer' v-tooltip='"Create Application"'/>
-            <SettingsIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer' v-tooltip='"Edit Application Form"'/>
+            <IconPlus v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer' v-tooltip='"Create Application"' size='32'/>
+            <IconSettings v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer' v-tooltip='"Edit Application Form"' size='32'/>
         </div>
     </div>
 
@@ -14,7 +14,7 @@
     <template v-else-if='loading'>
         <TablerLoading desc='Loading Applications'/>
     </template>
-    <template v-else-if='!list.applications.length'>
+    <template v-else-if='!list.items.length'>
         <TablerNone :create='false' :label='Applications'/>
     </template>
     <template v-else>
@@ -26,7 +26,7 @@
                 :export='false'
             />
             <tbody>
-                <tr @click='$router.push(`/application/${application.id}`)' :key='application.id' v-for='application in list.applications' class='cursor-pointer'>
+                <tr @click='$router.push(`/application/${application.id}`)' :key='application.id' v-for='application in list.items' class='cursor-pointer'>
                     <template v-for='h in header'>
                         <template v-if='h.display'>
                             <td v-if='["updated", "created"].includes(h.name)'>
@@ -58,10 +58,10 @@ import {
 } from '@tak-ps/vue-tabler'
 
 import {
-    GripVerticalIcon,
-    PlusIcon,
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconGripVertical,
+    IconPlus,
+    IconSettings
+} from '@tabler/icons-vue';
 
 
 export default {
@@ -129,7 +129,7 @@ export default {
             },
             list: {
                 total: 0,
-                applications: []
+                items: []
             },
         }
     },
@@ -183,15 +183,15 @@ export default {
         }
     },
     components: {
-        PlusIcon,
-        SettingsIcon,
+        IconPlus,
+        IconSettings,
+        IconGripVertical,
         TableHeader,
         TableFooter,
         TablerLoading,
         TablerEpoch,
         TablerNone,
         NoAccess,
-        GripVerticalIcon,
     }
 }
 </script>
