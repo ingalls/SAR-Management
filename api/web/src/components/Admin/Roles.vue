@@ -1,16 +1,16 @@
 <template>
 <div class="card">
     <div class="card-body">
-        <div class="d-flex">
-            <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer'>Mission Roles</a></h3>
+        <div class="d-flex align-items-center">
+            <h3 class="card-title">Mission Roles</h3>
 
             <div class='ms-auto btn-list'>
-                <PlusIcon @click='push()' class='cursor-pointer'/>
+                <IconPlus @click='push()' class='cursor-pointer' size='32'/>
             </div>
         </div>
     </div>
 
-    <TablerNone v-if='!list.roles.length' :create='false' label='Roles'/>
+    <TablerNone v-if='!list.items.length' :create='false' label='Roles'/>
     <TablerLoading v-else-if='loading'/>
     <table v-else class="table card-table table-vcenter">
         <thead>
@@ -21,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr :key='role.id' v-for='(role, roleit) in list.roles'>
+            <tr :key='role.id' v-for='(role, roleit) in list.items'>
                 <td>
                     <template v-if='role._edit'>
                         <TablerInput v-on:keyup.enter='saveRole(role, roleit)' v-model='role.name'/>
@@ -32,14 +32,14 @@
                 </td>
                 <td><TablerEpoch :date='role.created'/></td>
                 <td>
-                    <div class='d-flex'>
+                    <div class='d-flex align-items-center'>
                         <TablerEpoch :date='role.updated'/>
                         <div v-if='role._edit' class='ms-auto btn-list'>
-                            <CheckIcon @click='saveRole(role, roleit)' class='cursor-pointer'/>
-                            <TrashIcon @click='deleteRole(role, roleit)' class='cursor-pointer'/>
+                            <IconCheck @click='saveRole(role, roleit)' class='cursor-pointer' size='32'/>
+                            <IconTrash @click='deleteRole(role, roleit)' class='cursor-pointer' size='32'/>
                         </div>
                         <div v-else class='ms-auto btn-list'>
-                            <PencilIcon @click='role._edit = true' class='cursor-pointer'/>
+                            <IconPencil @click='role._edit = true' class='cursor-pointer' size='32'/>
                         </div>
                     </div>
                 </td>
@@ -51,11 +51,11 @@
 
 <script>
 import {
-    PlusIcon,
-    PencilIcon,
-    CheckIcon,
-    TrashIcon
-} from 'vue-tabler-icons';
+    IconPlus,
+    IconPencil,
+    IconCheck,
+    IconTrash
+} from '@tabler/icons-vue';
 import {
     TablerEpoch,
     TablerLoading,
@@ -70,7 +70,7 @@ export default {
             loading: true,
             list: {
                 total: 0,
-                roles: []
+                items: []
             }
         }
     },
@@ -89,13 +89,13 @@ export default {
                     method: 'PATCH',
                     body: role
                 });
-                this.list.roles.splice(roleit, 1, newrole);
+                this.list.items.splice(roleit, 1, newrole);
             } else {
                 const newrole = await window.std('/api/mission-role', {
                     method: 'POST',
                     body: role
                 });
-                this.list.roles.splice(roleit, 1, newrole);
+                this.list.items.splice(roleit, 1, newrole);
             }
         },
         deleteRole: async function(role, roleit) {
@@ -105,10 +105,10 @@ export default {
                 });
             }
 
-            this.list.roles.splice(roleit, 1);
+            this.list.items.splice(roleit, 1);
         },
         push: function() {
-            this.list.roles.splice(0, 0, {
+            this.list.items.splice(0, 0, {
                 _edit: true,
                 name: '',
                 updated: +new Date(),
@@ -118,10 +118,10 @@ export default {
     },
     components: {
         TablerNone,
-        PlusIcon,
-        PencilIcon,
-        CheckIcon,
-        TrashIcon,
+        IconPlus,
+        IconPencil,
+        IconCheck,
+        IconTrash,
         TablerEpoch,
         TablerLoading,
         TablerInput

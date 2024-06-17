@@ -13,7 +13,7 @@
             <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
                     <button class="btn btn-dark dropdown-toggle d-md-none" type='button' data-bs-toggle="dropdown" aria-expanded="false">
-                        <MenuIcon size='32'/>
+                        <IconMenu size='32'/>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a @click='$router.push("/")' class="dropdown-item">Home</a>
@@ -30,13 +30,13 @@
 
 
                     <a @click='$router.push("/notification")' class="btn btn-dark" target="_blank" rel="noreferrer">
-                        <BellIcon size='32'/>
+                        <IconBell size='32'/>
                         <span v-if='notifications' class="badge bg-red"></span>
                     </a>
 
                     <div class='dropdown'>
                         <div type="button" id="userProfileButton" data-bs-toggle="dropdown" aria-expanded="false" class='btn btn-dark'>
-                            <UserIcon size='32'/>
+                            <IconUser size='32'/>
                         </div>
                         <ul class="dropdown-menu" aria-labelledby='userProfileButton'>
                             <a @click='$router.push("/profile")' class="cursor-pointer dropdown-item">Profile</a>
@@ -55,7 +55,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <HomeIcon size='32'/>
+                                    <IconHome size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Home</span>
                             </a>
@@ -63,7 +63,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/issue")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <BugIcon size='32'/>
+                                    <IconBug size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Issues</span>
                             </a>
@@ -71,7 +71,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/equipment")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <ShovelIcon size='32'/>
+                                    <IconShovel size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Equipment</span>
                             </a>
@@ -79,7 +79,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/doc")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <NotebookIcon size='32'/>
+                                    <IconNotebook size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Docs</span>
                             </a>
@@ -87,7 +87,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/training")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <TruckIcon size='32'/>
+                                    <IconTruck size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Training</span>
                             </a>
@@ -95,7 +95,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/mission")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <AmbulanceIcon size='32'/>
+                                    <IconAmbulance size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Missions</span>
                             </a>
@@ -103,7 +103,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/team")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <UsersIcon size='32'/>
+                                    <IconUsers size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Team</span>
                             </a>
@@ -111,7 +111,7 @@
                         <li class="nav-item">
                             <a class="nav-link cursor-pointer" @click='$router.push("/calendar")'>
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <CalendarIcon size='32'/>
+                                    <IconCalendar size='32' stroke='2'/>
                                 </span>
                                 <span class="nav-link-title">Calendar</span>
                             </a>
@@ -121,7 +121,7 @@
                                 <template #default>
                                     <a class="nav-link cursor-pointer">
                                         <span class="nav-link-icon">
-                                            <CaretDownIcon size='32'/>
+                                            <IconCaretDown size='32' stroke='2'/>
                                         </span>
                                         <span class="nav-link-title">More</span>
                                     </a>
@@ -129,13 +129,13 @@
                                 <template #dropdown>
                                     <a class="nav-link cursor-pointer" @click='$router.push("/schedule")'>
                                         <span class="nav-link-icon">
-                                            <CalendarTimeIcon size='32'/>
+                                            <IconCalendarTime size='32' stroke='2'/>
                                         </span>
                                         <span class="nav-link-title">On-Call</span>
                                     </a>
                                     <a class="nav-link cursor-pointer" @click='$router.push("/application")'>
                                         <span class="nav-link-icon">
-                                            <UserPlusIcon size='32'/>
+                                            <IconUserPlus size='32' stroke='2'/>
                                         </span>
                                         <span class="nav-link-title">Applications</span>
                                     </a>
@@ -148,7 +148,7 @@
                             <li class="nav-item">
                                 <a class="nav-link cursor-pointer" @click='$router.push("/admin")'>
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                        <AdjustmentsIcon size='32'/>
+                                        <IconAdjustments size='32' stroke='2'/>
                                     </span>
                                     <span class="nav-link-title">Admin</span>
                                 </a>
