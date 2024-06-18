@@ -33,20 +33,22 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Training:View');
 
-            res.json(await config.models.Training.augmented_list({
+            const list = await config.models.Training.augmented_list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,
                 sort: req.query.sort,
                 where: sql`
                     (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
-                    AND (${Param(req.query.assigned)}::BIGINT IS NULL OR users @> ARRAY[${Param(req.query.assigned)}::BIGINT])
-                    AND (${Param(req.query.team)}::BIGINT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::BIGINT])
+                    AND (${Param(req.query.assigned)}::INT IS NULL OR users @> ARRAY[${Param(req.query.assigned)}::INT])
+                    AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                     AND (${Param(req.query.required)}::BOOLEAN IS NULL OR required = ${Param(req.query.required)})
                     AND (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
                     AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
                 `
-            }))
+            })
+
+            return res.json(list);
         } catch (err) {
             return Err.respond(err, res);
         }
