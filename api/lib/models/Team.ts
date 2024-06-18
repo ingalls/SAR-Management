@@ -3,7 +3,7 @@ import { Iam } from '../auth.js';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Team, UserTeam, User } from '../schema.js';
-import { sql, eq, asc, desc } from 'drizzle-orm';
+import { sql, eq, asc, desc, max } from 'drizzle-orm';
 
 export const AugmentedTeam = Type.Object({
     id: Type.Integer(),
@@ -30,6 +30,16 @@ export default class TeamModel extends Modeler<typeof Team> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
+        const RootMember = this.pool
+            .select({
+                members_team_id: max(UserTeam.tid).as('members_team_id'),
+                members: sql<string>`count(users.id)`.as('members')
+            })
+            .from(UserTeam, eq(Team.id, UserTeam.tid))
+            .leftJoin(User, eq(User.id, UserTeam.uid))
+            .groupBy(UserTeam.tid)
+            .as("root_members");
+
         const pgres = await this.pool
             .select({
                 count: sql<string>`count(*) OVER()`.as('count'),
@@ -43,11 +53,10 @@ export default class TeamModel extends Modeler<typeof Team> {
                 colour_bg: Team.colour_bg,
                 colour_txt: Team.colour_txt,
                 fieldable: Team.fieldable,
-                members: sql<number>`count(users.id)`.as('members')
+                members: RootMember.members
             })
             .from(Team)
-            .leftJoin(UserTeam, eq(Team.id, UserTeam.tid))
-            .leftJoin(User, eq(User.id, UserTeam.uid))
+            .leftJoin(RootMember, eq(Team.id, RootMember.members_team_id))
             .where(query.where)
             .orderBy(orderBy)
             .limit(query.limit || 10)

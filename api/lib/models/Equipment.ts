@@ -3,7 +3,7 @@ import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Equipment, EquipmentAssigned, User } from '../schema.js';
-import { sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const Assigned = Type.Object({
     id: Type.Integer(),
@@ -39,6 +39,14 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
+        const RootAssigned = this.pool
+            .select({
+                assigned_equip_id: max(EquipmentAssigned.equip_id).as('assigned_equip_id'),
+                assigned: sql<Array<number>>`coalesce(array_agg(equipment_assigned.uid), '{}'::INT[])`.as('assigned'),
+            })
+            .from(EquipmentAssigned)
+            .groupBy(EquipmentAssigned.mission_id)
+            .as("root_assigned");
 
         const pgres = await this.pool
             .select({
@@ -56,10 +64,10 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
                 archived: Equipment.archived,
                 quantity: Equipment.quantity,
                 value: Equipment.value,
-                assigned: sql<Array<Static<typeof Assigned>>>`json_agg(json_build_object('id', users.id, 'fname', users.fname, 'lname', users.lname))`.as('assigned')
+                assigned: RootAssigned.assigned
             })
             .from(Equipment)
-            .leftJoin(EquipmentAssigned, eq(Equipment.id, EquipmentAssigned.equip_id))
+            .leftJoin(RootAssigned, eq(Equipment.id, RootAssigned.equip_id))
             .leftJoin(User, eq(User.id, EquipmentAssigned.uid))
             .where(query.where)
             .orderBy(orderBy)

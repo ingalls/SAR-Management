@@ -46,7 +46,7 @@
                                     v-model:header='header'
                                 />
                                 <tbody>
-                                    <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.missions' class='cursor-pointer'>
+                                    <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.items' class='cursor-pointer'>
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
                                                 <td v-if='h.name === "title"'>
@@ -132,7 +132,7 @@ export default {
             },
             list: {
                 total: 0,
-                missions: []
+                items: []
             }
         }
     },

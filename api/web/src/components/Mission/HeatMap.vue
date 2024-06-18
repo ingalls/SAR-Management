@@ -38,7 +38,7 @@ export default {
     },
     watch: {
         missions: function() {
-            this.fc.features = this.missions.missions.filter((mission) => {
+            this.fc.features = this.missions.items.filter((mission) => {
                 return !!mission.location_geom;
             }).map((mission) => {
                 return {
@@ -64,7 +64,7 @@ export default {
                 projection: 'globe',
             }
 
-            this.fc.features = this.missions.missions.filter((mission) => {
+            this.fc.features = this.missions.items.filter((mission) => {
                 return !!mission.location_geom;
             }).map((mission) => {
                 return {
