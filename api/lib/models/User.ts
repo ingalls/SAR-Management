@@ -24,7 +24,7 @@ export const AugmentedUser = Type.Object({
     fname: Type.String(),
     start_year: Type.Integer(),
     last_login: Type.String(),
-    emergency: User_EmergencyContact,
+    emergency: Type.Array(User_EmergencyContact),
     address_street: Type.String(),
     address_city: Type.String(),
     address_state: Type.String(),

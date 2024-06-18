@@ -32,8 +32,8 @@ export default async function router(schema: Schema, config: Config) {
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Team)})),
             filter: Type.Optional(Type.String({ default: '' })),
-            fieldable: Type.Boolean(),
-            userid: Type.Integer()
+            fieldable: Type.Optional(Type.Boolean()),
+            userid: Type.Optional(Type.Integer())
         }),
         res: Type.Object({
             total: Type.Integer(),

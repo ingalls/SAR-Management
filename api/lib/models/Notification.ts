@@ -25,7 +25,7 @@ export default class NotificationModel extends Modeler<typeof Notification> {
     async users(type: string, perms: string[]): Promise<UserList> {
         const SubTable = this.pool.select({
             id: Team.id,
-            perm: sql`COALESCE(iam->>${type}::TEXT, 'None')`
+            perm: sql<string>`COALESCE(iam->>${type}::TEXT, 'None')`
         })
             .from(Team)
             .where(sql`COALESCE(iam->>${type}::TEXT, 'None') = ANY(${perms}::TEXT[])`)

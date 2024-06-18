@@ -43,7 +43,7 @@
 
                                         <div class='ms-auto btn-list'>
                                             <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
-                                            <SettingsIcon v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                            <IconSettings v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' size='24' class='cursor-pointer'/>
                                         </div>
                                     </div>
                                     <div v-if='training.teams.length' class='mt-2'>
@@ -99,8 +99,8 @@ import Location from './Mission/Location.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconSettings
+} from '@tabler/icons-vue';
 import {
     TablerEpochRange,
     TablerBreadCrumb,
@@ -161,7 +161,7 @@ export default {
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;
-            this.assigned = (await window.std(`/api/training/${this.$route.params.trainingid}/assigned`)).assigned;
+            this.assigned = (await window.std(`/api/training/${this.$route.params.trainingid}/assigned`)).items;
             this.loading.assigned = false;
         },
         request: async function() {
@@ -204,7 +204,7 @@ export default {
         TablerEpochRange,
         TeamBadge,
         Location,
-        SettingsIcon,
+        IconSettings,
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,

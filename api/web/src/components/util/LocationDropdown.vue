@@ -1,6 +1,6 @@
 <template>
-<div class="dropdown">
-    <div type="button" id="dropdownLocation" data-bs-toggle="dropdown" aria-expanded="false">
+<TablerDropdown>
+    <template #default>
         <TablerInput
             :required='required'
             :disabled='disabled'
@@ -9,22 +9,29 @@
             placeholder='Location Name'
             v-model='filter'
         />
-    </div>
-    <ul v-if='list.total' class="dropdown-menu" aria-labelledby="dropdownLocation">
-        <div class='m-1'>
-            <div @click='select(loc)' :key='loc.id' v-for='loc in list.locations'>
-                <div class="d-flex align-items-center my-1 cursor-pointer">
-                    <span v-text='loc.location'/>
+    </template>
+    <template #dropdown>
+        <TablerLoading v-if='loading'/>
+        <TablerNone v-if='list.total === 0' :compact='true' :create='false'/>
+        <div v-else>
+            <div class='m-1'>
+                <div @click='select(loc)' :key='loc.id' v-for='loc in list.locations'>
+                    <div class="d-flex align-items-center my-1 cursor-pointer">
+                        <span v-text='loc.location'/>
+                    </div>
                 </div>
             </div>
         </div>
-    </ul>
-</div>
+    </template>
+</TablerDropdown>
 </template>
 
 <script>
 import {
-    TablerInput
+    TablerNone,
+    TablerInput,
+    TablerLoading,
+    TablerDropdown
 } from '@tak-ps/vue-tabler'
 
 export default {
@@ -85,7 +92,10 @@ export default {
         }
     },
     components: {
-        TablerInput
+        TablerNone,
+        TablerInput,
+        TablerLoading,
+        TablerDropdown
     }
 }
 </script>

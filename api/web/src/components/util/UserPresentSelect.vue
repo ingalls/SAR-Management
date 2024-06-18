@@ -17,7 +17,7 @@
                         <div class='m-1'>
                             <TablerInput placeholder='Filter Users' v-model='filter'/>
 
-                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users' class='my-2 cursor-pointer'>
+                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.items' class='my-2 cursor-pointer'>
                                 <Avatar :user='user'/>
                             </div>
                         </div>
@@ -111,7 +111,8 @@ export default {
         return {
             filter: '',
             list: {
-                users: []
+                total: 0,
+                items: []
             },
             assigned: [],
             roles: []
@@ -156,7 +157,7 @@ export default {
         listRoles: async function() {
             const url = window.stdurl('/api/mission-role');
             const list = await window.std(url);
-            this.roles = list.roles.map((role) => {
+            this.roles = list.items.map((role) => {
                 return role.name;
             });
         },
@@ -167,7 +168,7 @@ export default {
             const list = await window.std(url);
 
             const ids = this.assigned.map((a) => a.uid);
-            this.list.users = list.users.filter((user) => {
+            this.list.items = list.items.filter((user) => {
                 return !ids.includes(user.id);
             }).splice(0, this.limit);
         }

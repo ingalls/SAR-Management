@@ -8,7 +8,7 @@ import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
 import VCard from 'vcard-creator';
 import { phone } from 'phone';
 import Schema from '@openaddresses/batch-schema';
-import { GenericListOrder } from '@openaddresses/batch-generic';
+import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { UserResponse } from '../lib/types.js';
 import { User_EmergencyContact } from '../lib/models/User.js';
 import Config from '../lib/config.js';
@@ -51,9 +51,9 @@ export default async function router(schema: Schema, config: Config) {
                 }
                 (await config.models.User.stream({
                     where: sql`
-                        (${req.query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${req.query.filter})
-                        AND (${req.query.team}::BIGINT IS NULL OR users_to_teams.tid = ${req.query.team})
-                        AND (${req.query.disabled}::BOOLEAN IS NULL OR users.disabled = ${req.query.disabled})
+                        (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
+                        AND (${Param(req.query.team)}::BIGINT IS NULL OR users_to_teams.tid = ${Param(req.query.team)})
+                        AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
                     `
                 })).on('data', async (user) => {
                     if (req.query.format === 'vcard') {
@@ -80,9 +80,9 @@ export default async function router(schema: Schema, config: Config) {
                     order: req.query.order,
                     sort: req.query.sort,
                     where: sql`
-                        (${req.query.filter}::TEXT IS NULL OR fname||' '||lname ~* ${req.query.filter})
-                        AND (${req.query.team}::BIGINT IS NULL OR utt.tid = ${req.query.team})
-                        AND (${req.query.disabled}::BOOLEAN IS NULL OR users.disabled = ${req.query.disabled})
+                        (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
+                        AND (${Param(req.query.team)}::BIGINT IS NULL OR users_to_teams.tid = ${Param(req.query.team)})
+                        AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
                     `
                 }));
             }
