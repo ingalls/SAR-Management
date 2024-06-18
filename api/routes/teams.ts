@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { Team } from '../lib/schema.js';
-import { GenericListOrder } from '@openaddresses/batch-generic';
+import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import Auth, { Permissions } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
@@ -50,10 +50,9 @@ export default async function router(schema: Schema, config: Config) {
                 sort: req.query.sort,
                 where: sql`
                     name ~* ${req.query.filter}
-                    AND (${req.query.userid} IS NULL OR user_to_team.uid = ${req.query.userid})
-                    AND (${req.query.fieldable} IS NULL OR fieldable = ${req.query.fieldable})
+                    AND (${Param(req.query.userid)} IS NULL OR users_to_teams.uid = ${Param(req.query.userid)})
+                    AND (${Param(req.query.fieldable)} IS NULL OR fieldable = ${Param(req.query.fieldable)})
                 `
-
             });
 
             return res.json(list)

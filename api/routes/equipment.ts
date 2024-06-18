@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
-import { GenericListOrder } from '@openaddresses/batch-generic';
+import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import Notify from '../lib/notify.js';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
@@ -42,14 +42,14 @@ export default async function router(schema: Schema, config: Config) {
                 sort: req.query.sort,
                 where: sql`
                     (
-                        (${req.query.parent}::BIGINT IS NULL)
-                        OR (${req.query.parent}::BIGINT = 0 AND parent IS NULL)
-                        OR (${req.query.parent}::BIGINT IS NOT NULL AND parent = ${req.query.parent}::BIGINT)
+                        (${Param(req.query.parent)}::BIGINT IS NULL)
+                        OR (${Param(req.query.parent)}::BIGINT = 0 AND parent IS NULL)
+                        OR (${Param(req.query.parent)}::BIGINT IS NOT NULL AND parent = ${Param(req.query.parent)}::BIGINT)
                     )
-                    AND (${req.query.container}::BOOLEAN IS NULL OR container = ${req.query.container})
-                    AND (${req.query.archived}::BOOLEAN IS NULL OR archived = ${req.query.archived})
-                    AND (${req.query.filter}::TEXT IS NULL OR name ~* ${req.query.filter})
-                    AND (${req.query.assigned}::BIGINT IS NULL OR equipment_assigned.uid = ${req.query.assigned})
+                    AND (${Param(req.query.container)}::BOOLEAN IS NULL OR container = ${Param(req.query.container)})
+                    AND (${Param(req.query.archived)}::BOOLEAN IS NULL OR archived = ${Param(req.query.archived)})
+                    AND (${Param(req.query.filter)}::TEXT IS NULL OR name ~* ${Param(req.query.filter)})
+                    AND (${Param(req.query.assigned)}::BIGINT IS NULL OR equipment_assigned.uid = ${Param(req.query.assigned)})
                 `
             }))
         } catch (err) {

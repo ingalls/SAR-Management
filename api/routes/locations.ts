@@ -28,7 +28,7 @@ export default async function router(schema: Schema, config: Config) {
                     location_geom: Training.location_geom
                 })
                 .from(Training)
-                .where(sql`name ~* ${req.query.filter}`)
+                .where(sql`location ~* ${req.query.filter}`)
                 .union(
                     config.pool
                     .select({
@@ -36,7 +36,7 @@ export default async function router(schema: Schema, config: Config) {
                         location_geom: Mission.location_geom
                     })
                     .from(Mission)
-                    .where(sql`name ~* ${req.query.filter}`)
+                    .where(sql`location ~* ${req.query.filter}`)
                 )
                 .limit(req.query.limit || 10)
                 .offset((req.query.page || 0) * (req.query.limit || 10))

@@ -125,6 +125,7 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 items: pgres.map((t) => {
                     delete t.count;
                     if (!t.teams) t.teams = [];
+                    if (!t.users) t.users = [];
 
                     return t as Static<typeof AugmentedTraining>
                 })
@@ -185,6 +186,9 @@ export default class TrainingModel extends Modeler<typeof Training> {
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
+
+        if (!pgres[0].teams) pgres[0].teams = [];
+        if (!pgres[0].users) pgres[0].users = [];
 
         return pgres[0] as Static<typeof AugmentedTraining>;
     }

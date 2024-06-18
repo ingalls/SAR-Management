@@ -19,7 +19,7 @@
     <template v-if='loading.list'>
         <TablerLoading/>
     </template>
-    <template v-else-if='!list.equipment.length'>
+    <template v-else-if='!list.items.length'>
         <TablerNone :create='false' label='Equipment' :compact='true'/>
     </template>
     <template v-else>
@@ -32,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr :key='equip.id' v-for='equip in list.equipment'>
+                <tr :key='equip.id' v-for='equip in list.items'>
                     <td><a @click='$router.push(`/equipment/${equip.id}`)' v-text='equip.name' class='cursor-pointer'></a></td>
                     <td>
                         <template v-if='equip.assigned.length'>
@@ -105,7 +105,7 @@ export default {
             },
             list: {
                 total: 0,
-                equipment: []
+                items: []
             }
         }
     },
