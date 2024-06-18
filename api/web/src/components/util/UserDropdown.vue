@@ -5,7 +5,7 @@
     </template>
     <template #dropdown>
         <div class='m-1'>
-            <div @click='select(user)' :key='user.id' v-for='user in list.users'>
+            <div @click='select(user)' :key='user.id' v-for='user in list.items'>
                 <div class="d-flex align-items-center my-1 cursor-pointer">
                     <Avatar :user='user'/>
                 </div>
@@ -69,7 +69,7 @@ export default {
             if (this.filter) url.searchParams.append('filter', this.filter);
             url.searchParams.append('limit', this.limit);
             const list = await window.std(url);
-            if (list.assigned) list.users = list.assigned;
+            if (list.assigned) list.items = list.assigned;
             this.list = list;
         }
     },

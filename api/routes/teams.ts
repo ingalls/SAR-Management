@@ -50,8 +50,8 @@ export default async function router(schema: Schema, config: Config) {
                 sort: req.query.sort,
                 where: sql`
                     name ~* ${req.query.filter}
-                    AND (${Param(req.query.userid)} IS NULL OR users_to_teams.uid = ${Param(req.query.userid)})
-                    AND (${Param(req.query.fieldable)} IS NULL OR fieldable = ${Param(req.query.fieldable)})
+                    AND (${Param(req.query.userid)}::INT IS NULL OR users @> ARRAY[${Param(req.query.userid)}::INT])
+                    AND (${Param(req.query.fieldable)}::BOOLEAN IS NULL OR fieldable = ${Param(req.query.fieldable)}::BOOLEAN)
                 `
             });
 

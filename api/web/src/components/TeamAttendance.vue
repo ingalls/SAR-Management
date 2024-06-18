@@ -177,7 +177,7 @@ export default {
         },
         fetchUsers: async function() {
             const list = await window.std(`/api/user?team=${this.team.id}`);
-            this.users = list.users;
+            this.users = list.items;
 
         },
         fetchTrainings: async function() {

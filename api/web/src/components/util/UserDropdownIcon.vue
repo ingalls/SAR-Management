@@ -10,7 +10,7 @@
         <div class='m-1'>
             <TablerInput placeholder='Filter Users' v-model='filter'/>
 
-            <div @click='select(user)' :key='user.id' v-for='user in list.users'>
+            <div @click='select(user)' :key='user.id' v-for='user in list.items'>
                 <div class="d-flex align-items-center my-1 cursor-pointer">
                     <Avatar :user='user'/>
                 </div>
@@ -50,7 +50,7 @@ export default {
         return {
             filter: '',
             list: {
-                users: []
+                items: []
             }
         }
     },

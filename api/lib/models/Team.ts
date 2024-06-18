@@ -16,7 +16,7 @@ export const AugmentedTeam = Type.Object({
     colour_bg: Type.String(),
     colour_txt: Type.String(),
     fieldable: Type.Boolean(),
-    members: Type.Optional(Type.Integer())
+    users: Type.Array(Type.Integer())
 });
 
 export default class TeamModel extends Modeler<typeof Team> {
@@ -30,15 +30,18 @@ export default class TeamModel extends Modeler<typeof Team> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
-        const RootMember = this.pool
+        const RootUser = this.pool
             .select({
-                members_team_id: max(UserTeam.tid).as('members_team_id'),
-                members: sql<string>`count(users.id)`.as('members')
+                users_team_id: max(UserTeam.tid).as('users_team_id'),
+                users: sql<number[]>`array_agg(users.id)`.as('users')
             })
             .from(UserTeam, eq(Team.id, UserTeam.tid))
+            .where(sql`
+                disabled = False
+            `)
             .leftJoin(User, eq(User.id, UserTeam.uid))
             .groupBy(UserTeam.tid)
-            .as("root_members");
+            .as("root_users");
 
         const pgres = await this.pool
             .select({
@@ -53,10 +56,10 @@ export default class TeamModel extends Modeler<typeof Team> {
                 colour_bg: Team.colour_bg,
                 colour_txt: Team.colour_txt,
                 fieldable: Team.fieldable,
-                members: RootMember.members
+                users: RootUser.users
             })
             .from(Team)
-            .leftJoin(RootMember, eq(Team.id, RootMember.members_team_id))
+            .leftJoin(RootUser, eq(Team.id, RootUser.users_team_id))
             .where(query.where)
             .orderBy(orderBy)
             .limit(query.limit || 10)
@@ -69,6 +72,7 @@ export default class TeamModel extends Modeler<typeof Team> {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
                     delete t.count;
+                    if (!t.users) t.users = [];
                     return t as Static<typeof AugmentedTeam>
                 })
             };

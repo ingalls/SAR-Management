@@ -17,7 +17,7 @@
                         <div class='m-1'>
                             <TablerInput placeholder='Filter Users' v-model='filter'/>
 
-                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.users'>
+                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.items'>
                                 <div class="d-flex align-items-center my-1 cursor-pointer">
                                     <Avatar :user='user'/>
                                 </div>
@@ -112,7 +112,7 @@ export default {
             const list = await window.std(url);
 
             const ids = this.assigned.map((a) => a.uid);
-            this.list.users = list.users.filter((user) => {
+            this.list.items = list.items.filter((user) => {
                 return !ids.includes(user.id);
             }).splice(0, this.limit);
         }
