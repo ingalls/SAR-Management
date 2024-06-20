@@ -59,7 +59,7 @@ export default async function router(schema: Schema, config: Config) {
                     res.end();
                 });
             } else {
-                res.json(await config.models.Issue.augmented_list({
+                const list = await config.models.Issue.augmented_list({
                     limit: req.query.limit,
                     page: req.query.page,
                     order: req.query.order,
@@ -67,8 +67,11 @@ export default async function router(schema: Schema, config: Config) {
                     where: sql`
                         (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
                         AND (${Param(req.query.assigned)}::INT IS NULL OR assigned_ids @> ARRAY[${Param(req.query.assigned)}::INT])
+                        AND (${Param(req.query.status)}::TEXT IS NULL OR status  = ${Param(req.query.status)}::TEXT)
                     `
-                }))
+                })
+
+                return res.json(list);
             }
         } catch (err) {
             return Err.respond(err, res);

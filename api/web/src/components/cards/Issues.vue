@@ -34,6 +34,10 @@
                                     <TablerEpoch v-if='issue[h.name]' :date='issue[h.name]'/>
                                     <span v-else>Never</span>
                                 </td>
+                                <td v-if='["status"].includes(h.name)'>
+                                    <span v-if='issue.status === "closed"' class="badge bg-red text-white" style="height: 20px;">Closed</span>
+                                    <span v-else-if='issue.status === "open"' class="badge bg-green text-white" style="height: 20px;">Open</span>
+                                </td>
                                 <td v-else>
                                     <span v-text='issue[h.name]'></span>
                                 </td>
@@ -134,7 +138,7 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/issue');
-            this.header = ['title'].map((h) => {
+            this.header = ['title', 'status'].map((h) => {
                 return { name: h, display: true };
             });
 
