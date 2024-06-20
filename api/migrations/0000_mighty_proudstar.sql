@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS "schedules_event" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "server" (
-	"key" text NOT NULL,
+	"key" text PRIMARY KEY,
 	"value" text NOT NULL,
 	"public" boolean DEFAULT false NOT NULL
 );
