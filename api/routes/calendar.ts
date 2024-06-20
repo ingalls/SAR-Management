@@ -47,6 +47,9 @@ export default async function router(schema: Schema, config: Config) {
         params: Type.Object({
             calendar: Type.String()
         }),
+        query: Type.Object({
+            token: Type.Optional(Type.String()),
+        }),
         res: Type.Object({
             token: Type.String()
         })
@@ -76,6 +79,7 @@ export default async function router(schema: Schema, config: Config) {
             calendar: Type.String()
         }),
         query: Type.Object({
+            token: Type.Optional(Type.String()),
             start: Type.Optional(Type.String()),
             end: Type.Optional(Type.String()),
         })

@@ -20,6 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'UserProfile',
         description: 'Get users profile picture',
         query: Type.Object({
+            token: Type.Optional(Type.String()),
             size: Type.String({
                 default: 'full',
                 enum: ['full', 'mini']
@@ -41,6 +42,7 @@ export default async function router(schema: Schema, config: Config) {
                 else Key = Key + 'profile.jpg';
 
                 const raw = await spaces.get({ Key });
+
                 const body = raw.Body as Readable;
                 body.pipe(res);
             } catch (err) {

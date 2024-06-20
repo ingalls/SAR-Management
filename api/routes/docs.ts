@@ -97,6 +97,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Docs',
         description: 'Convert doc to a preview format',
         query: Type.Object({
+            token: Type.Optional(Type.String()),
             access_token: Type.Optional(Type.String()),
             prefix: Type.Optional(Type.String()),
             file: Type.Optional(Type.String())
@@ -150,6 +151,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Docs',
         description: 'Download Doc',
         query: Type.Object({
+            token: Type.Optional(Type.String()),
             prefix: Type.String({ default: '' }),
             file: Type.String({ default: '' }),
             download: Type.Boolean({ default: true })

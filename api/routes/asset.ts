@@ -78,6 +78,9 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Raw Asset',
         group: 'Assets',
         description: 'Get single raw asset',
+        query: Type.Object({
+            token: Type.Optional(Type.String()),
+        }),
         params: Type.Object({
             assetid: Type.Integer()
         }),

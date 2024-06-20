@@ -20,6 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         group: 'EquipmentProfile',
         description: 'Get a picture of equipment',
         query: Type.Object({
+            token: Type.Optional(Type.String()),
             size: Type.String({
                 default: 'full',
                 enum: ['full', 'mini']
