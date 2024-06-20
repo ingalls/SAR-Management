@@ -1,4 +1,6 @@
 {
+  "id": "6e185ae1-7893-42c0-8c9b-b53ff6874df0",
+  "prevId": "847648d8-eb33-414e-9a91-5d1cc2db2724",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -118,28 +120,28 @@
         "application_comments_application_applications_id_fk": {
           "name": "application_comments_application_applications_id_fk",
           "tableFrom": "application_comments",
+          "tableTo": "applications",
           "columnsFrom": [
             "application"
           ],
-          "tableTo": "applications",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "application_comments_author_users_id_fk": {
           "name": "application_comments_author_users_id_fk",
           "tableFrom": "application_comments",
+          "tableTo": "users",
           "columnsFrom": [
             "author"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -248,41 +250,41 @@
         "certs_uid_users_id_fk": {
           "name": "certs_uid_users_id_fk",
           "tableFrom": "certs",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "certs_known_certs_known_id_fk": {
           "name": "certs_known_certs_known_id_fk",
           "tableFrom": "certs",
+          "tableTo": "certs_known",
           "columnsFrom": [
             "known"
           ],
-          "tableTo": "certs_known",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "certs_asset_assets_id_fk": {
           "name": "certs_asset_assets_id_fk",
           "tableFrom": "certs",
+          "tableTo": "assets",
           "columnsFrom": [
             "asset"
           ],
-          "tableTo": "assets",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -420,28 +422,28 @@
         "equipment_type_id_equipment_types_id_fk": {
           "name": "equipment_type_id_equipment_types_id_fk",
           "tableFrom": "equipment",
+          "tableTo": "equipment_types",
           "columnsFrom": [
             "type_id"
           ],
-          "tableTo": "equipment_types",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "equipment_parent_equipment_id_fk": {
           "name": "equipment_parent_equipment_id_fk",
           "tableFrom": "equipment",
+          "tableTo": "equipment",
           "columnsFrom": [
             "parent"
           ],
-          "tableTo": "equipment",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -475,28 +477,28 @@
         "equipment_assigned_equip_id_equipment_id_fk": {
           "name": "equipment_assigned_equip_id_equipment_id_fk",
           "tableFrom": "equipment_assigned",
+          "tableTo": "equipment",
           "columnsFrom": [
             "equip_id"
           ],
-          "tableTo": "equipment",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "equipment_assigned_uid_users_id_fk": {
           "name": "equipment_assigned_uid_users_id_fk",
           "tableFrom": "equipment_assigned",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -573,15 +575,15 @@
         "fieldability_team_teams_id_fk": {
           "name": "fieldability_team_teams_id_fk",
           "tableFrom": "fieldability",
+          "tableTo": "teams",
           "columnsFrom": [
             "team"
           ],
-          "tableTo": "teams",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -660,28 +662,28 @@
         "issues_author_users_id_fk": {
           "name": "issues_author_users_id_fk",
           "tableFrom": "issues",
+          "tableTo": "users",
           "columnsFrom": [
             "author"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "issues_poll_id_poll_id_fk": {
           "name": "issues_poll_id_poll_id_fk",
           "tableFrom": "issues",
+          "tableTo": "poll",
           "columnsFrom": [
             "poll_id"
           ],
-          "tableTo": "poll",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -722,28 +724,28 @@
         "issues_assigned_issue_id_issues_id_fk": {
           "name": "issues_assigned_issue_id_issues_id_fk",
           "tableFrom": "issues_assigned",
+          "tableTo": "issues",
           "columnsFrom": [
             "issue_id"
           ],
-          "tableTo": "issues",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "issues_assigned_uid_users_id_fk": {
           "name": "issues_assigned_uid_users_id_fk",
           "tableFrom": "issues_assigned",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -804,28 +806,28 @@
         "issues_comments_issue_issues_id_fk": {
           "name": "issues_comments_issue_issues_id_fk",
           "tableFrom": "issues_comments",
+          "tableTo": "issues",
           "columnsFrom": [
             "issue"
           ],
-          "tableTo": "issues",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "issues_comments_author_users_id_fk": {
           "name": "issues_comments_author_users_id_fk",
           "tableFrom": "issues_comments",
+          "tableTo": "users",
           "columnsFrom": [
             "author"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -859,15 +861,15 @@
         "leadership_uid_users_id_fk": {
           "name": "leadership_uid_users_id_fk",
           "tableFrom": "leadership",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -960,15 +962,15 @@
         "missions_author_users_id_fk": {
           "name": "missions_author_users_id_fk",
           "tableFrom": "missions",
+          "tableTo": "users",
           "columnsFrom": [
             "author"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1015,28 +1017,28 @@
         "missions_assigned_mission_id_missions_id_fk": {
           "name": "missions_assigned_mission_id_missions_id_fk",
           "tableFrom": "missions_assigned",
+          "tableTo": "missions",
           "columnsFrom": [
             "mission_id"
           ],
-          "tableTo": "missions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "missions_assigned_uid_users_id_fk": {
           "name": "missions_assigned_uid_users_id_fk",
           "tableFrom": "missions_assigned",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1044,6 +1046,42 @@
     },
     "public.mission_role": {
       "name": "mission_role",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "Now()"
+        },
+        "updated": {
+          "name": "updated",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "Now()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.mission_tag": {
+      "name": "mission_tag",
       "schema": "",
       "columns": {
         "id": {
@@ -1106,28 +1144,28 @@
         "missions_team_mission_id_missions_id_fk": {
           "name": "missions_team_mission_id_missions_id_fk",
           "tableFrom": "missions_team",
+          "tableTo": "missions",
           "columnsFrom": [
             "mission_id"
           ],
-          "tableTo": "missions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "missions_team_team_id_teams_id_fk": {
           "name": "missions_team_team_id_teams_id_fk",
           "tableFrom": "missions_team",
+          "tableTo": "teams",
           "columnsFrom": [
             "team_id"
           ],
-          "tableTo": "teams",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1181,15 +1219,15 @@
         "notifications_uid_users_id_fk": {
           "name": "notifications_uid_users_id_fk",
           "tableFrom": "notifications",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1245,15 +1283,15 @@
         "poll_questions_poll_id_poll_id_fk": {
           "name": "poll_questions_poll_id_poll_id_fk",
           "tableFrom": "poll_questions",
+          "tableTo": "poll",
           "columnsFrom": [
             "poll_id"
           ],
-          "tableTo": "poll",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1287,41 +1325,41 @@
         "poll_votes_uid_users_id_fk": {
           "name": "poll_votes_uid_users_id_fk",
           "tableFrom": "poll_votes",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "poll_votes_poll_id_poll_id_fk": {
           "name": "poll_votes_poll_id_poll_id_fk",
           "tableFrom": "poll_votes",
+          "tableTo": "poll",
           "columnsFrom": [
             "poll_id"
           ],
-          "tableTo": "poll",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "poll_votes_question_id_poll_questions_id_fk": {
           "name": "poll_votes_question_id_poll_questions_id_fk",
           "tableFrom": "poll_votes",
+          "tableTo": "poll_questions",
           "columnsFrom": [
             "question_id"
           ],
-          "tableTo": "poll_questions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1411,28 +1449,28 @@
         "schedules_assigned_schedule_id_schedule_id_fk": {
           "name": "schedules_assigned_schedule_id_schedule_id_fk",
           "tableFrom": "schedules_assigned",
+          "tableTo": "schedule",
           "columnsFrom": [
             "schedule_id"
           ],
-          "tableTo": "schedule",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "schedules_assigned_uid_users_id_fk": {
           "name": "schedules_assigned_uid_users_id_fk",
           "tableFrom": "schedules_assigned",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1478,28 +1516,28 @@
         "schedules_event_schedule_id_schedule_id_fk": {
           "name": "schedules_event_schedule_id_schedule_id_fk",
           "tableFrom": "schedules_event",
+          "tableTo": "schedule",
           "columnsFrom": [
             "schedule_id"
           ],
-          "tableTo": "schedule",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "schedules_event_uid_users_id_fk": {
           "name": "schedules_event_uid_users_id_fk",
           "tableFrom": "schedules_event",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1732,15 +1770,15 @@
         "training_author_users_id_fk": {
           "name": "training_author_users_id_fk",
           "tableFrom": "training",
+          "tableTo": "users",
           "columnsFrom": [
             "author"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1787,28 +1825,28 @@
         "training_assigned_training_id_training_id_fk": {
           "name": "training_assigned_training_id_training_id_fk",
           "tableFrom": "training_assigned",
+          "tableTo": "training",
           "columnsFrom": [
             "training_id"
           ],
-          "tableTo": "training",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "training_assigned_uid_users_id_fk": {
           "name": "training_assigned_uid_users_id_fk",
           "tableFrom": "training_assigned",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1842,28 +1880,28 @@
         "trainings_team_training_id_training_id_fk": {
           "name": "trainings_team_training_id_training_id_fk",
           "tableFrom": "trainings_team",
+          "tableTo": "training",
           "columnsFrom": [
             "training_id"
           ],
-          "tableTo": "training",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "trainings_team_team_id_teams_id_fk": {
           "name": "trainings_team_team_id_teams_id_fk",
           "tableFrom": "trainings_team",
+          "tableTo": "teams",
           "columnsFrom": [
             "team_id"
           ],
-          "tableTo": "teams",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2043,15 +2081,15 @@
         "users_reset_uid_users_id_fk": {
           "name": "users_reset_uid_users_id_fk",
           "tableFrom": "users_reset",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2091,15 +2129,15 @@
         "user_settings_uid_users_id_fk": {
           "name": "user_settings_uid_users_id_fk",
           "tableFrom": "user_settings",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2127,28 +2165,28 @@
         "users_to_teams_uid_users_id_fk": {
           "name": "users_to_teams_uid_users_id_fk",
           "tableFrom": "users_to_teams",
+          "tableTo": "users",
           "columnsFrom": [
             "uid"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "users_to_teams_tid_teams_id_fk": {
           "name": "users_to_teams_tid_teams_id_fk",
           "tableFrom": "users_to_teams",
+          "tableTo": "teams",
           "columnsFrom": [
             "tid"
           ],
-          "tableTo": "teams",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2158,10 +2196,8 @@
   "enums": {},
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "id": "847648d8-eb33-414e-9a91-5d1cc2db2724",
-  "prevId": "95769fa4-fce4-4e1a-a4ce-d7505d5e17b1"
+    "tables": {}
+  }
 }
