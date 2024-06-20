@@ -1,6 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
-import { GenericListOrder } from '@openaddresses/batch-generic';
+import { Param, GenericListOrder } from '@openaddresses/batch-generic';
+import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import { IssueResponse } from '../lib/types.js';
 import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
@@ -21,9 +22,10 @@ export default async function router(schema: Schema, config: Config) {
             }),
             fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Issue) }))),
             limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Issue)})),
+            assigned: Type.Optional(Type.Integer()),
             status: Type.String({
                 default: 'open',
                 enum: ['open', 'closed']
@@ -57,7 +59,16 @@ export default async function router(schema: Schema, config: Config) {
                     res.end();
                 });
             } else {
-                res.json(await config.models.Issue.augmented_list(req.query));
+                res.json(await config.models.Issue.augmented_list({
+                    limit: req.query.limit,
+                    page: req.query.page,
+                    order: req.query.order,
+                    sort: req.query.sort,
+                    where: sql`
+                        (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
+                        AND (${Param(req.query.assigned)}::INT IS NULL OR assigned_ids @> ARRAY[${Param(req.query.assigned)}::INT])
+                    `
+                }))
             }
         } catch (err) {
             return Err.respond(err, res);
