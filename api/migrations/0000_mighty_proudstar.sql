@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS "missions" (
 	"author" integer NOT NULL,
 	"location" text DEFAULT '' NOT NULL,
 	"location_geom" geometry(Point, 4326),
-	"external_id" text DEFAULT ''
+	"externalid" text DEFAULT ''
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "missions_assigned" (
