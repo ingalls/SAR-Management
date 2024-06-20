@@ -83,7 +83,7 @@ export default {
             this.list = await window.std('/api/mission-tag');
             this.loading = false;
         },
-        saveRole: async function(tag, tagit) {
+        saveTag: async function(tag, tagit) {
             if (tag.id) {
                 const newtag = await window.std(`/api/mission-tag/${tag.id}`, {
                     method: 'PATCH',
@@ -98,7 +98,7 @@ export default {
                 this.list.items.splice(tagit, 1, newtag);
             }
         },
-        deleteRole: async function(tag, tagit) {
+        deleteTag: async function(tag, tagit) {
             if (tag.id) {
                 const newtag = await window.std(`/api/mission-tag/${tag.id}`, {
                     method: 'DELETE',

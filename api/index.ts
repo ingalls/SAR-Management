@@ -50,7 +50,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
  */
 
 export default async function server(config) {
-    config.pg = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/sar', pgtypes, {
+    config.pool = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/sar', pgtypes, {
         ssl: process.env.StackName === 'test' ? undefined  : { rejectUnauthorized: false },
         migrationsFolder: (new URL('./migrations', import.meta.url)).pathname
     })
