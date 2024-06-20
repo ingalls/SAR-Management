@@ -1,11 +1,22 @@
 <template>
 <div class='card'>
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move'/>
         <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <PlusIcon v-if='create && is_iam("Issue:Manage")' @click='$router.push(`/issue/new`)' class='cursor-pointer'/>
+            <IconPlus v-if='create && is_iam("Issue:Manage")' @click='$router.push(`/issue/new`)' class='cursor-pointer'/>
+        </div>
+    </div>
+
+    <div v-if='search' class='px-2 pb-2'>
+        <div class='row g-2'>
+            <div class='col-8'>
+                <TablerInput label='Issue Search' v-model='paging.filter'/>
+            </div>
+            <div class='col-4'>
+                <TablerEnum label='Issue Status' :options='["open", "closed"]' v-model='paging.status'/>
+            </div>
         </div>
     </div>
 
@@ -58,14 +69,16 @@ import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    TablerEnum,
     TablerNone,
     TablerEpoch,
+    TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
-    GripVerticalIcon,
-    PlusIcon
-} from 'vue-tabler-icons';
+    IconGripVertical,
+    IconPlus
+} from '@tabler/icons-vue';
 
 export default {
     name: 'IssueCard',
@@ -73,6 +86,10 @@ export default {
         label: {
             type: String,
             default: 'Recent Issues'
+        },
+        search: {
+            type: Boolean,
+            default: false
         },
         dragHandle: {
             type: Boolean,
@@ -112,6 +129,7 @@ export default {
                 sort: 'id',
                 order: 'desc',
                 limit: this.limit,
+                status: 'open',
                 page: 0
             },
             list: {
@@ -162,6 +180,7 @@ export default {
             url.searchParams.append('order', this.paging.order);
             url.searchParams.append('sort', this.paging.sort);
             url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('status', this.paging.status);
             if (this.assigned) url.searchParams.append('assigned', this.assigned);
             this.list = await window.std(url);
             this.loading = false;
@@ -170,6 +189,9 @@ export default {
             const url = window.stdurl('/api/issue');
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('format', format);
+            url.searchParams.append('status', this.paging.status);
+            url.searchParams.append('order', this.paging.order);
+            url.searchParams.append('sort', this.paging.sort);
 
             if (format === 'csv') {
                 url.searchParams.append('fields', this.header.filter((h) => {
@@ -192,14 +214,16 @@ export default {
         },
     },
     components: {
-        GripVerticalIcon,
+        IconPlus,
+        IconGripVertical,
+        TablerEnum,
         TablerNone,
         TablerEpoch,
-        PlusIcon,
+        TablerInput,
+        TablerLoading,
         NoAccess,
         TableHeader,
         TableFooter,
-        TablerLoading,
     }
 }
 </script>

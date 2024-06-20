@@ -40,9 +40,6 @@ import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import CardEquipment from './cards/Equipment.vue';
 import {
-    SearchIcon
-} from 'vue-tabler-icons';
-import {
     TablerBreadCrumb 
 } from '@tak-ps/vue-tabler';
 
@@ -63,7 +60,6 @@ export default {
     },
     components: {
         NoAccess,
-        SearchIcon,
         TablerBreadCrumb,
         CardEquipment
     }

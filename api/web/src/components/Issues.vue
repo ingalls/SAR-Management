@@ -19,6 +19,7 @@
                     <CardIssues
                         label='Issues'
                         :iam='iam'
+                        :search='true'
                         :auth='auth'
                         :limit='20'
                     />
