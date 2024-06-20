@@ -34,13 +34,11 @@ export default class TeamModel extends Modeler<typeof Team> {
         const RootUser = this.pool
             .select({
                 users_team_id: max(UserTeam.tid).as('users_team_id'),
-                users: sql<number[]>`array_agg(users.id)`.as('users')
+                users: sql<number[]>`array_agg(DISTINCT users_to_teams.uid)`.as('users')
             })
             .from(UserTeam)
-            .where(sql`
-                disabled = False
-            `)
             .leftJoin(User, eq(User.id, UserTeam.uid))
+            .where(eq(User.disabled, false))
             .groupBy(UserTeam.tid)
             .as("root_users");
 
@@ -87,10 +85,8 @@ export default class TeamModel extends Modeler<typeof Team> {
                 users: sql<number[]>`array_agg(users.id)`.as('users')
             })
             .from(UserTeam)
-            .where(sql`
-                disabled = False
-            `)
             .leftJoin(User, eq(User.id, UserTeam.uid))
+            .where(eq(User.disabled, false))
             .groupBy(UserTeam.tid)
             .as("root_users");
 

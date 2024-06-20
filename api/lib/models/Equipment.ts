@@ -115,7 +115,7 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
                 archived: Equipment.archived,
                 quantity: Equipment.quantity,
                 value: Equipment.value,
-                assigned: RootAssigned
+                assigned: RootAssigned.assigned
             })
             .from(Equipment)
             .leftJoin(RootAssigned, eq(Equipment.id, RootAssigned.assigned_equip_id))
