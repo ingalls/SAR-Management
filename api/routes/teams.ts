@@ -78,7 +78,8 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Team:Manage');
 
-            res.json(await config.models.Team.generate(req.body));
+            const team = await config.models.Team.generate(req.body);
+            res.json(await config.models.Team.augmented_from(team.id));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -96,7 +97,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Team:View');
 
-            res.json(await config.models.Team.from(req.params.teamid));
+            res.json(await config.models.Team.augmented_from(req.params.teamid));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -127,7 +128,9 @@ export default async function router(schema: Schema, config: Config) {
                 delete req.body.iam;
             }
 
-            res.json(await config.models.Team.commit(req.params.teamid, req.body));
+            const team = await config.models.Team.commit(req.params.teamid, req.body);
+
+            res.json(await config.models.Team.augmented_from(team.id));
         } catch (err) {
             return Err.respond(err, res);
         }

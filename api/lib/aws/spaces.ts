@@ -3,6 +3,8 @@ import Err from '@openaddresses/batch-error';
 import { Upload } from "@aws-sdk/lib-storage";
 
 export default class Spaces {
+    client: S3.S3Client;
+
     constructor() {
         this.client = Spaces.newclient();
     }
@@ -19,7 +21,7 @@ export default class Spaces {
         });
     }
 
-    async list(params) {
+    async list(params): Promise<S3.ListObjectsCommandOutput> {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         return await this.client.send(new S3.ListObjectsCommand(params));
@@ -88,7 +90,7 @@ export default class Spaces {
                 }));
 
                 if (list.KeyCount) {
-                    const deleted = this.client.send(new S3.DeleteObjectsCommand({
+                    const deleted = await this.client.send(new S3.DeleteObjectsCommand({
                         Bucket: params.Bucket,
                         Delete: {
                             Objects: list.Contents.map((item) => ({ Key: item.Key })),

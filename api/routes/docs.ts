@@ -1,5 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
+import { Readable } from 'node:stream';
 import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import busboy from 'busboy';
@@ -109,7 +110,8 @@ export default async function router(schema: Schema, config: Config) {
                     Key: `documents/${decoded.p ? decoded.p : ''}${decoded.f}`
                 });
 
-                return file.Body.pipe(res);
+                const body = file.Body as Readable;
+                return body.pipe(res);
             } else {
                 const user = await Auth.is_auth(config, req, { token: true });
                 await Auth.is_iam(config, req, 'Doc:Manage');
@@ -164,12 +166,14 @@ export default async function router(schema: Schema, config: Config) {
             });
 
             if (!req.query.download) {
-                return file.Body.pipe(res);
+                const body = file.Body as Readable;
+                return body.pipe(res);
             } else {
                 res.writeHead(200, {
                     'Content-Disposition': `attachment; filename="${req.query.file}"`
                 });
-                return file.Body.pipe(res);
+                const body = file.Body as Readable;
+                return body.pipe(res);
             }
         } catch (err) {
             return Err.respond(err, res);

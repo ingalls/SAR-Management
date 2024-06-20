@@ -49,7 +49,7 @@ export default async function router(schema: Schema, config: Config) {
                     AND (${Param(req.query.container)}::BOOLEAN IS NULL OR container = ${Param(req.query.container)})
                     AND (${Param(req.query.archived)}::BOOLEAN IS NULL OR archived = ${Param(req.query.archived)})
                     AND (${Param(req.query.filter)}::TEXT IS NULL OR name ~* ${Param(req.query.filter)})
-                    AND (${Param(req.query.assigned)}::BIGINT IS NULL OR equipment_assigned.uid = ${Param(req.query.assigned)})
+                    AND (${Param(req.query.assigned)}::INT IS NULL OR assigned_ids @> ARRAY[${Param(req.query.assigned)}::INT])
                 `
             }))
         } catch (err) {

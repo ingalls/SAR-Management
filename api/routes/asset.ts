@@ -1,6 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { sql } from 'drizzle-orm';
 import { GenericListOrder } from '@openaddresses/batch-generic';
+import { Readable } from 'node:stream';
 import path from 'node:path';
 import { Type } from '@sinclair/typebox';
 import busboy from 'busboy';
@@ -91,7 +92,8 @@ export default async function router(schema: Schema, config: Config) {
             });
 
             res.contentType(asset.name);
-            raw.Body.pipe(res);
+            const body = raw.Body as Readable;
+            body.pipe(res);
         } catch (err) {
             return Err.respond(err, res);
         }

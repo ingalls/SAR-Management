@@ -42,10 +42,12 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
         const RootAssigned = this.pool
             .select({
                 assigned_equip_id: max(EquipmentAssigned.equip_id).as('assigned_equip_id'),
-                assigned: sql<Array<number>>`coalesce(array_agg(equipment_assigned.uid), '{}'::INT[])`.as('assigned'),
+                assigned_ids: sql<Array<number>>`coalesce(array_agg(equipment_assigned.uid), '{}'::INT[])`.as('assigned_ids'),
+                assigned: sql<Array<Static<typeof Assigned>>>`json_agg(json_build_object('id', users.id, 'fname', users.fname, 'lname', users.lname))`.as('assigned')
             })
             .from(EquipmentAssigned)
-            .groupBy(EquipmentAssigned.mission_id)
+            .leftJoin(User, eq(EquipmentAssigned.uid, User.id))
+            .groupBy(EquipmentAssigned.equip_id)
             .as("root_assigned");
 
         const pgres = await this.pool
@@ -67,8 +69,7 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
                 assigned: RootAssigned.assigned
             })
             .from(Equipment)
-            .leftJoin(RootAssigned, eq(Equipment.id, RootAssigned.equip_id))
-            .leftJoin(User, eq(User.id, EquipmentAssigned.uid))
+            .leftJoin(RootAssigned, eq(Equipment.id, RootAssigned.assigned_equip_id))
             .where(query.where)
             .orderBy(orderBy)
             .limit(query.limit || 10)
@@ -88,6 +89,17 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
     }
 
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedEquipment>> {
+        const RootAssigned = this.pool
+            .select({
+                assigned_equip_id: max(EquipmentAssigned.equip_id).as('assigned_equip_id'),
+                assigned_ids: sql<Array<number>>`coalesce(array_agg(equipment_assigned.uid), '{}'::INT[])`.as('assigned_ids'),
+                assigned: sql<Array<Static<typeof Assigned>>>`json_agg(json_build_object('id', users.id, 'fname', users.fname, 'lname', users.lname))`.as('assigned')
+            })
+            .from(EquipmentAssigned)
+            .leftJoin(User, eq(EquipmentAssigned.uid, User.id))
+            .groupBy(EquipmentAssigned.equip_id)
+            .as("root_assigned");
+
         const pgres = await this.pool
             .select({
                 id: Equipment.id,
@@ -103,11 +115,10 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
                 archived: Equipment.archived,
                 quantity: Equipment.quantity,
                 value: Equipment.value,
-                assigned: sql<Array<Static<typeof Assigned>>>`json_agg(json_build_object('id', users.id, 'fname', users.fname, 'lname', users.lname))`.as('assigned')
+                assigned: RootAssigned
             })
             .from(Equipment)
-            .leftJoin(EquipmentAssigned, eq(Equipment.id, EquipmentAssigned.equip_id))
-            .leftJoin(User, eq(User.id, EquipmentAssigned.uid))
+            .leftJoin(RootAssigned, eq(Equipment.id, RootAssigned.assigned_equip_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
             .limit(1);
 

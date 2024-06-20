@@ -12,7 +12,7 @@ import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { UserResponse } from '../lib/types.js';
 import { User_EmergencyContact } from '../lib/models/User.js';
 import Config from '../lib/config.js';
-import { Type } from '@sinclair/typebox';
+import { Static, Type } from '@sinclair/typebox';
 
 function format(u: Static<typeof UserResponse>): Static<typeof UserResponse> {
     if (u.phone) {

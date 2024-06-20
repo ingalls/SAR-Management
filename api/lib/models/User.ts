@@ -9,7 +9,18 @@ export const User_EmergencyContact = Type.Object({
     name: Type.String(),
     phone: Type.String(),
     relationship: Type.String()
-})
+});
+
+export const PartialTeam = Type.Object({
+    id: Type.Integer(),
+    name: Type.String(),
+    created: Type.String(),
+    updated: Type.String(),
+    public: Type.Boolean(),
+    colour_bg: Type.String(),
+    colour_txt: Type.String(),
+    fieldable: Type.Boolean()
+});
 
 export const AugmentedUser = Type.Object({
     id: Type.Integer(),

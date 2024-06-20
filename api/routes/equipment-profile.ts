@@ -6,6 +6,7 @@ import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import sharp from 'sharp';
 import Schema from '@openaddresses/batch-schema';
+import { Readable } from 'node:stream';
 import { StandardResponse } from '../lib/types.js';
 import Config from '../lib/config.js';
 
@@ -38,8 +39,9 @@ export default async function router(schema: Schema, config: Config) {
                 else Key = Key + 'profile.jpg';
 
                 const raw = await spaces.get({ Key });
+                const body = raw.Body as Readable;
 
-                raw.Body.pipe(res);
+                body.pipe(res);
             } catch (err) {
                 if (err.Code === 'NoSuchKey') {
                     res.writeHead(200, {
