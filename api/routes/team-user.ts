@@ -7,6 +7,7 @@ import { User } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, UserResponse } from '../lib/types.js';
+import { userFormat } from './users.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/team/:teamid/user', {
@@ -37,9 +38,11 @@ export default async function router(schema: Schema, config: Config) {
                 order: req.query.order,
                 sort: req.query.sort,
                 where: sql`
-                    team = ${req.params.teamid}
+                    teams_id @> ARRAY[${req.params.teamid}::INT]
                 `
             });
+
+            list.items.map(userFormat)
 
             return res.json(list);
         } catch (err) {

@@ -14,7 +14,7 @@ import { User_EmergencyContact } from '../lib/models/User.js';
 import Config from '../lib/config.js';
 import { Static, Type } from '@sinclair/typebox';
 
-function format(u: Static<typeof UserResponse>): Static<typeof UserResponse> {
+export function userFormat(u: Static<typeof UserResponse>): Static<typeof UserResponse> {
     if (u.phone) {
         const p = phone(u.phone);
         if (p.isValid && p.countryCode === '+1') {
@@ -97,7 +97,7 @@ export default async function router(schema: Schema, config: Config) {
                     `
                 });
 
-                list.items.map(format)
+                list.items.map(userFormat)
 
                 return res.json(list);
             }
@@ -151,7 +151,7 @@ export default async function router(schema: Schema, config: Config) {
 
             if (config.email) await email.newuser(user);
 
-            return res.json(format(await config.models.User.augmented_from(user.id)));
+            return res.json(userFormat(await config.models.User.augmented_from(user.id)));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -190,7 +190,7 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.User.commit(req.params.userid, req.body);
 
-            return res.json(format(await config.models.User.augmented_from(req.params.userid)));
+            return res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -208,7 +208,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'User:View');
 
-            return res.json(format(await config.models.User.augmented_from(req.params.userid)));
+            return res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
         } catch (err) {
             return Err.respond(err, res);
         }
