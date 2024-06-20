@@ -52,7 +52,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr :key='doc.key' v-for='doc in list.documents'>
+                                <tr :key='doc.key' v-for='doc in list.items'>
                                     <td>
                                         <template v-if='doc.type === "dir"'>
                                             <FolderFilledIcon class='mx-2'/>
@@ -151,7 +151,7 @@ export default {
             },
             list: {
                 total: 0,
-                documents: []
+                items: []
             }
         }
     },
