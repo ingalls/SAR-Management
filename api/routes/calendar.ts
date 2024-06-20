@@ -1,4 +1,5 @@
 import Err from '@openaddresses/batch-error';
+import { Param } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Auth, { AuthUserType } from '../lib/auth.js';
@@ -96,8 +97,8 @@ export default async function router(schema: Schema, config: Config) {
             if (req.params.calendar === 'training') {
                 (await config.models.Training.stream({
                     where: sql`
-                        (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
-                        AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                        (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
+                        AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
                     `
                 })).on('data', (training) => {
                     calendar.createEvent({
@@ -154,8 +155,8 @@ export default async function router(schema: Schema, config: Config) {
 
                     for (const user of (await config.models.User.list({
                         where: sql`
-                            indexable_month_day(bday) >= indexable_month_day(${query.start_bday}::DATE)
-                            AND indexable_month_day(bday) <= indexable_month_day(${query.end_bday}::DATE)
+                            indexable_month_day(bday) >= indexable_month_day(${Param(query.start_bday)}::DATE)
+                            AND indexable_month_day(bday) <= indexable_month_day(${Param(query.end_bday)}::DATE)
                             AND disabled IS False
                         `
                     })).items) {
@@ -170,8 +171,8 @@ export default async function router(schema: Schema, config: Config) {
             } else if (req.params.calendar === 'mission') {
                 for (const mission of (await config.models.Mission.list({
                     where: sql`
-                        (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
-                        AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                        (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
+                        AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
                     `
                 })).items) {
                     events.push({
@@ -185,8 +186,8 @@ export default async function router(schema: Schema, config: Config) {
             } else if (req.params.calendar === 'training') {
                 for (const training of (await config.models.Training.list({
                     where: sql`
-                        (${req.query.start}::TIMESTAMP IS NULL OR start_ts >= ${req.query.start}::TIMESTAMP)
-                        AND (${req.query.end}::TIMESTAMP IS NULL OR end_ts <= ${req.query.end}::TIMESTAMP)
+                        (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
+                        AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
                     `
                 })).items) {
                     events.push({
