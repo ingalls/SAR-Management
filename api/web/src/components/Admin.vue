@@ -22,6 +22,9 @@
                     <div class="col-lg-4">
                         <CardRoles/>
                     </div>
+                    <div class="col-lg-4">
+                        <CardTags/>
+                    </div>
                 </template>
             </div>
         </div>
@@ -31,6 +34,7 @@
 
 <script>
 import CardRoles from './Admin/Roles.vue';
+import CardTags from './Admin/Tags.vue';
 import ServerConfig from './Admin/ServerConfig.vue';
 import {
     TablerBreadCrumb
@@ -50,6 +54,7 @@ export default {
     },
     components: {
         CardRoles,
+        CardTags,
         TablerBreadCrumb,
         ServerConfig,
     }

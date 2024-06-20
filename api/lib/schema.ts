@@ -211,6 +211,13 @@ export const MissionRole = pgTable('mission_role', {
     name: text('name').notNull()
 });
 
+export const MissionTag = pgTable('mission_tag', {
+    id: serial('id').primaryKey(),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    name: text('name').notNull()
+});
+
 export const Mission = pgTable('missions', {
     id: serial('id').primaryKey(),
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
