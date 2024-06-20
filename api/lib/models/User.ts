@@ -2,8 +2,8 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { User, UserTeam } from '../schema.js';
-import { sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
+import { User, UserTeam, Team } from '../schema.js';
+import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const User_EmergencyContact = Type.Object({
     name: Type.String(),
@@ -42,13 +42,35 @@ export default class UserModel extends Modeler<typeof User> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
 
+        const RootTeam = this.pool
+            .select({
+                teams_uid: max(UserTeam.uid).as('teams_uid'),
+                teams_id: sql<Array<number>>`coalesce(array_agg(teams.id), '{}'::INT[])`.as('teams_id'),
+                teams: sql<Array<Static<typeof PartialTeam>>>`coalesce(json_agg(json_build_object(
+                    'id', teams.id,
+                    'name', teams.name,
+                    'created', teams.created,
+                    'updated', teams.updated,
+                    'public', teams.public,
+                    'colour_bg', teams.colour_bg,
+                    'colour_txt', teams.colour_txt,
+                    'fieldable', teams.fieldable
+                )), '[]'::JSON)`.as('teams'),
+            })
+            .from(UserTeam)
+            .leftJoin(Team, eq(UserTeam.tid, Team.id))
+            .groupBy(UserTeam.uid)
+            .as("root_teams");
+
         const pgres = await this.pool
             .select({
                 count: sql<string>`count(*) OVER()`.as('count'),
+                teams: RootTeam.teams,
+                teams_id: RootTeam.teams_id,
                 generic: this.generic
             })
             .from(User)
-            .leftJoin(UserTeam, eq(User.id, UserTeam.uid))
+            .leftJoin(RootTeam, eq(this.generic.id, RootTeam.teams_uid))
             .where(query.where)
             .orderBy(orderBy)
             .limit(query.limit || 10)
@@ -61,7 +83,7 @@ export default class UserModel extends Modeler<typeof User> {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
                     return t.generic as Static<typeof AugmentedUser>
-                })  
+                })
             };
         }
     }

@@ -14,6 +14,17 @@ import { User_EmergencyContact } from '../lib/models/User.js';
 import Config from '../lib/config.js';
 import { Type } from '@sinclair/typebox';
 
+function format(u: Static<typeof UserResponse>): Static<typeof UserResponse> {
+    if (u.phone) {
+        const p = phone(u.phone);
+        if (p.isValid && p.countryCode === '+1') {
+            u.phone = `(${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
+        }
+    }
+
+    return u;
+}
+
 export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
 
@@ -52,7 +63,7 @@ export default async function router(schema: Schema, config: Config) {
                 (await config.models.User.stream({
                     where: sql`
                         (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
-                        AND (${Param(req.query.team)}::BIGINT IS NULL OR users_to_teams.tid = ${Param(req.query.team)})
+                        AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                         AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
                     `
                 })).on('data', async (user) => {
@@ -74,17 +85,21 @@ export default async function router(schema: Schema, config: Config) {
                     res.end();
                 });
             } else {
-                res.json(await config.models.User.augmented_list({
+                const list = await config.models.User.augmented_list({
                     limit: req.query.limit,
                     page: req.query.page,
                     order: req.query.order,
                     sort: req.query.sort,
                     where: sql`
                         (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
-                        AND (${Param(req.query.team)}::BIGINT IS NULL OR users_to_teams.tid = ${Param(req.query.team)})
+                        AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                         AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
                     `
-                }));
+                });
+
+                list.items.map(format)
+
+                return res.json(list);
             }
         } catch (err) {
             return Err.respond(err, res);
@@ -136,7 +151,7 @@ export default async function router(schema: Schema, config: Config) {
 
             if (config.email) await email.newuser(user);
 
-            return res.json(await config.models.User.augmented_from(user.id));
+            return res.json(format(await config.models.User.augmented_from(user.id)));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -175,7 +190,7 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.User.commit(req.params.userid, req.body);
 
-            return res.json(await config.models.User.augmented_from(req.params.userid));
+            return res.json(format(await config.models.User.augmented_from(req.params.userid)));
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -193,7 +208,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'User:View');
 
-            return res.json(await config.models.User.augmented_from(req.params.userid));
+            return res.json(format(await config.models.User.augmented_from(req.params.userid)));
         } catch (err) {
             return Err.respond(err, res);
         }
