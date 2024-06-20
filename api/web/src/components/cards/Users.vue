@@ -145,6 +145,10 @@ export default {
             type: Boolean,
             default: true
         },
+        limit: {
+            type: Number,
+            default: 10
+        },
         url: {
             type: String,
             default: '/api/user'
@@ -166,7 +170,7 @@ export default {
                 filter: '',
                 sort: 'Name',
                 order: 'asc',
-                limit: 10,
+                limit: this.limit,
                 page: 0
             },
             list: {
