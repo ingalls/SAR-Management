@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
+import * as pgtypes from './lib/schema.js';
 import minify from 'express-minify';
 import history from 'connect-history-api-fallback';
 import express from 'express';
@@ -49,14 +50,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
  */
 
 export default async function server(config) {
-    config.pool = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/sar', {
-        schemas: {
-            dir: new URL('./schema', import.meta.url)
-        },
-        parsing: {
-            geometry: true
-        }
-    });
+    config.pg = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/sar', pgtypes, {
+        ssl: process.env.StackName === 'test' ? undefined  : { rejectUnauthorized: false },
+        migrationsFolder: (new URL('./migrations', import.meta.url)).pathname
+    })
 
     config.models = new Models(config.pool);
     config.URL = (await config.models.Server.from('frontend')).value;
