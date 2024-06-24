@@ -8,6 +8,7 @@ import { AugmentedEquipmentAssigned } from './models/EquipmentAssigned.js';
 import { AugmentedMissionAssigned } from './models/MissionAssigned.js';
 import { AugmentedTrainingAssigned } from './models/TrainingAssigned.js';
 import { AugmentedIssueAssigned } from './models/IssueAssigned.js';
+import { AugmentedScheduleAssigned } from './models/ScheduleAssigned.js';
 import { AugmentedEquipment } from './models/Equipment.js';
 import { AugmentedUser } from './models/User.js';
 import { AugmentedTraining } from './models/Training.js';
@@ -41,16 +42,11 @@ export const ScheduleEventResponse = AugmentedScheduleEvent;
 export const IssueAssignedResponse = AugmentedIssueAssigned;
 export const MissionAssignedResponse = AugmentedMissionAssigned;
 export const TrainingAssignedResponse = AugmentedTrainingAssigned;
+export const ScheduleAssignedResponse = AugmentedScheduleAssigned;
 
 export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
     id: Type.Integer(),
     team: Type.Integer()
-});
-
-export const ScheduleAssignedResponse = createSelectSchema(schemas.ScheduleAssigned, {
-    id: Type.Integer(),
-    schedule_id: Type.Integer(),
-    uid: Type.Integer(),
 });
 
 export const ScheduleResponse = createSelectSchema(schemas.Schedule, {

@@ -317,7 +317,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
 
-            return res.json(await config.models.ScheduleAssigned.list({
+            return res.json(await config.models.ScheduleAssigned.augmented_list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,
