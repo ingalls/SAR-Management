@@ -3,7 +3,7 @@
     <div class='card-header'>
         <div class="col">
             <div class="d-flex align-items-center">
-                <Avatar :user='comment.user'/>
+                <Avatar :user='comment.user' :link='true' color='black'/>
                 <span class='mx-2'>-</span>
                 <div v-text='fromNow'></div>
                 <div class='ms-auto btn-list'>
