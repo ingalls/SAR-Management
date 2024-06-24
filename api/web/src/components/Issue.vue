@@ -78,7 +78,7 @@
                         </div>
                     </div>
 
-                    <div :key='comment.updated' v-for='comment in comments.issues_comments' class="col-md-9">
+                    <div :key='comment.updated' v-for='comment in comments.items' class="col-md-9">
                         <Comment
                             @delete='deleteComment($event)'
                             @update='updateComment($event)'
@@ -162,7 +162,7 @@ export default {
             },
             assigned: [],
             comments: {
-                issues_comments: []
+                items: []
             }
         }
     },
