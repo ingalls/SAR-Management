@@ -308,7 +308,6 @@ export default async function router(schema: Schema, config: Config) {
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(ScheduleAssigned)})),
-            filter: Type.Optional(Type.String({ default: '' }))
         }),
         res: Type.Object({
             total: Type.Integer(),
@@ -324,8 +323,7 @@ export default async function router(schema: Schema, config: Config) {
                 order: req.query.order,
                 sort: req.query.sort,
                 where: sql`
-                    name ~* ${req.query.filter}
-                    AND schedule_id = ${req.params.scheduleid}
+                    schedule_id = ${req.params.scheduleid}
                 `
             }));
         } catch (err) {
