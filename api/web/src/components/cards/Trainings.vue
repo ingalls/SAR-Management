@@ -1,7 +1,7 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' size='32'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' :size='24'/>
         <h3 class="card-title"><a @click='goto' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
