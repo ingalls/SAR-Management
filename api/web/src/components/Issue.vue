@@ -187,7 +187,7 @@ export default {
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;
-            this.assigned = (await window.std(`/api/issue/${this.$route.params.issueid}/assigned`)).assigned;
+            this.assigned = (await window.std(`/api/issue/${this.$route.params.issueid}/assigned`)).items;
             this.loading.assigned = false;
         },
         deleteAssigned: async function(user) {
