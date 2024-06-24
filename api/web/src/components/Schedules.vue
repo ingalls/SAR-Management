@@ -27,7 +27,7 @@
                         <template v-if='loading.list'>
                             <TablerLoading desc='Loading Schedules'/>
                         </template>
-                        <template v-else-if='!list.schedules.length'>
+                        <template v-else-if='!list.items.length'>
                             <TablerNone label='Schedules' :create='false'/>
                         </template>
                         <div v-else class='table-responsive'>
@@ -38,7 +38,7 @@
                                     v-model:header='header'
                                 />
                                 <tbody>
-                                    <tr @click='$router.push(`/schedule/${schedule.id}`)' :key='schedule.id' v-for='schedule in list.schedules' class='cursor-pointer'>
+                                    <tr @click='$router.push(`/schedule/${schedule.id}`)' :key='schedule.id' v-for='schedule in list.items' class='cursor-pointer'>
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
                                                 <td><span v-text='schedule[h.name]'/></td>
@@ -102,7 +102,7 @@ export default {
             header: [],
             list: {
                 total: 0,
-                schedules: []
+                items: []
             }
         }
     },

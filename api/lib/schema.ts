@@ -274,7 +274,8 @@ export const Schedule = pgTable('schedule', {
     updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text('name').notNull(),
     body: text('body').notNull().default(''),
-    handoff: text('handoff').notNull().default('06:00')
+    handoff: text('handoff').notNull().default('06:00'),
+    disabled: boolean('disabled').notNull().default(false)
 });
 
 export const ScheduleAssigned = pgTable('schedules_assigned', {
