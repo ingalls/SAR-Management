@@ -1,12 +1,10 @@
 <template>
 <div class="card">
-    <div class="card-body">
-        <div class="d-flex align-items-center">
-            <h3 class="card-title">Mission Tags</h3>
+    <div class="card-header d-flex align-items-center">
+        <h3 class="card-title">Mission Tags</h3>
 
-            <div class='ms-auto btn-list'>
-                <IconPlus @click='push()' class='cursor-pointer' size='32'/>
-            </div>
+        <div class='ms-auto btn-list'>
+            <IconPlus @click='push()' class='cursor-pointer' size='32'/>
         </div>
     </div>
 
