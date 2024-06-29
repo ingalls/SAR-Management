@@ -188,6 +188,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .from(Mission)
             .leftJoin(RootTeams, eq(Mission.id, RootTeams.teams_mission_id))
             .leftJoin(RootUsers, eq(Mission.id, RootUsers.users_mission_id))
+            .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
             .limit(1)
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);

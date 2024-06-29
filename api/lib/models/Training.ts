@@ -184,6 +184,7 @@ export default class TrainingModel extends Modeler<typeof Training> {
             .leftJoin(RootTeams, eq(Training.id, RootTeams.teams_training_id))
             .leftJoin(RootUsers, eq(Training.id, RootUsers.users_training_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
+            .limit(1)
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
 
