@@ -92,15 +92,12 @@
                                             <div class="datagrid-item">
                                                 <div class="datagrid-title">Teams</div>
                                                 <div class="datagrid-content">
-                                                    <template v-if='loading.teams'>
-                                                        <TablerLoading desc='Loading Teams'/>
-                                                    </template>
-                                                    <template v-else-if='!teams.total'>
+                                                    <template v-if='!user.teams.length'>
                                                         None
                                                     </template>
                                                     <template v-else>
-                                                        <div :key='team.id' v-for='team in teams.teams'>
-                                                            <a @click='$router.push(`/team/${team.id}`)' class='cursor-pointer'  v-text='team.name'></a>
+                                                        <div :key='team.id' v-for='team of user.teams' class='pe-2 pt-1'>
+                                                            <TeamBadge :team='team'/>
                                                         </div>
                                                     </template>
                                                 </div>
@@ -200,6 +197,7 @@ import CardMissionMini from './cards/MissionsMini.vue';
 import CardTrainingMini from './cards/TrainingMini.vue';
 import CardCerts from './cards/Certs.vue';
 import NoAccess from './util/NoAccess.vue';
+import TeamBadge from './util/TeamBadge.vue'
 import {
     TablerEpoch,
     TablerBreadCrumb,
@@ -234,7 +232,6 @@ export default {
     },
     mounted: async function() {
         if (this.is_iam('User:View')) await this.fetch();
-        if (this.is_iam('Team:View')) await this.fetchTeams();
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
@@ -251,11 +248,6 @@ export default {
             this.user = await window.std(`/api/user/${this.userid}`);
             this.loading.user = false;
         },
-        fetchTeams: async function() {
-            this.loading.teams = true;
-            this.teams = await window.std(`/api/team?userid=${this.userid}`);
-            this.loading.teams = false;
-        }
     },
     components: {
         TablerEpoch,
@@ -269,6 +261,7 @@ export default {
         CardCerts,
         TablerLoading,
         TablerBreadCrumb,
+        TeamBadge,
         NoAccess
     }
 }

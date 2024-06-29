@@ -25,7 +25,7 @@
         <TablerLoading desc='Loading Issues'/>
     </template>
     <template v-else-if='!list.items.length'>
-        <TablerNone :create='false' label='Assigned Issues'/>
+        <TablerNone :create='false' label='Issues'/>
     </template>
     <template v-else>
         <div class='table-responsive'>
