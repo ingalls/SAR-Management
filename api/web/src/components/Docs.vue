@@ -31,14 +31,14 @@
                                 <div class="input-icon w-50">
                                     <input v-model='paging.filter' type="text" class="form-control" placeholder="Search…">
                                     <span class="input-icon-addon">
-                                        <SearchIcon width='24'/>
+                                        <IconSearch size='24' :stroke='1'/>
                                     </span>
                                 </div>
                                 <div class='ms-auto'>
                                     <div v-if='is_iam("Doc:Manage")' class='btn-list'>
-                                        <FolderPlusIcon @click='folder = true' class='cursor-pointer my-1'/>
+                                        <IconFolderPlus @click='folder = true' class='cursor-pointer my-1' :size='32' :stroke='1'/>
                                         <TablerDelete v-if='paging.prefix' displaytype='icon' class='my-1' @delete='deleteFolder'/>
-                                        <PlusIcon @click='upload = true' class='cursor-pointer my-1'/>
+                                        <IconPlus @click='upload = true' class='cursor-pointer my-1' :size='32' :stroke='1'/>
                                     </div>
                                 </div>
                             </div>
@@ -55,11 +55,11 @@
                                 <tr :key='doc.key' v-for='doc in list.items'>
                                     <td>
                                         <template v-if='doc.type === "dir"'>
-                                            <FolderFilledIcon class='mx-2'/>
+                                            <IconFolderFilled class='mx-2' :size='32' :stroke='1'/>
                                             <a class='cursor-pointer' @click='paging.prefix = paging.prefix + doc.key' v-text='doc.key'></a>
                                         </template>
                                         <template v-else>
-                                            <FileFilledIcon class='mx-2'/>
+                                            <IconFileFilled class='mx-2' :size='32' :stroke='1'/>
                                             <a class='cursor-pointer' @click='file = doc.key' v-text='doc.key'></a>
                                         </template>
                                     </td>
@@ -112,13 +112,13 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    DotsVerticalIcon,
-    PlusIcon,
-    FolderPlusIcon,
-    SearchIcon,
-    FileFilledIcon,
-    FolderFilledIcon
-} from 'vue-tabler-icons';
+    IconDotsVertical,
+    IconPlus,
+    IconFolderPlus,
+    IconSearch,
+    IconFileFilled,
+    IconFolderFilled
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Docs',
@@ -219,14 +219,14 @@ export default {
         TablerNone,
         File,
         Upload,
-        PlusIcon,
-        DotsVerticalIcon,
         NewFolder,
-        FolderPlusIcon,
         NoAccess,
-        SearchIcon,
-        FileFilledIcon,
-        FolderFilledIcon,
+        IconDotsVertical,
+        IconPlus,
+        IconFolderPlus,
+        IconSearch,
+        IconFileFilled,
+        IconFolderFilled,
         TableFooter,
         TablerDelete,
         TablerBreadCrumb,
