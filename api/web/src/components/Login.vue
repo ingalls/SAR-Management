@@ -11,8 +11,14 @@
                             </div>
                             <h2 class="h2 text-center mb-4">Login to your account</h2>
                             <div class="mb-3">
-                                <label class="form-label">Username or Email</label>
-                                <input v-model='username' v-on:keyup.enter='createLogin' type="text" class="form-control" placeholder="your@email.com" autocomplete="off">
+                                <TablerInput
+                                    v-model='username'
+                                    icon='user'
+                                    label='Username or Email'
+                                    placeholder='your@email.com'
+                                    autocomplete='off'
+                                    @keyup.enter='createLogin'
+                                />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">
@@ -21,9 +27,14 @@
                                         <a @click='$router.push("/login/forgot")' class='cursor-pointer'>Forgot Password</a>
                                     </span>
                                 </label>
-                                <div class="input-group input-group-flat">
-                                    <input v-model='password' v-on:keyup.enter='createLogin' type="password" class="form-control" placeholder="Your password" autocomplete="off">
-                                </div>
+                                <TablerInput
+                                    v-model='password'
+                                    icon='lock'
+                                    type='password'
+                                    placeholder='Your password'
+                                    autocomplete='off'
+                                    @keyup.enter='createLogin'
+                                />
                             </div>
                             <div class="form-footer">
                               <button @click='createLogin' type="submit" class="btn btn-primary w-100">Sign In</button>
@@ -41,6 +52,10 @@
 </template>
 
 <script>
+import {
+    TablerInput
+} from '@tak-ps/vue-tabler';
+
 export default {
     name: 'Login',
     data: function() {
@@ -48,6 +63,9 @@ export default {
             username: '',
             password: ''
         }
+    },
+    components: {
+        TablerInput
     },
     methods: {
         createLogin: async function() {
