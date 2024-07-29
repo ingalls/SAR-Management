@@ -3,7 +3,7 @@ import { GenericListOrder, Param } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Auth from '../lib/auth.js';
-import { Training } from '../lib/schema.js';
+import { Training, TrainingTeam, TrainingAssigned } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, TrainingResponse } from '../lib/types.js';
@@ -189,6 +189,14 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Training:Admin');
+
+            await config.models.TrainingTeam.delete(sql`
+                training_id = ${req.params.trainingid}
+            `);
+
+            await config.models.TrainingAssigned.delete(sql`
+                training_id = ${req.params.trainingid}
+            `);
 
             await config.models.Training.delete(req.params.trainingid);
 

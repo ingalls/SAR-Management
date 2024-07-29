@@ -34,7 +34,7 @@
 
                                     <div class='ms-auto btn-list'>
                                         <TablerEpoch :date='application.created'/>
-                                        <SettingsIcon v-if='!edit' class='cursor-pointer' @click='$router.push(`/application/${$route.params.applicationid}/edit`)'/>
+                                        <IconSettings v-if='!edit' class='cursor-pointer' :size='32' :stroke='1' @click='$router.push(`/application/${$route.params.applicationid}/edit`)'/>
                                     </div>
                                 </div>
                             </div>
@@ -90,8 +90,8 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconSettings
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Application',
@@ -198,7 +198,7 @@ export default {
         Avatar,
         TablerEpoch,
         CreateComment,
-        SettingsIcon,
+        IconSettings,
         TablerBreadCrumb,
         TablerLoading,
         TablerDelete,

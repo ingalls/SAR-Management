@@ -23,8 +23,8 @@
                                 <div class='col d-flex'>
                                     <h1 class='card-title'>Notifications</h1>
                                     <div class='ms-auto btn-list'>
-                                        <IconTrash v-if='list.total' @click='clearNotifications' class='cursor-pointer' size='32'/>
-                                        <IconSettings @click='$router.push("/notification/settings")' class='cursor-pointer' size='32'/>
+                                        <IconTrash v-if='list.total' @click='clearNotifications' class='cursor-pointer' :size='32' :stroke='1'/>
+                                        <IconSettings @click='$router.push("/notification/settings")' class='cursor-pointer' :size='32' :stroke='1'/>
                                     </div>
                                 </div>
                             </div>
@@ -34,11 +34,11 @@
                                 </template>
                                 <template v-else>
                                     <div :key='notify.id' v-for='notify in list.items'  class='col py-2 d-flex align-items-center hover-light rounded'>
-                                        <IconCircleDot class='mx-2' size='32'/>
+                                        <IconCircleDot class='mx-2' :size='32' :stroke='1'/>
                                         <span v-if='!notify.url' v-text='notify.text'/>
                                         <a v-else :href='notify.url' v-text='notify.text'/>
                                         <div class='ms-auto btn-list mx-2'>
-                                            <IconTrash @click='clearNotifications(notify)' class='cursor-pointer' size='32'/>
+                                            <IconTrash @click='clearNotifications(notify)' class='cursor-pointer' :size='32' :stroke='1'/>
                                         </div>
                                     </div>
                                 </template>
