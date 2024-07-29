@@ -4,7 +4,7 @@
         <h3 class="card-title">Mission Roles</h3>
 
         <div class='ms-auto btn-list'>
-            <IconPlus @click='push()' class='cursor-pointer' size='32'/>
+            <IconPlus @click='push()' class='cursor-pointer' size='32' :stroke='1'/>
         </div>
     </div>
 
@@ -33,11 +33,11 @@
                     <div class='d-flex align-items-center'>
                         <TablerEpoch :date='role.updated'/>
                         <div v-if='role._edit' class='ms-auto btn-list'>
-                            <IconCheck @click='saveRole(role, roleit)' class='cursor-pointer' size='32'/>
-                            <IconTrash @click='deleteRole(role, roleit)' class='cursor-pointer' size='32'/>
+                            <IconCheck @click='saveRole(role, roleit)' class='cursor-pointer' size='32' :stroke='1'/>
+                            <IconTrash @click='deleteRole(role, roleit)' class='cursor-pointer' size='32' :stroke='1'/>
                         </div>
                         <div v-else class='ms-auto btn-list'>
-                            <IconPencil @click='role._edit = true' class='cursor-pointer' size='32'/>
+                            <IconPencil @click='role._edit = true' class='cursor-pointer' size='32' :stroke='1'/>
                         </div>
                     </div>
                 </td>
