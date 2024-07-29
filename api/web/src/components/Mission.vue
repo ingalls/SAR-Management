@@ -162,7 +162,7 @@ export default {
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;
-            this.assigned = (await window.std(`/api/mission/${this.$route.params.missionid}/assigned`)).assigned;
+            this.assigned = (await window.std(`/api/mission/${this.$route.params.missionid}/assigned`)).items;
             this.loading.assigned = false;
         },
         deleteAssigned: async function(user) {
