@@ -104,7 +104,7 @@ export default async function router(schema: Schema, config: Config) {
             const assigned = await config.models.TrainingAssigned.from(req.params.assignedid);
             if (assigned.training_id !== training.id) throw new Err(400, null, 'Assigned User does not belong to the Training');
 
-            await config.models.TrainingAssigned.commit(req.params.trainingid, req.body);
+            await config.models.TrainingAssigned.commit(req.params.assignedid, req.body);
 
             return res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
         } catch (err) {
