@@ -15,7 +15,7 @@
         <TablerNone v-if='list.total === 0' :compact='true' :create='false'/>
         <div v-else>
             <div class='m-1'>
-                <div @click='select(loc)' :key='loc.id' v-for='loc in list.locations'>
+                <div @click='select(loc)' :key='loc.id' v-for='loc in list.items'>
                     <div class="d-flex align-items-center my-1 cursor-pointer">
                         <span v-text='loc.location'/>
                     </div>
@@ -62,7 +62,7 @@ export default {
         return {
             filter: '',
             list: {
-                locations: []
+                items: []
             }
         }
     },

@@ -37,13 +37,13 @@
                         <div v-else class="card">
                             <div class='card-header'>
                                 <div class='row col-12'>
-                                    <div class='col-12 d-flex'>
+                                    <div class='col-12 d-flex align-items-center'>
                                         <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
                                         <span v-if='training.required' class="mx-2 badge bg-red text-white" style="height: 20px;">Required</span>
 
                                         <div class='ms-auto btn-list'>
                                             <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
-                                            <IconSettings v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' size='24' class='cursor-pointer'/>
+                                            <IconSettings v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' :size='24' :stroke='1' class='cursor-pointer'/>
                                         </div>
                                     </div>
                                     <div v-if='training.teams.length' class='mt-2'>
