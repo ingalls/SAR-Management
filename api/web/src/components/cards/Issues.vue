@@ -1,11 +1,18 @@
 <template>
 <div class='card'>
     <div class="card-header">
-        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' :size='24'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' :size='24' :stroke='1'/>
         <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <IconPlus v-if='create && is_iam("Issue:Manage")' @click='$router.push(`/issue/new`)' class='cursor-pointer'/>
+            <IconPlus
+                v-if='create && is_iam("Issue:Manage")'
+                v-tooltip='"New Issue"'
+                @click='$router.push(`/issue/new`)'
+                class='cursor-pointer'
+                :size='32'
+                :stroke='1'
+            />
         </div>
     </div>
 
