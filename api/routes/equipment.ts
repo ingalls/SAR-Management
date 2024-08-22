@@ -35,7 +35,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Equipment:View');
 
-            res.json(await config.models.Equipment.augmented_list({
+            const list = await config.models.Equipment.augmented_list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,
@@ -51,7 +51,9 @@ export default async function router(schema: Schema, config: Config) {
                     AND (${Param(req.query.filter)}::TEXT IS NULL OR name ~* ${Param(req.query.filter)})
                     AND (${Param(req.query.assigned)}::INT IS NULL OR assigned_ids @> ARRAY[${Param(req.query.assigned)}::INT])
                 `
-            }))
+            })
+
+            return res.json(list);
         } catch (err) {
             return Err.respond(err, res);
         }

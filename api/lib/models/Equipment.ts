@@ -82,6 +82,7 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
                     delete t.count;
+                    if (!t.assigned) t.assigned = [];
                     return t as Static<typeof AugmentedEquipment>
                 })
             };
@@ -123,6 +124,8 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
             .limit(1);
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
+
+        if (!pgres[0].assigned) pgres[0].assigned = [];
 
         return pgres[0] as Static<typeof AugmentedEquipment>;
     }
