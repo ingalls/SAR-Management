@@ -135,8 +135,10 @@ export default class Auth {
     }
 
     // Ensure IAM permission is at least permission
-    static async is_iam(config: Config, req: Request<unknown, unknown, unknown, any>, permission): Promise<AuthUser> {
-        const auth = await Auth.is_auth(config, req);
+    static async is_iam(config: Config, req: Request<unknown, unknown, unknown, any>, permission: string, opts: {
+        token: boolean
+    } = { token: false }): Promise<AuthUser> {
+        const auth = await Auth.is_auth(config, req, opts);
 
         // Admins will be admins
         if (auth && auth.access && auth.access === 'admin') return auth;

@@ -56,10 +56,8 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            const user = await Auth.is_auth(config, req, {
-                token: true
-            });
-            await Auth.is_iam(config, req, 'Calendar:View');
+            const user = await Auth.is_auth(config, req, { token: true });
+            await Auth.is_iam(config, req, 'Calendar:View', { token: true });
 
             const token = jwt.sign({
                 u: user.id,
@@ -86,10 +84,8 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            const user = await Auth.is_auth(config, req, {
-                token: true
-            });
-            await Auth.is_iam(config, req, 'Calendar:View');
+            const user = await Auth.is_auth(config, req, { token: true });
+            await Auth.is_iam(config, req, 'Calendar:View', { token: true });
 
             if (user.type === AuthUserType.TOKEN) await Auth.is_scope(config, req, user.scopes);
 

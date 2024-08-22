@@ -115,7 +115,7 @@ export default async function router(schema: Schema, config: Config) {
                 return body.pipe(res);
             } else {
                 const user = await Auth.is_auth(config, req, { token: true });
-                await Auth.is_iam(config, req, 'Doc:Manage');
+                await Auth.is_iam(config, req, 'Doc:Manage', { token: true });
 
                 req.query.prefix = prefix(req.query.prefix);
 
@@ -159,7 +159,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             await Auth.is_auth(config, req, { token: true });
-            await Auth.is_iam(config, req, 'Doc:View');
+            await Auth.is_iam(config, req, 'Doc:View', { token: true });
 
             req.query.prefix = prefix(req.query.prefix);
 

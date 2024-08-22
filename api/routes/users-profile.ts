@@ -31,9 +31,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
     }, async (req, res) => {
         try {
-            await Auth.is_auth(config, req, {
-                token: true
-            });
+            await Auth.is_auth(config, req, { token: true });
 
             try {
                 let Key = `users/${req.params.userid}/`;
