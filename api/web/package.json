@@ -17,7 +17,7 @@
         "@tabler/core": "^1.0.0-beta16",
         "@tabler/icons-vue": "^3.6.0",
         "@tak-ps/vue-tabler": "^3.22.2",
-        "@turf/bbox": "^7.0.0",
+        "@turf/bbox": "^7.1.0",
         "core-js": "^3.6.4",
         "dropzone": "^6.0.0-beta.2",
         "floating-vue": "^2.0.0-beta.17",
