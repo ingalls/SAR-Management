@@ -28,7 +28,8 @@ export default async function router(schema: Schema, config: Config) {
             let vote;
             try {
                 vote = await config.models.PollVote.from(sql`
-                    uid = ${user.id} AND poll_id = ${poll.id}
+                    uid = ${user.id}
+                    AND poll_id = ${poll.id}
                 `);
             } catch (err) {
                 vote = null;
