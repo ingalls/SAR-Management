@@ -52,10 +52,10 @@ export default async function router(schema: Schema, config: Config) {
                 uid: req.body.uid
             });
 
-            return {
+            return res.json({
                 status: 200,
                 message: 'User Assigned'
-            }
+            })
         } catch (err) {
             return Err.respond(err, res);
         }

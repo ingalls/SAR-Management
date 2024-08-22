@@ -36,7 +36,7 @@ export default async function router(schema: Schema, config: Config) {
                 order: req.query.order,
                 sort: req.query.sort,
                 where: sql`
-                    application ~* ${req.params.applicationid}
+                    application = ${req.params.applicationid}
                 `
             }));
         } catch (err) {
