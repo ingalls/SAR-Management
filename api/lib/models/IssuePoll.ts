@@ -40,7 +40,7 @@ export default class PollModel extends Modeler<typeof Poll> {
             .leftJoin(PollVote, eq(Poll.id, PollVote.poll_id))
             .leftJoin(PollQuestion, eq(Poll.id, PollVote.poll_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
-            .groupBy(PollVote.question_id);
+            .groupBy([Poll.id, PollVote.question_id]);
 
         if (pgres.length === 0) {
             throw new Err(404, null, 'Poll Not Found');
