@@ -30,28 +30,64 @@ export default class PollModel extends Modeler<typeof Poll> {
 
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedPoll>> {
         const pgres = await this.pool
-            .select({
-                id: Poll.id,
-                expiry: Poll.expiry,
-                questions: sql<Array<Static<typeof AugmentedPollQuestion>>>`JSON_AGG(ROW_TO_JSON(poll_questions.*))`.as('questions'),
-                votes: PollVote
-            })
-            .from(Poll)
-            .leftJoin(PollVote, eq(Poll.id, PollVote.poll_id))
-            .leftJoin(PollQuestion, eq(Poll.id, PollVote.poll_id))
-            .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
-            .groupBy([Poll.id, PollVote.question_id]);
+            .execute(sql`
+                 SELECT
+                        poll.*,
+                        pq.questions AS questions,
+                        pv.votes AS votes
+                    FROM
+                        poll
+                            LEFT JOIN
+                                (
+                                    SELECT
+                                        poll_id,
+                                        JSON_AGG(ROW_TO_JSON(poll_questions.*)) AS questions
+                                    FROM
+                                        poll_questions
+                                    WHERE
+                                        poll_id = ${id}
+                                    GROUP BY
+                                        poll_id
 
+                                ) pq ON poll.id = pq.poll_id
+                            LEFT JOIN
+                                (
+                                    SELECT
+                                        MAX(poll_id) AS poll_id,
+                                        JSON_AGG(ROW_TO_JSON(pi.*)) AS votes
+                                    FROM (
+                                        SELECT
+                                            MAX(poll_id) AS poll_id,
+                                            question_id,
+                                            count(*) AS votes
+                                        FROM
+                                            poll_votes
+                                        WHERE
+                                            poll_id = ${id}
+                                        GROUP BY
+                                            question_id
+                                    ) pi
+                                    GROUP BY
+                                        question_id
+
+                                ) pv ON poll.id = pv.poll_id
+                    WHERE
+                        poll.id = ${id}
+            `)
         if (pgres.length === 0) {
             throw new Err(404, null, 'Poll Not Found');
         }
 
-        // TODO Add Vote info
         return {
             id: pgres[0].id,
             expiry: pgres[0].expiry,
-            questions: pgres[0].questions,
-            votes: []
+            questions: pgres[0].questions.map((q: any) => {
+                return {
+                    ...q,
+                    question: JSON.parse(q.question)
+                }
+            }),
+            votes: pgres[0].votes || []
         }
     }
 }

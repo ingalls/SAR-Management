@@ -35,7 +35,10 @@ export default async function router(schema: Schema, config: Config) {
                 vote = null;
             }
 
-            return res.json({ ...poll, vote })
+            return res.json({
+                ...poll,
+                vote: vote.question_id
+            })
         } catch (err) {
             return Err.respond(err, res);
         }
