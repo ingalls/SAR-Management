@@ -5,8 +5,8 @@
         <h3 class="card-title"><a @click='$router.push("/application")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <IconPlus v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer' v-tooltip='"Create Application"' size='32'/>
-            <IconSettings v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer' v-tooltip='"Edit Application Form"' size='32'/>
+            <IconPlus v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer' v-tooltip='"Create Application"' size='32' stroke='1'/>
+            <IconSettings v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer' v-tooltip='"Edit Application Form"' size='32' stroke='1'/>
         </div>
     </div>
 

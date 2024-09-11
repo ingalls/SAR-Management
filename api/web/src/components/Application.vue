@@ -23,7 +23,7 @@
                     <div class="card">
                         <div class='card-header'>
                             <div class='row col-12'>
-                                <div class='col-12 d-flex'>
+                                <div class='col-12 d-flex align-items-center'>
                                     <div v-if='$route.params.applicationid'>
                                         <div class='card-title' v-text='`${application.name}`'></div>
                                         <div class='subheader' v-text='`${application.phone} - ${application.email}`'></div>
@@ -32,7 +32,7 @@
                                         <div class='card-title'>New Application</div>
                                     </div>
 
-                                    <div class='ms-auto btn-list'>
+                                    <div class='ms-auto btn-list d-flex align-items-center'>
                                         <TablerEpoch :date='application.created'/>
                                         <IconSettings v-if='!edit' class='cursor-pointer' :size='32' :stroke='1' @click='$router.push(`/application/${$route.params.applicationid}/edit`)'/>
                                     </div>

@@ -7,7 +7,7 @@
                     <div class="card card-md">
                         <div class="card-body">
                             <div class='text-center' style='margin-bottom: 24px;'>
-                                <img src='/logo.png' height='150'/>
+                                <img src='/logo.png' style='height: 150px;'/>
                             </div>
                             <h2 class="h2 text-center mb-4">Login to your account</h2>
                             <div class="mb-3">
