@@ -100,7 +100,6 @@ import {
     TablerNone,
     TablerEpochRange,
     TablerBreadCrumb,
-    TablerLoading
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -193,7 +192,6 @@ export default {
         NoAccess,
         TablerEpochRange,
         TableFooter,
-        TablerLoading,
         TableHeader,
         HeatMap,
         TeamBadge,

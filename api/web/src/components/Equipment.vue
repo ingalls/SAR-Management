@@ -63,10 +63,10 @@
                                                         <span v-else>Unknown</span>
                                                     </div>
                                                 </div>
-                                                <div v-if='assigned.length' class="datagrid-item">
+                                                <div v-if='equipment.assigned.length' class="datagrid-item">
                                                     <div class="datagrid-title">Assigned</div>
                                                     <div class="datagrid-content">
-                                                        <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1' :link='true'/>
+                                                        <Avatar :key='a.uid' v-for='a in equipment.assigned' :user='a' class='my-1' :link='true'/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -126,7 +126,6 @@ export default {
             },
             type: {},
             parent: {},
-            assigned: [],
             equipment: {},
         }
     },
@@ -145,8 +144,6 @@ export default {
             if (this.equipment.parent) {
                 this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
-
-            this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).assigned;
 
             this.loading.equipment = false;
         },
