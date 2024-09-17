@@ -11,14 +11,18 @@
     </div>
 
     <NoAccess v-if='!is_iam("Application:View")'/>
-    <template v-else-if='loading'>
-        <TablerLoading desc='Loading Applications'/>
-    </template>
-    <template v-else-if='!list.items.length'>
-        <TablerNone :create='false' :label='Applications'/>
-    </template>
     <template v-else>
-        <table class="table card-table table-hover table-vcenter">
+        <div class='col-12 px-2 py-2'>
+            <TablerInput
+                placeholder='Filter Applications'
+                v-model='paging.filter'
+                icon='search'
+            />
+        </div>
+
+        <TablerLoading v-if='loading' desc='Loading Applications'/>
+        <TablerNone v-else-if='!list.items.length' :create='false' :label='Applications'/>
+        <table v-else class="table card-table table-hover table-vcenter">
             <TableHeader
                 v-model:sort='paging.sort'
                 v-model:order='paging.order'
@@ -53,6 +57,7 @@ import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
+    TablerInput,
     TablerEpoch,
     TablerLoading
 } from '@tak-ps/vue-tabler'
@@ -188,6 +193,7 @@ export default {
         IconGripVertical,
         TableHeader,
         TableFooter,
+        TablerInput,
         TablerLoading,
         TablerEpoch,
         TablerNone,

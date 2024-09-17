@@ -64,6 +64,7 @@ export default async function router(schema: Schema, config: Config) {
 
             const mission = await config.models.Mission.augmented_from(req.params.missionid);
             if (!mission.users) mission.users = [];
+
             return res.json(mission);
         } catch (err) {
             return Err.respond(err, res);
