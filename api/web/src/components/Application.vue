@@ -62,7 +62,7 @@
                     </div>
                 </div>
 
-                <div :key='comment.updated' v-for='comment in comments.application_comments' class="col-md-12 py-2">
+                <div :key='comment.updated' v-for='comment in comments.items' class="col-md-12 py-2">
                     <Comment
                         @delete='deleteComment($event)'
                         @update='updateComment($event)'
