@@ -11,7 +11,7 @@ import {
     StandardResponse,
     ScheduleResponse,
     ScheduleEventResponse,
-    ScheduleAssignedResponse 
+    ScheduleAssignedResponse
 } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
@@ -74,7 +74,7 @@ export default async function router(schema: Schema, config: Config) {
                 for (const a of assigned) {
                     await config.models.ScheduleAssigned.generate({
                         schedule_id: schedule.id,
-                        role: a.role,
+                        role: 'Default',
                         uid: a.uid
                     });
                 }

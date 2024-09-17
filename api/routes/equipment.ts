@@ -151,7 +151,9 @@ export default async function router(schema: Schema, config: Config) {
             const assigned = req.body.assigned;
             delete req.body.assigned;
 
-            const old_assigned = (await config.models.EquipmentAssigned.list(equipment.id)).items.map((assigned) => {
+            const old_assigned = (await config.models.EquipmentAssigned.list({
+                where: sql`${equipment.id} = equip_id`
+            })).items.map((assigned) => {
                 return assigned.uid;
             });
 

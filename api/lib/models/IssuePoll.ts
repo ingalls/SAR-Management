@@ -29,7 +29,7 @@ export default class PollModel extends Modeler<typeof Poll> {
     }
 
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedPoll>> {
-        const pgres = await this.pool
+        const pgres: any = await this.pool
             .execute(sql`
                  SELECT
                         poll.*,
@@ -74,6 +74,7 @@ export default class PollModel extends Modeler<typeof Poll> {
                     WHERE
                         poll.id = ${id}
             `)
+
         if (pgres.length === 0) {
             throw new Err(404, null, 'Poll Not Found');
         }

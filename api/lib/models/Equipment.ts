@@ -19,7 +19,7 @@ export const AugmentedEquipment = Type.Object({
     name: Type.String(),
     description: Type.String(),
     type_id: Type.Integer(),
-    container: Type.Integer(),
+    container: Type.Boolean(),
     parent: Type.Integer(),
     meta: Type.Any(),
     archived: Type.Boolean(),
