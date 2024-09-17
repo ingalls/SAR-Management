@@ -25,7 +25,14 @@
                             <div class='row col-12'>
                                 <div class='col-12 d-flex align-items-center'>
                                     <div v-if='$route.params.applicationid'>
-                                        <div class='card-title' v-text='`${application.name}`'></div>
+                                        <div class='d-flex align-items-center'>
+                                            <span v-if='application.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
+                                            <span v-else class="badge bg-green text-white" style="height: 20px;">Active</span>
+                                           
+                                            <div class='card-title mx-2'>
+                                                <span v-text='application.name'/>
+                                            </div>
+                                        </div>
                                         <div class='subheader' v-text='`${application.phone} - ${application.email}`'></div>
                                     </div>
                                     <div v-else>

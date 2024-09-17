@@ -33,7 +33,11 @@
                 <tr @click='$router.push(`/application/${application.id}`)' :key='application.id' v-for='application in list.items' class='cursor-pointer'>
                     <template v-for='h in header'>
                         <template v-if='h.display'>
-                            <td v-if='["updated", "created"].includes(h.name)'>
+                            <td v-if='["archived"].includes(h.name)'>
+                                <span v-if='application.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
+                                <span v-else class="badge bg-green text-white" style="height: 20px;">Active</span>
+                            </td>
+                            <td v-else-if='["updated", "created"].includes(h.name)'>
                                 <TablerEpoch v-if='application[h.name]' :date='application[h.name]'/>
                                 <span v-else>Never</span>
                             </td>
@@ -156,7 +160,7 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/application');
-            this.header = ['name', 'created', 'phone', 'email'].map((h) => {
+            this.header = ['archived', 'name', 'created', 'phone', 'email'].map((h) => {
                 return { name: h, display: true };
             });
 
