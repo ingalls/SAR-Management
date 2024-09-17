@@ -158,11 +158,14 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Application:Admin');
 
-            await config.models.Application.delete(req.params.applicationid);
+            await config.models.Application.commit(req.params.applicationid, {
+                updated: sql`Now()`,
+                archived: true
+            });
 
             return res.json({
                 status: 200,
-                message: 'Application Deleted'
+                message: 'Application Archived'
             });
         } catch (err) {
             return Err.respond(err, res);

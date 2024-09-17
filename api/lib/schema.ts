@@ -89,7 +89,8 @@ export const Application = pgTable('applications', {
     phone: text('phone').notNull(),
     email: text('email').notNull(),
     meta: json('meta').notNull().default({}),
-    schema: json('schema').notNull()
+    schema: json('schema').notNull(),
+    archived: boolean('archived').notNull().default(false)
 });
 
 export const ApplicationComment = pgTable('application_comments', {

@@ -51,6 +51,7 @@ export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
 
 export const ScheduleResponse = createSelectSchema(schemas.Schedule, {
     id: Type.Integer(),
+    disabled: Type.Boolean()
 });
 
 export const AssetResponse = Type.Object({
@@ -131,6 +132,7 @@ export const IssueCommentResponse = AugmentedIssueComment;
 export const ApplicationCommentResponse = AugmentedApplicationComment;
 
 export const ApplicationResponse = createSelectSchema(schemas.Application, {
-    id: Type.Integer()
+    id: Type.Integer(),
+    archived: Type.Boolean()
 });
 
