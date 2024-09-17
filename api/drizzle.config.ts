@@ -4,7 +4,7 @@ export default {
     dialect: 'postgresql',
     schema: './lib/schema.ts',
     dbCredentials: {
-        url: process.env.POSTGRES || 'postgres://postgres@localhost:5432/tak_ps_etl',
+        url: process.env.POSTGRES || 'postgres://postgres@localhost:5432/sar',
     },
     verbose: true,
     strict: true,
