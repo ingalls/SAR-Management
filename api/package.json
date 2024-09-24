@@ -6,7 +6,7 @@
     "main": "index.js",
     "scripts": {
         "test": "tape test/**.test.js",
-        "build": "tsc --build && cp package.json ./dist/",
+        "build": "tsc --build && cp package.json ./dist/ && cp migrations/ dist/ -r",
         "lint": "eslint index.ts routes/ lib/",
         "loaddb": "echo 'DROP DATABASE sar' | psql && echo 'CREATE DATABASE sar' | psql && psql sar < sar-latest.dump && echo \"UPDATE users SET email = username || '@ingalls.ca'\" | psql sar",
         "prod": "node dist/index.js",
