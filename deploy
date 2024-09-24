@@ -3,9 +3,11 @@ set -euo pipefail
 
 git pull
 npm install
+
 cd api
 npm install
+npm run build
+
 cd web
 npm install
-
 npm run build
