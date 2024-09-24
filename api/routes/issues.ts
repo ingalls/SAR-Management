@@ -4,7 +4,7 @@ import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import { IssueResponse } from '../lib/types.js';
-import { stringify } from 'csv-stringify/lib/sync.js';
+import { stringify } from 'csv-stringify/sync';
 import Schema from '@openaddresses/batch-schema';
 import { Issue } from '../lib/schema.js';
 import Config from '../lib/config.js';
