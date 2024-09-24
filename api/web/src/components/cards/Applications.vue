@@ -12,12 +12,20 @@
 
     <NoAccess v-if='!is_iam("Application:View")'/>
     <template v-else>
-        <div class='col-12 px-2 py-2'>
-            <TablerInput
-                placeholder='Filter Applications'
-                v-model='paging.filter'
-                icon='search'
-            />
+        <div class='px-2 py-2 row g-2'>
+            <div class='col-12 col-md-8'>
+                <TablerInput
+                    placeholder='Filter Applications'
+                    v-model='paging.filter'
+                    icon='search'
+                />
+            </div>
+            <div class='col-12 col-md-4'>
+                <TablerEnum
+                    :options='["all", "archived", "active"]'
+                    v-model='paging.status'
+                />
+            </div>
         </div>
 
         <TablerLoading v-if='loading' desc='Loading Applications'/>
@@ -62,6 +70,7 @@ import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
+    TablerEnum,
     TablerInput,
     TablerEpoch,
     TablerLoading
@@ -133,6 +142,7 @@ export default {
                 order: this.order,
                 limit: this.limit,
                 start: this.start,
+                status: 'all',
                 end: this.end,
                 page: 0
 
@@ -196,6 +206,9 @@ export default {
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('sort', this.paging.sort);
             url.searchParams.append('order', this.paging.order);
+            if (this.paging.status !== 'all') {
+                url.searchParams.append('status', this.paging.status);
+            }
 
             if (this.paging.start) url.searchParams.append('start', this.paging.start);
             if (this.paging.end) url.searchParams.append('end', this.paging.end);
@@ -216,6 +229,7 @@ export default {
         IconGripVertical,
         TableHeader,
         TableFooter,
+        TablerEnum,
         TablerInput,
         TablerLoading,
         TablerEpoch,
