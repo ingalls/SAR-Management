@@ -22,13 +22,11 @@
                         <div class="card">
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='equipment.name'/>
-                                <div class='ms-auto'>
-                                    <div class='btn-list'>
-                                        <span v-if='equipment.container' class="badge bg-blue text-white" style="height: 20px;">Container</span>
-                                        <span v-if='equipment.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
+                                <div class='ms-auto btn-list align-items-center'>
+                                    <span v-if='equipment.container' class="badge bg-blue text-white" style="height: 20px;">Container</span>
+                                    <span v-if='equipment.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
 
-                                        <SettingsIcon v-if='is_iam("Equipment:Manage") && !equipment.archived' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
-                                    </div>
+                                    <IconSettings v-if='is_iam("Equipment:Manage") && !equipment.archived' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer' :stroke='1' :size='32'/>
                                 </div>
                             </div>
                             <div class='row row-0'>
@@ -100,8 +98,8 @@ import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import {
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconSettings
+} from '@tabler/icons-vue';
 import CardEquipment from './cards/Equipment.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
 import EquipmentProfile from './Equipment/Profile.vue';
@@ -151,7 +149,7 @@ export default {
     components: {
         NoAccess,
         Avatar,
-        SettingsIcon,
+        IconSettings,
         CardEquipment,
         TablerLoading,
         EquipmentMeta,

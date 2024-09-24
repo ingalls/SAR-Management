@@ -5,11 +5,11 @@
             <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
             <div class='ms-auto'>
                 <div class='btn-list'>
-                    <PlusIcon v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' class='cursor-pointer my-2'/>
+                    <IconPlus v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' :size='32' :stroke='1' class='cursor-pointer my-2'/>
                     <div v-if='search' class="input-icon">
                         <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
                             <span class="input-icon-addon">
-                            <SearchIcon width='24'/>
+                            <IconSearch :size='24'/>
                         </span>
                     </div>
                 </div>
@@ -56,9 +56,9 @@
 <script>
 import TableFooter from '../util/TableFooter.vue';
 import {
-    PlusIcon,
-    SearchIcon
-} from 'vue-tabler-icons';
+    IconPlus,
+    IconSearch
+} from '@tabler/icons-vue';
 import {
     TablerLoading,
     TablerNone
@@ -137,8 +137,8 @@ export default {
     components: {
         TablerNone,
         Avatar,
-        PlusIcon,
-        SearchIcon,
+        IconPlus,
+        IconSearch,
         TableFooter,
         TablerLoading
     }

@@ -13,7 +13,7 @@
             <div v-if='user' class='ms-auto'>
                 <div class='btn-list'>
                     <button class="btn btn-dark dropdown-toggle d-md-none" type='button' data-bs-toggle="dropdown" aria-expanded="false">
-                        <IconMenu size='32'/>
+                        <IconMenu size='32' stroke='1'/>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <a @click='$router.push("/")' class="dropdown-item">Home</a>
@@ -30,13 +30,13 @@
 
 
                     <a @click='$router.push("/notification")' class="btn btn-dark" target="_blank" rel="noreferrer">
-                        <IconBell size='32'/>
+                        <IconBell size='32' stroke='1'/>
                         <span v-if='notifications' class="badge bg-red"></span>
                     </a>
 
                     <div class='dropdown'>
                         <div type="button" id="userProfileButton" data-bs-toggle="dropdown" aria-expanded="false" class='btn btn-dark'>
-                            <IconUser size='32'/>
+                            <IconUser size='32' stroke='1'/>
                         </div>
                         <ul class="dropdown-menu" aria-labelledby='userProfileButton'>
                             <a @click='$router.push("/profile")' class="cursor-pointer dropdown-item">Profile</a>
