@@ -4,7 +4,7 @@ import Auth from '../lib/auth.js';
 import { User } from '../lib/schema.js';
 import bcrypt from 'bcrypt';
 import Email from '../lib/email.js';
-import { stringify } from '../node_modules/csv-stringify/lib/sync.js';
+import { stringify } from 'csv-stringify/lib/sync.js';
 import VCard from 'vcard-creator';
 import { phone } from 'phone';
 import Schema from '@openaddresses/batch-schema';
