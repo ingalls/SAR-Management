@@ -51,7 +51,7 @@
                                 <TablerSchema :disabled='!edit' :schema='application.schema' v-model='application'/>
                                 <template v-if='edit'>
                                     <div class='d-flex'>
-                                        <TablerDelete v-if='is_iam("Application:Admin")' @delete='deleteApp'/>
+                                        <TablerDelete v-if='is_iam("Application:Admin")' @delete='deleteApp' label='Archive'/>
                                         <div class='ms-auto'>
                                             <button @click='submit' class='btn btn-primary'>save</button>
                                         </div>
@@ -86,6 +86,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import phoneFormat from 'phone';
 import Avatar from './util/Avatar.vue';
 import CreateComment from './Application/CreateComment.vue';
 import Comment from './util/Comment.vue';
@@ -192,9 +193,22 @@ export default {
             this.loading.application = false;
             this.$router.push('/application');
         },
+        format: function(number) {
+            const p = phoneFormat(number);
+
+            if (!p.isValid) return number;
+
+            if (p.countryCode === '+1') {
+                return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
+            } else {
+                return p;
+            }
+        },
         fetch: async function() {
             this.loading.application = true;
-            this.application = await window.std(`/api/application/${this.$route.params.applicationid}`);
+            const application = await window.std(`/api/application/${this.$route.params.applicationid}`);
+            application.phone = this.format(application.phone);
+            this.application = application;
             this.loading.application = false;
         },
         getSchema: async function() {

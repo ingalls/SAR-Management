@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import phoneFormat from 'phone';
 import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
@@ -176,6 +177,17 @@ export default {
                 return true;
             }));
         },
+        format: function(number) {
+            const p = phoneFormat(number);
+
+            if (!p.isValid) return number;
+
+            if (p.countryCode === '+1') {
+                return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
+            } else {
+                return p;
+            }
+        },
         fetch: async function() {
             this.loading = true;
             const url = window.stdurl('/api/application');
@@ -187,7 +199,14 @@ export default {
 
             if (this.paging.start) url.searchParams.append('start', this.paging.start);
             if (this.paging.end) url.searchParams.append('end', this.paging.end);
-            this.list = await window.std(url);
+            const list = await window.std(url);
+
+            list.items.map((i) => {
+                i.phone = this.format(i.phone);
+            })
+
+            this.list = list;
+
             this.loading = false;
         }
     },
