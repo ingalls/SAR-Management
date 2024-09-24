@@ -1,31 +1,31 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' size='32' stroke='1'/>
         <h1 class='card-title'>Team Calendar</h1>
 
         <div v-if='is_iam("Calendar:View")' class='ms-auto btn-list'>
-            <FileExportIcon @click='createExport' v-tooltip='"Google Calendar Export"' class='cursor-pointer'/>
+            <IconFileExport @click='createExport' v-tooltip='"Google Calendar Export"' class='cursor-pointer' size='32' stroke='1'/>
             <div class="dropdown">
                 <div type="button" id="dropdownLocation" data-bs-toggle="dropdown" aria-expanded="false">
-                    <Menu2Icon v-tooltip='"Options"' class='cursor-pointer'/>
+                    <IconMenu2 v-tooltip='"Options"' class='cursor-pointer' size='32' stroke='1'/>
                 </div>
                 <ul class="dropdown-menu" aria-labelledby="dropdownLocation">
                     <div class='m-1'>
                         <div class='d-flex'>
-                            <AmbulanceIcon class='my-1 mx-1'/>
+                            <IconAmbulance class='my-1 mx-1' size='32' stroke='1'/>
                             <TablerToggle v-model='calendars.mission' label='Missions' class='w-full'/>
                         </div>
                         <div class='d-flex'>
-                            <TruckIcon class='my-1 mx-1'/>
+                            <IconTruck class='my-1 mx-1' size='32' stroke='1'/>
                             <TablerToggle v-model='calendars.training' label='Trainings' class='w-full'/>
                         </div>
                         <div class='d-flex'>
-                            <BalloonIcon class='my-1 mx-1'/>
+                            <IconBalloon class='my-1 mx-1' size='32' stroke='1'/>
                             <TablerToggle v-model='calendars.birthday' label='Birthdays' class='w-full'/>
                         </div>
                         <div class='d-flex'>
-                            <CalendarTimeIcon class='my-1 mx-1'/>
+                            <IconCalendarTime class='my-1 mx-1' size='32' stroke='1'/>
                             <TablerToggle v-model='calendars.schedule' label='Schedules' class='w-full'/>
                         </div>
                     </div>
@@ -47,14 +47,14 @@ import iam from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
 import { Calendar } from '@fullcalendar/core';
 import {
-    GripVerticalIcon,
-    Menu2Icon,
-    FileExportIcon,
-    BalloonIcon,
-    AmbulanceIcon,
-    CalendarTimeIcon,
-    TruckIcon,
-} from 'vue-tabler-icons';
+    IconGripVertical,
+    IconMenu2,
+    IconFileExport,
+    IconBalloon,
+    IconAmbulance,
+    IconCalendarTime,
+    IconTruck,
+} from '@tabler/icons-vue';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
@@ -166,15 +166,15 @@ export default {
         },
     },
     components: {
-        TruckIcon,
-        AmbulanceIcon,
-        CalendarTimeIcon,
-        FileExportIcon,
+        IconTruck,
+        IconAmbulance,
+        IconCalendarTime,
+        IconFileExport,
         TablerToggle,
-        BalloonIcon,
-        Menu2Icon,
+        IconBalloon,
+        IconMenu2,
         NoAccess,
-        GripVerticalIcon,
+        IconGripVertical,
     },
 }
 </script>

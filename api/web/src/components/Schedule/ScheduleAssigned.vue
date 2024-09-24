@@ -8,7 +8,7 @@
     </div>
 
     <TablerLoading v-if='loading.list' desc='Loading Assigned'/>
-    <TablerNone v-else-if ='!list.assigned.length' label='Assigned Users' :create='false'/>
+    <TablerNone v-else-if ='!list.items.length' label='Assigned Users' :create='false'/>
     <template v-else>
         <div class='table-responsive'>
             <table class="table card-table table-hover table-vcenter datatable">
@@ -19,7 +19,7 @@
                     :export='false'
                 />
                 <tbody>
-                    <tr :key='user.id' v-for='(user, user_it) in list.assigned'>
+                    <tr :key='user.id' v-for='(user, user_it) in list.items'>
                         <template v-for='h in header'>
                             <template v-if='h.display'>
                                 <td v-if='h.name === "name"'>
@@ -88,7 +88,7 @@ export default {
             },
             list: {
                 total: 0,
-                assigned: []
+                items: []
             },
         }
     },

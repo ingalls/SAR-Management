@@ -48,7 +48,7 @@ export default {
         listLeaders: async function() {
             const list = await window.std('/api/leadership');
 
-            for (const leader of list.leadership) {
+            for (const leader of list.items) {
                 if (!this.leaders[leader.position]) this.leaders[leader.position] = [];
                 this.leaders[leader.position].push(leader);
 

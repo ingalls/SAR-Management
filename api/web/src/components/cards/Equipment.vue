@@ -5,11 +5,11 @@
             <h3 class="card-title"><a @click='$router.push("/equipment")' class='cursor-pointer' v-text='label'></a></h3>
             <div class='ms-auto'>
                 <div class='btn-list'>
-                    <PlusIcon v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' class='cursor-pointer my-2'/>
+                    <IconPlus v-if='create' @click='$router.push(`/equipment/new?parent=${parent}`)' :size='32' :stroke='1' class='cursor-pointer my-2'/>
                     <div v-if='search' class="input-icon">
                         <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
                             <span class="input-icon-addon">
-                            <SearchIcon width='24'/>
+                            <IconSearch :size='24'/>
                         </span>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
     <template v-if='loading.list'>
         <TablerLoading/>
     </template>
-    <template v-else-if='!list.equipment.length'>
+    <template v-else-if='!list.items.length'>
         <TablerNone :create='false' label='Equipment' :compact='true'/>
     </template>
     <template v-else>
@@ -32,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr :key='equip.id' v-for='equip in list.equipment'>
+                <tr :key='equip.id' v-for='equip in list.items'>
                     <td><a @click='$router.push(`/equipment/${equip.id}`)' v-text='equip.name' class='cursor-pointer'></a></td>
                     <td>
                         <template v-if='equip.assigned.length'>
@@ -56,9 +56,9 @@
 <script>
 import TableFooter from '../util/TableFooter.vue';
 import {
-    PlusIcon,
-    SearchIcon
-} from 'vue-tabler-icons';
+    IconPlus,
+    IconSearch
+} from '@tabler/icons-vue';
 import {
     TablerLoading,
     TablerNone
@@ -105,7 +105,7 @@ export default {
             },
             list: {
                 total: 0,
-                equipment: []
+                items: []
             }
         }
     },
@@ -137,8 +137,8 @@ export default {
     components: {
         TablerNone,
         Avatar,
-        PlusIcon,
-        SearchIcon,
+        IconPlus,
+        IconSearch,
         TableFooter,
         TablerLoading
     }

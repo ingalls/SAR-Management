@@ -24,7 +24,7 @@
                                     <h3 class='card-title'>Leadership Team</h3>
 
                                     <div class='ms-auto'>
-                                        <PlusIcon @click='push' class='cursor-pointer' height='24' width='24'/>
+                                        <IconPlus @click='push' class='cursor-pointer' :size='24' :stroke='1'/>
                                     </div>
                                 </div>
                             </div>
@@ -33,7 +33,7 @@
                         <template v-if='loading.list'>
                             <TablerLoading desc='Loading Leadership'/>
                         </template>
-                        <template v-else-if='!list.leadership.length'>
+                        <template v-else-if='!list.items.length'>
                             <TablerNone :create='false' label='Leaders'/>
                         </template>
                         <template v-else>
@@ -46,17 +46,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr :key='leader.id' v-for='(leader, leader_it) in list.leadership'>
+                                        <tr :key='leader.id' v-for='(leader, leader_it) in list.items'>
                                             <template v-if='leader._edit'>
                                                 <td>
                                                     <UserDropdown v-model='leader.name' :disabled='leader._loading' @selected='selected(leader, $event)'/>
                                                 </td>
                                                 <td>
                                                     <div class='d-flex'>
-                                                        <TablerInput v-model='leader.position' :disabled='leader._loading' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
+                                                        <TablerInput label='Position' v-model='leader.position' :disabled='leader._loading' placeholder='Position' class='w-full' style='margin-right: 12px;'/>
                                                         <div class='ms-auto'>
                                                             <div v-if='!leader._loading' class='btn-list'>
-                                                                <CheckIcon @click='saveLeader(leader)' class='my-1 cursor-pointer'/>
+                                                                <IconCheck @click='saveLeader(leader)' class='my-1 cursor-pointer' :size='32' :stroke='1'/>
                                                             </div>
                                                             <div v-else class='btn-list'>
                                                                 <TablerLoading :inline='true'/>
@@ -72,8 +72,8 @@
                                                         <span v-text='leader.position'/>
                                                         <div class='ms-auto'>
                                                             <div v-if='!leader._loading' class='btn-list'>
-                                                                <PencilIcon @click='leader._edit = true' class='cursor-pointer'/>
-                                                                <TrashIcon @click='removeLeader(leader, leader_it)' class='cursor-pointer'/>
+                                                                <IconPencil @click='leader._edit = true' class='cursor-pointer' :size='32' :stroke='1'/>
+                                                                <IconTrash @click='removeLeader(leader, leader_it)' class='cursor-pointer' :size='32' :stroke='1'/>
                                                             </div>
                                                             <div v-else class='btn-list'>
                                                                 <TablerLoading :inline='true'/>
@@ -104,11 +104,11 @@ import TableFooter from './util/TableFooter.vue';
 import UserDropdown from './util/UserDropdown.vue';
 import Avatar from './util/Avatar.vue';
 import {
-    PlusIcon,
-    TrashIcon,
-    PencilIcon,
-    CheckIcon,
-} from 'vue-tabler-icons'
+    IconPlus,
+    IconTrash,
+    IconPencil,
+    IconCheck,
+} from '@tabler/icons-vue'
 import {
     TablerNone,
     TablerBreadCrumb,
@@ -139,7 +139,7 @@ export default {
             },
             list: {
                 total: 0,
-                leadership: []
+                items: []
             }
         }
     },
@@ -149,7 +149,7 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         push: function() {
-            this.list.leadership.splice(0, 0, {
+            this.list.items.splice(0, 0, {
                 _edit: true,
                 _loading: false,
                 uid: null,
@@ -169,7 +169,7 @@ export default {
             });
             leader._loading = false;
 
-            this.list.leadership.splice(it, 1);
+            this.list.items.splice(it, 1);
             this.list.total--;
         },
         saveLeader: async function(leader) {
@@ -200,10 +200,10 @@ export default {
     components: {
         TablerNone,
         Avatar,
-        PlusIcon,
-        TrashIcon,
-        CheckIcon,
-        PencilIcon,
+        IconPlus,
+        IconTrash,
+        IconPencil,
+        IconCheck,
         TablerLoading,
         TablerInput,
         UserDropdown,

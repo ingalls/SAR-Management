@@ -7,7 +7,7 @@
                 <h1 class="card-title" v-text='file'></h1>
                 <div class='ms-auto btn-list'>
                     <TablerDelete displaytype='icon' v-tooltip='"Delete File"' v-if='manage' @delete='deleteFile'/>
-                    <DownloadIcon @click='download' v-tooltip='"Download File"' class='cursor-pointer'/>
+                    <IconDownload @click='download' v-tooltip='"Download File"' class='cursor-pointer' :stroke='1' :size='32'/>
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@
         </div>
         <div v-else-if='preview === null'>
             <div class='d-flex justify-content-center mt-4 mb-2'>
-                <EyeOffIcon width='48' height='48'/>
+                <IconEyeOff :size='48' :stroke='1'/>
             </div>
 
             <div class='text-center mb-4 mt-2'>
@@ -48,11 +48,11 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    EyeOffIcon,
-    ArrowBadgeLeftIcon,
-    ArrowBadgeRightIcon,
-    DownloadIcon
-} from 'vue-tabler-icons';
+    IconEyeOff,
+    IconArrowBadgeLeft,
+    IconArrowBadgeRight,
+    IconDownload
+} from '@tabler/icons-vue';
 
 export default {
     name: 'File',
@@ -101,7 +101,7 @@ export default {
             url.searchParams.append('prefix', this.prefix + this.file + '/');
             const res = await window.std(url)
 
-            for (const doc of res.documents) {
+            for (const doc of res.items) {
                 if (doc.key === 'preview.pdf') {
                     const url = window.stdurl('/api/doc/download');
                     url.searchParams.append('prefix', this.prefix + this.file);
@@ -150,10 +150,10 @@ export default {
     },
     components: {
         TablerDelete,
-        ArrowBadgeLeftIcon,
-        ArrowBadgeRightIcon,
-        EyeOffIcon,
-        DownloadIcon,
+        IconEyeOff,
+        IconArrowBadgeLeft,
+        IconArrowBadgeRight,
+        IconDownload,
         TablerLoading
     }
 }

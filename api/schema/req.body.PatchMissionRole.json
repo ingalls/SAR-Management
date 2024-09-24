@@ -1,9 +1,0 @@
-{
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-        "name": {
-            "$ref": "./mission_role/name.json"
-        }
-    }
-}

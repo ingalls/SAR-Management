@@ -13,7 +13,7 @@
     <template v-else-if='loading'>
         <TablerLoading desc='Loading Missions'/>
     </template>
-    <template v-else-if='!list.missions.length'>
+    <template v-else-if='!list.items.length'>
         <TablerNone :create='false' :label='Missions'/>
     </template>
     <template v-else>
@@ -25,7 +25,7 @@
                 :export='false'
             />
             <tbody>
-                <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.missions' class='cursor-pointer'>
+                <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.items' class='cursor-pointer'>
                     <template v-for='h in header'>
                         <template v-if='h.display'>
                             <td v-if='["updated", "created"].includes(h.name)'>
@@ -143,7 +143,7 @@ export default {
             },
             list: {
                 total: 0,
-                missions: []
+                items: []
             },
         }
     },

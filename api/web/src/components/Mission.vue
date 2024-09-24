@@ -43,9 +43,9 @@
                                             <div class='subheader' v-text='`${mission.location || "Location Unknown"} - ${mission.externalid || "No Mission Number"}`'></div>
                                         </div>
 
-                                        <div class='ms-auto btn-list'>
+                                        <div class='ms-auto btn-list d-flex align-items-center'>
                                             <TablerEpochRange :start='mission.start_ts' :end='mission.end_ts'/>
-                                            <SettingsIcon v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' height='24' width='24' class='cursor-pointer'/>
+                                            <IconSettings v-if='is_iam("Mission:Manage")' @click='$router.push(`/mission/${$route.params.missionid}/edit`)' size='24' stroke='1' class='cursor-pointer'/>
                                         </div>
                                     </div>
                                     <div v-if='mission.teams.length' class='col-12 mt-2 btn-list'>
@@ -104,8 +104,8 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconSettings
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Mission',
@@ -162,7 +162,7 @@ export default {
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;
-            this.assigned = (await window.std(`/api/mission/${this.$route.params.missionid}/assigned`)).assigned;
+            this.assigned = (await window.std(`/api/mission/${this.$route.params.missionid}/assigned`)).items;
             this.loading.assigned = false;
         },
         deleteAssigned: async function(user) {
@@ -200,7 +200,7 @@ export default {
     },
     components: {
         TablerEpochRange,
-        SettingsIcon,
+        IconSettings,
         Location,
         UserPresentSelect,
         TablerBreadCrumb,

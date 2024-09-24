@@ -1,11 +1,29 @@
 <template>
 <div class='card'>
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' :size='24' :stroke='1'/>
         <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <PlusIcon v-if='create && is_iam("Issue:Manage")' @click='$router.push(`/issue/new`)' class='cursor-pointer'/>
+            <IconPlus
+                v-if='create && is_iam("Issue:Manage")'
+                v-tooltip='"New Issue"'
+                @click='$router.push(`/issue/new`)'
+                class='cursor-pointer'
+                :size='32'
+                :stroke='1'
+            />
+        </div>
+    </div>
+
+    <div v-if='search' class='px-2 pb-2'>
+        <div class='row g-2'>
+            <div class='col-8'>
+                <TablerInput label='Issue Search' v-model='paging.filter'/>
+            </div>
+            <div class='col-4'>
+                <TablerEnum label='Issue Status' :options='["open", "closed"]' v-model='paging.status'/>
+            </div>
         </div>
     </div>
 
@@ -13,8 +31,8 @@
     <template v-else-if='loading'>
         <TablerLoading desc='Loading Issues'/>
     </template>
-    <template v-else-if='!list.issues.length'>
-        <TablerNone :create='false' label='Assigned Issues'/>
+    <template v-else-if='!list.items.length'>
+        <TablerNone :create='false' label='Issues'/>
     </template>
     <template v-else>
         <div class='table-responsive'>
@@ -27,12 +45,16 @@
                     @export='exportIssues("csv")'
                 />
                 <tbody>
-                    <tr @click='$router.push(`/issue/${issue.id}`)' :key='issue.id' v-for='(issue, issue_it) in list.issues' class='cursor-pointer'>
+                    <tr @click='$router.push(`/issue/${issue.id}`)' :key='issue.id' v-for='(issue, issue_it) in list.items' class='cursor-pointer'>
                         <template v-for='h in header'>
                             <template v-if='h.display'>
                                 <td v-if='["updated", "created"].includes(h.name)'>
                                     <TablerEpoch v-if='issue[h.name]' :date='issue[h.name]'/>
                                     <span v-else>Never</span>
+                                </td>
+                                <td v-if='["status"].includes(h.name)'>
+                                    <span v-if='issue.status === "closed"' class="badge bg-red text-white" style="height: 20px;">Closed</span>
+                                    <span v-else-if='issue.status === "open"' class="badge bg-green text-white" style="height: 20px;">Open</span>
                                 </td>
                                 <td v-else>
                                     <span v-text='issue[h.name]'></span>
@@ -54,14 +76,16 @@ import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    TablerEnum,
     TablerNone,
     TablerEpoch,
+    TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
-    GripVerticalIcon,
-    PlusIcon
-} from 'vue-tabler-icons';
+    IconGripVertical,
+    IconPlus
+} from '@tabler/icons-vue';
 
 export default {
     name: 'IssueCard',
@@ -69,6 +93,10 @@ export default {
         label: {
             type: String,
             default: 'Recent Issues'
+        },
+        search: {
+            type: Boolean,
+            default: false
         },
         dragHandle: {
             type: Boolean,
@@ -108,11 +136,12 @@ export default {
                 sort: 'id',
                 order: 'desc',
                 limit: this.limit,
+                status: 'open',
                 page: 0
             },
             list: {
                 total: 0,
-                issues: []
+                items: []
             }
         }
     },
@@ -134,7 +163,7 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/issue');
-            this.header = ['title'].map((h) => {
+            this.header = ['title', 'status'].map((h) => {
                 return { name: h, display: true };
             });
 
@@ -158,6 +187,7 @@ export default {
             url.searchParams.append('order', this.paging.order);
             url.searchParams.append('sort', this.paging.sort);
             url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('status', this.paging.status);
             if (this.assigned) url.searchParams.append('assigned', this.assigned);
             this.list = await window.std(url);
             this.loading = false;
@@ -166,6 +196,9 @@ export default {
             const url = window.stdurl('/api/issue');
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('format', format);
+            url.searchParams.append('status', this.paging.status);
+            url.searchParams.append('order', this.paging.order);
+            url.searchParams.append('sort', this.paging.sort);
 
             if (format === 'csv') {
                 url.searchParams.append('fields', this.header.filter((h) => {
@@ -188,14 +221,16 @@ export default {
         },
     },
     components: {
-        GripVerticalIcon,
+        IconPlus,
+        IconGripVertical,
+        TablerEnum,
         TablerNone,
         TablerEpoch,
-        PlusIcon,
+        TablerInput,
+        TablerLoading,
         NoAccess,
         TableHeader,
         TableFooter,
-        TablerLoading,
     }
 }
 </script>

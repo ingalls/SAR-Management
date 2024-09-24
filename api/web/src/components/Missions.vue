@@ -46,7 +46,7 @@
                                     v-model:header='header'
                                 />
                                 <tbody>
-                                    <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.missions' class='cursor-pointer'>
+                                    <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.items' class='cursor-pointer'>
                                         <template v-for='h in header'>
                                             <template v-if='h.display'>
                                                 <td v-if='h.name === "title"'>
@@ -100,7 +100,6 @@ import {
     TablerNone,
     TablerEpochRange,
     TablerBreadCrumb,
-    TablerLoading
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -132,7 +131,7 @@ export default {
             },
             list: {
                 total: 0,
-                missions: []
+                items: []
             }
         }
     },
@@ -193,7 +192,6 @@ export default {
         NoAccess,
         TablerEpochRange,
         TableFooter,
-        TablerLoading,
         TableHeader,
         HeatMap,
         TeamBadge,

@@ -43,7 +43,7 @@
     <template v-if='loading.list'>
         <TablerLoading desc='Loading Users'/>
     </template>
-    <template v-else-if='!list.users.length'>
+    <template v-else-if='!list.items.length'>
         <TablerNone label='Users' :create='false'/>
     </template>
     <template v-else-if='mode === "list"'>
@@ -57,7 +57,7 @@
                     @export='exportUsers("csv")'
                 />
                 <tbody>
-                    <tr :key='user.id' v-for='(user, user_it) in list.users'>
+                    <tr :key='user.id' v-for='(user, user_it) in list.items'>
                         <template v-for='h in header'>
                             <template v-if='h.display'>
                                 <td v-if='h.name === "name"' @click='$router.push(`/user/${user.id}`)'>
@@ -95,7 +95,7 @@
     </template>
     <template v-else>
         <div class='row row-cards'>
-            <div :key='user.id' v-for='user in list.users' class='col-sm-6 col-lg-4'>
+            <div :key='user.id' v-for='user in list.items' class='col-sm-6 col-lg-4'>
                 <div class="card card-sm">
                     <a @click='$router.push(`/user/${user.id}`)' class="d-block cursor-pointer">
                         <UserProfile bgstyle='cover' :userid='user.id'/>
@@ -145,6 +145,10 @@ export default {
             type: Boolean,
             default: true
         },
+        limit: {
+            type: Number,
+            default: 10
+        },
         url: {
             type: String,
             default: '/api/user'
@@ -166,12 +170,12 @@ export default {
                 filter: '',
                 sort: 'Name',
                 order: 'asc',
-                limit: 10,
+                limit: this.limit,
                 page: 0
             },
             list: {
                 total: 0,
-                users: []
+                items: []
             },
         }
     },
@@ -195,7 +199,7 @@ export default {
             });
             user._loading = false;
 
-            this.list.users.splice(user_it, 1);
+            this.list.items.splice(user_it, 1);
             this.list.total--;
         },
         addUser: async function(user) {
@@ -205,7 +209,7 @@ export default {
                 body: { uid: user.id }
             });
 
-            this.list.users.splice(0, 0, user);
+            this.list.items.splice(0, 0, user);
             this.list.total++;
             this.loading.add = false;
         },

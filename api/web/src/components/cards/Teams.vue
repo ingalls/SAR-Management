@@ -33,7 +33,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr :key='team.id' v-for='team in teams.teams'>
+                    <tr :key='team.id' v-for='team in teams.items'>
                         <td>
                             <div class='d-flex'>
                                 <a @click='click(team)' class='cursor-pointer' v-text='team.name'></a>
@@ -41,7 +41,7 @@
                                 <span v-if='team.fieldable' class="ms-auto badge bg-green text-white" style="height: 20px;">Fieldable</span>
                             </div>
                         </td>
-                        <td v-text='team.members  || "None"'></td>
+                        <td v-text='team.users.length  || "None"'></td>
                     </tr>
                 </tbody>
             </table>
@@ -79,7 +79,7 @@ export default {
             },
             teams: {
                 total: 0,
-                teams: []
+                items: []
             }
         }
     },

@@ -11,7 +11,7 @@
             </div>
         </div>
     </div>
-    <template v-if='!list.certs.length'>
+    <template v-if='!list.items.length'>
         <TablerNone :create='false' label='Certificates'/>
     </template>
     <template v-else>
@@ -23,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr :key='cert.id' v-for='cert in list.certs'>
+                <tr :key='cert.id' v-for='cert in list.items'>
                     <td><a @click='$router.push(`/user/${cert.uid}/cert/${cert.id}`)' v-text='cert.name' class='cursor-pointer'></a></td>
                     <td v-text='cert.expiry || "None"'></td>
                 </tr>
@@ -67,7 +67,7 @@ export default {
             upload: null,
             list: {
                 total: 0,
-                certs: []
+                items: []
             }
         }
     },

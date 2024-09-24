@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { bbox } from '@turf/bbox';
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -69,7 +70,7 @@ export default {
                 map.addControl(geocoder, 'top-left');
             }
 
-            map.on('load', () => {
+            map.once('load', () => {
                 if (this.modelValue) {
                     map.addSource('point', {
                         type: 'geojson',
@@ -105,7 +106,7 @@ export default {
                 });
 
                 if (this.modelValue) {
-                    map.fitBounds(this.modelValue.bounds, {
+                    map.fitBounds(bbox(this.modelValue), {
                         padding: {
                             top: 100,
                             bottom: 100,

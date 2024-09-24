@@ -17,7 +17,7 @@
                         <div class='m-1'>
                             <TablerInput placeholder='Filter Teams' v-model='filter'/>
 
-                            <div @click='push_teams(team)' :key='team.id' v-for='team in list.teams'>
+                            <div @click='push_teams(team)' :key='team.id' v-for='team in list.items'>
                                 <div class="d-flex align-items-center my-1 cursor-pointer">
                                     <TeamBadge :team='team'/>
                                 </div>
@@ -78,7 +78,7 @@ export default {
         return {
             filter: '',
             list: {
-                teams: []
+                items: []
             },
             teams: []
         }
@@ -120,7 +120,7 @@ export default {
 
             const ids = this.teams.map((a) => a.id);
 
-            this.list.teams = list.teams.filter((team) => {
+            this.list.items = list.items.filter((team) => {
                 return !ids.includes(team.id);
             }).splice(0, this.limit);
         }

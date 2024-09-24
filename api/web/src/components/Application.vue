@@ -23,18 +23,25 @@
                     <div class="card">
                         <div class='card-header'>
                             <div class='row col-12'>
-                                <div class='col-12 d-flex'>
+                                <div class='col-12 d-flex align-items-center'>
                                     <div v-if='$route.params.applicationid'>
-                                        <div class='card-title' v-text='`${application.name}`'></div>
+                                        <div class='d-flex align-items-center'>
+                                            <span v-if='application.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
+                                            <span v-else class="badge bg-green text-white" style="height: 20px;">Active</span>
+                                           
+                                            <div class='card-title mx-2'>
+                                                <span v-text='application.name'/>
+                                            </div>
+                                        </div>
                                         <div class='subheader' v-text='`${application.phone} - ${application.email}`'></div>
                                     </div>
                                     <div v-else>
                                         <div class='card-title'>New Application</div>
                                     </div>
 
-                                    <div class='ms-auto btn-list'>
+                                    <div class='ms-auto btn-list d-flex align-items-center'>
                                         <TablerEpoch :date='application.created'/>
-                                        <SettingsIcon v-if='!edit' class='cursor-pointer' @click='$router.push(`/application/${$route.params.applicationid}/edit`)'/>
+                                        <IconSettings v-if='!edit' class='cursor-pointer' :size='32' :stroke='1' @click='$router.push(`/application/${$route.params.applicationid}/edit`)'/>
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +51,7 @@
                                 <TablerSchema :disabled='!edit' :schema='application.schema' v-model='application'/>
                                 <template v-if='edit'>
                                     <div class='d-flex'>
-                                        <TablerDelete v-if='is_iam("Application:Admin")' @delete='deleteApp'/>
+                                        <TablerDelete v-if='is_iam("Application:Admin")' @delete='deleteApp' label='Archive'/>
                                         <div class='ms-auto'>
                                             <button @click='submit' class='btn btn-primary'>save</button>
                                         </div>
@@ -55,7 +62,7 @@
                     </div>
                 </div>
 
-                <div :key='comment.updated' v-for='comment in comments.application_comments' class="col-md-12 py-2">
+                <div :key='comment.updated' v-for='comment in comments.items' class="col-md-12 py-2">
                     <Comment
                         @delete='deleteComment($event)'
                         @update='updateComment($event)'
@@ -79,6 +86,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import phoneFormat from 'phone';
 import Avatar from './util/Avatar.vue';
 import CreateComment from './Application/CreateComment.vue';
 import Comment from './util/Comment.vue';
@@ -90,8 +98,8 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconSettings
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Application',
@@ -185,9 +193,22 @@ export default {
             this.loading.application = false;
             this.$router.push('/application');
         },
+        format: function(number) {
+            const p = phoneFormat(number);
+
+            if (!p.isValid) return number;
+
+            if (p.countryCode === '+1') {
+                return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
+            } else {
+                return p;
+            }
+        },
         fetch: async function() {
             this.loading.application = true;
-            this.application = await window.std(`/api/application/${this.$route.params.applicationid}`);
+            const application = await window.std(`/api/application/${this.$route.params.applicationid}`);
+            application.phone = this.format(application.phone);
+            this.application = application;
             this.loading.application = false;
         },
         getSchema: async function() {
@@ -198,7 +219,7 @@ export default {
         Avatar,
         TablerEpoch,
         CreateComment,
-        SettingsIcon,
+        IconSettings,
         TablerBreadCrumb,
         TablerLoading,
         TablerDelete,

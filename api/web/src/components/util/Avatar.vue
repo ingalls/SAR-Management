@@ -6,7 +6,9 @@
         <span v-else v-text='user.name'/>
     </span>
     <span v-else>
-        <a v-if='link' @click='$router.push(`/user/${user.uid || user.id}`)' class='cursor-pointer' v-text='`${user.fname} ${user.lname}`'></a>
+        <a v-if='link' :style='{
+            color: color
+        }' @click='$router.push(`/user/${user.uid || user.id}`)' class='cursor-pointer' v-text='`${user.fname} ${user.lname}`'></a>
         <span v-else v-text='`${user.fname} ${user.lname}`'/>
     </span>
 </div>
@@ -19,6 +21,10 @@ export default {
         user: {
             type: Object,
             required: true
+        },
+        color: {
+            type: String,
+            default: 'rgb(0, 67, 133)'
         },
         link: {
             type: Boolean,

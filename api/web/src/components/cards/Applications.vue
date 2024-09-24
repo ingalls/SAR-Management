@@ -1,24 +1,28 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' size='32'/>
         <h3 class="card-title"><a @click='$router.push("/application")' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <PlusIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer' v-tooltip='"Create Application"'/>
-            <SettingsIcon v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer' v-tooltip='"Edit Application Form"'/>
+            <IconPlus v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer' v-tooltip='"Create Application"' size='32' stroke='1'/>
+            <IconSettings v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer' v-tooltip='"Edit Application Form"' size='32' stroke='1'/>
         </div>
     </div>
 
     <NoAccess v-if='!is_iam("Application:View")'/>
-    <template v-else-if='loading'>
-        <TablerLoading desc='Loading Applications'/>
-    </template>
-    <template v-else-if='!list.applications.length'>
-        <TablerNone :create='false' :label='Applications'/>
-    </template>
     <template v-else>
-        <table class="table card-table table-hover table-vcenter">
+        <div class='col-12 px-2 py-2'>
+            <TablerInput
+                placeholder='Filter Applications'
+                v-model='paging.filter'
+                icon='search'
+            />
+        </div>
+
+        <TablerLoading v-if='loading' desc='Loading Applications'/>
+        <TablerNone v-else-if='!list.items.length' :create='false' :label='Applications'/>
+        <table v-else class="table card-table table-hover table-vcenter">
             <TableHeader
                 v-model:sort='paging.sort'
                 v-model:order='paging.order'
@@ -26,10 +30,14 @@
                 :export='false'
             />
             <tbody>
-                <tr @click='$router.push(`/application/${application.id}`)' :key='application.id' v-for='application in list.applications' class='cursor-pointer'>
+                <tr @click='$router.push(`/application/${application.id}`)' :key='application.id' v-for='application in list.items' class='cursor-pointer'>
                     <template v-for='h in header'>
                         <template v-if='h.display'>
-                            <td v-if='["updated", "created"].includes(h.name)'>
+                            <td v-if='["archived"].includes(h.name)'>
+                                <span v-if='application.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
+                                <span v-else class="badge bg-green text-white" style="height: 20px;">Active</span>
+                            </td>
+                            <td v-else-if='["updated", "created"].includes(h.name)'>
                                 <TablerEpoch v-if='application[h.name]' :date='application[h.name]'/>
                                 <span v-else>Never</span>
                             </td>
@@ -47,21 +55,23 @@
 </template>
 
 <script>
+import phoneFormat from 'phone';
 import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
+    TablerInput,
     TablerEpoch,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
 import {
-    GripVerticalIcon,
-    PlusIcon,
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconGripVertical,
+    IconPlus,
+    IconSettings
+} from '@tabler/icons-vue';
 
 
 export default {
@@ -129,7 +139,7 @@ export default {
             },
             list: {
                 total: 0,
-                applications: []
+                items: []
             },
         }
     },
@@ -151,7 +161,7 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/application');
-            this.header = ['name', 'created', 'phone', 'email'].map((h) => {
+            this.header = ['archived', 'name', 'created', 'phone', 'email'].map((h) => {
                 return { name: h, display: true };
             });
 
@@ -167,6 +177,17 @@ export default {
                 return true;
             }));
         },
+        format: function(number) {
+            const p = phoneFormat(number);
+
+            if (!p.isValid) return number;
+
+            if (p.countryCode === '+1') {
+                return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
+            } else {
+                return p;
+            }
+        },
         fetch: async function() {
             this.loading = true;
             const url = window.stdurl('/api/application');
@@ -178,20 +199,28 @@ export default {
 
             if (this.paging.start) url.searchParams.append('start', this.paging.start);
             if (this.paging.end) url.searchParams.append('end', this.paging.end);
-            this.list = await window.std(url);
+            const list = await window.std(url);
+
+            list.items.map((i) => {
+                i.phone = this.format(i.phone);
+            })
+
+            this.list = list;
+
             this.loading = false;
         }
     },
     components: {
-        PlusIcon,
-        SettingsIcon,
+        IconPlus,
+        IconSettings,
+        IconGripVertical,
         TableHeader,
         TableFooter,
+        TablerInput,
         TablerLoading,
         TablerEpoch,
         TablerNone,
         NoAccess,
-        GripVerticalIcon,
     }
 }
 </script>

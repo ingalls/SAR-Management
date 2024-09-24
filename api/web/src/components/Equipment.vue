@@ -22,13 +22,11 @@
                         <div class="card">
                             <div class='card-header'>
                                 <h3 class='card-title' v-text='equipment.name'/>
-                                <div class='ms-auto'>
-                                    <div class='btn-list'>
-                                        <span v-if='equipment.container' class="badge bg-blue text-white" style="height: 20px;">Container</span>
-                                        <span v-if='equipment.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
+                                <div class='ms-auto btn-list align-items-center'>
+                                    <span v-if='equipment.container' class="badge bg-blue text-white" style="height: 20px;">Container</span>
+                                    <span v-if='equipment.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
 
-                                        <SettingsIcon v-if='is_iam("Equipment:Manage") && !equipment.archived' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer'/>
-                                    </div>
+                                    <IconSettings v-if='is_iam("Equipment:Manage") && !equipment.archived' @click='$router.push(`/equipment/${$route.params.equipid}/edit`)' class='cursor-pointer' :stroke='1' :size='32'/>
                                 </div>
                             </div>
                             <div class='row row-0'>
@@ -63,10 +61,10 @@
                                                         <span v-else>Unknown</span>
                                                     </div>
                                                 </div>
-                                                <div v-if='assigned.length' class="datagrid-item">
+                                                <div v-if='equipment.assigned.length' class="datagrid-item">
                                                     <div class="datagrid-title">Assigned</div>
                                                     <div class="datagrid-content">
-                                                        <Avatar :key='a.uid' v-for='a in assigned' :user='a' class='my-1' :link='true'/>
+                                                        <Avatar :key='a.uid' v-for='a in equipment.assigned' :user='a' class='my-1' :link='true'/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -100,8 +98,8 @@ import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import {
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconSettings
+} from '@tabler/icons-vue';
 import CardEquipment from './cards/Equipment.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
 import EquipmentProfile from './Equipment/Profile.vue';
@@ -126,7 +124,6 @@ export default {
             },
             type: {},
             parent: {},
-            assigned: [],
             equipment: {},
         }
     },
@@ -146,15 +143,13 @@ export default {
                 this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
 
-            this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).assigned;
-
             this.loading.equipment = false;
         },
     },
     components: {
         NoAccess,
         Avatar,
-        SettingsIcon,
+        IconSettings,
         CardEquipment,
         TablerLoading,
         EquipmentMeta,

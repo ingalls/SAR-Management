@@ -22,7 +22,7 @@
         <div class='container-xl'>
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
-                    <CardUsers v-if='is_iam("User:View")'/>
+                    <CardUsers v-if='is_iam("User:View")' :limit='50'/>
                     <NoAccess v-else title='Users'/>
                 </div>
             </div>

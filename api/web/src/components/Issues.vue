@@ -18,8 +18,10 @@
                 <div class="col-lg-12">
                     <CardIssues
                         label='Issues'
+                        :create='true'
                         :iam='iam'
                         :auth='auth'
+                        :search='true'
                         :limit='20'
                     />
                 </div>
