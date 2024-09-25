@@ -11,8 +11,8 @@ mesacountysar.com {
         X-Content-Type-Options nosniff
         X-Frame-Options DENY
         Referrer-Policy strict-origin-when-cross-origin
-        Permissions-Policy fullscreen=(self), clipboard-read=(self), clipboard-write=(self)
-        Strict-Transport-Security max-age=31536000; includeSubDomains; preload
+        Permissions-Policy "fullscreen=(self), clipboard-read=(self), clipboard-write=(self)"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     }
 
     encode zstd gzip {
