@@ -211,9 +211,7 @@ export default {
     name: 'SearchAndRescue',
     data: function() {
         return {
-            loading: {
-                user: false
-            },
+            loading: false,
             notifications: false,
             name: 'Search & Rescue',
             iam: {},
@@ -249,9 +247,10 @@ export default {
 
         await this.fetchName();
         if (localStorage.token) {
-            await this.getUser();
+            this.loading = true;
             await this.getIAM();
             await this.fetchNotify();
+            await this.getUser();
         }
     },
     methods: {
@@ -266,11 +265,11 @@ export default {
         },
         getUser: async function() {
             try {
-                this.loading.user = true;
+                this.loading = true;
                 this.user = await window.std('/api/login');
-                this.loading.user = false;
+                this.loading = false;
             } catch (err) {
-                this.loading.user = false;
+                this.loading = false;
                 this.user = null;
 
                 if (err.message === 'Authentication Required') {
