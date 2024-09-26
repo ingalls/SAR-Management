@@ -40,7 +40,7 @@ export default async function router(schema: Schema, config: Config) {
         body: Type.Object({
             username: Type.String({
                 "minLength": 2,
-                "maxLength": 40, 
+                "maxLength": 40,
                 "description": "username"
             }),
             password: Type.String({

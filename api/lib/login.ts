@@ -108,10 +108,15 @@ export default class Login {
         if (!body.username) throw new Err(400, null, 'username required');
         if (!body.password) throw new Err(400, null, 'password required');
 
-        const user = await config.models.User.from(sql`
-            Lower(username) = ${body.username.toLowerCase()}
-            OR Lower(username) = ${body.username.toLowerCase()}
-        `);
+        let user;
+        try {
+            user = await config.models.User.from(sql`
+                Lower(username) = ${body.username.toLowerCase()}
+                OR Lower(email) = ${body.username.toLowerCase()}
+            `);
+        } catch (err) {
+            throw new Err(403, err, 'Invalid Username or Pass');
+        }
 
         if (!await bcrypt.compare(body.password, user.password)) {
             throw new Err(403, null, 'Invalid Username or Pass');
