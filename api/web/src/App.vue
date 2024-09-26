@@ -160,9 +160,7 @@
         </div>
     </div>
 
-    <template v-if='loading.user'>
-        <TablerLoading desc='Loading User...'/>
-    </template>
+    <TablerLoading v-if='loading' desc='Loading User...'/>
     <template v-else-if='enableNav'>
         <router-view
             :key="$route.fullPath"
