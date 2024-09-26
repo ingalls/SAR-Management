@@ -164,7 +164,7 @@
     <template v-else-if='enableNav'>
         <router-view
             :key="$route.fullPath"
-            @login='getUser'
+            @login='refetch'
             @notifications='notifications = $event'
             :iam='iam'
             :auth='user'
@@ -244,14 +244,18 @@ export default {
         });
 
         await this.fetchName();
+
         if (localStorage.token) {
+            await this.refetch();
+        }
+    },
+    methods: {
+        refetch: async function() {
             this.loading = true;
             await this.getIAM();
             await this.fetchNotify();
             await this.getUser();
-        }
-    },
-    methods: {
+        },
         fetchName: async function() {
             this.name = (await window.std('/api/server/name')).value;
         },

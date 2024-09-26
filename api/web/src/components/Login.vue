@@ -58,6 +58,9 @@ import {
 
 export default {
     name: 'Login',
+    emits: [
+        'login'
+    ],
     data: function() {
         return {
             username: '',
