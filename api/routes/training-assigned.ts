@@ -23,6 +23,7 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Training:View');
 
             res.json(await config.models.TrainingAssigned.augmented_list({
+                limit: 1000,
                 where: sql`training_id = ${req.params.trainingid}`
             }))
         } catch (err) {

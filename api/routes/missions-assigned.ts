@@ -23,6 +23,7 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Mission:View');
 
             res.json(await config.models.MissionAssigned.augmented_list({
+                limit: 1000,
                 where: sql`mission_id = ${req.params.missionid}`
             }))
         } catch (err) {
