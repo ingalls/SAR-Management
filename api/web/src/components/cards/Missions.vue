@@ -10,12 +10,8 @@
     </div>
 
     <NoAccess v-if='!is_iam("Mission:View")' title='Missions'/>
-    <template v-else-if='loading'>
-        <TablerLoading desc='Loading Missions'/>
-    </template>
-    <template v-else-if='!list.items.length'>
-        <TablerNone :create='false' :label='Missions'/>
-    </template>
+    <TablerLoading v-else-if='loading' desc='Loading Missions'/>
+    <TablerNone v-else-if='!list.items.length' :create='false' :label='Missions'/>
     <template v-else>
         <table class="table card-table table-hover table-vcenter">
             <TableHeader
