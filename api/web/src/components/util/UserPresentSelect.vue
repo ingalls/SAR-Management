@@ -7,10 +7,11 @@
             <div v-if='!disabled' class='ms-auto'>
                 <div class="dropdown">
                     <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <SettingsIcon
+                        <IconPlus
+                            v-tooltip='"Add User"'
                             class='cursor-pointer dropdown-toggle'
-                            height=16
-                            width=16
+                            :size='16'
+                            :stroke='1'
                         />
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -27,9 +28,7 @@
         </div>
 
         <TablerLoading v-if='loading'/>
-        <template v-else-if='!assigned.length'>
-            <TablerNone label='Users Assigned' :create='false'/>
-        </template>
+        <TablerNone v-else-if='!assigned.length' label='Users Assigned' :create='false'/>
         <template v-else>
             <Draggable v-model="assigned" itemKey='id'>
                 <template #item="{element}">
@@ -39,7 +38,7 @@
                         <div v-if='!disabled' class='ms-auto'>
                             <div class='btn-list'>
                                 <div v-if='!element.confirmed' @click='confirm_assigned(element)' class='btn btn--sm'>
-                                    <CheckIcon height='16'/> Confirm
+                                    <IconCheck :size='16' :stroke='1'/> Confirm
                                 </div>
 
                                 <template v-if='disabled'>
@@ -54,7 +53,13 @@
                                     />
                                 </template>
 
-                                <TrashIcon @click='delete_assigned(a_idx, element)' height='16' class='cursor-pointer my-2'/>
+                                <IconTrash
+                                    v-tooltip='"Remove User"'
+                                    @click='delete_assigned(element)'
+                                    class='cursor-pointer my-2'
+                                    :size='20'
+                                    :stroke='1'
+                                />
                             </div>
                         </div>
                     </div>
@@ -67,10 +72,10 @@
 
 <script>
 import {
-    SettingsIcon,
-    TrashIcon,
-    CheckIcon
-} from 'vue-tabler-icons';
+    IconPlus,
+    IconTrash,
+    IconCheck
+} from '@tabler/icons-vue';
 import {
     TablerNone,
     TablerInput,
@@ -142,8 +147,8 @@ export default {
             this.$emit('push', user);
             this.filter = '';
         },
-        delete_assigned: async function(idx, user) {
-            this.assigned.splice(idx, 1);
+        delete_assigned: async function(user) {
+            this.assigned.splice(this.assigned.indexOf(user), 1);
             this.$emit('delete', user);
             await this.listUsers();
         },
@@ -176,9 +181,9 @@ export default {
     components: {
         TablerNone,
         Avatar,
-        SettingsIcon,
-        TrashIcon,
-        CheckIcon,
+        IconPlus,
+        IconTrash,
+        IconCheck,
         TablerInput,
         TablerSelect,
         TablerLoading,
