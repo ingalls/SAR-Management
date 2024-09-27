@@ -105,7 +105,7 @@ export default async function router(schema: Schema, config: Config) {
             const assigned = await config.models.MissionAssigned.from(req.params.assignedid);
             if (assigned.mission_id !== mission.id) throw new Err(400, null, 'Assigned User does not belong to the Mission');
 
-            await config.models.MissionAssigned.delete(req.params.missionid);
+            await config.models.MissionAssigned.delete(req.params.assignedid);
 
             return res.json({
                 status: 200,
