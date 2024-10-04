@@ -1,11 +1,12 @@
 <template>
 <div class="card">
     <div class="card-header">
-        <GripVerticalIcon v-if='dragHandle' class='drag-handle cursor-move'/>
+        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' size='24' stroke='1'/>
         <h3 class="card-title"><a @click='goto' class='cursor-pointer' v-text='label'></a></h3>
 
         <div class='btn-list ms-auto'>
-            <PlusIcon v-if='create && is_iam("Mission:Manage")' @click='$router.push(`/mission/new`)' class='cursor-pointer'/>
+            <IconPlus v-if='create && is_iam("Mission:Manage")' @click='$router.push(`/mission/new`)' class='cursor-pointer' size='32' stroke='1'/>
+            <IconRefresh v-if='is_iam("Mission:View")' @click='fetch' class='cursor-pointer' :size='32' :stroke='1'/>
         </div>
     </div>
 
@@ -32,7 +33,22 @@
                                 <TablerEpochRange :start='mission.start_ts' :end='mission.end_ts'/>
                             </td>
                             <td v-else-if='h.name === "title"'>
-                                <div class='d-flex'>
+                                <div class='d-flex align-items-center'>
+                                    <span class='me-3'>
+                                        <IconUserCheck
+                                            v-if='mission.users.includes(auth.id)'
+                                            v-tooltip='"Attended"'
+                                            size='32'
+                                            stroke='1'
+                                            color='green'
+                                        />
+                                        <IconUserOff
+                                            v-else
+                                            v-tooltip='"Did not attend"'
+                                            size='32'
+                                            stroke='1'
+                                        />
+                                    </span>
                                     <span v-text='mission.title'/>
                                     <div class='ms-auto btn-list h-25'>
                                         <template v-for='team in mission.teams'>
@@ -69,10 +85,12 @@ import {
 } from '@tak-ps/vue-tabler'
 
 import {
-    GripVerticalIcon,
-    PlusIcon
-} from 'vue-tabler-icons';
-
+    IconGripVertical,
+    IconPlus,
+    IconRefresh,
+    IconUserCheck,
+    IconUserOff
+} from '@tabler/icons-vue';
 
 export default {
     name: 'MissionCard',
@@ -196,7 +214,6 @@ export default {
         }
     },
     components: {
-        PlusIcon,
         TableHeader,
         TableFooter,
         TablerLoading,
@@ -205,7 +222,11 @@ export default {
         TeamBadge,
         TablerNone,
         NoAccess,
-        GripVerticalIcon,
+        IconGripVertical,
+        IconRefresh,
+        IconPlus,
+        IconUserCheck,
+        IconUserOff
     }
 }
 </script>

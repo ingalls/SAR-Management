@@ -17,6 +17,7 @@
             <div class='row row-deck row-cards'>
                 <div class="col-lg-12">
                     <CardTrainings
+                        label='Trainings'
                         :auth='auth'
                         :iam='iam'
                         :limit='20'

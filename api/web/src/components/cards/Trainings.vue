@@ -6,6 +6,7 @@
 
         <div class='btn-list ms-auto'>
             <IconPlus v-if='create && is_iam("Training:Manage")' @click='$router.push(`/training/new`)' class='cursor-pointer' :size='32' :stroke='1'/>
+            <IconRefresh v-if='is_iam("Training:View")' @click='fetch' class='cursor-pointer' :size='32' :stroke='1'/>
         </div>
     </div>
 
@@ -26,7 +27,7 @@
             />
             <tbody>
                 <tr @click='$router.push(`/training/${training.id}`)' :key='training.id' v-for='training in list.items' class='cursor-pointer'>
-                    <template v-for='h in header'>
+                    <template v-for='(h, h_it) in header'>
                         <template v-if='h.display'>
                             <td v-if='["updated", "created"].includes(h.name)'>
                                 <TablerEpoch v-if='training[h.name]' :date='training[h.name]'/>
@@ -36,7 +37,23 @@
                                 <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
                             </td>
                             <td v-else-if='h.name === "title"'>
-                                <div class='d-flex'>
+                                <div class='d-flex align-items-center'>
+                                    <span class='me-3'>
+                                        <IconUserCheck
+                                            v-if='training.users.includes(auth.id)'
+                                            v-tooltip='"Attended"'
+                                            size='32'
+                                            stroke='1'
+                                            color='green'
+                                        />
+                                        <IconUserOff
+                                            v-else
+                                            v-tooltip='"Did not attend"'
+                                            size='32'
+                                            stroke='1'
+                                        />
+                                    </span>
+
                                     <span v-text='training.title'/>
                                     <div class='ms-auto btn-list h-25'>
                                         <template v-for='team in training.teams'>
@@ -74,9 +91,11 @@ import {
 
 import {
     IconGripVertical,
+    IconRefresh,
+    IconUserCheck,
+    IconUserOff,
     IconPlus
 } from '@tabler/icons-vue';
-
 
 export default {
     name: 'TrainingCard',
@@ -203,7 +222,10 @@ export default {
     },
     components: {
         IconGripVertical,
+        IconUserCheck,
+        IconUserOff,
         IconPlus,
+        IconRefresh,
         TableHeader,
         TableFooter,
         TablerLoading,

@@ -25,58 +25,12 @@
                         <HeatMap :missions='list'/>
                     </div>
                     <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex">
-                                    <div class="input-icon w-50">
-                                        <input v-model='paging.filter' type="text" class="form-control" placeholder="Search…">
-                                        <span class="input-icon-addon">
-                                            <SearchIcon width='24'/>
-                                        </span>
-                                    </div>
-                                    <div class='ms-auto'>
-                                        <PlusIcon v-if='is_iam("Mission:Manage")' @click='$router.push("/mission/new")' class="cursor-pointer my-1"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <table class="table table-hover card-table table-vcenter">
-                                <TableHeader
-                                    v-model:sort='paging.sort'
-                                    v-model:order='paging.order'
-                                    v-model:header='header'
-                                />
-                                <tbody>
-                                    <tr @click='$router.push(`/mission/${mission.id}`)' :key='mission.id' v-for='mission in list.items' class='cursor-pointer'>
-                                        <template v-for='h in header'>
-                                            <template v-if='h.display'>
-                                                <td v-if='h.name === "title"'>
-                                                    <div class='row'>
-                                                        <div class='d-flex'>
-                                                            <a @click='$router.push(`/mission/${mission.id}`)' class='cursor-pointer' v-text='mission.title'></a>
-                                                            <div class='ms-auto btn-list'>
-                                                                <template v-for='team in mission.teams'>
-                                                                    <TeamBadge :team='team' class='ms-auto'/>
-                                                                </template>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td v-else-if='h.name === "date"'>
-                                                    <TablerEpochRange :start='mission.start_ts' :end='mission.end_ts'/>
-                                                </td>
-                                                <td v-else>
-                                                    <span v-text='mission[h.name]'></span>
-                                                </td>
-                                            </template>
-                                        </template>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <template v-if='!list.total'>
-                                <TablerNone label='Missions' :create='false'/>
-                            </template>
-                            <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
-                        </div>
+                        <CardMissions
+                            label='Missions'
+                            :auth='auth'
+                            :iam='iam'
+                            :limit='20'
+                        />
                     </div>
                 </template>
             </div>
@@ -88,6 +42,7 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import CardMissions from './cards/Missions.vue';
 import TableFooter from './util/TableFooter.vue';
 import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
@@ -194,6 +149,7 @@ export default {
         TableFooter,
         TableHeader,
         HeatMap,
+        CardMissions,
         TeamBadge,
         TablerBreadCrumb
     }
