@@ -75,7 +75,7 @@
                                 </td>
                                 <td v-else-if='h.name === "title"'>
                                     <div class='d-flex align-items-center'>
-                                        <span class='me-3'>
+                                        <span v-if='attendance' class='me-3'>
                                             <IconUserCheck
                                                 v-if='training.users.includes(auth.id)'
                                                 v-tooltip='"Attended"'
@@ -208,6 +208,10 @@ export default {
         },
         assigned: {
             type: Number
+        },
+        attendance: {
+            type: Boolean,
+            default: true
         }
     },
     data: function() {

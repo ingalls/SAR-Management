@@ -251,6 +251,7 @@
                             :assigned='userid'
                             :search='false'
                             :footer='false'
+                            :attendance='false'
                             :iam='iam'
                             :auth='auth'
                         />
@@ -267,6 +268,7 @@
                             :assigned='userid'
                             :search='false'
                             :footer='false'
+                            :attendance='false'
                             :iam='iam'
                             :auth='auth'
                         />

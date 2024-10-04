@@ -31,6 +31,7 @@
                                 :auth='auth'
                                 :limit='5'
                                 order='asc'
+                                :attendance='false'
                                 :start='moment().subtract(1, "day").format()'
                                 :end='moment().add(1, "month").format()'
                                 :drag-handle='true'
