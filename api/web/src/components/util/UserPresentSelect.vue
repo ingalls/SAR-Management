@@ -169,6 +169,12 @@ export default {
             default: 10
         },
     },
+    emits: [
+        'patch',
+        'delete',
+        'push',
+        'update:modelValue'
+    ],
     data: function() {
         return {
             filter: '',

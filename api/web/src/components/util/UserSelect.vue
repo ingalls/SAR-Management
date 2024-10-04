@@ -109,6 +109,11 @@ export default {
             default: 10
         },
     },
+    emits: [
+        'update:modelValue',
+        'push',
+        'delete'
+    ],
     data: function() {
         return {
             filter: '',

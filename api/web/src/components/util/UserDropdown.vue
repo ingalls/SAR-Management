@@ -55,6 +55,9 @@ export default {
             default: 10
         },
     },
+    emits: [
+        'selected'
+    ],
     data: function() {
         return {
             filter: '',
