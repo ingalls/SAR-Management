@@ -1,46 +1,77 @@
 <template>
-<div class='mb-3'>
-    <div class='row'>
-        <div class="d-flex align-items-center mb-3">
-            <div class="subheader" v-text='label'></div>
+    <div class='mb-3'>
+        <div class='row'>
+            <div class='d-flex align-items-center mb-3'>
+                <div
+                    class='subheader'
+                    v-text='label'
+                />
 
-            <div class='ms-auto'>
-                <div class="dropdown">
-                    <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <SettingsIcon
-                            class='cursor-pointer dropdown-toggle'
-                            height=16
-                            width=16
-                        />
-                    </div>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <div class='m-1'>
-                            <TablerInput placeholder='Filter Teams' v-model='filter'/>
+                <div class='ms-auto'>
+                    <div class='dropdown'>
+                        <div
+                            id='dropdownMenuButton1'
+                            class='dropdown-toggle'
+                            type='button'
+                            data-bs-toggle='dropdown'
+                            aria-expanded='false'
+                        >
+                            <SettingsIcon
+                                class='cursor-pointer dropdown-toggle'
+                                height='16'
+                                width='16'
+                            />
+                        </div>
+                        <ul
+                            class='dropdown-menu'
+                            aria-labelledby='dropdownMenuButton1'
+                        >
+                            <div class='m-1'>
+                                <TablerInput
+                                    v-model='filter'
+                                    placeholder='Filter Teams'
+                                />
 
-                            <div @click='push_teams(team)' :key='team.id' v-for='team in list.items'>
-                                <div class="d-flex align-items-center my-1 cursor-pointer">
-                                    <TeamBadge :team='team'/>
+                                <div
+                                    v-for='team in list.items'
+                                    :key='team.id'
+                                    @click='push_teams(team)'
+                                >
+                                    <div class='d-flex align-items-center my-1 cursor-pointer'>
+                                        <TeamBadge :team='team' />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <template v-if='!teams.length'>
-            <TablerNone label='Teams Assigned' :create='false' :compact='true'/>
-        </template>
-        <template v-else>
-            <div :key='a.id' v-for='(a, a_idx) in teams' class="d-flex align-items-center my-1">
-                <TeamBadge :team='a'/>
-                <div class='ms-auto'>
-                    <TrashIcon @click='delete_teams(a_idx, a)' height='16' class='cursor-pointer'/>
+            <template v-if='!teams.length'>
+                <TablerNone
+                    label='Teams Assigned'
+                    :create='false'
+                    :compact='true'
+                />
+            </template>
+            <template v-else>
+                <div
+                    v-for='(a, a_idx) in teams'
+                    :key='a.id'
+                    class='d-flex align-items-center my-1'
+                >
+                    <TeamBadge :team='a' />
+                    <div class='ms-auto'>
+                        <TrashIcon
+                            height='16'
+                            class='cursor-pointer'
+                            @click='delete_teams(a_idx, a)'
+                        />
+                    </div>
                 </div>
-            </div>
-        </template>
+            </template>
+        </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -56,6 +87,13 @@ import {
 
 export default {
     name: 'TeamSelect',
+    components: {
+        TablerNone,
+        TeamBadge,
+        SettingsIcon,
+        TrashIcon,
+        TablerInput
+    },
     props: {
         modelValue: {
             type: Array,
@@ -124,13 +162,6 @@ export default {
                 return !ids.includes(team.id);
             }).splice(0, this.limit);
         }
-    },
-    components: {
-        TablerNone,
-        TeamBadge,
-        SettingsIcon,
-        TrashIcon,
-        TablerInput
     }
 }
 </script>

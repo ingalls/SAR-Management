@@ -1,21 +1,25 @@
 <template>
-<table class="table card-table table-vcenter">
-    <thead>
-        <tr>
-            <th>User Group</th>
-            <th colspan="2">Users</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr :key='i.name' v-for='i in items'>
-            <td v-text='a.name'></td>
-            <td v-text='a.count'></td>
-            <td class="w-50">
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
+    <table class='table card-table table-vcenter'>
+        <thead>
+            <tr>
+                <th>User Group</th>
+                <th colspan='2'>
+                    Users
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr
+                v-for='i in items'
+                :key='i.name'
+            >
+                <td v-text='a.name' />
+                <td v-text='a.count' />
+                <td class='w-50' />
+            </tr>
+        </tbody>
+    </table>
+    </div>
 </template>
 
 <script>

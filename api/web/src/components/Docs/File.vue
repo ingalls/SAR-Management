@@ -1,45 +1,74 @@
 <template>
-<div class="card">
-    <TablerLoading v-if='loading.main'/>
-    <template v-else>
-        <div class='card-header'>
-            <div class='col d-flex'>
-                <h1 class="card-title" v-text='file'></h1>
-                <div class='ms-auto btn-list'>
-                    <TablerDelete displaytype='icon' v-tooltip='"Delete File"' v-if='manage' @delete='deleteFile'/>
-                    <IconDownload @click='download' v-tooltip='"Download File"' class='cursor-pointer' :stroke='1' :size='32'/>
+    <div class='card'>
+        <TablerLoading v-if='loading.main' />
+        <template v-else>
+            <div class='card-header'>
+                <div class='col d-flex'>
+                    <h1
+                        class='card-title'
+                        v-text='file'
+                    />
+                    <div class='ms-auto btn-list'>
+                        <TablerDelete
+                            v-if='manage'
+                            v-tooltip='"Delete File"'
+                            displaytype='icon'
+                            @delete='deleteFile'
+                        />
+                        <IconDownload
+                            v-tooltip='"Download File"'
+                            class='cursor-pointer'
+                            :stroke='1'
+                            :size='32'
+                            @click='download'
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div v-if='is_img'>
-            <img :src='url(false)'/>
-        </div>
-        <div v-else-if='loading.preview'>
-            <TablerLoading desc='Loading Preview'/>
-        </div>
-        <div v-else-if='is_pdf || preview'>
-            <embed
-                :src='preview'
-                width='100%'
-                height='1000px'
-            />
-        </div>
-        <div v-else-if='preview === null'>
-            <div class='d-flex justify-content-center mt-4 mb-2'>
-                <IconEyeOff :size='48' :stroke='1'/>
+            <div v-if='is_img'>
+                <img :src='url(false)'>
             </div>
+            <div v-else-if='loading.preview'>
+                <TablerLoading desc='Loading Preview' />
+            </div>
+            <div v-else-if='is_pdf || preview'>
+                <embed
+                    :src='preview'
+                    width='100%'
+                    height='1000px'
+                >
+            </div>
+            <div v-else-if='preview === null'>
+                <div class='d-flex justify-content-center mt-4 mb-2'>
+                    <IconEyeOff
+                        :size='48'
+                        :stroke='1'
+                    />
+                </div>
 
-            <div class='text-center mb-4 mt-2'>
-                <div>Unsupported Preview Format</div>
-            </div>
+                <div class='text-center mb-4 mt-2'>
+                    <div>Unsupported Preview Format</div>
+                </div>
 
-            <div v-if='manage' class='d-flex justify-content-center my-4'>
-                <TablerLoading v-if='loading.generate' desc='Generating Preview'/>
-                <div v-else @click='generate' class='btn btn-secondary'>Generate PDF</div>
+                <div
+                    v-if='manage'
+                    class='d-flex justify-content-center my-4'
+                >
+                    <TablerLoading
+                        v-if='loading.generate'
+                        desc='Generating Preview'
+                    />
+                    <div
+                        v-else
+                        class='btn btn-secondary'
+                        @click='generate'
+                    >
+                        Generate PDF
+                    </div>
+                </div>
             </div>
-        </div>
-    </template>
-</div>
+        </template>
+    </div>
 </template>
 
 <script>
@@ -56,6 +85,14 @@ import {
 
 export default {
     name: 'File',
+    components: {
+        TablerDelete,
+        IconEyeOff,
+        IconArrowBadgeLeft,
+        IconArrowBadgeRight,
+        IconDownload,
+        TablerLoading
+    },
     props: {
         prefix: {
             type: String,
@@ -70,6 +107,16 @@ export default {
             required: true
         }
     },
+    data: function() {
+        return {
+            loading: {
+                main: false,
+                generate: false,
+                preview: true
+            },
+            preview: null,
+        }
+    },
     computed: {
         is_img: function() {
             for (const format of ['.jpg', '.jpeg', 'png', '.webp']) {
@@ -79,16 +126,6 @@ export default {
         },
         is_pdf: function() {
             return this.file.endsWith('.pdf')
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                main: false,
-                generate: false,
-                preview: true
-            },
-            preview: null,
         }
     },
     mounted: async function() {
@@ -147,14 +184,6 @@ export default {
             this.loading.main = false;
             this.$emit('delete');
         }
-    },
-    components: {
-        TablerDelete,
-        IconEyeOff,
-        IconArrowBadgeLeft,
-        IconArrowBadgeRight,
-        IconDownload,
-        TablerLoading
     }
 }
 </script>

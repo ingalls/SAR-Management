@@ -1,28 +1,35 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <TablerLoading
+                            v-if='loading'
+                            desc='Loading Schema'
+                        />
+                        <Builder
+                            v-else
+                            v-model='schema'
+                            title='Application Builder'
+                        />
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <TablerLoading v-if='loading' desc='Loading Schema'/>
-                    <Builder v-else title='Application Builder' v-model='schema'/>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 </template>
 
 <script>
@@ -35,6 +42,12 @@ import {
 
 export default {
     name: 'ApplicationBuilder',
+    components: {
+        Builder,
+        TablerInput,
+        TablerLoading,
+        TablerBreadCrumb,
+    },
     props: {
         iam: {
             type: Object,
@@ -51,9 +64,6 @@ export default {
             schema: {}
         }
     },
-    mounted: async function() {
-        await this.fetch();
-    },
     watch: {
         schema: {
             deep: true,
@@ -61,6 +71,9 @@ export default {
                 await this.saveSchema();
             }
         }
+    },
+    mounted: async function() {
+        await this.fetch();
     },
     methods: {
         fetch: async function() {
@@ -80,12 +93,6 @@ export default {
             });
             this.loading = false;
         }
-    },
-    components: {
-        Builder,
-        TablerInput,
-        TablerLoading,
-        TablerBreadCrumb,
     }
 }
 </script>

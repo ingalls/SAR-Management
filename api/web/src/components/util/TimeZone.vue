@@ -1,10 +1,10 @@
 <template>
-<TablerEnum
-    :label='label'
-    :options='Array.from(timezones)'
-    :default='modelValue'
-    v-on:change='$emit("update:modelValue", $event.target.value)'
-/>
+    <TablerEnum
+        :label='label'
+        :options='Array.from(timezones)'
+        :default='modelValue'
+        @change='$emit("update:modelValue", $event.target.value)'
+    />
 </template>
 
 <script>
@@ -15,6 +15,9 @@ import moment from 'moment-timezone';
 
 export default {
     name: 'TimeZone',
+    components: {
+        TablerEnum
+    },
     props: {
         modelValue: {
             type: String,
@@ -53,9 +56,6 @@ export default {
             internal: this.modelValue,
             timezones
         }
-    },
-    components: {
-        TablerEnum
     }
 }
 </script>

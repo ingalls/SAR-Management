@@ -1,18 +1,26 @@
 <template>
-<TablerDropdown>
-    <template #default>
-        <TablerInput label='Name' :disabled='disabled' v-model='filter'/>
-    </template>
-    <template #dropdown>
-        <div class='m-1'>
-            <div @click='select(user)' :key='user.id' v-for='user in list.items'>
-                <div class="d-flex align-items-center my-1 cursor-pointer">
-                    <Avatar :user='user'/>
+    <TablerDropdown>
+        <template #default>
+            <TablerInput
+                v-model='filter'
+                label='Name'
+                :disabled='disabled'
+            />
+        </template>
+        <template #dropdown>
+            <div class='m-1'>
+                <div
+                    v-for='user in list.items'
+                    :key='user.id'
+                    @click='select(user)'
+                >
+                    <div class='d-flex align-items-center my-1 cursor-pointer'>
+                        <Avatar :user='user' />
+                    </div>
                 </div>
             </div>
-        </div>
-    </template>
-</TablerDropdown>
+        </template>
+    </TablerDropdown>
 </template>
 
 <script>
@@ -24,6 +32,11 @@ import {
 
 export default {
     name: 'UserDropdown',
+    components: {
+        Avatar,
+        TablerDropdown,
+        TablerInput
+    },
     props: {
         modelValue: {
             type: String,
@@ -72,11 +85,6 @@ export default {
             if (list.assigned) list.items = list.assigned;
             this.list = list;
         }
-    },
-    components: {
-        Avatar,
-        TablerDropdown,
-        TablerInput
     }
 }
 </script>

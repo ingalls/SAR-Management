@@ -1,103 +1,144 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <NoAccess v-if='!is_iam("Issue:View")' title='Issue'/>
-                <template v-else>
-                    <div class="col-md-9">
-                        <div class="card">
-                            <TablerLoading v-if='loading.issue'/>
-                            <template v-else>
-                                <div class='card-header'>
-                                    <div class="col">
-                                        <div class="d-flex">
-                                            <div class='btn-list'>
-                                                <span v-if='issue.status === "closed"' class="badge bg-red text-white" style="height: 20px;">Closed</span>
-                                                <span v-else-if='issue.status === "open"' class="badge bg-green text-white" style="height: 20px;">Open</span>
-
-                                                <h3 class='card-title' v-text='issue.title'></h3>
-                                            </div>
-
-                                            <div class='ms-auto'>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <NoAccess
+                        v-if='!is_iam("Issue:View")'
+                        title='Issue'
+                    />
+                    <template v-else>
+                        <div class='col-md-9'>
+                            <div class='card'>
+                                <TablerLoading v-if='loading.issue' />
+                                <template v-else>
+                                    <div class='card-header'>
+                                        <div class='col'>
+                                            <div class='d-flex'>
                                                 <div class='btn-list'>
-                                                    <div class="d-flex align-items-center">
-                                                        <Avatar :user='issue.user'/>
-                                                    </div>
+                                                    <span
+                                                        v-if='issue.status === "closed"'
+                                                        class='badge bg-red text-white'
+                                                        style='height: 20px;'
+                                                    >Closed</span>
+                                                    <span
+                                                        v-else-if='issue.status === "open"'
+                                                        class='badge bg-green text-white'
+                                                        style='height: 20px;'
+                                                    >Open</span>
 
-                                                    <button v-if='issue.author === auth.id || is_iam("Issue:Admin")' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                                                    <div class="dropdown-menu dropdown-menu-end" style="">
-                                                        <a @click='$router.push(`/issue/${$route.params.issueid}/edit`)' class="dropdown-item cursor-pointer hover-light">Edit</a>
-                                                        <a v-if='issue.status === "open"' @click='update("closed")' class="dropdown-item cursor-pointer hover-light">Close</a>
-                                                        <a v-if='issue.status === "closed"' @click='update("open")' class="dropdown-item cursor-pointer hover-light">Re-Open</a>
+                                                    <h3
+                                                        class='card-title'
+                                                        v-text='issue.title'
+                                                    />
+                                                </div>
+
+                                                <div class='ms-auto'>
+                                                    <div class='btn-list'>
+                                                        <div class='d-flex align-items-center'>
+                                                            <Avatar :user='issue.user' />
+                                                        </div>
+
+                                                        <button
+                                                            v-if='issue.author === auth.id || is_iam("Issue:Admin")'
+                                                            data-bs-toggle='dropdown'
+                                                            type='button'
+                                                            class='btn dropdown-toggle dropdown-toggle-split'
+                                                            aria-expanded='false'
+                                                        />
+                                                        <div
+                                                            class='dropdown-menu dropdown-menu-end'
+                                                            style=''
+                                                        >
+                                                            <a
+                                                                class='dropdown-item cursor-pointer hover-light'
+                                                                @click='$router.push(`/issue/${$route.params.issueid}/edit`)'
+                                                            >Edit</a>
+                                                            <a
+                                                                v-if='issue.status === "open"'
+                                                                class='dropdown-item cursor-pointer hover-light'
+                                                                @click='update("closed")'
+                                                            >Close</a>
+                                                            <a
+                                                                v-if='issue.status === "closed"'
+                                                                class='dropdown-item cursor-pointer hover-light'
+                                                                @click='update("open")'
+                                                            >Re-Open</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card-body">
-                                    <TablerMarkdown :markdown='issue.body'/>
-                                </div>
+                                    <div class='card-body'>
+                                        <TablerMarkdown :markdown='issue.body' />
+                                    </div>
 
-                                <IssuePoll v-if='issue.poll_id' :issue='issue'/>
-
-                                <div class='card-footer'>
-                                    <span v-text='fromNow'/>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <div class='col-md-3'>
-                        <div class='card'>
-                            <div class='card-body'>
-                                <template v-if='loading.assigned'>
-                                    <TablerLoading/>
-                                </template>
-                                <template v-else>
-                                    <UserSelect
-                                        v-model='assigned'
-                                        @push='postAssigned($event)'
-                                        @delete='deleteAssigned($event)'
+                                    <IssuePoll
+                                        v-if='issue.poll_id'
+                                        :issue='issue'
                                     />
+
+                                    <div class='card-footer'>
+                                        <span v-text='fromNow' />
+                                    </div>
                                 </template>
                             </div>
                         </div>
-                    </div>
 
-                    <div :key='comment.updated' v-for='comment in comments.items' class="col-md-9">
-                        <Comment
-                            @delete='deleteComment($event)'
-                            @update='updateComment($event)'
-                            :canEdit='comment.author === auth.id || is_iam("Issue:Admin")'
-                            :comment='comment'
-                        />
-                    </div>
+                        <div class='col-md-3'>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <template v-if='loading.assigned'>
+                                        <TablerLoading />
+                                    </template>
+                                    <template v-else>
+                                        <UserSelect
+                                            v-model='assigned'
+                                            @push='postAssigned($event)'
+                                            @delete='deleteAssigned($event)'
+                                        />
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
 
-                    <template v-if='issue.status === "open"'>
-                        <CreateComment
-                            @comment='fetchComments'
-                            @close='update("closed")'
-                        />
+                        <div
+                            v-for='comment in comments.items'
+                            :key='comment.updated'
+                            class='col-md-9'
+                        >
+                            <Comment
+                                :can-edit='comment.author === auth.id || is_iam("Issue:Admin")'
+                                :comment='comment'
+                                @delete='deleteComment($event)'
+                                @update='updateComment($event)'
+                            />
+                        </div>
+
+                        <template v-if='issue.status === "open"'>
+                            <CreateComment
+                                @comment='fetchComments'
+                                @close='update("closed")'
+                            />
+                        </template>
                     </template>
-                </template>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -138,6 +179,17 @@ moment.updateLocale('en', {
 
 export default {
     name: 'Issue',
+    components: {
+        Avatar,
+        NoAccess,
+        Comment,
+        TablerLoading,
+        TablerMarkdown,
+        TablerBreadCrumb,
+        CreateComment,
+        IssuePoll,
+        UserSelect
+    },
     props: {
         iam: {
             type: Object,
@@ -231,17 +283,6 @@ export default {
                 }
             });
         }
-    },
-    components: {
-        Avatar,
-        NoAccess,
-        Comment,
-        TablerLoading,
-        TablerMarkdown,
-        TablerBreadCrumb,
-        CreateComment,
-        IssuePoll,
-        UserSelect
     }
 }
 </script>

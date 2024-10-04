@@ -1,35 +1,40 @@
 <template>
-<div class='col-md-12'>
-    <div class="card">
-        <div class="card-body">
-            <div class="mb-3">
-                <MdEditor
-                    :preview='false' noUploadImg noMermaid
-                    :noKatex='true'
-                    :toolbarsExclude='[
-                        "save",
-                        "prettier",
-                        "mermaid"
-                    ]'
-                    language='en-US'
-                    v-model="body"
-                />
-            </div>
+    <div class='col-md-12'>
+        <div class='card'>
+            <div class='card-body'>
+                <div class='mb-3'>
+                    <MdEditor
+                        v-model='body'
+                        :preview='false'
+                        no-upload-img
+                        no-mermaid
+                        :no-katex='true'
+                        :toolbars-exclude='[
+                            "save",
+                            "prettier",
+                            "mermaid"
+                        ]'
+                        language='en-US'
+                    />
+                </div>
 
-            <div class="col-md-12">
-                <div class='d-flex'>
-                    <div class='ms-auto'>
-                        <div class='btn-list'>
-                            <a @click='create(false)' class="cursor-pointer btn btn-primary">
-                                Comment
-                            </a>
+                <div class='col-md-12'>
+                    <div class='d-flex'>
+                        <div class='ms-auto'>
+                            <div class='btn-list'>
+                                <a
+                                    class='cursor-pointer btn btn-primary'
+                                    @click='create(false)'
+                                >
+                                    Comment
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -41,6 +46,10 @@ import 'md-editor-v3/lib/style.css';
 
 export default {
     name: 'CreateComment',
+    components: {
+        MdEditor,
+        TablerInput
+    },
     data: function() {
         return {
             body: '',
@@ -58,10 +67,6 @@ export default {
             this.body = '';
             this.$emit('comment');
         }
-    },
-    components: {
-        MdEditor,
-        TablerInput
     }
 }
 </script>

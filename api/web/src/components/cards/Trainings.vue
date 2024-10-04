@@ -1,79 +1,128 @@
 <template>
-<div class="card">
-    <div class="card-header">
-        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' :size='24' :stroke='1'/>
-        <h3 class="card-title"><a @click='goto' class='cursor-pointer' v-text='label'></a></h3>
-
-        <div class='btn-list ms-auto'>
-            <IconPlus v-if='create && is_iam("Training:Manage")' @click='$router.push(`/training/new`)' class='cursor-pointer' :size='32' :stroke='1'/>
-            <IconRefresh v-if='is_iam("Training:View")' @click='fetch' class='cursor-pointer' :size='32' :stroke='1'/>
-        </div>
-    </div>
-
-    <NoAccess v-if='!is_iam("Training:View")'/>
-    <template v-else-if='loading'>
-        <TablerLoading desc='Loading Trainings'/>
-    </template>
-    <template v-else-if='!list.items.length'>
-        <TablerNone :create='false' :label='Trainings'/>
-    </template>
-    <template v-else>
-        <table class="table card-table table-hover table-vcenter">
-            <TableHeader
-                v-model:sort='paging.sort'
-                v-model:order='paging.order'
-                v-model:header='header'
-                :export='false'
+    <div class='card'>
+        <div class='card-header'>
+            <IconGripVertical
+                v-if='dragHandle'
+                class='drag-handle cursor-move'
+                :size='24'
+                :stroke='1'
             />
-            <tbody>
-                <tr @click='$router.push(`/training/${training.id}`)' :key='training.id' v-for='training in list.items' class='cursor-pointer'>
-                    <template v-for='(h, h_it) in header'>
-                        <template v-if='h.display'>
-                            <td v-if='["updated", "created"].includes(h.name)'>
-                                <TablerEpoch v-if='training[h.name]' :date='training[h.name]'/>
-                                <span v-else>Never</span>
-                            </td>
-                            <td v-else-if='h.name === "dates"'>
-                                <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
-                            </td>
-                            <td v-else-if='h.name === "title"'>
-                                <div class='d-flex align-items-center'>
-                                    <span class='me-3'>
-                                        <IconUserCheck
-                                            v-if='training.users.includes(auth.id)'
-                                            v-tooltip='"Attended"'
-                                            size='32'
-                                            stroke='1'
-                                            color='green'
-                                        />
-                                        <IconUserOff
-                                            v-else
-                                            v-tooltip='"Did not attend"'
-                                            size='32'
-                                            stroke='1'
-                                        />
-                                    </span>
+            <h3 class='card-title'>
+                <a
+                    class='cursor-pointer'
+                    @click='goto'
+                    v-text='label'
+                />
+            </h3>
 
-                                    <span v-text='training.title'/>
-                                    <div class='ms-auto btn-list h-25'>
-                                        <template v-for='team in training.teams'>
-                                            <TeamBadge :team='team' class='ms-auto'/>
-                                        </template>
-                                        <span v-if='training.required' class="ms-auto badge bg-red text-white" style="height: 20px;">Required</span>
+            <div class='btn-list ms-auto'>
+                <IconPlus
+                    v-if='create && is_iam("Training:Manage")'
+                    class='cursor-pointer'
+                    :size='32'
+                    :stroke='1'
+                    @click='$router.push(`/training/new`)'
+                />
+                <IconRefresh
+                    v-if='is_iam("Training:View")'
+                    class='cursor-pointer'
+                    :size='32'
+                    :stroke='1'
+                    @click='fetch'
+                />
+            </div>
+        </div>
+
+        <NoAccess v-if='!is_iam("Training:View")' />
+        <template v-else-if='loading'>
+            <TablerLoading desc='Loading Trainings' />
+        </template>
+        <template v-else-if='!list.items.length'>
+            <TablerNone
+                :create='false'
+                :label='Trainings'
+            />
+        </template>
+        <template v-else>
+            <table class='table card-table table-hover table-vcenter'>
+                <TableHeader
+                    v-model:sort='paging.sort'
+                    v-model:order='paging.order'
+                    v-model:header='header'
+                    :export='false'
+                />
+                <tbody>
+                    <tr
+                        v-for='training in list.items'
+                        :key='training.id'
+                        class='cursor-pointer'
+                        @click='$router.push(`/training/${training.id}`)'
+                    >
+                        <template v-for='(h, h_it) in header'>
+                            <template v-if='h.display'>
+                                <td v-if='["updated", "created"].includes(h.name)'>
+                                    <TablerEpoch
+                                        v-if='training[h.name]'
+                                        :date='training[h.name]'
+                                    />
+                                    <span v-else>Never</span>
+                                </td>
+                                <td v-else-if='h.name === "dates"'>
+                                    <TablerEpochRange
+                                        :start='training.start_ts'
+                                        :end='training.end_ts'
+                                    />
+                                </td>
+                                <td v-else-if='h.name === "title"'>
+                                    <div class='d-flex align-items-center'>
+                                        <span class='me-3'>
+                                            <IconUserCheck
+                                                v-if='training.users.includes(auth.id)'
+                                                v-tooltip='"Attended"'
+                                                size='32'
+                                                stroke='1'
+                                                color='green'
+                                            />
+                                            <IconUserOff
+                                                v-else
+                                                v-tooltip='"Did not attend"'
+                                                size='32'
+                                                stroke='1'
+                                            />
+                                        </span>
+
+                                        <span v-text='training.title' />
+                                        <div class='ms-auto btn-list h-25'>
+                                            <template v-for='team in training.teams'>
+                                                <TeamBadge
+                                                    :team='team'
+                                                    class='ms-auto'
+                                                />
+                                            </template>
+                                            <span
+                                                v-if='training.required'
+                                                class='ms-auto badge bg-red text-white'
+                                                style='height: 20px;'
+                                            >Required</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td v-else>
-                                <span v-text='training[h.name]'></span>
-                            </td>
+                                </td>
+                                <td v-else>
+                                    <span v-text='training[h.name]' />
+                                </td>
+                            </template>
                         </template>
-                    </template>
-                </tr>
-            </tbody>
-        </table>
-        <TableFooter v-if='footer' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
-    </template>
-</div>
+                    </tr>
+                </tbody>
+            </table>
+            <TableFooter
+                v-if='footer'
+                :limit='paging.limit'
+                :total='list.total'
+                @page='paging.page = $event'
+            />
+        </template>
+    </div>
 </template>
 
 <script>
@@ -99,6 +148,21 @@ import {
 
 export default {
     name: 'TrainingCard',
+    components: {
+        IconGripVertical,
+        IconUserCheck,
+        IconUserOff,
+        IconPlus,
+        IconRefresh,
+        TableHeader,
+        TableFooter,
+        TablerLoading,
+        TablerEpoch,
+        TablerEpochRange,
+        TeamBadge,
+        TablerNone,
+        NoAccess,
+    },
     props: {
         label: {
             type: String,
@@ -219,21 +283,6 @@ export default {
             this.list = await window.std(url);
             this.loading = false;
         }
-    },
-    components: {
-        IconGripVertical,
-        IconUserCheck,
-        IconUserOff,
-        IconPlus,
-        IconRefresh,
-        TableHeader,
-        TableFooter,
-        TablerLoading,
-        TablerEpoch,
-        TablerEpochRange,
-        TeamBadge,
-        TablerNone,
-        NoAccess,
     }
 }
 </script>

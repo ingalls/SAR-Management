@@ -1,42 +1,45 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <template v-if='!is_iam("Mission:View")'>
-                    <div class="col-lg-12">
-                        <NoAccess title='Missions'/>
-                    </div>
-                </template>
-                <template v-else>
-                    <div v-if='!loading.initial' class="col-lg-12">
-                        <HeatMap :missions='list'/>
-                    </div>
-                    <div class="col-lg-12">
-                        <CardMissions
-                            label='Missions'
-                            :auth='auth'
-                            :iam='iam'
-                            :limit='20'
-                        />
-                    </div>
-                </template>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <template v-if='!is_iam("Mission:View")'>
+                        <div class='col-lg-12'>
+                            <NoAccess title='Missions' />
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div
+                            v-if='!loading.initial'
+                            class='col-lg-12'
+                        >
+                            <HeatMap :missions='list' />
+                        </div>
+                        <div class='col-lg-12'>
+                            <CardMissions
+                                label='Missions'
+                                :auth='auth'
+                                :iam='iam'
+                                :limit='20'
+                            />
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -59,6 +62,19 @@ import {
 
 export default {
     name: 'Missions',
+    components: {
+        TablerNone,
+        SearchIcon,
+        PlusIcon,
+        NoAccess,
+        TablerEpochRange,
+        TableFooter,
+        TableHeader,
+        HeatMap,
+        CardMissions,
+        TeamBadge,
+        TablerBreadCrumb
+    },
     props: {
         iam: {
             type: Object,
@@ -139,19 +155,6 @@ export default {
             }));
         },
 
-    },
-    components: {
-        TablerNone,
-        SearchIcon,
-        PlusIcon,
-        NoAccess,
-        TablerEpochRange,
-        TableFooter,
-        TableHeader,
-        HeatMap,
-        CardMissions,
-        TeamBadge,
-        TablerBreadCrumb
     }
 }
 </script>

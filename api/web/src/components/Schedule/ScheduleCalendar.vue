@@ -1,43 +1,83 @@
 schedules_assigned.json<template>
-<div class="card">
-    <div class="card-header">
-        <h1 class='card-title'>Schedule Calendar</h1>
-    </div>
+    <div class='card'>
+        <div class='card-header'>
+            <h1 class='card-title'>
+                Schedule Calendar
+            </h1>
+        </div>
 
-    <div class="card-body">
-        <div id='calendar' style='width: 100%; height: 500px;'></div>
-    </div>
+        <div class='card-body'>
+            <div
+                id='calendar'
+                style='width: 100%; height: 500px;'
+            />
+        </div>
 
-    <TablerModal v-if='modal.shown'>
-        <button type="button" class="btn-close" @click='modal.shown = false' aria-label="Close"></button>
-        <div class="modal-status bg-yellow"></div>
-        <div class='modal-header'>
-            <template v-if='modal.id'>
-                <div class='modal-title'>Edit Shift</div>
+        <TablerModal v-if='modal.shown'>
+            <button
+                type='button'
+                class='btn-close'
+                aria-label='Close'
+                @click='modal.shown = false'
+            />
+            <div class='modal-status bg-yellow' />
+            <div class='modal-header'>
+                <template v-if='modal.id'>
+                    <div class='modal-title'>
+                        Edit Shift
+                    </div>
 
-                <div class='ms-auto'>
-                    <TablerDelete @delete='deleteAssignment' displaytype='icon' v-tooltip='"Delete Event"'/>
+                    <div class='ms-auto'>
+                        <TablerDelete
+                            v-tooltip='"Delete Event"'
+                            displaytype='icon'
+                            @delete='deleteAssignment'
+                        />
+                    </div>
+                </template>
+                <div
+                    v-else
+                    class='modal-title'
+                >
+                    Create Shift
                 </div>
-            </template>
-            <div v-else class='modal-title'>Create Shift</div>
-        </div>
-        <div class="modal-body">
-            <TablerLoading v-if='modal.loading' desc='Loading Assignment'/>
-            <div v-else class='col-12'>
-                <TablerInput type='datetime-local' label='Shift Start' v-model='modal.start'/>
-                <TablerInput type='datetime-local' label='Shift End' v-model='modal.end'/>
-                <UserDropdown
-                    v-model='modal.title'
-                    @selected='modal.user = $event.uid'
-                    :url='`/api/schedule/${schedule.id}/assigned`'
-                />
             </div>
-        </div>
-        <div class='modal-footer'>
-            <button @click='submitAssignment' class='btn btn-primary mt-2 ms-auto'>Submit</button>
-        </div>
-    </TablerModal>
-</div>
+            <div class='modal-body'>
+                <TablerLoading
+                    v-if='modal.loading'
+                    desc='Loading Assignment'
+                />
+                <div
+                    v-else
+                    class='col-12'
+                >
+                    <TablerInput
+                        v-model='modal.start'
+                        type='datetime-local'
+                        label='Shift Start'
+                    />
+                    <TablerInput
+                        v-model='modal.end'
+                        type='datetime-local'
+                        label='Shift End'
+                    />
+                    <UserDropdown
+                        v-model='modal.title'
+                        :url='`/api/schedule/${schedule.id}/assigned`'
+                        @selected='modal.user = $event.uid'
+                    />
+                </div>
+            </div>
+            <div class='modal-footer'>
+                <button
+                    class='btn btn-primary mt-2 ms-auto'
+                    @click='submitAssignment'
+                >
+                    Submit
+                </button>
+            </div>
+        </TablerModal>
+    </div>
 </template>
 
 <script>
@@ -55,6 +95,13 @@ import {
 
 export default {
     name: 'Calendar',
+    components: {
+        TablerModal,
+        TablerInput,
+        TablerDelete,
+        UserDropdown,
+        TablerLoading,
+    },
     props: {
         schedule: {
             type: Object,
@@ -162,13 +209,6 @@ export default {
 
             this.modal = { shown: false }
         }
-    },
-    components: {
-        TablerModal,
-        TablerInput,
-        TablerDelete,
-        UserDropdown,
-        TablerLoading,
     }
 }
 </script>

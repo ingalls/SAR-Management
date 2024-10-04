@@ -1,73 +1,119 @@
 <template>
-<div class='card'>
-    <div class='card-body'>
-        <div class="d-flex align-items-center mb-3">
-            <div class="subheader" v-text='label'></div>
+    <div class='card'>
+        <div class='card-body'>
+            <div class='d-flex align-items-center mb-3'>
+                <div
+                    class='subheader'
+                    v-text='label'
+                />
 
-            <div v-if='!disabled' class='ms-auto'>
-                <div class="dropdown">
-                    <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <IconPlus
-                            v-tooltip='"Add User"'
-                            class='cursor-pointer dropdown-toggle'
-                            :size='16'
-                            :stroke='1'
-                        />
-                    </div>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <div class='m-1'>
-                            <TablerInput placeholder='Filter Users' v-model='filter'/>
-
-                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.items' class='my-2 cursor-pointer'>
-                                <Avatar :user='user'/>
-                            </div>
+                <div
+                    v-if='!disabled'
+                    class='ms-auto'
+                >
+                    <div class='dropdown'>
+                        <div
+                            id='dropdownMenuButton1'
+                            class='dropdown-toggle'
+                            type='button'
+                            data-bs-toggle='dropdown'
+                            aria-expanded='false'
+                        >
+                            <IconPlus
+                                v-tooltip='"Add User"'
+                                class='cursor-pointer dropdown-toggle'
+                                :size='16'
+                                :stroke='1'
+                            />
                         </div>
-                    </ul>
+                        <ul
+                            class='dropdown-menu'
+                            aria-labelledby='dropdownMenuButton1'
+                        >
+                            <div class='m-1'>
+                                <TablerInput
+                                    v-model='filter'
+                                    placeholder='Filter Users'
+                                />
+
+                                <div
+                                    v-for='user in list.items'
+                                    :key='user.id'
+                                    class='my-2 cursor-pointer'
+                                    @click='push_assigned(user)'
+                                >
+                                    <Avatar :user='user' />
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <TablerLoading v-if='loading'/>
-        <TablerNone v-else-if='!assigned.length' label='Users Assigned' :create='false'/>
-        <template v-else>
-            <Draggable v-model="assigned" itemKey='id'>
-                <template #item="{element}">
-                    <div class="d-flex align-items-center my-2 hover">
-                        <Avatar :link='true' :user='element'/>
+            <TablerLoading v-if='loading' />
+            <TablerNone
+                v-else-if='!assigned.length'
+                label='Users Assigned'
+                :create='false'
+            />
+            <template v-else>
+                <Draggable
+                    v-model='assigned'
+                    item-key='id'
+                >
+                    <template #item='{element}'>
+                        <div class='d-flex align-items-center my-2 hover'>
+                            <Avatar
+                                :link='true'
+                                :user='element'
+                            />
 
-                        <div v-if='!disabled' class='ms-auto'>
-                            <div class='btn-list'>
-                                <div v-if='!element.confirmed' @click='confirm_assigned(element)' class='btn btn--sm'>
-                                    <IconCheck :size='16' :stroke='1'/> Confirm
-                                </div>
+                            <div
+                                v-if='!disabled'
+                                class='ms-auto'
+                            >
+                                <div class='btn-list'>
+                                    <div
+                                        v-if='!element.confirmed'
+                                        class='btn btn--sm'
+                                        @click='confirm_assigned(element)'
+                                    >
+                                        <IconCheck
+                                            :size='16'
+                                            :stroke='1'
+                                        /> Confirm
+                                    </div>
 
-                                <template v-if='disabled'>
-                                    <span v-text='element.role' class='pt-1'/>
-                                </template>
-                                <template v-else>
-                                    <TablerSelect
-                                        v-model='element.role'
-                                        v-on:update:modelValue='saveRole(element)'
-                                        :options='roles'
-                                        class='pt-2 mx-3'
+                                    <template v-if='disabled'>
+                                        <span
+                                            class='pt-1'
+                                            v-text='element.role'
+                                        />
+                                    </template>
+                                    <template v-else>
+                                        <TablerSelect
+                                            v-model='element.role'
+                                            :options='roles'
+                                            class='pt-2 mx-3'
+                                            @update:model-value='saveRole(element)'
+                                        />
+                                    </template>
+
+                                    <IconTrash
+                                        v-tooltip='"Remove User"'
+                                        class='cursor-pointer my-2'
+                                        :size='20'
+                                        :stroke='1'
+                                        @click='delete_assigned(element)'
                                     />
-                                </template>
-
-                                <IconTrash
-                                    v-tooltip='"Remove User"'
-                                    @click='delete_assigned(element)'
-                                    class='cursor-pointer my-2'
-                                    :size='20'
-                                    :stroke='1'
-                                />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </template>
-            </Draggable>
-        </template>
+                    </template>
+                </Draggable>
+            </template>
+        </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -87,6 +133,17 @@ import Draggable from 'vuedraggable';
 
 export default {
     name: 'UserPresenceSelect',
+    components: {
+        TablerNone,
+        Avatar,
+        IconPlus,
+        IconTrash,
+        IconCheck,
+        TablerInput,
+        TablerSelect,
+        TablerLoading,
+        Draggable,
+    },
     props: {
         modelValue: {
             type: Array,
@@ -177,17 +234,6 @@ export default {
                 return !ids.includes(user.id);
             }).splice(0, this.limit);
         }
-    },
-    components: {
-        TablerNone,
-        Avatar,
-        IconPlus,
-        IconTrash,
-        IconCheck,
-        TablerInput,
-        TablerSelect,
-        TablerLoading,
-        Draggable,
     }
 }
 </script>

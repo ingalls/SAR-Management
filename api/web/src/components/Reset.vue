@@ -1,65 +1,101 @@
 <template>
-<div class="page page-center">
-    <div class="container container-normal py-4">
-        <div class="row align-items-center g-4">
-            <div class="col-lg">
-                <div class="container-tight">
-                    <div class="card card-md">
-                        <div class="card-body">
-                            <template v-if='err'>
-                                <div class="text-center py-4">
-                                    <AlertCircleIcon height='48' width='48'/>
-                                    <h3 class='pt-3'>Password Reset Failed</h3>
-                                    <div class="text-muted" v-text='err.message'></div>
+    <div class='page page-center'>
+        <div class='container container-normal py-4'>
+            <div class='row align-items-center g-4'>
+                <div class='col-lg'>
+                    <div class='container-tight'>
+                        <div class='card card-md'>
+                            <div class='card-body'>
+                                <template v-if='err'>
+                                    <div class='text-center py-4'>
+                                        <AlertCircleIcon
+                                            height='48'
+                                            width='48'
+                                        />
+                                        <h3 class='pt-3'>
+                                            Password Reset Failed
+                                        </h3>
+                                        <div
+                                            class='text-muted'
+                                            v-text='err.message'
+                                        />
 
-                                    <div class="form-footer">
-                                        <button @click='$router.push("/login/forgot")' type="submit" class="btn btn-primary w-100">Forgot Password</button>
-                                    </div>
-                                </div>
-                            </template>
-                            <template v-else>
-                                <h2 class="h2 text-center mb-4">Reset Password</h2>
-                                <template v-if='loading'>
-                                    <TablerLoading/>
-                                </template>
-                                <template v-else-if='success'>
-                                    <div class='d-flex justify-content-center mb-4'>
-                                        <CheckIcon width='48' height='48' />
-                                    </div>
-
-                                    <div class='d-flex justify-content-center'>
-                                        <div>Password Reset</div>
-                                    </div>
-                                    <div class="form-footer">
-                                        <button @click='$router.push("/login")' type="submit" class="btn btn-primary w-100">Login</button>
+                                        <div class='form-footer'>
+                                            <button
+                                                type='submit'
+                                                class='btn btn-primary w-100'
+                                                @click='$router.push("/login/forgot")'
+                                            >
+                                                Forgot Password
+                                            </button>
+                                        </div>
                                     </div>
                                 </template>
                                 <template v-else>
-                                    <div class="mb-2">
-                                        <label class="form-label">
-                                            New Password
-                                        </label>
-                                        <div class="input-group input-group-flat">
-                                            <input v-model='password' v-on:keyup.enter='reset' type="password" class="form-control" placeholder="Your password" autocomplete="off">
+                                    <h2 class='h2 text-center mb-4'>
+                                        Reset Password
+                                    </h2>
+                                    <template v-if='loading'>
+                                        <TablerLoading />
+                                    </template>
+                                    <template v-else-if='success'>
+                                        <div class='d-flex justify-content-center mb-4'>
+                                            <CheckIcon
+                                                width='48'
+                                                height='48'
+                                            />
                                         </div>
-                                    </div>
-                                    <div class="form-footer">
-                                        <button @click='reset' type="submit" class="btn btn-primary w-100">Reset Password</button>
-                                    </div>
+
+                                        <div class='d-flex justify-content-center'>
+                                            <div>Password Reset</div>
+                                        </div>
+                                        <div class='form-footer'>
+                                            <button
+                                                type='submit'
+                                                class='btn btn-primary w-100'
+                                                @click='$router.push("/login")'
+                                            >
+                                                Login
+                                            </button>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class='mb-2'>
+                                            <label class='form-label'>
+                                                New Password
+                                            </label>
+                                            <div class='input-group input-group-flat'>
+                                                <input
+                                                    v-model='password'
+                                                    type='password'
+                                                    class='form-control'
+                                                    placeholder='Your password'
+                                                    autocomplete='off'
+                                                    @keyup.enter='reset'
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class='form-footer'>
+                                            <button
+                                                type='submit'
+                                                class='btn btn-primary w-100'
+                                                @click='reset'
+                                            >
+                                                Reset Password
+                                            </button>
+                                        </div>
+                                    </template>
                                 </template>
-                            </template>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-center text-muted mt-3">
-                        Don't have account yet? <a href='mailto:rescue@ingalls.ca'>Contact Us</a>
+                        <div class='text-center text-muted mt-3'>
+                            Don't have account yet? <a href='mailto:rescue@ingalls.ca'>Contact Us</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-
 </template>
 
 <script>
@@ -73,6 +109,11 @@ import {
 
 export default {
     name: 'Reset',
+    components: {
+        CheckIcon,
+        TablerLoading,
+        AlertCircleIcon
+    },
     data: function() {
         return {
             err: false,
@@ -106,11 +147,6 @@ export default {
 
             this.loading = false
         }
-    },
-    components: {
-        CheckIcon,
-        TablerLoading,
-        AlertCircleIcon
     }
 }
 </script>

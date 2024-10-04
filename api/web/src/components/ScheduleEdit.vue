@@ -1,91 +1,105 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <NoAccess v-if='!is_iam("Schedule:Admin")' title='New Schedule'/>
-                <TablerLoading v-if='loading.schedule'/>
-                <template v-else>
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class='row row-cards'>
-                                    <div class="col-md-12">
-                                        <TablerInput
-                                            v-model='schedule.name'
-                                            :error='errors.name'
-                                            :required='true'
-                                            label='Schedule Name'
-                                            description='A Human Readable name for the schedule'
-                                        />
-                                    </div>
-                                    <div class="col-md-12">
-                                        <TablerInput
-                                            :rows='5'
-                                            v-model='schedule.body'
-                                            :error='errors.body'
-                                            :required='true'
-                                            label='Schedule Body'
-                                            description='A Human Readable description for the schedule'
-                                        />
-                                    </div>
-                                    <div class="col-md-12">
-                                        <TablerInput
-                                            type='time'
-                                            v-model='schedule.handoff'
-                                            :error='errors.handoff'
-                                            :required='true'
-                                            label='Schedule Handoff'
-                                            description='Default time at which Schedules change'
-                                        />
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <NoAccess
+                        v-if='!is_iam("Schedule:Admin")'
+                        title='New Schedule'
+                    />
+                    <TablerLoading v-if='loading.schedule' />
+                    <template v-else>
+                        <div class='col-lg-12'>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <div class='row row-cards'>
+                                        <div class='col-md-12'>
+                                            <TablerInput
+                                                v-model='schedule.name'
+                                                :error='errors.name'
+                                                :required='true'
+                                                label='Schedule Name'
+                                                description='A Human Readable name for the schedule'
+                                            />
+                                        </div>
+                                        <div class='col-md-12'>
+                                            <TablerInput
+                                                v-model='schedule.body'
+                                                :rows='5'
+                                                :error='errors.body'
+                                                :required='true'
+                                                label='Schedule Body'
+                                                description='A Human Readable description for the schedule'
+                                            />
+                                        </div>
+                                        <div class='col-md-12'>
+                                            <TablerInput
+                                                v-model='schedule.handoff'
+                                                type='time'
+                                                :error='errors.handoff'
+                                                :required='true'
+                                                label='Schedule Handoff'
+                                                description='Default time at which Schedules change'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class='mx-4'>
-                                <UserPresentSelect
-                                    label='Scheduled Users'
-                                    v-if='!$route.params.scheduleid'
-                                    :confirmed='true'
-                                    v-model='assigned'
-                                />
-                            </div>
+                                <div class='mx-4'>
+                                    <UserPresentSelect
+                                        v-if='!$route.params.scheduleid'
+                                        v-model='assigned'
+                                        label='Scheduled Users'
+                                        :confirmed='true'
+                                    />
+                                </div>
 
-                            <div class='col-12 py-1 pb-4 px-4'>
-                                <div class='d-flex'>
-                                    <a v-if='$route.params.scheduleid && is_iam("Schedule:Admin")' @click='deleteSchedule' class="cursor-pointer btn btn-danger">
-                                        Delete Schedule
-                                    </a>
-                                    <div class='ms-auto'>
-
-                                        <a v-if='$route.params.scheduleid' @click='update' class="cursor-pointer btn btn-primary">
-                                            Update Schedule
+                                <div class='col-12 py-1 pb-4 px-4'>
+                                    <div class='d-flex'>
+                                        <a
+                                            v-if='$route.params.scheduleid && is_iam("Schedule:Admin")'
+                                            class='cursor-pointer btn btn-danger'
+                                            @click='deleteSchedule'
+                                        >
+                                            Delete Schedule
                                         </a>
-                                        <a v-else @click='create' class="cursor-pointer btn btn-primary">
-                                            Create Schedule
-                                        </a>
+                                        <div class='ms-auto'>
+                                            <a
+                                                v-if='$route.params.scheduleid'
+                                                class='cursor-pointer btn btn-primary'
+                                                @click='update'
+                                            >
+                                                Update Schedule
+                                            </a>
+                                            <a
+                                                v-else
+                                                class='cursor-pointer btn btn-primary'
+                                                @click='create'
+                                            >
+                                                Create Schedule
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -100,6 +114,13 @@ import {
 
 export default {
     name: 'ScheduleEdit',
+    components: {
+        TablerInput,
+        UserPresentSelect,
+        TablerLoading,
+        TablerBreadCrumb,
+        NoAccess
+    },
     props: {
         iam: {
             type: Object,
@@ -195,13 +216,6 @@ export default {
             this.schedule = await window.std(`/api/schedule/${this.$route.params.scheduleid}`);
             this.loading.schedule = false;
         },
-    },
-    components: {
-        TablerInput,
-        UserPresentSelect,
-        TablerLoading,
-        TablerBreadCrumb,
-        NoAccess
     }
 }
 </script>

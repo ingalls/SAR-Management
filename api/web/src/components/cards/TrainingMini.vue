@@ -1,25 +1,40 @@
 <template>
-<div class="card">
-    <div class="card-body">
-        <div class='d-flex'>
-            <h3 class="subheader" v-text='label'></h3>
+    <div class='card'>
+        <div class='card-body'>
+            <div class='d-flex'>
+                <h3
+                    class='subheader'
+                    v-text='label'
+                />
 
-            <div class='ms-auto'>
-                <h3 class="subheader" v-text='Math.round(percent * 100) + "%"'></h3>
+                <div class='ms-auto'>
+                    <h3
+                        class='subheader'
+                        v-text='Math.round(percent * 100) + "%"'
+                    />
+                </div>
             </div>
-        </div>
-        <TablerLoading v-if='loading'/>
-        <template v-else>
-            <TablerProgress :key='percent' :percent='percent'/>
-        </template>
-        <div class='d-flex'>
-            <h3 class="subheader mt-2" v-text='`${this.attended} of ${this.total} required trainings`'></h3>
-            <div class='ms-auto btn-list mt-1'>
-                <TablerSelect v-model='range' :options='["Current Year", "1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]'/>
+            <TablerLoading v-if='loading' />
+            <template v-else>
+                <TablerProgress
+                    :key='percent'
+                    :percent='percent'
+                />
+            </template>
+            <div class='d-flex'>
+                <h3
+                    class='subheader mt-2'
+                    v-text='`${attended} of ${total} required trainings`'
+                />
+                <div class='ms-auto btn-list mt-1'>
+                    <TablerSelect
+                        v-model='range'
+                        :options='["Current Year", "1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]'
+                    />
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -32,6 +47,11 @@ import moment from 'moment';
 
 export default {
     name: 'TrainingCardMini',
+    components: {
+        TablerSelect,
+        TablerLoading,
+        TablerProgress
+    },
     props: {
         label: {
             type: String,
@@ -42,11 +62,6 @@ export default {
             default: null
         },
     },
-    watch: {
-        range: async function() {
-            await this.fetch();
-        }
-    },
     data: function() {
         return {
             range: 'Current Year',
@@ -54,6 +69,11 @@ export default {
             total: 0,
             attended: 0,
             percent: 0
+        }
+    },
+    watch: {
+        range: async function() {
+            await this.fetch();
         }
     },
     mounted: async function() {
@@ -93,11 +113,6 @@ export default {
             const end = moment().quarter(quarter).endOf('quarter').format('YYYY-MM-DD');
             return {start, end};
         }
-    },
-    components: {
-        TablerSelect,
-        TablerLoading,
-        TablerProgress
     }
 }
 </script>

@@ -1,23 +1,41 @@
 <template>
+    <div class='dropdown'>
+        <div
+            id='dropdownMenuButton1'
+            type='button'
+            :class='{
+                "btn px-2": button
+            }'
+            data-bs-toggle='dropdown'
+            aria-expanded='false'
+        >
+            <PlusIcon
+                height='24'
+                width='24'
+            />
+        </div>
+        <ul
+            class='dropdown-menu'
+            aria-labelledby='dropdownMenuButton1'
+        >
+            <div class='m-1'>
+                <TablerInput
+                    v-model='filter'
+                    placeholder='Filter Users'
+                />
 
-<div class="dropdown">
-    <div type="button" :class='{
-        "btn px-2": button
-     }' id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        <PlusIcon height='24' width='24'/>
-    </div>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-        <div class='m-1'>
-            <TablerInput placeholder='Filter Users' v-model='filter'/>
-
-            <div @click='select(user)' :key='user.id' v-for='user in list.items'>
-                <div class="d-flex align-items-center my-1 cursor-pointer">
-                    <Avatar :user='user'/>
+                <div
+                    v-for='user in list.items'
+                    :key='user.id'
+                    @click='select(user)'
+                >
+                    <div class='d-flex align-items-center my-1 cursor-pointer'>
+                        <Avatar :user='user' />
+                    </div>
                 </div>
             </div>
-        </div>
-    </ul>
-</div>
+        </ul>
+    </div>
 </template>
 
 <script>
@@ -31,6 +49,11 @@ import {
 
 export default {
     name: 'UserDropdown',
+    components: {
+        Avatar,
+        PlusIcon,
+        TablerInput
+    },
     props: {
         button: {
             type: Boolean,
@@ -73,11 +96,6 @@ export default {
             url.searchParams.append('limit', this.limit);
             this.list = await window.std(url);
         }
-    },
-    components: {
-        Avatar,
-        PlusIcon,
-        TablerInput
     }
 }
 </script>

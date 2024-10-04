@@ -1,16 +1,21 @@
 <template>
     <TablerModal>
-        <button type="button" class="btn-close" @click='close' aria-label="Close"></button>
-            <div class="modal-status bg-yellow"></div>
-            <div class="modal-body text-center py-4">
-                <UploadDefault
-                    :url='url'
-                    :headers='headers'
-                    :cancel='false'
-                    @done='$emit("done", $event)'
-                    @cancel='$emit("cancel")'
-                />
-            </div>
+        <button
+            type='button'
+            class='btn-close'
+            aria-label='Close'
+            @click='close'
+        />
+        <div class='modal-status bg-yellow' />
+        <div class='modal-body text-center py-4'>
+            <UploadDefault
+                :url='url'
+                :headers='headers'
+                :cancel='false'
+                @done='$emit("done", $event)'
+                @cancel='$emit("cancel")'
+            />
+        </div>
     </TablerModal>
 </template>
 
@@ -20,6 +25,10 @@ import UploadDefault from './UploadDefault.vue';
 
 export default {
     name: 'UploadModal',
+    components: {
+        TablerModal,
+        UploadDefault
+    },
     props: {
         url: {
             type: [String, URL],
@@ -40,10 +49,6 @@ export default {
         close: function() {
             this.$emit('close');
         }
-    },
-    components: {
-        TablerModal,
-        UploadDefault
     }
 }
 </script>

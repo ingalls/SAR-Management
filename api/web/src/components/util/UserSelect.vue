@@ -1,47 +1,78 @@
 <template>
-<div class='mb-3'>
-    <div class='row'>
-        <div class="d-flex align-items-center mb-3">
-            <div class="subheader" v-text='label'></div>
-
-            <div class='ms-auto'>
-                <div class="dropdown">
-                    <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <SettingsIcon
-                            class='cursor-pointer dropdown-toggle'
-                            height=16
-                            width=16
-                        />
-                    </div>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <div class='m-1'>
-                            <TablerInput placeholder='Filter Users' v-model='filter'/>
-
-                            <div @click='push_assigned(user)' :key='user.id' v-for='user in list.items'>
-                                <div class="d-flex align-items-center my-1 cursor-pointer">
-                                    <Avatar :user='user'/>
-                                </div>
-                            </div>
-                        </div>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <template v-if='!assigned.length'>
-            <TablerNone label='Users Assigned' :create='false' :compact='true'/>
-        </template>
-        <template v-else>
-            <div :key='a.id' v-for='(a, a_idx) in assigned' class="d-flex align-items-center my-1">
-                <Avatar :user='a'/>
+    <div class='mb-3'>
+        <div class='row'>
+            <div class='d-flex align-items-center mb-3'>
+                <div
+                    class='subheader'
+                    v-text='label'
+                />
 
                 <div class='ms-auto'>
-                    <TrashIcon @click='delete_assigned(a_idx, a)' height='16' class='cursor-pointer'/>
+                    <div class='dropdown'>
+                        <div
+                            id='dropdownMenuButton1'
+                            class='dropdown-toggle'
+                            type='button'
+                            data-bs-toggle='dropdown'
+                            aria-expanded='false'
+                        >
+                            <SettingsIcon
+                                class='cursor-pointer dropdown-toggle'
+                                height='16'
+                                width='16'
+                            />
+                        </div>
+                        <ul
+                            class='dropdown-menu'
+                            aria-labelledby='dropdownMenuButton1'
+                        >
+                            <div class='m-1'>
+                                <TablerInput
+                                    v-model='filter'
+                                    placeholder='Filter Users'
+                                />
+
+                                <div
+                                    v-for='user in list.items'
+                                    :key='user.id'
+                                    @click='push_assigned(user)'
+                                >
+                                    <div class='d-flex align-items-center my-1 cursor-pointer'>
+                                        <Avatar :user='user' />
+                                    </div>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </template>
+
+            <template v-if='!assigned.length'>
+                <TablerNone
+                    label='Users Assigned'
+                    :create='false'
+                    :compact='true'
+                />
+            </template>
+            <template v-else>
+                <div
+                    v-for='(a, a_idx) in assigned'
+                    :key='a.id'
+                    class='d-flex align-items-center my-1'
+                >
+                    <Avatar :user='a' />
+
+                    <div class='ms-auto'>
+                        <TrashIcon
+                            height='16'
+                            class='cursor-pointer'
+                            @click='delete_assigned(a_idx, a)'
+                        />
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -57,6 +88,13 @@ import {
 
 export default {
     name: 'UserSelect',
+    components: {
+        TablerNone,
+        Avatar,
+        SettingsIcon,
+        TrashIcon,
+        TablerInput
+    },
     props: {
         modelValue: {
             type: Array,
@@ -116,13 +154,6 @@ export default {
                 return !ids.includes(user.id);
             }).splice(0, this.limit);
         }
-    },
-    components: {
-        TablerNone,
-        Avatar,
-        SettingsIcon,
-        TrashIcon,
-        TablerInput
     }
 }
 </script>

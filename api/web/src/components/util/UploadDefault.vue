@@ -1,30 +1,50 @@
 <template>
-<div class='card-body'>
-    <div class='row' :class='{ "d-none": progress !== 0 }'>
-        <div class='col-12 d-flex justify-content-center mb-3' v-text='label'></div>
-        <div class='col-12 d-flex justify-content-center'>
-            <div class='btn-list'>
-                <button v-if='cancel' @click='$emit("cancel")' class='btn btn-secondary'>Cancel</button>
-                <button @click='$refs.fileInput.click()' class='btn btn-primary'>Upload</button>
-            </div>
-        </div>
-        <form>
-            <input
-                ref='fileInput'
-                class='d-none'
-                type='file'
-                id='file'
-                name='file'
-                :accept='mimetype'
-                @change='upload'
+    <div class='card-body'>
+        <div
+            class='row'
+            :class='{ "d-none": progress !== 0 }'
+        >
+            <div
+                class='col-12 d-flex justify-content-center mb-3'
+                v-text='label'
             />
-        </form>
+            <div class='col-12 d-flex justify-content-center'>
+                <div class='btn-list'>
+                    <button
+                        v-if='cancel'
+                        class='btn btn-secondary'
+                        @click='$emit("cancel")'
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        class='btn btn-primary'
+                        @click='$refs.fileInput.click()'
+                    >
+                        Upload
+                    </button>
+                </div>
+            </div>
+            <form>
+                <input
+                    id='file'
+                    ref='fileInput'
+                    class='d-none'
+                    type='file'
+                    name='file'
+                    :accept='mimetype'
+                    @change='upload'
+                >
+            </form>
+        </div>
+        <div
+            v-if='progress && progress < 101'
+            class='row'
+        >
+            <TablerLoading :desc='`Uploading ${name}`' />
+            <TablerProgress :percent='progress / 100' />
+        </div>
     </div>
-    <div v-if='progress && progress < 101' class='row'>
-        <TablerLoading :desc='`Uploading ${name}`'/>
-        <TablerProgress :percent='progress / 100'/>
-    </div>
-</div>
 </template>
 
 <script>
@@ -35,6 +55,10 @@ import {
 
 export default {
     name: 'UploadFile',
+    components: {
+        TablerLoading,
+        TablerProgress
+    },
     props: {
         url: {
             type: [String, URL],
@@ -109,10 +133,6 @@ export default {
                 xhr.send(formData)
             });
         }
-    },
-    components: {
-        TablerLoading,
-        TablerProgress
     }
 }
 

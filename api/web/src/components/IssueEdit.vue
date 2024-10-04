@@ -1,57 +1,75 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Issue:Manage")' title='New Issue'/>
-                    <div v-else class="card">
-                        <div class="card-body">
-                            <TablerLoading v-if='loading' desc='Loading Issue'/>
-                            <template v-else>
-                                <div class='row row-cards'>
-                                    <div class="col-md-12">
-                                        <TablerInput v-model='issue.title' label='Issue Title' :error='errors.title'/>
-                                        <MdEditor
-                                            :preview='false' noUploadImg noMermaid
-                                            :noKatex='true'
-                                            :toolbarsExclude='[
-                                                "save",
-                                                "prettier",
-                                                "mermaid"
-                                            ]'
-                                            language='en-US'
-                                            v-model="issue.body"
-                                        />
-                                    </div>
-                                    <div class="col-md-12 d-flex">
-                                        <div class='ms-auto'>
-                                            <a @click='update' class="cursor-pointer btn btn-primary">
-                                                Update Issue
-                                            </a>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <NoAccess
+                            v-if='!is_iam("Issue:Manage")'
+                            title='New Issue'
+                        />
+                        <div
+                            v-else
+                            class='card'
+                        >
+                            <div class='card-body'>
+                                <TablerLoading
+                                    v-if='loading'
+                                    desc='Loading Issue'
+                                />
+                                <template v-else>
+                                    <div class='row row-cards'>
+                                        <div class='col-md-12'>
+                                            <TablerInput
+                                                v-model='issue.title'
+                                                label='Issue Title'
+                                                :error='errors.title'
+                                            />
+                                            <MdEditor
+                                                v-model='issue.body'
+                                                :preview='false'
+                                                no-upload-img
+                                                no-mermaid
+                                                :no-katex='true'
+                                                :toolbars-exclude='[
+                                                    "save",
+                                                    "prettier",
+                                                    "mermaid"
+                                                ]'
+                                                language='en-US'
+                                            />
+                                        </div>
+                                        <div class='col-md-12 d-flex'>
+                                            <div class='ms-auto'>
+                                                <a
+                                                    class='cursor-pointer btn btn-primary'
+                                                    @click='update'
+                                                >
+                                                    Update Issue
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </template>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -72,6 +90,17 @@ import {
 
 export default {
     name: 'IssuesEdit',
+    components: {
+        NoAccess,
+        TablerLoading,
+        TablerInput,
+        MdEditor,
+        TablerBreadCrumb,
+        UserSelect,
+        TrashIcon,
+        PlusIcon
+
+    },
     props: {
         iam: {
             type: Object,
@@ -128,17 +157,6 @@ export default {
 
             this.$router.push(`/issue/${this.issue.id}`);
         }
-    },
-    components: {
-        NoAccess,
-        TablerLoading,
-        TablerInput,
-        MdEditor,
-        TablerBreadCrumb,
-        UserSelect,
-        TrashIcon,
-        PlusIcon
-
     }
 }
 </script>

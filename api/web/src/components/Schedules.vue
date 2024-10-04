@@ -1,62 +1,83 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h1 class='card-title'>On Call Schedules</h1>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <div class='card'>
+                            <div class='card-header'>
+                                <h1 class='card-title'>
+                                    On Call Schedules
+                                </h1>
 
-                            <div class='ms-auto btn-list'>
-                                <PlusIcon @click='$router.push("/schedule/new")' class='cursor-pointer'/>
+                                <div class='ms-auto btn-list'>
+                                    <PlusIcon
+                                        class='cursor-pointer'
+                                        @click='$router.push("/schedule/new")'
+                                    />
+                                </div>
+                            </div>
+                            <template v-if='loading.list'>
+                                <TablerLoading desc='Loading Schedules' />
+                            </template>
+                            <template v-else-if='!list.items.length'>
+                                <TablerNone
+                                    label='Schedules'
+                                    :create='false'
+                                />
+                            </template>
+                            <div
+                                v-else
+                                class='table-responsive'
+                            >
+                                <table class='table card-table table-hover table-vcenter datatable'>
+                                    <TableHeader
+                                        v-model:sort='paging.sort'
+                                        v-model:order='paging.order'
+                                        v-model:header='header'
+                                    />
+                                    <tbody>
+                                        <tr
+                                            v-for='schedule in list.items'
+                                            :key='schedule.id'
+                                            class='cursor-pointer'
+                                            @click='$router.push(`/schedule/${schedule.id}`)'
+                                        >
+                                            <template v-for='h in header'>
+                                                <template v-if='h.display'>
+                                                    <td><span v-text='schedule[h.name]' /></td>
+                                                </template>
+                                            </template>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <TablerLoading v-if='loading.list' />
+                                <TableFooter
+                                    v-else
+                                    :limit='paging.limit'
+                                    :total='list.total'
+                                    @page='paging.page = $event'
+                                />
                             </div>
                         </div>
-                        <template v-if='loading.list'>
-                            <TablerLoading desc='Loading Schedules'/>
-                        </template>
-                        <template v-else-if='!list.items.length'>
-                            <TablerNone label='Schedules' :create='false'/>
-                        </template>
-                        <div v-else class='table-responsive'>
-                            <table class="table card-table table-hover table-vcenter datatable">
-                                <TableHeader
-                                    v-model:sort='paging.sort'
-                                    v-model:order='paging.order'
-                                    v-model:header='header'
-                                />
-                                <tbody>
-                                    <tr @click='$router.push(`/schedule/${schedule.id}`)' :key='schedule.id' v-for='schedule in list.items' class='cursor-pointer'>
-                                        <template v-for='h in header'>
-                                            <template v-if='h.display'>
-                                                <td><span v-text='schedule[h.name]'/></td>
-                                            </template>
-                                        </template>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <TablerLoading v-if='loading.list'/>
-                            <TableFooter v-else :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 ading
@@ -76,6 +97,15 @@ import {
 
 export default {
     name: 'OnCall',
+    components: {
+        TablerNone,
+        PlusIcon,
+        TablerLoading,
+        TablerBreadCrumb,
+        TableHeader,
+        TableFooter,
+        NoAccess,
+    },
     props: {
         iam: {
             type: Object,
@@ -139,15 +169,6 @@ export default {
             }));
             this.loading.schema = false;
         },
-    },
-    components: {
-        TablerNone,
-        PlusIcon,
-        TablerLoading,
-        TablerBreadCrumb,
-        TableHeader,
-        TableFooter,
-        NoAccess,
     },
 }
 </script>

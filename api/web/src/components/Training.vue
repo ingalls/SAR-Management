@@ -1,95 +1,170 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <NoAccess v-if='!is_iam("Training:View")' title='Training'/>
-                <template v-else>
-                    <div v-if='!loading.assigned && is_roster' class="col-lg-12">
-                        <div class='card'>
-                            <div class="alert alert-info alert-dismissible" role="alert">
-                                <h3 class="mb-1">Roster Correction</h3>
-                                <p>You aren't marked as present for this training. If this is incorrect, request to be added to the training roster</p>
-                                <div class='d-flex'>
-                                    <div class='ms-auto'>
-                                        <TablerLoading v-if='loading.request' :inline='true'/>
-                                        <button v-else @click='request' class="btn btn-info cursor-pointer">Request Inclusion</button>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <NoAccess
+                        v-if='!is_iam("Training:View")'
+                        title='Training'
+                    />
+                    <template v-else>
+                        <div
+                            v-if='!loading.assigned && is_roster'
+                            class='col-lg-12'
+                        >
+                            <div class='card'>
+                                <div
+                                    class='alert alert-info alert-dismissible'
+                                    role='alert'
+                                >
+                                    <h3 class='mb-1'>
+                                        Roster Correction
+                                    </h3>
+                                    <p>You aren't marked as present for this training. If this is incorrect, request to be added to the training roster</p>
+                                    <div class='d-flex'>
+                                        <div class='ms-auto'>
+                                            <TablerLoading
+                                                v-if='loading.request'
+                                                :inline='true'
+                                            />
+                                            <button
+                                                v-else
+                                                class='btn btn-info cursor-pointer'
+                                                @click='request'
+                                            >
+                                                Request Inclusion
+                                            </button>
+                                        </div>
                                     </div>
+                                    <a
+                                        class='btn-close'
+                                        data-bs-dismiss='alert'
+                                        aria-label='close'
+                                    />
                                 </div>
-                                <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <TablerLoading v-if='loading.training'/>
-                        <div v-else class="card">
-                            <div class='card-header'>
-                                <div class='row col-12'>
-                                    <div class='col-12 d-flex align-items-center'>
-                                        <h3 class='card-title' v-text='`${training.title} @ ${training.location || "Unknown"}`'/>
-                                        <span v-if='training.required' class="mx-2 badge bg-red text-white" style="height: 20px;">Required</span>
+                        <div class='col-lg-12'>
+                            <TablerLoading v-if='loading.training' />
+                            <div
+                                v-else
+                                class='card'
+                            >
+                                <div class='card-header'>
+                                    <div class='row col-12'>
+                                        <div class='col-12 d-flex align-items-center'>
+                                            <h3
+                                                class='card-title'
+                                                v-text='`${training.title} @ ${training.location || "Unknown"}`'
+                                            />
+                                            <span
+                                                v-if='training.required'
+                                                class='mx-2 badge bg-red text-white'
+                                                style='height: 20px;'
+                                            >Required</span>
 
-                                        <div class='ms-auto btn-list'>
-                                            <TablerEpochRange :start='training.start_ts' :end='training.end_ts'/>
-                                            <IconSettings v-if='is_iam("Training:Manage")' @click='$router.push(`/training/${$route.params.trainingid}/edit`)' :size='24' :stroke='1' class='cursor-pointer'/>
+                                            <div class='ms-auto btn-list'>
+                                                <TablerEpochRange
+                                                    :start='training.start_ts'
+                                                    :end='training.end_ts'
+                                                />
+                                                <IconSettings
+                                                    v-if='is_iam("Training:Manage")'
+                                                    :size='24'
+                                                    :stroke='1'
+                                                    class='cursor-pointer'
+                                                    @click='$router.push(`/training/${$route.params.trainingid}/edit`)'
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div v-if='training.teams.length' class='mt-2'>
-                                        <template v-for='team in training.teams'>
-                                            <TeamBadge class='mx-1' :team='team'/>
-                                        </template>
+                                        <div
+                                            v-if='training.teams.length'
+                                            class='mt-2'
+                                        >
+                                            <template v-for='team in training.teams'>
+                                                <TeamBadge
+                                                    class='mx-1'
+                                                    :team='team'
+                                                />
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <div class='row row-cards'>
-                                    <TablerMarkdown class="col-md-12" :markdown='training.body'/>
+                                <div class='card-body'>
+                                    <div class='row row-cards'>
+                                        <TablerMarkdown
+                                            class='col-md-12'
+                                            :markdown='training.body'
+                                        />
 
-                                    <div class='col-12 datagrid'>
-                                        <div v-if='training.end_ts < +new Date()' class="datagrid-item">
-                                            <div class="datagrid-title">Personnel</div>
-                                            <div class="datagrid-content" v-text='training.users.length'></div>
-                                        </div>
-                                        <div v-if='training.end_ts < +new Date()' class="datagrid-item">
-                                            <div class="datagrid-title">Man-Hours</div>
-                                            <div class="datagrid-content" v-text='Math.round(training.users.length * (training.end_ts - training.start_ts) / 1000 / 60 / 60)'></div>
+                                        <div class='col-12 datagrid'>
+                                            <div
+                                                v-if='training.end_ts < +new Date()'
+                                                class='datagrid-item'
+                                            >
+                                                <div class='datagrid-title'>
+                                                    Personnel
+                                                </div>
+                                                <div
+                                                    class='datagrid-content'
+                                                    v-text='training.users.length'
+                                                />
+                                            </div>
+                                            <div
+                                                v-if='training.end_ts < +new Date()'
+                                                class='datagrid-item'
+                                            >
+                                                <div class='datagrid-title'>
+                                                    Man-Hours
+                                                </div>
+                                                <div
+                                                    class='datagrid-content'
+                                                    v-text='Math.round(training.users.length * (training.end_ts - training.start_ts) / 1000 / 60 / 60)'
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <Location v-if='training.location_geom' v-model='training.location_geom' :search='false'/>
+                                <Location
+                                    v-if='training.location_geom'
+                                    v-model='training.location_geom'
+                                    :search='false'
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-12" v-if='!loading.training'>
-                        <UserPresentSelect
-                            label='Training Roster'
-                            :disabled='!is_iam("Training:Manage")'
-                            v-model='assigned'
-                            :loading='loading.assigned'
-                            @push='postAssigned($event)'
-                            @patch='patchAssigned($event)'
-                            @delete='deleteAssigned($event)'
-                        />
-                    </div>
-                </template>
+                        <div
+                            v-if='!loading.training'
+                            class='col-lg-12'
+                        >
+                            <UserPresentSelect
+                                v-model='assigned'
+                                label='Training Roster'
+                                :disabled='!is_iam("Training:Manage")'
+                                :loading='loading.assigned'
+                                @push='postAssigned($event)'
+                                @patch='patchAssigned($event)'
+                                @delete='deleteAssigned($event)'
+                            />
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -110,6 +185,17 @@ import {
 
 export default {
     name: 'TrainingsNew',
+    components: {
+        TablerEpochRange,
+        TeamBadge,
+        Location,
+        IconSettings,
+        UserPresentSelect,
+        TablerLoading,
+        TablerBreadCrumb,
+        TablerMarkdown,
+        NoAccess
+    },
     props: {
         iam: {
             type: Object,
@@ -136,12 +222,6 @@ export default {
             }
         }
     },
-    mounted: async function() {
-        if (this.is_iam('Training:View')) {
-            await this.fetch();
-            await this.fetchAssigned();
-        }
-    },
     computed: {
         is_roster: function() {
             if (this.training.start_ts > +new Date()) return false;
@@ -150,6 +230,12 @@ export default {
             return this.assigned.every((a) => {
                 return a.uid != this.auth.id;
             });
+        }
+    },
+    mounted: async function() {
+        if (this.is_iam('Training:View')) {
+            await this.fetch();
+            await this.fetchAssigned();
         }
     },
     methods: {
@@ -199,17 +285,6 @@ export default {
 
             await this.fetchAssigned();
         },
-    },
-    components: {
-        TablerEpochRange,
-        TeamBadge,
-        Location,
-        IconSettings,
-        UserPresentSelect,
-        TablerLoading,
-        TablerBreadCrumb,
-        TablerMarkdown,
-        NoAccess
     }
 }
 </script>

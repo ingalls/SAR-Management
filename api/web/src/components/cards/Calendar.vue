@@ -1,45 +1,115 @@
 <template>
-<div class="card">
-    <div class="card-header">
-        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' size='32' stroke='1'/>
-        <h1 class='card-title'>Team Calendar</h1>
+    <div class='card'>
+        <div class='card-header'>
+            <IconGripVertical
+                v-if='dragHandle'
+                class='drag-handle cursor-move'
+                size='32'
+                stroke='1'
+            />
+            <h1 class='card-title'>
+                Team Calendar
+            </h1>
 
-        <div v-if='is_iam("Calendar:View")' class='ms-auto btn-list'>
-            <IconFileExport @click='createExport' v-tooltip='"Google Calendar Export"' class='cursor-pointer' size='32' stroke='1'/>
-            <div class="dropdown">
-                <div type="button" id="dropdownLocation" data-bs-toggle="dropdown" aria-expanded="false">
-                    <IconMenu2 v-tooltip='"Options"' class='cursor-pointer' size='32' stroke='1'/>
-                </div>
-                <ul class="dropdown-menu" aria-labelledby="dropdownLocation">
-                    <div class='m-1'>
-                        <div class='d-flex'>
-                            <IconAmbulance class='my-1 mx-1' size='32' stroke='1'/>
-                            <TablerToggle v-model='calendars.mission' label='Missions' class='w-full'/>
-                        </div>
-                        <div class='d-flex'>
-                            <IconTruck class='my-1 mx-1' size='32' stroke='1'/>
-                            <TablerToggle v-model='calendars.training' label='Trainings' class='w-full'/>
-                        </div>
-                        <div class='d-flex'>
-                            <IconBalloon class='my-1 mx-1' size='32' stroke='1'/>
-                            <TablerToggle v-model='calendars.birthday' label='Birthdays' class='w-full'/>
-                        </div>
-                        <div class='d-flex'>
-                            <IconCalendarTime class='my-1 mx-1' size='32' stroke='1'/>
-                            <TablerToggle v-model='calendars.schedule' label='Schedules' class='w-full'/>
-                        </div>
+            <div
+                v-if='is_iam("Calendar:View")'
+                class='ms-auto btn-list'
+            >
+                <IconFileExport
+                    v-tooltip='"Google Calendar Export"'
+                    class='cursor-pointer'
+                    size='32'
+                    stroke='1'
+                    @click='createExport'
+                />
+                <div class='dropdown'>
+                    <div
+                        id='dropdownLocation'
+                        type='button'
+                        data-bs-toggle='dropdown'
+                        aria-expanded='false'
+                    >
+                        <IconMenu2
+                            v-tooltip='"Options"'
+                            class='cursor-pointer'
+                            size='32'
+                            stroke='1'
+                        />
                     </div>
-                </ul>
+                    <ul
+                        class='dropdown-menu'
+                        aria-labelledby='dropdownLocation'
+                    >
+                        <div class='m-1'>
+                            <div class='d-flex'>
+                                <IconAmbulance
+                                    class='my-1 mx-1'
+                                    size='32'
+                                    stroke='1'
+                                />
+                                <TablerToggle
+                                    v-model='calendars.mission'
+                                    label='Missions'
+                                    class='w-full'
+                                />
+                            </div>
+                            <div class='d-flex'>
+                                <IconTruck
+                                    class='my-1 mx-1'
+                                    size='32'
+                                    stroke='1'
+                                />
+                                <TablerToggle
+                                    v-model='calendars.training'
+                                    label='Trainings'
+                                    class='w-full'
+                                />
+                            </div>
+                            <div class='d-flex'>
+                                <IconBalloon
+                                    class='my-1 mx-1'
+                                    size='32'
+                                    stroke='1'
+                                />
+                                <TablerToggle
+                                    v-model='calendars.birthday'
+                                    label='Birthdays'
+                                    class='w-full'
+                                />
+                            </div>
+                            <div class='d-flex'>
+                                <IconCalendarTime
+                                    class='my-1 mx-1'
+                                    size='32'
+                                    stroke='1'
+                                />
+                                <TablerToggle
+                                    v-model='calendars.schedule'
+                                    label='Schedules'
+                                    class='w-full'
+                                />
+                            </div>
+                        </div>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <div v-if='is_iam("Calendar:View")' class="card-body">
-        <pre v-if='showExport' v-text='exportURL'/>
+        <div
+            v-if='is_iam("Calendar:View")'
+            class='card-body'
+        >
+            <pre
+                v-if='showExport'
+                v-text='exportURL'
+            />
 
-        <div id='calendar' style='width: 100%; height: 500px;'></div>
+            <div
+                id='calendar'
+                style='width: 100%; height: 500px;'
+            />
+        </div>
+        <NoAccess v-else />
     </div>
-    <NoAccess v-else/>
-</div>
 </template>
 
 <script>
@@ -64,6 +134,17 @@ import {
 
 export default {
     name: 'Calendar',
+    components: {
+        IconTruck,
+        IconAmbulance,
+        IconCalendarTime,
+        IconFileExport,
+        TablerToggle,
+        IconBalloon,
+        IconMenu2,
+        NoAccess,
+        IconGripVertical,
+    },
     props: {
         iam: {
             type: Object,
@@ -164,17 +245,6 @@ export default {
         fetchCalendars: async function() {
             this.layers = await window.std('/api/calendar');
         },
-    },
-    components: {
-        IconTruck,
-        IconAmbulance,
-        IconCalendarTime,
-        IconFileExport,
-        TablerToggle,
-        IconBalloon,
-        IconMenu2,
-        NoAccess,
-        IconGripVertical,
     },
 }
 </script>

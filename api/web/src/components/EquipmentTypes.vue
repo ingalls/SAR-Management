@@ -1,63 +1,90 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Equipment:View")' title='Equipment Types'/>
-                    <div v-else class="card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="input-icon w-50">
-                                    <input v-model='query.filter' type="text" class="form-control" placeholder="Search…">
-                                    <span class="input-icon-addon">
-                                        <SearchIcon width='24'/>
-                                    </span>
-                                </div>
-                                <div v-if='is_iam("Equipment:Admin")' class='ms-auto'>
-                                    <PlusIcon @click='$router.push("/equipment/type/new")' class='cursor-pointer'/>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <NoAccess
+                            v-if='!is_iam("Equipment:View")'
+                            title='Equipment Types'
+                        />
+                        <div
+                            v-else
+                            class='card'
+                        >
+                            <div class='card-body'>
+                                <div class='d-flex'>
+                                    <div class='input-icon w-50'>
+                                        <input
+                                            v-model='query.filter'
+                                            type='text'
+                                            class='form-control'
+                                            placeholder='Search…'
+                                        >
+                                        <span class='input-icon-addon'>
+                                            <SearchIcon width='24' />
+                                        </span>
+                                    </div>
+                                    <div
+                                        v-if='is_iam("Equipment:Admin")'
+                                        class='ms-auto'
+                                    >
+                                        <PlusIcon
+                                            class='cursor-pointer'
+                                            @click='$router.push("/equipment/type/new")'
+                                        />
+                                    </div>
                                 </div>
                             </div>
+                            <table class='table card-table table-vcenter'>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Created</th>
+                                        <th>Updated</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for='type in list.types'
+                                        :key='type.id'
+                                    >
+                                        <td>
+                                            <a
+                                                class='cursor-pointer'
+                                                @click='$router.push(`/equipment/type/${type.id}`)'
+                                                v-text='type.type'
+                                            />
+                                        </td>
+                                        <td><TablerEpoch :date='type.created' /></td>
+                                        <td><TablerEpoch :date='type.updated' /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <template v-if='!list.total'>
+                                <TablerNone
+                                    label='Equipment Types'
+                                    :create='false'
+                                />
+                            </template>
                         </div>
-                        <table class="table card-table table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Created</th>
-                                    <th>Updated</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr :key='type.id' v-for='type in list.types'>
-                                    <td>
-                                        <a @click='$router.push(`/equipment/type/${type.id}`)' class='cursor-pointer' v-text='type.type'></a>
-                                    </td>
-                                    <td><TablerEpoch :date='type.created'/></td>
-                                    <td><TablerEpoch :date='type.updated'/></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <template v-if='!list.total'>
-                            <TablerNone label='Equipment Types' :create='false'/>
-                        </template>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -75,6 +102,14 @@ import {
 
 export default {
     name: 'EquipmentTypes',
+    components: {
+        TablerNone,
+        TablerEpoch,
+        TablerBreadCrumb,
+        PlusIcon,
+        NoAccess,
+        SearchIcon
+    },
     props: {
         iam: {
             type: Object,
@@ -106,14 +141,6 @@ export default {
             if (this.query.filter) url.searchParams.append('filter', this.query.filter);
             this.list = await window.std(url)
         }
-    },
-    components: {
-        TablerNone,
-        TablerEpoch,
-        TablerBreadCrumb,
-        PlusIcon,
-        NoAccess,
-        SearchIcon
     }
 }
 </script>

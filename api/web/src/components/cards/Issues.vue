@@ -1,73 +1,118 @@
 <template>
-<div class='card'>
-    <div class="card-header">
-        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' :size='24' :stroke='1'/>
-        <h3 class="card-title"><a @click='$router.push("/issue")' class='cursor-pointer' v-text='label'></a></h3>
-
-        <div class='btn-list ms-auto'>
-            <IconPlus
-                v-if='create && is_iam("Issue:Manage")'
-                v-tooltip='"New Issue"'
-                @click='$router.push(`/issue/new`)'
-                class='cursor-pointer'
-                :size='32'
+    <div class='card'>
+        <div class='card-header'>
+            <IconGripVertical
+                v-if='dragHandle'
+                class='drag-handle cursor-move'
+                :size='24'
                 :stroke='1'
             />
-        </div>
-    </div>
-
-    <div v-if='search' class='px-2 pb-2'>
-        <div class='row g-2'>
-            <div class='col-8'>
-                <TablerInput label='Issue Search' v-model='paging.filter'/>
-            </div>
-            <div class='col-4'>
-                <TablerEnum label='Issue Status' :options='["open", "closed"]' v-model='paging.status'/>
-            </div>
-        </div>
-    </div>
-
-    <NoAccess v-if='!is_iam("Issue:View")'/>
-    <template v-else-if='loading'>
-        <TablerLoading desc='Loading Issues'/>
-    </template>
-    <template v-else-if='!list.items.length'>
-        <TablerNone :create='false' label='Issues'/>
-    </template>
-    <template v-else>
-        <div class='table-responsive'>
-            <table class="table card-table table-hover table-vcenter datatable">
-                <TableHeader
-                    v-model:sort='paging.sort'
-                    v-model:order='paging.order'
-                    v-model:header='header'
-                    :export='true'
-                    @export='exportIssues("csv")'
+            <h3 class='card-title'>
+                <a
+                    class='cursor-pointer'
+                    @click='$router.push("/issue")'
+                    v-text='label'
                 />
-                <tbody>
-                    <tr @click='$router.push(`/issue/${issue.id}`)' :key='issue.id' v-for='(issue, issue_it) in list.items' class='cursor-pointer'>
-                        <template v-for='h in header'>
-                            <template v-if='h.display'>
-                                <td v-if='["updated", "created"].includes(h.name)'>
-                                    <TablerEpoch v-if='issue[h.name]' :date='issue[h.name]'/>
-                                    <span v-else>Never</span>
-                                </td>
-                                <td v-if='["status"].includes(h.name)'>
-                                    <span v-if='issue.status === "closed"' class="badge bg-red text-white" style="height: 20px;">Closed</span>
-                                    <span v-else-if='issue.status === "open"' class="badge bg-green text-white" style="height: 20px;">Open</span>
-                                </td>
-                                <td v-else>
-                                    <span v-text='issue[h.name]'></span>
-                                </td>
-                            </template>
-                        </template>
-                    </tr>
-                </tbody>
-            </table>
-            <TableFooter v-if='footer' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
+            </h3>
+
+            <div class='btn-list ms-auto'>
+                <IconPlus
+                    v-if='create && is_iam("Issue:Manage")'
+                    v-tooltip='"New Issue"'
+                    class='cursor-pointer'
+                    :size='32'
+                    :stroke='1'
+                    @click='$router.push(`/issue/new`)'
+                />
+            </div>
         </div>
-    </template>
-</div>
+
+        <div
+            v-if='search'
+            class='px-2 pb-2'
+        >
+            <div class='row g-2'>
+                <div class='col-8'>
+                    <TablerInput
+                        v-model='paging.filter'
+                        label='Issue Search'
+                    />
+                </div>
+                <div class='col-4'>
+                    <TablerEnum
+                        v-model='paging.status'
+                        label='Issue Status'
+                        :options='["open", "closed"]'
+                    />
+                </div>
+            </div>
+        </div>
+
+        <NoAccess v-if='!is_iam("Issue:View")' />
+        <template v-else-if='loading'>
+            <TablerLoading desc='Loading Issues' />
+        </template>
+        <template v-else-if='!list.items.length'>
+            <TablerNone
+                :create='false'
+                label='Issues'
+            />
+        </template>
+        <template v-else>
+            <div class='table-responsive'>
+                <table class='table card-table table-hover table-vcenter datatable'>
+                    <TableHeader
+                        v-model:sort='paging.sort'
+                        v-model:order='paging.order'
+                        v-model:header='header'
+                        :export='true'
+                        @export='exportIssues("csv")'
+                    />
+                    <tbody>
+                        <tr
+                            v-for='(issue, issue_it) in list.items'
+                            :key='issue.id'
+                            class='cursor-pointer'
+                            @click='$router.push(`/issue/${issue.id}`)'
+                        >
+                            <template v-for='h in header'>
+                                <template v-if='h.display'>
+                                    <td v-if='["updated", "created"].includes(h.name)'>
+                                        <TablerEpoch
+                                            v-if='issue[h.name]'
+                                            :date='issue[h.name]'
+                                        />
+                                        <span v-else>Never</span>
+                                    </td>
+                                    <td v-if='["status"].includes(h.name)'>
+                                        <span
+                                            v-if='issue.status === "closed"'
+                                            class='badge bg-red text-white'
+                                            style='height: 20px;'
+                                        >Closed</span>
+                                        <span
+                                            v-else-if='issue.status === "open"'
+                                            class='badge bg-green text-white'
+                                            style='height: 20px;'
+                                        >Open</span>
+                                    </td>
+                                    <td v-else>
+                                        <span v-text='issue[h.name]' />
+                                    </td>
+                                </template>
+                            </template>
+                        </tr>
+                    </tbody>
+                </table>
+                <TableFooter
+                    v-if='footer'
+                    :limit='paging.limit'
+                    :total='list.total'
+                    @page='paging.page = $event'
+                />
+            </div>
+        </template>
+    </div>
 </template>
 
 <script>
@@ -89,6 +134,18 @@ import {
 
 export default {
     name: 'IssueCard',
+    components: {
+        IconPlus,
+        IconGripVertical,
+        TablerEnum,
+        TablerNone,
+        TablerEpoch,
+        TablerInput,
+        TablerLoading,
+        NoAccess,
+        TableHeader,
+        TableFooter,
+    },
     props: {
         label: {
             type: String,
@@ -219,18 +276,6 @@ export default {
             a.click();
             a.remove();
         },
-    },
-    components: {
-        IconPlus,
-        IconGripVertical,
-        TablerEnum,
-        TablerNone,
-        TablerEpoch,
-        TablerInput,
-        TablerLoading,
-        NoAccess,
-        TableHeader,
-        TableFooter,
     }
 }
 </script>

@@ -1,50 +1,69 @@
 <template>
-<div class="card">
-    <div class="card-body">
-        <div class="d-flex">
-            <h3 class="card-title">Top User Groups</h3>
+    <div class='card'>
+        <div class='card-body'>
+            <div class='d-flex'>
+                <h3 class='card-title'>
+                    Top User Groups
+                </h3>
 
-            <div class='ms-auto'>
-                <div class="btn-list">
-                    <TablerSelect
-                        :default='current'
-                        :values='["Category", "Agency", "SubAgency", "Title", "ZipCode"]'
-                        @select='fetch($event)'
-                    />
+                <div class='ms-auto'>
+                    <div class='btn-list'>
+                        <TablerSelect
+                            :default='current'
+                            :values='["Category", "Agency", "SubAgency", "Title", "ZipCode"]'
+                            @select='fetch($event)'
+                        />
 
-                    <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                    <div class="dropdown-menu dropdown-menu-end" style="">
-                        <a @click='getExport' class="dropdown-item" href="#">Export</a>
+                        <button
+                            data-bs-toggle='dropdown'
+                            type='button'
+                            class='btn dropdown-toggle dropdown-toggle-split'
+                            aria-expanded='false'
+                        />
+                        <div
+                            class='dropdown-menu dropdown-menu-end'
+                            style=''
+                        >
+                            <a
+                                class='dropdown-item'
+                                href='#'
+                                @click='getExport'
+                            >Export</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <table class="table card-table table-hover table-vcenter">
-                <thead>
-                    <tr>
-                        <th>User Group</th>
-                        <th colspan="2">Users</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr :key='a.name' v-for='a in agg'>
-                        <td v-text='a.name'></td>
-                        <td v-text='a.count'></td>
-                        <td class="w-50">
-                            <div class="progress progress-xs">
-                                <div
-                                    class="progress-bar bg-primary"
-                                    :style='`width: ${a.percent * 100}%;`'
-                                ></div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class='row'>
+                <table class='table card-table table-hover table-vcenter'>
+                    <thead>
+                        <tr>
+                            <th>User Group</th>
+                            <th colspan='2'>
+                                Users
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for='a in agg'
+                            :key='a.name'
+                        >
+                            <td v-text='a.name' />
+                            <td v-text='a.count' />
+                            <td class='w-50'>
+                                <div class='progress progress-xs'>
+                                    <div
+                                        class='progress-bar bg-primary'
+                                        :style='`width: ${a.percent * 100}%;`'
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -54,6 +73,9 @@ import {
 
 export default {
     name: 'TopStats',
+    components: {
+        TablerSelect
+    },
     data: function() {
         return {
             agg: {},
@@ -100,9 +122,6 @@ export default {
             if (url.hostname === 'localhost') url.port = '4999'
             window.open(url, "_blank")
         }
-    },
-    components: {
-        TablerSelect
     }
 }
 </script>

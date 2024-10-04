@@ -1,29 +1,37 @@
 <template>
-<TablerDropdown>
-    <template #default>
-        <TablerInput
-            :required='required'
-            :disabled='disabled'
-            :error='error'
-            label='Location Name'
-            placeholder='Location Name'
-            v-model='filter'
-        />
-    </template>
-    <template #dropdown>
-        <TablerLoading v-if='loading'/>
-        <TablerNone v-if='list.total === 0' :compact='true' :create='false'/>
-        <div v-else>
-            <div class='m-1'>
-                <div @click='select(loc)' :key='loc.id' v-for='loc in list.items'>
-                    <div class="d-flex align-items-center my-1 cursor-pointer">
-                        <span v-text='loc.location'/>
+    <TablerDropdown>
+        <template #default>
+            <TablerInput
+                v-model='filter'
+                :required='required'
+                :disabled='disabled'
+                :error='error'
+                label='Location Name'
+                placeholder='Location Name'
+            />
+        </template>
+        <template #dropdown>
+            <TablerLoading v-if='loading' />
+            <TablerNone
+                v-if='list.total === 0'
+                :compact='true'
+                :create='false'
+            />
+            <div v-else>
+                <div class='m-1'>
+                    <div
+                        v-for='loc in list.items'
+                        :key='loc.id'
+                        @click='select(loc)'
+                    >
+                        <div class='d-flex align-items-center my-1 cursor-pointer'>
+                            <span v-text='loc.location' />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </template>
-</TablerDropdown>
+        </template>
+    </TablerDropdown>
 </template>
 
 <script>
@@ -36,6 +44,12 @@ import {
 
 export default {
     name: 'LocationDropdown',
+    components: {
+        TablerNone,
+        TablerInput,
+        TablerLoading,
+        TablerDropdown
+    },
     props: {
         modelValue: {
             type: String,
@@ -90,12 +104,6 @@ export default {
             url.searchParams.append('limit', this.limit);
             this.list = await window.std(url);
         }
-    },
-    components: {
-        TablerNone,
-        TablerInput,
-        TablerLoading,
-        TablerDropdown
     }
 }
 </script>

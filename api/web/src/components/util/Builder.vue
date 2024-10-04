@@ -1,70 +1,120 @@
 <template>
-<div class='card'>
-    <div class="card-header">
-        <h3 class="card-title" v-text='title'></h3>
+    <div class='card'>
+        <div class='card-header'>
+            <h3
+                class='card-title'
+                v-text='title'
+            />
 
-        <div class='ms-auto btn-list'>
-            <div class="dropdown">
-                <div class="dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <PlusIcon class='cursor-pointer'/>
-                </div>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <div class='m-1 text-center'>
-                        <div @click='modal = {
-                            "name": "",
-                            "type": "string",
-                            "required": false,
-                        }' class='opt cursor-pointer py-1'>String</div>
-                        <div @click='modal = {
-                            "name": "",
-                            "type": "string",
-                            "enum": [],
-                            "required": false,
-                        }' class='opt cursor-pointer py-1'>Enum</div>
-                        <div @click='modal = {
-                            "name": "",
-                            "type": "boolean",
-                            "required": false,
-                        }' class='opt cursor-pointer py-1'>Boolean</div>
-                        <div @click='modal = {
-                            "name": "",
-                            "type": "number",
-                            "required": false,
-                        }' class='opt cursor-pointer py-1'>Number</div>
-                        <div @click='modal = {
-                            "name": "",
-                            "type": "integer",
-                            "required": false,
-                        }' class='opt cursor-pointer py-1'>Integer</div>
+            <div class='ms-auto btn-list'>
+                <div class='dropdown'>
+                    <div
+                        id='dropdownMenuButton1'
+                        class='dropdown-toggle'
+                        type='button'
+                        data-bs-toggle='dropdown'
+                        aria-expanded='false'
+                    >
+                        <PlusIcon class='cursor-pointer' />
                     </div>
-                </ul>
+                    <ul
+                        class='dropdown-menu'
+                        aria-labelledby='dropdownMenuButton1'
+                    >
+                        <div class='m-1 text-center'>
+                            <div
+                                class='opt cursor-pointer py-1'
+                                @click='modal = {
+                                    "name": "",
+                                    "type": "string",
+                                    "required": false,
+                                }'
+                            >
+                                String
+                            </div>
+                            <div
+                                class='opt cursor-pointer py-1'
+                                @click='modal = {
+                                    "name": "",
+                                    "type": "string",
+                                    "enum": [],
+                                    "required": false,
+                                }'
+                            >
+                                Enum
+                            </div>
+                            <div
+                                class='opt cursor-pointer py-1'
+                                @click='modal = {
+                                    "name": "",
+                                    "type": "boolean",
+                                    "required": false,
+                                }'
+                            >
+                                Boolean
+                            </div>
+                            <div
+                                class='opt cursor-pointer py-1'
+                                @click='modal = {
+                                    "name": "",
+                                    "type": "number",
+                                    "required": false,
+                                }'
+                            >
+                                Number
+                            </div>
+                            <div
+                                class='opt cursor-pointer py-1'
+                                @click='modal = {
+                                    "name": "",
+                                    "type": "integer",
+                                    "required": false,
+                                }'
+                            >
+                                Integer
+                            </div>
+                        </div>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="card-body">
-        <TablerNone v-if='!schema.length' label='Properties' :create='false' :compact='true'/>
-        <template v-else>
-            <div class='row g-2'>
-                <TablerSchema :schema='computedSchema' v-model='input' :disabled='true'/>
-            </div>
-            <div class='row'>
-                <div class='d-flex'>
-                    <div class='ms-auto'>
-                        <button @click='$emit("update:modelValue", computedSchema)' class='btn btn-primary'>Update Application</button>
+        <div class='card-body'>
+            <TablerNone
+                v-if='!schema.length'
+                label='Properties'
+                :create='false'
+                :compact='true'
+            />
+            <template v-else>
+                <div class='row g-2'>
+                    <TablerSchema
+                        v-model='input'
+                        :schema='computedSchema'
+                        :disabled='true'
+                    />
+                </div>
+                <div class='row'>
+                    <div class='d-flex'>
+                        <div class='ms-auto'>
+                            <button
+                                class='btn btn-primary'
+                                @click='$emit("update:modelValue", computedSchema)'
+                            >
+                                Update Application
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </template>
+            </template>
+        </div>
+
+        <BuilderEdit
+            v-if='modal'
+            :prop='modal'
+            @close='modal = null'
+            @done='push($event)'
+        />
     </div>
-
-    <BuilderEdit
-        v-if='modal'
-        @close='modal = null'
-        @done='push($event)'
-        :prop='modal'
-    />
-</div>
-
 </template>
 
 <script>
@@ -80,6 +130,13 @@ import {
 
 export default {
     name: 'Builder',
+    components: {
+        PlusIcon,
+        TrashIcon,
+        TablerNone,
+        TablerSchema,
+        BuilderEdit,
+    },
     props: {
         title: {
             type: String,
@@ -133,13 +190,6 @@ export default {
             this.schema.push(prop);
             this.modal = null;
         }
-    },
-    components: {
-        PlusIcon,
-        TrashIcon,
-        TablerNone,
-        TablerSchema,
-        BuilderEdit,
     }
 }
 </script>

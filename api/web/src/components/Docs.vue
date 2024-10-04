@@ -1,101 +1,162 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb :normalize='false'/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb :normalize='false' />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Doc:View")' title='Documents'/>
-                    <TablerLoading v-else-if='loading.list'/>
-                    <File
-                        v-else-if='file'
-                        :prefix='paging.prefix'
-                        :file='file'
-                        :manage='is_iam("Doc:Manage")'
-                        @delete='deleteFile'
-                    />
-                    <div v-else class="card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="input-icon w-50">
-                                    <input v-model='paging.filter' type="text" class="form-control" placeholder="Search…">
-                                    <span class="input-icon-addon">
-                                        <IconSearch size='24' :stroke='1'/>
-                                    </span>
-                                </div>
-                                <div class='ms-auto'>
-                                    <div v-if='is_iam("Doc:Manage")' class='btn-list'>
-                                        <IconFolderPlus @click='folder = true' class='cursor-pointer my-1' :size='32' :stroke='1'/>
-                                        <TablerDelete v-if='paging.prefix' displaytype='icon' class='my-1' @delete='deleteFolder'/>
-                                        <IconPlus @click='upload = true' class='cursor-pointer my-1' :size='32' :stroke='1'/>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <NoAccess
+                            v-if='!is_iam("Doc:View")'
+                            title='Documents'
+                        />
+                        <TablerLoading v-else-if='loading.list' />
+                        <File
+                            v-else-if='file'
+                            :prefix='paging.prefix'
+                            :file='file'
+                            :manage='is_iam("Doc:Manage")'
+                            @delete='deleteFile'
+                        />
+                        <div
+                            v-else
+                            class='card'
+                        >
+                            <div class='card-body'>
+                                <div class='d-flex'>
+                                    <div class='input-icon w-50'>
+                                        <input
+                                            v-model='paging.filter'
+                                            type='text'
+                                            class='form-control'
+                                            placeholder='Search…'
+                                        >
+                                        <span class='input-icon-addon'>
+                                            <IconSearch
+                                                size='24'
+                                                :stroke='1'
+                                            />
+                                        </span>
+                                    </div>
+                                    <div class='ms-auto'>
+                                        <div
+                                            v-if='is_iam("Doc:Manage")'
+                                            class='btn-list'
+                                        >
+                                            <IconFolderPlus
+                                                class='cursor-pointer my-1'
+                                                :size='32'
+                                                :stroke='1'
+                                                @click='folder = true'
+                                            />
+                                            <TablerDelete
+                                                v-if='paging.prefix'
+                                                displaytype='icon'
+                                                class='my-1'
+                                                @delete='deleteFolder'
+                                            />
+                                            <IconPlus
+                                                class='cursor-pointer my-1'
+                                                :size='32'
+                                                :stroke='1'
+                                                @click='upload = true'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <table class='table table-hover card-table table-vcenter'>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Size</th>
+                                        <th>Last Modified</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for='doc in list.items'
+                                        :key='doc.key'
+                                    >
+                                        <td>
+                                            <template v-if='doc.type === "dir"'>
+                                                <IconFolderFilled
+                                                    class='mx-2'
+                                                    :size='32'
+                                                    :stroke='1'
+                                                />
+                                                <a
+                                                    class='cursor-pointer'
+                                                    @click='paging.prefix = paging.prefix + doc.key'
+                                                    v-text='doc.key'
+                                                />
+                                            </template>
+                                            <template v-else>
+                                                <IconFileFilled
+                                                    class='mx-2'
+                                                    :size='32'
+                                                    :stroke='1'
+                                                />
+                                                <a
+                                                    class='cursor-pointer'
+                                                    @click='file = doc.key'
+                                                    v-text='doc.key'
+                                                />
+                                            </template>
+                                        </td>
+                                        <td>
+                                            <span v-if='doc.type === "dir"'>-</span>
+                                            <span
+                                                v-else
+                                                v-text='human(doc.size)'
+                                            />
+                                        </td>
+                                        <td v-text='doc.last_modified' />
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <template v-if='!list.total'>
+                                <TablerNone
+                                    label='Documents'
+                                    :create='false'
+                                />
+                            </template>
+                            <TableFooter
+                                :limit='paging.limit'
+                                :total='list.total'
+                                @page='paging.page = $event'
+                            />
                         </div>
-                        <table class="table table-hover card-table table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Size</th>
-                                    <th>Last Modified</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr :key='doc.key' v-for='doc in list.items'>
-                                    <td>
-                                        <template v-if='doc.type === "dir"'>
-                                            <IconFolderFilled class='mx-2' :size='32' :stroke='1'/>
-                                            <a class='cursor-pointer' @click='paging.prefix = paging.prefix + doc.key' v-text='doc.key'></a>
-                                        </template>
-                                        <template v-else>
-                                            <IconFileFilled class='mx-2' :size='32' :stroke='1'/>
-                                            <a class='cursor-pointer' @click='file = doc.key' v-text='doc.key'></a>
-                                        </template>
-                                    </td>
-                                    <td>
-                                        <span v-if='doc.type === "dir"'>-</span>
-                                        <span v-else v-text='human(doc.size)'/>
-                                    </td>
-                                    <td v-text='doc.last_modified'/>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <template v-if='!list.total'>
-                            <TablerNone label='Documents' :create='false'/>
-                        </template>
-                        <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
                     </div>
                 </div>
             </div>
         </div>
+
+        <NewFolder
+            v-if='folder'
+            :prefix='paging.prefix'
+            @close='folder = null'
+            @done='folder = null; listDocs($event)'
+        />
+
+        <Upload
+            v-if='upload'
+            :url='url()'
+            :headers='headers'
+            @close='upload = null'
+            @done='upload = null; listDocs($event)'
+        />
     </div>
-
-    <NewFolder
-        v-if='folder'
-        :prefix='paging.prefix'
-        @close='folder = null'
-        @done='folder = null; listDocs($event)'
-    />
-
-    <Upload
-        v-if='upload'
-        :url='url()'
-        :headers='headers'
-        @close='upload = null'
-        @done='upload = null; listDocs($event)'
-    />
-</div>
 </template>
 
 <script>
@@ -122,6 +183,23 @@ import {
 
 export default {
     name: 'Docs',
+    components: {
+        TablerNone,
+        File,
+        Upload,
+        NewFolder,
+        NoAccess,
+        IconDotsVertical,
+        IconPlus,
+        IconFolderPlus,
+        IconSearch,
+        IconFileFilled,
+        IconFolderFilled,
+        TableFooter,
+        TablerDelete,
+        TablerBreadCrumb,
+        TablerLoading
+    },
     props: {
         iam: {
             type: Object,
@@ -214,23 +292,6 @@ export default {
             this.list = await window.std(url);
             this.loading.list = false;
         }
-    },
-    components: {
-        TablerNone,
-        File,
-        Upload,
-        NewFolder,
-        NoAccess,
-        IconDotsVertical,
-        IconPlus,
-        IconFolderPlus,
-        IconSearch,
-        IconFileFilled,
-        IconFolderFilled,
-        TableFooter,
-        TablerDelete,
-        TablerBreadCrumb,
-        TablerLoading
     }
 }
 </script>

@@ -1,54 +1,89 @@
 <template>
-<div class="card">
-    <div class='card-header'>
-        <h3 class='card-title'>Assigned</h3>
-        <div class='ms-auto'>
-            <SettingsIcon @click='edit = !edit' class='cursor-pointer' v-tooltip='"Edit"'/>
-        </div>
-    </div>
-
-    <TablerLoading v-if='loading.list' desc='Loading Assigned'/>
-    <TablerNone v-else-if ='!list.items.length' label='Assigned Users' :create='false'/>
-    <template v-else>
-        <div class='table-responsive'>
-            <table class="table card-table table-hover table-vcenter datatable">
-                <TableHeader
-                    v-model:sort='paging.sort'
-                    v-model:order='paging.order'
-                    v-model:header='header'
-                    :export='false'
+    <div class='card'>
+        <div class='card-header'>
+            <h3 class='card-title'>
+                Assigned
+            </h3>
+            <div class='ms-auto'>
+                <SettingsIcon
+                    v-tooltip='"Edit"'
+                    class='cursor-pointer'
+                    @click='edit = !edit'
                 />
-                <tbody>
-                    <tr :key='user.id' v-for='(user, user_it) in list.items'>
-                        <template v-for='h in header'>
-                            <template v-if='h.display'>
-                                <td v-if='h.name === "name"'>
-                                    <div class='d-flex'>
-                                        <Avatar :link='true' :user='user'/>
+            </div>
+        </div>
 
-                                        <div v-if='edit' class='ms-auto'>
-                                            <div v-if='!user._loading' class='btn-list'>
-                                                <TablerDelete displaytype='icon' @delete='removeUser(user, user_it)'/>
-                                            </div>
-                                            <div v-else class='btn-list'>
-                                                <TablerLoading :inline='true'/>
+        <TablerLoading
+            v-if='loading.list'
+            desc='Loading Assigned'
+        />
+        <TablerNone
+            v-else-if='!list.items.length'
+            label='Assigned Users'
+            :create='false'
+        />
+        <template v-else>
+            <div class='table-responsive'>
+                <table class='table card-table table-hover table-vcenter datatable'>
+                    <TableHeader
+                        v-model:sort='paging.sort'
+                        v-model:order='paging.order'
+                        v-model:header='header'
+                        :export='false'
+                    />
+                    <tbody>
+                        <tr
+                            v-for='(user, user_it) in list.items'
+                            :key='user.id'
+                        >
+                            <template v-for='h in header'>
+                                <template v-if='h.display'>
+                                    <td v-if='h.name === "name"'>
+                                        <div class='d-flex'>
+                                            <Avatar
+                                                :link='true'
+                                                :user='user'
+                                            />
+
+                                            <div
+                                                v-if='edit'
+                                                class='ms-auto'
+                                            >
+                                                <div
+                                                    v-if='!user._loading'
+                                                    class='btn-list'
+                                                >
+                                                    <TablerDelete
+                                                        displaytype='icon'
+                                                        @delete='removeUser(user, user_it)'
+                                                    />
+                                                </div>
+                                                <div
+                                                    v-else
+                                                    class='btn-list'
+                                                >
+                                                    <TablerLoading :inline='true' />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td v-else>
-                                    <span v-text='user[h.name]'/>
-                                </td>
+                                    </td>
+                                    <td v-else>
+                                        <span v-text='user[h.name]' />
+                                    </td>
+                                </template>
                             </template>
-                        </template>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </template>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </template>
 
-    <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
-</div>
+        <TableFooter
+            :limit='paging.limit'
+            :total='list.total'
+            @page='paging.page = $event'
+        />
+    </div>
 </template>
 
 <script>
@@ -72,6 +107,21 @@ import UserProfile from '../User/Profile.vue';
 
 export default {
     name: 'CardScheduleAssigned',
+    components: {
+        SettingsIcon,
+        TablerNone,
+        TablerEpoch,
+        Avatar,
+        UserDropdownIcon,
+        TrashIcon,
+        SearchIcon,
+        ListIcon,
+        UserProfile,
+        TablerLoading,
+        TableFooter,
+        TableHeader,
+        TablerDelete
+    },
     data: function() {
         return {
             edit: false,
@@ -137,21 +187,6 @@ export default {
             this.list = await window.std(url);
             this.loading.list = false;
         },
-    },
-    components: {
-        SettingsIcon,
-        TablerNone,
-        TablerEpoch,
-        Avatar,
-        UserDropdownIcon,
-        TrashIcon,
-        SearchIcon,
-        ListIcon,
-        UserProfile,
-        TablerLoading,
-        TableFooter,
-        TableHeader,
-        TablerDelete
     }
 }
 </script>

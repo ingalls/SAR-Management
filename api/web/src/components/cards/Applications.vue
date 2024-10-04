@@ -1,65 +1,120 @@
 <template>
-<div class="card">
-    <div class="card-header">
-        <IconGripVertical v-if='dragHandle' class='drag-handle cursor-move' size='32'/>
-        <h3 class="card-title"><a @click='$router.push("/application")' class='cursor-pointer' v-text='label'></a></h3>
-
-        <div class='btn-list ms-auto'>
-            <IconPlus v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/new`)' class='cursor-pointer' v-tooltip='"Create Application"' size='32' stroke='1'/>
-            <IconSettings v-if='create && is_iam("Application:Manage")' @click='$router.push(`/application/edit`)' class='cursor-pointer' v-tooltip='"Edit Application Form"' size='32' stroke='1'/>
-        </div>
-    </div>
-
-    <NoAccess v-if='!is_iam("Application:View")'/>
-    <template v-else>
-        <div class='px-2 py-2 row g-2'>
-            <div class='col-12 col-md-8'>
-                <TablerInput
-                    placeholder='Filter Applications'
-                    v-model='paging.filter'
-                    icon='search'
-                />
-            </div>
-            <div class='col-12 col-md-4'>
-                <TablerEnum
-                    :options='["all", "archived", "active"]'
-                    v-model='paging.status'
-                />
-            </div>
-        </div>
-
-        <TablerLoading v-if='loading' desc='Loading Applications'/>
-        <TablerNone v-else-if='!list.items.length' :create='false' :label='Applications'/>
-        <table v-else class="table card-table table-hover table-vcenter">
-            <TableHeader
-                v-model:sort='paging.sort'
-                v-model:order='paging.order'
-                v-model:header='header'
-                :export='false'
+    <div class='card'>
+        <div class='card-header'>
+            <IconGripVertical
+                v-if='dragHandle'
+                class='drag-handle cursor-move'
+                size='32'
             />
-            <tbody>
-                <tr @click='$router.push(`/application/${application.id}`)' :key='application.id' v-for='application in list.items' class='cursor-pointer'>
-                    <template v-for='h in header'>
-                        <template v-if='h.display'>
-                            <td v-if='["archived"].includes(h.name)'>
-                                <span v-if='application.archived' class="badge bg-red text-white" style="height: 20px;">Archived</span>
-                                <span v-else class="badge bg-green text-white" style="height: 20px;">Active</span>
-                            </td>
-                            <td v-else-if='["updated", "created"].includes(h.name)'>
-                                <TablerEpoch v-if='application[h.name]' :date='application[h.name]'/>
-                                <span v-else>Never</span>
-                            </td>
-                            <td v-else>
-                                <span v-text='application[h.name]'></span>
-                            </td>
+            <h3 class='card-title'>
+                <a
+                    class='cursor-pointer'
+                    @click='$router.push("/application")'
+                    v-text='label'
+                />
+            </h3>
+
+            <div class='btn-list ms-auto'>
+                <IconPlus
+                    v-if='create && is_iam("Application:Manage")'
+                    v-tooltip='"Create Application"'
+                    class='cursor-pointer'
+                    size='32'
+                    stroke='1'
+                    @click='$router.push(`/application/new`)'
+                />
+                <IconSettings
+                    v-if='create && is_iam("Application:Manage")'
+                    v-tooltip='"Edit Application Form"'
+                    class='cursor-pointer'
+                    size='32'
+                    stroke='1'
+                    @click='$router.push(`/application/edit`)'
+                />
+            </div>
+        </div>
+
+        <NoAccess v-if='!is_iam("Application:View")' />
+        <template v-else>
+            <div class='px-2 py-2 row g-2'>
+                <div class='col-12 col-md-8'>
+                    <TablerInput
+                        v-model='paging.filter'
+                        placeholder='Filter Applications'
+                        icon='search'
+                    />
+                </div>
+                <div class='col-12 col-md-4'>
+                    <TablerEnum
+                        v-model='paging.status'
+                        :options='["all", "archived", "active"]'
+                    />
+                </div>
+            </div>
+
+            <TablerLoading
+                v-if='loading'
+                desc='Loading Applications'
+            />
+            <TablerNone
+                v-else-if='!list.items.length'
+                :create='false'
+                :label='Applications'
+            />
+            <table
+                v-else
+                class='table card-table table-hover table-vcenter'
+            >
+                <TableHeader
+                    v-model:sort='paging.sort'
+                    v-model:order='paging.order'
+                    v-model:header='header'
+                    :export='false'
+                />
+                <tbody>
+                    <tr
+                        v-for='application in list.items'
+                        :key='application.id'
+                        class='cursor-pointer'
+                        @click='$router.push(`/application/${application.id}`)'
+                    >
+                        <template v-for='h in header'>
+                            <template v-if='h.display'>
+                                <td v-if='["archived"].includes(h.name)'>
+                                    <span
+                                        v-if='application.archived'
+                                        class='badge bg-red text-white'
+                                        style='height: 20px;'
+                                    >Archived</span>
+                                    <span
+                                        v-else
+                                        class='badge bg-green text-white'
+                                        style='height: 20px;'
+                                    >Active</span>
+                                </td>
+                                <td v-else-if='["updated", "created"].includes(h.name)'>
+                                    <TablerEpoch
+                                        v-if='application[h.name]'
+                                        :date='application[h.name]'
+                                    />
+                                    <span v-else>Never</span>
+                                </td>
+                                <td v-else>
+                                    <span v-text='application[h.name]' />
+                                </td>
+                            </template>
                         </template>
-                    </template>
-                </tr>
-            </tbody>
-        </table>
-        <TableFooter v-if='footer' :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
-    </template>
-</div>
+                    </tr>
+                </tbody>
+            </table>
+            <TableFooter
+                v-if='footer'
+                :limit='paging.limit'
+                :total='list.total'
+                @page='paging.page = $event'
+            />
+        </template>
+    </div>
 </template>
 
 <script>
@@ -85,6 +140,19 @@ import {
 
 export default {
     name: 'ApplicationCard',
+    components: {
+        IconPlus,
+        IconSettings,
+        IconGripVertical,
+        TableHeader,
+        TableFooter,
+        TablerEnum,
+        TablerInput,
+        TablerLoading,
+        TablerEpoch,
+        TablerNone,
+        NoAccess,
+    },
     props: {
         label: {
             type: String,
@@ -222,19 +290,6 @@ export default {
 
             this.loading = false;
         }
-    },
-    components: {
-        IconPlus,
-        IconSettings,
-        IconGripVertical,
-        TableHeader,
-        TableFooter,
-        TablerEnum,
-        TablerInput,
-        TablerLoading,
-        TablerEpoch,
-        TablerNone,
-        NoAccess,
     }
 }
 </script>

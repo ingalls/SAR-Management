@@ -1,56 +1,83 @@
 <template>
     <TablerModal>
-        <button type="button" class="btn-close" @click='$emit("close")' aria-label="Close"></button>
-            <div class="modal-status bg-yellow"></div>
-            <div class="modal-header">
-                <div class='modal-title'>Certificate Upload</div>
+        <button
+            type='button'
+            class='btn-close'
+            aria-label='Close'
+            @click='$emit("close")'
+        />
+        <div class='modal-status bg-yellow' />
+        <div class='modal-header'>
+            <div class='modal-title'>
+                Certificate Upload
             </div>
-            <div class="modal-body">
-                <template v-if='loading'>
-                    <TablerLoading/>
+        </div>
+        <div class='modal-body'>
+            <template v-if='loading'>
+                <TablerLoading />
+            </template>
+            <template v-else>
+                <TablerEnum
+                    v-model='cert.name'
+                    label='Certificate Name'
+                    :options='knownNames'
+                />
+
+                <template v-if='cert.name === "Other"'>
+                    <TablerInput
+                        v-model='cert.custom'
+                        label='Custom Name'
+                        class='my-3'
+                    />
+                </template>
+
+                <TablerInput
+                    v-model='cert.expiry'
+                    label='Expiration'
+                    type='date'
+                    class='my-3'
+                    :disabled='noExpiry'
+                >
+                    <TablerToggle
+                        v-model='noExpiry'
+                        label='No Expiry'
+                    />
+                </TablerInput>
+
+                <template v-if='asset'>
+                    <div class='d-flex justify-content-center mb-4'>
+                        <CheckIcon
+                            width='48'
+                            height='48'
+                        />
+                    </div>
+
+                    <div class='d-flex justify-content-center'>
+                        <div v-text='asset.name' />
+                    </div>
                 </template>
                 <template v-else>
-                    <TablerEnum label='Certificate Name' v-model='cert.name' :options='knownNames'/>
-
-                    <template v-if='cert.name === "Other"'>
-                        <TablerInput label='Custom Name' v-model='cert.custom' class='my-3'/>
-                    </template>
-
-                    <TablerInput
-                        label='Expiration'
-                        type='date'
-                        v-model='cert.expiry'
-                        class='my-3'
-                        :disabled='noExpiry'
-                    >
-                        <TablerToggle v-model='noExpiry' label='No Expiry'/>
-                    </TablerInput>
-
-                    <template v-if='asset'>
-                        <div class='d-flex justify-content-center mb-4'>
-                            <CheckIcon width='48' height='48' />
-                        </div>
-
-                        <div class='d-flex justify-content-center'>
-                            <div v-text='asset.name'></div>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <UploadDefault
-                            :url='url'
-                            :headers='headers'
-                            :cancel='false'
-                            @done='asset = $event'
-                            @cancel='$emit("cancel")'
-                        />
-                    </template>
+                    <UploadDefault
+                        :url='url'
+                        :headers='headers'
+                        :cancel='false'
+                        @done='asset = $event'
+                        @cancel='$emit("cancel")'
+                    />
                 </template>
+            </template>
+        </div>
+        <div class='modal-footer d-flex'>
+            <div class='ms-auto'>
+                <button
+                    :disabled='!asset'
+                    class='btn btn-primary'
+                    @click='saveCert'
+                >
+                    Save Certificate
+                </button>
             </div>
-            <div class='modal-footer d-flex'>
-                <div class='ms-auto'>
-                    <button @click='saveCert' :disabled='!asset' class='btn btn-primary'>Save Certificate</button>
-                </div>
-            </div>
+        </div>
     </TablerModal>
 </template>
 
@@ -69,6 +96,15 @@ import UploadDefault from './UploadDefault.vue';
 
 export default {
     name: 'UploadCertificateModal',
+    components: {
+        CheckIcon,
+        TablerModal,
+        TablerInput,
+        TablerLoading,
+        TablerToggle,
+        TablerEnum,
+        UploadDefault
+    },
     props: {
         uid: {
             type: Number
@@ -106,7 +142,7 @@ export default {
             const known = await window.std('/api/certs');
             this.knownNames = known.certs.map((k) => k.name).concat(['Other']);
             for (const cert of known.certs) {
-                this.knownMap.set(known.name, known);
+                this.knownMap.set(cert.name, cert);
             }
 
             this.loading = false;
@@ -130,15 +166,6 @@ export default {
 
             this.$emit('close');
         },
-    },
-    components: {
-        CheckIcon,
-        TablerModal,
-        TablerInput,
-        TablerLoading,
-        TablerToggle,
-        TablerEnum,
-        UploadDefault
     }
 }
 </script>

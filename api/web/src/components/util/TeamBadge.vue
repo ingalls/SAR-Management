@@ -1,12 +1,12 @@
 <template>
     <span
-        class="badge"
-        v-text='team.name'
-        style="height: 20px;"
+        class='badge'
+        style='height: 20px;'
         :style='{
             backgroundColor: team.colour_bg,
             color: team.colour_txt
         }'
+        v-text='team.name'
     />
 </template>
 

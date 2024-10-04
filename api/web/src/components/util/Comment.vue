@@ -1,47 +1,73 @@
 <template>
-<div class="card">
-    <div class='card-header'>
-        <div class="col">
-            <div class="d-flex align-items-center">
-                <Avatar :user='comment.user' :link='true' color='black'/>
-                <span class='mx-2'>-</span>
-                <div v-text='fromNow'></div>
-                <div class='ms-auto btn-list'>
-                    <button v-if='canEdit' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                    <div class="dropdown-menu dropdown-menu-end" style="">
-                        <a @click='edit = true' class="dropdown-item cursor-pointer hover-light">Edit</a>
-                        <a @click='$emit("delete", comment)' class="dropdown-item cursor-pointer hover-light">Delete</a>
+    <div class='card'>
+        <div class='card-header'>
+            <div class='col'>
+                <div class='d-flex align-items-center'>
+                    <Avatar
+                        :user='comment.user'
+                        :link='true'
+                        color='black'
+                    />
+                    <span class='mx-2'>-</span>
+                    <div v-text='fromNow' />
+                    <div class='ms-auto btn-list'>
+                        <button
+                            v-if='canEdit'
+                            data-bs-toggle='dropdown'
+                            type='button'
+                            class='btn dropdown-toggle dropdown-toggle-split'
+                            aria-expanded='false'
+                        />
+                        <div
+                            class='dropdown-menu dropdown-menu-end'
+                            style=''
+                        >
+                            <a
+                                class='dropdown-item cursor-pointer hover-light'
+                                @click='edit = true'
+                            >Edit</a>
+                            <a
+                                class='dropdown-item cursor-pointer hover-light'
+                                @click='$emit("delete", comment)'
+                            >Delete</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <TablerLoading v-if='loading'/>
-    <template v-else-if='edit'>
-        <MdEditor
-            :preview='false' noUploadImg noMermaid
-            :noKatex='true'
-            :toolbarsExclude='[
-                "save",
-                "prettier",
-                "mermaid"
-            ]'
-            language='en-US'
-            v-model="comment.body"
-        />
-        <div class='card-footer d-flex'>
-            <div class='ms-auto'>
-                <button @click='updateComment' class='btn btn-primary'>Update</button>
+        <TablerLoading v-if='loading' />
+        <template v-else-if='edit'>
+            <MdEditor
+                v-model='comment.body'
+                :preview='false'
+                no-upload-img
+                no-mermaid
+                :no-katex='true'
+                :toolbars-exclude='[
+                    "save",
+                    "prettier",
+                    "mermaid"
+                ]'
+                language='en-US'
+            />
+            <div class='card-footer d-flex'>
+                <div class='ms-auto'>
+                    <button
+                        class='btn btn-primary'
+                        @click='updateComment'
+                    >
+                        Update
+                    </button>
+                </div>
             </div>
-        </div>
-    </template>
-    <template v-else>
-        <div class="card-body">
-            <TablerMarkdown :markdown='comment.body'/>
-        </div>
-    </template>
-</div>
+        </template>
+        <template v-else>
+            <div class='card-body'>
+                <TablerMarkdown :markdown='comment.body' />
+            </div>
+        </template>
+    </div>
 </template>
 
 <script>
@@ -77,6 +103,12 @@ moment.updateLocale('en', {
 
 export default {
     name: 'Comment',
+    components: {
+        Avatar,
+        MdEditor,
+        TablerMarkdown,
+        TablerLoading
+    },
     props: {
         canEdit: {
             type: Boolean,
@@ -103,12 +135,6 @@ export default {
             this.loading = true;
             this.$emit('update', this.comment);
         }
-    },
-    components: {
-        Avatar,
-        MdEditor,
-        TablerMarkdown,
-        TablerLoading
     }
 }
 </script>

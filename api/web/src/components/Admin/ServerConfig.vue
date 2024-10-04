@@ -1,28 +1,50 @@
 <template>
-<div class="card">
-    <div class="card-header">
-        <h1 class='card-title'>Server Config</h1>
-    </div>
-    <div class="card-body">
-        <TablerLoading v-if='loading'/>
-        <template v-else>
-            <div class='col-12 pb-3'>
-                <TablerInput label='Organisation Name (Public)' v-model='keys.name.value' :disabled='auth.access !== "admin"'/>
-            </div>
-            <div class='col-12 pb-3'>
-                <TablerInput label='Frontend URL (Public)' v-model='keys.frontend.value' :disabled='auth.access !== "admin"'/>
-            </div>
-            <div class='col-12 pb-3'>
-                <TimeZone label='Default Timezone' v-model='keys.timezone.value' :disabled='auth.access !== "admin"'/>
-            </div>
-            <div v-if='auth.access === "admin"' class='col-12 pb-3 d-flex'>
-                <div class='ms-auto'>
-                    <button @click='save' class='btn btn-primary'>Update</button>
+    <div class='card'>
+        <div class='card-header'>
+            <h1 class='card-title'>
+                Server Config
+            </h1>
+        </div>
+        <div class='card-body'>
+            <TablerLoading v-if='loading' />
+            <template v-else>
+                <div class='col-12 pb-3'>
+                    <TablerInput
+                        v-model='keys.name.value'
+                        label='Organisation Name (Public)'
+                        :disabled='auth.access !== "admin"'
+                    />
                 </div>
-            </div>
-        </template>
+                <div class='col-12 pb-3'>
+                    <TablerInput
+                        v-model='keys.frontend.value'
+                        label='Frontend URL (Public)'
+                        :disabled='auth.access !== "admin"'
+                    />
+                </div>
+                <div class='col-12 pb-3'>
+                    <TimeZone
+                        v-model='keys.timezone.value'
+                        label='Default Timezone'
+                        :disabled='auth.access !== "admin"'
+                    />
+                </div>
+                <div
+                    v-if='auth.access === "admin"'
+                    class='col-12 pb-3 d-flex'
+                >
+                    <div class='ms-auto'>
+                        <button
+                            class='btn btn-primary'
+                            @click='save'
+                        >
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -34,6 +56,11 @@ import TimeZone from '../util/TimeZone.vue';
 
 export default {
     name: 'AdminServerConfig',
+    components: {
+        TimeZone,
+        TablerLoading,
+        TablerInput
+    },
     props: {
         auth: {
             type: Object,
@@ -94,11 +121,6 @@ export default {
             }
             this.loading = false;
         }
-    },
-    components: {
-        TimeZone,
-        TablerLoading,
-        TablerInput
     }
 }
 </script>

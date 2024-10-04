@@ -1,43 +1,63 @@
 <template>
-<div class="card">
-    <div class="card-header">
-        <div class='col'>
-            <div class="d-flex">
-                <h3 class="card-title">Certificates</h3>
+    <div class='card'>
+        <div class='card-header'>
+            <div class='col'>
+                <div class='d-flex'>
+                    <h3 class='card-title'>
+                        Certificates
+                    </h3>
 
-                <div class='ms-auto'>
-                    <PlusIcon v-if='$route.name === "profile"' @click='upload = true' class='cursor-pointer'/>
+                    <div class='ms-auto'>
+                        <PlusIcon
+                            v-if='$route.name === "profile"'
+                            class='cursor-pointer'
+                            @click='upload = true'
+                        />
+                    </div>
                 </div>
             </div>
         </div>
+        <template v-if='!list.items.length'>
+            <TablerNone
+                :create='false'
+                label='Certificates'
+            />
+        </template>
+        <template v-else>
+            <table class='table table-hover card-table table-vcenter'>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th colspan='2'>
+                            Expiry
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for='cert in list.items'
+                        :key='cert.id'
+                    >
+                        <td>
+                            <a
+                                class='cursor-pointer'
+                                @click='$router.push(`/user/${cert.uid}/cert/${cert.id}`)'
+                                v-text='cert.name'
+                            />
+                        </td>
+                        <td v-text='cert.expiry || "None"' />
+                    </tr>
+                </tbody>
+            </table>
+        </template>
+        <UploadCertificate
+            v-if='upload'
+            :uid='assigned'
+            @err='error($event)'
+            @close='upload = null'
+            @upload='upload = null; fetch($event)'
+        />
     </div>
-    <template v-if='!list.items.length'>
-        <TablerNone :create='false' label='Certificates'/>
-    </template>
-    <template v-else>
-        <table class="table table-hover card-table table-vcenter">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th colspan="2">Expiry</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr :key='cert.id' v-for='cert in list.items'>
-                    <td><a @click='$router.push(`/user/${cert.uid}/cert/${cert.id}`)' v-text='cert.name' class='cursor-pointer'></a></td>
-                    <td v-text='cert.expiry || "None"'></td>
-                </tr>
-            </tbody>
-        </table>
-    </template>
-    <UploadCertificate
-        :uid='assigned'
-        v-if='upload'
-        @err='error($event)'
-        @close='upload = null'
-        @upload='upload = null; fetch($event)'
-    />
-</div>
 </template>
 
 <script>
@@ -51,6 +71,11 @@ import {
 
 export default {
     name: 'CertsCard',
+    components: {
+        TablerNone,
+        UploadCertificate,
+        PlusIcon
+    },
     props: {
         limit: {
             type: Number,
@@ -87,11 +112,6 @@ export default {
 
             this.list = await window.std(url);
         }
-    },
-    components: {
-        TablerNone,
-        UploadCertificate,
-        PlusIcon
     }
 }
 </script>

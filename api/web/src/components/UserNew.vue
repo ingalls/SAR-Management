@@ -1,50 +1,93 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("User:Admin")' title='New User'/>
-                    <div v-else class="card">
-                        <div class="card-body">
-                            <TablerLoading v-if='loading' desc='Creating User'/>
-                            <div v-else class='row row-cards'>
-                                <div class="col-md-6">
-                                    <TablerInput label='First Name' v-model='user.fname' :error='errors.fname'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput label='Last Name' v-model='user.lname' :error='errors.lname'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput label='Username' v-model='user.username' :error='errors.username'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput label='Email' v-model='user.email' :error='errors.email'/>
-                                </div>
-                                <div class="col-md-6">
-                                    <TablerInput label='Phone' v-model='user.phone' :error='errors.phone'/>
-                                </div>
-                                <div class="col-md-12">
-                                    <NoAccess v-if='!is_iam("Team:View")' title='Team Selection'/>
-                                    <CardTeams v-else :select='true' @selected='user.teams = $event'/>
-                                </div>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <NoAccess
+                            v-if='!is_iam("User:Admin")'
+                            title='New User'
+                        />
+                        <div
+                            v-else
+                            class='card'
+                        >
+                            <div class='card-body'>
+                                <TablerLoading
+                                    v-if='loading'
+                                    desc='Creating User'
+                                />
+                                <div
+                                    v-else
+                                    class='row row-cards'
+                                >
+                                    <div class='col-md-6'>
+                                        <TablerInput
+                                            v-model='user.fname'
+                                            label='First Name'
+                                            :error='errors.fname'
+                                        />
+                                    </div>
+                                    <div class='col-md-6'>
+                                        <TablerInput
+                                            v-model='user.lname'
+                                            label='Last Name'
+                                            :error='errors.lname'
+                                        />
+                                    </div>
+                                    <div class='col-md-6'>
+                                        <TablerInput
+                                            v-model='user.username'
+                                            label='Username'
+                                            :error='errors.username'
+                                        />
+                                    </div>
+                                    <div class='col-md-6'>
+                                        <TablerInput
+                                            v-model='user.email'
+                                            label='Email'
+                                            :error='errors.email'
+                                        />
+                                    </div>
+                                    <div class='col-md-6'>
+                                        <TablerInput
+                                            v-model='user.phone'
+                                            label='Phone'
+                                            :error='errors.phone'
+                                        />
+                                    </div>
+                                    <div class='col-md-12'>
+                                        <NoAccess
+                                            v-if='!is_iam("Team:View")'
+                                            title='Team Selection'
+                                        />
+                                        <CardTeams
+                                            v-else
+                                            :select='true'
+                                            @selected='user.teams = $event'
+                                        />
+                                    </div>
 
-                                <div class="col-md-12">
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a @click='create' class="cursor-pointer btn btn-primary">Create User</a>
+                                    <div class='col-md-12'>
+                                        <div class='d-flex'>
+                                            <div class='ms-auto'>
+                                                <a
+                                                    class='cursor-pointer btn btn-primary'
+                                                    @click='create'
+                                                >Create User</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -55,7 +98,6 @@
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -70,6 +112,13 @@ import {
 
 export default {
     name: 'UserNew',
+    components: {
+        NoAccess,
+        TablerBreadCrumb,
+        CardTeams,
+        TablerInput,
+        TablerLoading
+    },
     props: {
         iam: {
             type: Object,
@@ -128,13 +177,6 @@ export default {
 
             this.$router.push(`/user/${create.id}`);
         }
-    },
-    components: {
-        NoAccess,
-        TablerBreadCrumb,
-        CardTeams,
-        TablerInput,
-        TablerLoading
     }
 }
 </script>

@@ -1,50 +1,91 @@
 <template>
-<div class="card">
-    <div class="card-header d-flex align-items-center">
-        <h3 class="card-title">Mission Roles</h3>
+    <div class='card'>
+        <div class='card-header d-flex align-items-center'>
+            <h3 class='card-title'>
+                Mission Roles
+            </h3>
 
-        <div class='ms-auto btn-list'>
-            <IconPlus @click='push()' class='cursor-pointer' size='32' :stroke='1'/>
+            <div class='ms-auto btn-list'>
+                <IconPlus
+                    class='cursor-pointer'
+                    size='32'
+                    :stroke='1'
+                    @click='push()'
+                />
+            </div>
         </div>
-    </div>
 
-    <TablerNone v-if='!list.items.length' :create='false' label='Roles'/>
-    <TablerLoading v-else-if='loading'/>
-    <table v-else class="table card-table table-vcenter">
-        <thead>
-            <tr>
-                <th>Role</th>
-                <th>Created</th>
-                <th>Updated</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr :key='role.id' v-for='(role, roleit) in list.items'>
-                <td>
-                    <template v-if='role._edit'>
-                        <TablerInput v-on:keyup.enter='saveRole(role, roleit)' v-model='role.name'/>
-                    </template>
-                    <template v-else>
-                        <span v-text='role.name'/>
-                    </template>
-                </td>
-                <td><TablerEpoch :date='role.created'/></td>
-                <td>
-                    <div class='d-flex align-items-center'>
-                        <TablerEpoch :date='role.updated'/>
-                        <div v-if='role._edit' class='ms-auto btn-list'>
-                            <IconCheck @click='saveRole(role, roleit)' class='cursor-pointer' size='32' :stroke='1'/>
-                            <IconTrash @click='deleteRole(role, roleit)' class='cursor-pointer' size='32' :stroke='1'/>
+        <TablerNone
+            v-if='!list.items.length'
+            :create='false'
+            label='Roles'
+        />
+        <TablerLoading v-else-if='loading' />
+        <table
+            v-else
+            class='table card-table table-vcenter'
+        >
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    v-for='(role, roleit) in list.items'
+                    :key='role.id'
+                >
+                    <td>
+                        <template v-if='role._edit'>
+                            <TablerInput
+                                v-model='role.name'
+                                @keyup.enter='saveRole(role, roleit)'
+                            />
+                        </template>
+                        <template v-else>
+                            <span v-text='role.name' />
+                        </template>
+                    </td>
+                    <td><TablerEpoch :date='role.created' /></td>
+                    <td>
+                        <div class='d-flex align-items-center'>
+                            <TablerEpoch :date='role.updated' />
+                            <div
+                                v-if='role._edit'
+                                class='ms-auto btn-list'
+                            >
+                                <IconCheck
+                                    class='cursor-pointer'
+                                    size='32'
+                                    :stroke='1'
+                                    @click='saveRole(role, roleit)'
+                                />
+                                <IconTrash
+                                    class='cursor-pointer'
+                                    size='32'
+                                    :stroke='1'
+                                    @click='deleteRole(role, roleit)'
+                                />
+                            </div>
+                            <div
+                                v-else
+                                class='ms-auto btn-list'
+                            >
+                                <IconPencil
+                                    class='cursor-pointer'
+                                    size='32'
+                                    :stroke='1'
+                                    @click='role._edit = true'
+                                />
+                            </div>
                         </div>
-                        <div v-else class='ms-auto btn-list'>
-                            <IconPencil @click='role._edit = true' class='cursor-pointer' size='32' :stroke='1'/>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 
 <script>
@@ -63,6 +104,16 @@ import {
 
 export default {
     name: 'AdminRoleCard',
+    components: {
+        TablerNone,
+        IconPlus,
+        IconPencil,
+        IconCheck,
+        IconTrash,
+        TablerEpoch,
+        TablerLoading,
+        TablerInput
+    },
     data: function() {
         return {
             loading: true,
@@ -113,16 +164,6 @@ export default {
                 created: +new Date()
             });
         }
-    },
-    components: {
-        TablerNone,
-        IconPlus,
-        IconPencil,
-        IconCheck,
-        IconTrash,
-        TablerEpoch,
-        TablerLoading,
-        TablerInput
     }
 }
 </script>

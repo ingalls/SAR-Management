@@ -1,34 +1,34 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <CardIssues
+                            label='Issues'
+                            :create='true'
+                            :iam='iam'
+                            :auth='auth'
+                            :search='true'
+                            :limit='20'
+                        />
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <CardIssues
-                        label='Issues'
-                        :create='true'
-                        :iam='iam'
-                        :auth='auth'
-                        :search='true'
-                        :limit='20'
-                    />
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 </template>
 
 <script>
@@ -39,6 +39,10 @@ import {
 
 export default {
     name: 'Issues',
+    components: {
+        TablerBreadCrumb,
+        CardIssues,
+    },
     props: {
         iam: {
             type: Object,
@@ -48,10 +52,6 @@ export default {
             type: Object,
             required: true
         }
-    },
-    components: {
-        TablerBreadCrumb,
-        CardIssues,
     }
 }
 </script>

@@ -1,95 +1,137 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Training:Manage")' title='Edit Training'/>
-                    <div v-else class="card">
-                        <TablerLoading v-if='loading.training'/>
-                        <template v-else>
-                            <div class='card-header'>
-                                <h1 class='card-title' v-text='training.title || "Training Editor"'></h1>
-                                <div class='ms-auto'>
-                                    <TablerToggle label='Required Training' v-model='training.required'/>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <NoAccess
+                            v-if='!is_iam("Training:Manage")'
+                            title='Edit Training'
+                        />
+                        <div
+                            v-else
+                            class='card'
+                        >
+                            <TablerLoading v-if='loading.training' />
+                            <template v-else>
+                                <div class='card-header'>
+                                    <h1
+                                        class='card-title'
+                                        v-text='training.title || "Training Editor"'
+                                    />
+                                    <div class='ms-auto'>
+                                        <TablerToggle
+                                            v-model='training.required'
+                                            label='Required Training'
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <div class='row row-cards'>
-                                    <div class="col-12 col-md-8 row">
-                                        <div class='col-12'>
-                                            <TablerInput v-model='training.title' label='Training Title'/>
+                                <div class='card-body'>
+                                    <div class='row row-cards'>
+                                        <div class='col-12 col-md-8 row'>
+                                            <div class='col-12'>
+                                                <TablerInput
+                                                    v-model='training.title'
+                                                    label='Training Title'
+                                                />
+                                            </div>
+                                            <div class='col-12 col-md-6'>
+                                                <TablerInput
+                                                    v-model='training.start_ts'
+                                                    type='datetime-local'
+                                                    label='Training Start'
+                                                />
+                                            </div>
+                                            <div class='col-12 col-md-6'>
+                                                <TablerInput
+                                                    v-model='training.end_ts'
+                                                    type='datetime-local'
+                                                    label='Training End'
+                                                />
+                                            </div>
                                         </div>
-                                        <div class='col-12 col-md-6'>
-                                            <TablerInput type='datetime-local' v-model='training.start_ts' label='Training Start'/>
+                                        <div class='col-12 col-md-4'>
+                                            <TeamSelect
+                                                v-model='training.teams'
+                                                label='Assigned'
+                                            />
                                         </div>
-                                        <div class='col-12 col-md-6'>
-                                            <TablerInput type='datetime-local' v-model='training.end_ts' label='Training End'/>
+                                        <div class='col-md-12'>
+                                            <MdEditor
+                                                v-model='training.body'
+                                                :preview='false'
+                                                no-upload-img
+                                                no-mermaid
+                                                :no-katex='true'
+                                                :toolbars-exclude='[
+                                                    "save",
+                                                    "prettier",
+                                                    "mermaid"
+                                                ]'
+                                                language='en-US'
+                                            />
                                         </div>
-                                    </div>
-                                    <div class="col-12 col-md-4">
-                                        <TeamSelect
-                                            v-model='training.teams'
-                                            label='Assigned'
-                                        />
-                                    </div>
-                                    <div class="col-md-12">
-                                        <MdEditor
-                                            :preview='false' noUploadImg noMermaid
-                                            :noKatex='true'
-                                            :toolbarsExclude='[
-                                                "save",
-                                                "prettier",
-                                                "mermaid"
-                                            ]'
-                                            language='en-US'
-                                            v-model="training.body"
-                                        />
-                                    </div>
-                                    <div class='col-md-12'>
-                                        <LocationDropdown @locGeom='training.location_geom = $event' v-model='training.location'/>
-                                    </div>
-                                    <div class='col-md-12'>
-                                        <Location v-model='training.location_geom' :disabled='false'/>
-                                    </div>
+                                        <div class='col-md-12'>
+                                            <LocationDropdown
+                                                v-model='training.location'
+                                                @loc-geom='training.location_geom = $event'
+                                            />
+                                        </div>
+                                        <div class='col-md-12'>
+                                            <Location
+                                                v-model='training.location_geom'
+                                                :disabled='false'
+                                            />
+                                        </div>
 
-                                    <div class="col-md-12">
-                                        <div class='d-flex'>
-                                            <a v-if='$route.params.trainingid && is_iam("Training:Admin")' @click='deleteTraining' class="cursor-pointer btn btn-danger">
-                                                Delete Training
-                                            </a>
-                                            <div class='ms-auto'>
-
-                                                <a v-if='$route.params.trainingid' @click='update' class="cursor-pointer btn btn-primary">
-                                                    Update Training
+                                        <div class='col-md-12'>
+                                            <div class='d-flex'>
+                                                <a
+                                                    v-if='$route.params.trainingid && is_iam("Training:Admin")'
+                                                    class='cursor-pointer btn btn-danger'
+                                                    @click='deleteTraining'
+                                                >
+                                                    Delete Training
                                                 </a>
-                                                <a v-else @click='create' class="cursor-pointer btn btn-primary">
-                                                    Create Training
-                                                </a>
+                                                <div class='ms-auto'>
+                                                    <a
+                                                        v-if='$route.params.trainingid'
+                                                        class='cursor-pointer btn btn-primary'
+                                                        @click='update'
+                                                    >
+                                                        Update Training
+                                                    </a>
+                                                    <a
+                                                        v-else
+                                                        class='cursor-pointer btn btn-primary'
+                                                        @click='create'
+                                                    >
+                                                        Create Training
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </template>
+                            </template>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -110,6 +152,17 @@ import moment from 'moment-timezone';
 
 export default {
     name: 'TrainingsEdit',
+    components: {
+        Location,
+        MdEditor,
+        TablerInput,
+        TablerToggle,
+        TablerLoading,
+        TeamSelect,
+        LocationDropdown,
+        NoAccess,
+        TablerBreadCrumb,
+    },
     props: {
         iam: {
             type: Object,
@@ -183,17 +236,6 @@ export default {
 
             this.$router.push(`/training/${create.id}`);
         }
-    },
-    components: {
-        Location,
-        MdEditor,
-        TablerInput,
-        TablerToggle,
-        TablerLoading,
-        TeamSelect,
-        LocationDropdown,
-        NoAccess,
-        TablerBreadCrumb,
     }
 }
 </script>

@@ -1,34 +1,60 @@
 <template>
-<div>
-    <TablerLoading v-if='loading.poll' desc='Loading Poll'/>
-    <template v-else>
-        <label v-if='!poll.vote' class='mx-3'>Select a vote from the following:</label>
-        <div class='border rounded mx-2 my-2 px-2 py-2'>
-            <div :key='question.id' v-for='question in poll.questions' class='my-1'>
-                <template v-if='!poll.vote'>
-                    <div class='d-flex'>
-                        <span @click='selected = question.id' v-text='question.question.name' class='cursor-pointer my-1'/>
+    <div>
+        <TablerLoading
+            v-if='loading.poll'
+            desc='Loading Poll'
+        />
+        <template v-else>
+            <label
+                v-if='!poll.vote'
+                class='mx-3'
+            >Select a vote from the following:</label>
+            <div class='border rounded mx-2 my-2 px-2 py-2'>
+                <div
+                    v-for='question in poll.questions'
+                    :key='question.id'
+                    class='my-1'
+                >
+                    <template v-if='!poll.vote'>
+                        <div class='d-flex'>
+                            <span
+                                class='cursor-pointer my-1'
+                                @click='selected = question.id'
+                                v-text='question.question.name'
+                            />
 
-                        <div class='ms-auto'>
-                            <CheckIcon v-if='selected === question.id'/>
+                            <div class='ms-auto'>
+                                <CheckIcon v-if='selected === question.id' />
+                            </div>
                         </div>
+                    </template>
+                    <template v-else>
+                        <div class='mb-3'>
+                            <span
+                                class='my-1'
+                                v-text='question.question.name'
+                            />
+                            <TablerProgress :percent='votes[question.id] || 0' />
+                        </div>
+                    </template>
+                </div>
+                <div
+                    v-if='!poll.vote'
+                    class='d-flex'
+                >
+                    <div class='ms-auto'>
+                        <button
+                            :disabled='!selected'
+                            class='btn'
+                            @click='vote'
+                        >
+                            Vote
+                        </button>
                     </div>
-                </template>
-                <template v-else>
-                    <div class='mb-3'>
-                        <span v-text='question.question.name' class='my-1'/>
-                        <TablerProgress :percent='votes[question.id] || 0'/>
-                    </div>
-                </template>
-            </div>
-            <div v-if='!poll.vote' class='d-flex'>
-                <div class='ms-auto'>
-                    <button @click='vote' :disabled='!selected' class='btn'>Vote</button>
                 </div>
             </div>
-        </div>
-    </template>
-</div>
+        </template>
+    </div>
 </template>
 
 <script>
@@ -42,6 +68,11 @@ import {
 
 export default {
     name: 'Poll',
+    components: {
+        CheckIcon,
+        TablerProgress,
+        TablerLoading
+    },
     props: {
         issue: {
             type: Object,
@@ -94,11 +125,6 @@ export default {
 
             await this.fetchPoll();
         },
-    },
-    components: {
-        CheckIcon,
-        TablerProgress,
-        TablerLoading
     }
 }
 </script>

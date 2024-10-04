@@ -1,122 +1,235 @@
 <template>
-<div class="card">
-    <div class='card-header'>
-        <div class="col">
-            <div class="d-flex">
-                <h3 class='card-title'>Users</h3>
+    <div class='card'>
+        <div class='card-header'>
+            <div class='col'>
+                <div class='d-flex'>
+                    <h3 class='card-title'>
+                        Users
+                    </h3>
 
-                <div class='ms-auto'>
-                    <div class="btn-list">
-                        <div v-if='!edit' class="input-icon">
-                            <input v-model='paging.filter' style='height: 40px;' type="text" class="form-control" placeholder="Search…">
-                            <span class="input-icon-addon">
-                                <SearchIcon />
-                            </span>
-                        </div>
-
+                    <div class='ms-auto'>
                         <div class='btn-list'>
-                            <div class="btn-group" role="group">
-                                <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='list'>
-                                <label @click='mode="list"' class="btn btn-icon"><ListIcon/></label>
-                                <input v-model='mode' type="radio" class="btn-check" name="btn-radio-toolbar" value='gallery'>
-                                <label @click='mode="gallery"' class="btn btn-icon"><PolaroidIcon/></label>
+                            <div
+                                v-if='!edit'
+                                class='input-icon'
+                            >
+                                <input
+                                    v-model='paging.filter'
+                                    style='height: 40px;'
+                                    type='text'
+                                    class='form-control'
+                                    placeholder='Search…'
+                                >
+                                <span class='input-icon-addon'>
+                                    <SearchIcon />
+                                </span>
                             </div>
 
-                            <button class='btn px-2'>
-                                <AddressBookIcon @click='exportUsers("vcard")' class='cursor-pointer'/>
-                            </button>
-                            <template v-if='edit'>
-                                <TablerLoading v-if='loading.add' :inline='true'/>
-                                <UserDropdownIcon v-else :button='true' @selected='addUser($event)'/>
-                            </template>
-                        </div>
+                            <div class='btn-list'>
+                                <div
+                                    class='btn-group'
+                                    role='group'
+                                >
+                                    <input
+                                        v-model='mode'
+                                        type='radio'
+                                        class='btn-check'
+                                        name='btn-radio-toolbar'
+                                        value='list'
+                                    >
+                                    <label
+                                        class='btn btn-icon'
+                                        @click='mode="list"'
+                                    ><ListIcon /></label>
+                                    <input
+                                        v-model='mode'
+                                        type='radio'
+                                        class='btn-check'
+                                        name='btn-radio-toolbar'
+                                        value='gallery'
+                                    >
+                                    <label
+                                        class='btn btn-icon'
+                                        @click='mode="gallery"'
+                                    ><PolaroidIcon /></label>
+                                </div>
 
-                        <button v-if='dropdown && edit' data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                        <div class="dropdown-menu dropdown-menu-end" style="">
-                            <a @click='$router.push("/user/new")' class="dropdown-item">New User</a>
+                                <button class='btn px-2'>
+                                    <AddressBookIcon
+                                        class='cursor-pointer'
+                                        @click='exportUsers("vcard")'
+                                    />
+                                </button>
+                                <template v-if='edit'>
+                                    <TablerLoading
+                                        v-if='loading.add'
+                                        :inline='true'
+                                    />
+                                    <UserDropdownIcon
+                                        v-else
+                                        :button='true'
+                                        @selected='addUser($event)'
+                                    />
+                                </template>
+                            </div>
+
+                            <button
+                                v-if='dropdown && edit'
+                                data-bs-toggle='dropdown'
+                                type='button'
+                                class='btn dropdown-toggle dropdown-toggle-split'
+                                aria-expanded='false'
+                            />
+                            <div
+                                class='dropdown-menu dropdown-menu-end'
+                                style=''
+                            >
+                                <a
+                                    class='dropdown-item'
+                                    @click='$router.push("/user/new")'
+                                >New User</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <template v-if='loading.list'>
-        <TablerLoading desc='Loading Users'/>
-    </template>
-    <template v-else-if='!list.items.length'>
-        <TablerNone label='Users' :create='false'/>
-    </template>
-    <template v-else-if='mode === "list"'>
-        <div class='table-responsive'>
-            <table class="table card-table table-hover table-vcenter datatable">
-                <TableHeader
-                    v-model:sort='paging.sort'
-                    v-model:order='paging.order'
-                    v-model:header='header'
-                    :export='true'
-                    @export='exportUsers("csv")'
-                />
-                <tbody>
-                    <tr :key='user.id' v-for='(user, user_it) in list.items'>
-                        <template v-for='h in header'>
-                            <template v-if='h.display'>
-                                <td v-if='h.name === "name"' @click='$router.push(`/user/${user.id}`)'>
-                                    <Avatar :link='true' :user='user'/>
-                                </td>
-                                <td v-else-if='h.name === "email"'>
-                                    <a :href='`mailto:${user.email}`' v-text='user.email'></a>
-                                </td>
-                                <td v-else-if='h.name === "phone"'>
-                                    <div class='d-flex'>
-                                        <a :href='`tel:${user.phone}`' v-text='user.phone'></a>
-                                        <div v-if='edit' class='ms-auto'>
-                                            <div v-if='!user._loading' class='btn-list'>
-                                                <TablerDelete @delete='removeUser(user, user_it)' displaytype='icon'/>
-                                            </div>
-                                            <div v-else class='btn-list'>
-                                                <TablerLoading :inline='true'/>
+        <template v-if='loading.list'>
+            <TablerLoading desc='Loading Users' />
+        </template>
+        <template v-else-if='!list.items.length'>
+            <TablerNone
+                label='Users'
+                :create='false'
+            />
+        </template>
+        <template v-else-if='mode === "list"'>
+            <div class='table-responsive'>
+                <table class='table card-table table-hover table-vcenter datatable'>
+                    <TableHeader
+                        v-model:sort='paging.sort'
+                        v-model:order='paging.order'
+                        v-model:header='header'
+                        :export='true'
+                        @export='exportUsers("csv")'
+                    />
+                    <tbody>
+                        <tr
+                            v-for='(user, user_it) in list.items'
+                            :key='user.id'
+                        >
+                            <template v-for='h in header'>
+                                <template v-if='h.display'>
+                                    <td
+                                        v-if='h.name === "name"'
+                                        @click='$router.push(`/user/${user.id}`)'
+                                    >
+                                        <Avatar
+                                            :link='true'
+                                            :user='user'
+                                        />
+                                    </td>
+                                    <td v-else-if='h.name === "email"'>
+                                        <a
+                                            :href='`mailto:${user.email}`'
+                                            v-text='user.email'
+                                        />
+                                    </td>
+                                    <td v-else-if='h.name === "phone"'>
+                                        <div class='d-flex'>
+                                            <a
+                                                :href='`tel:${user.phone}`'
+                                                v-text='user.phone'
+                                            />
+                                            <div
+                                                v-if='edit'
+                                                class='ms-auto'
+                                            >
+                                                <div
+                                                    v-if='!user._loading'
+                                                    class='btn-list'
+                                                >
+                                                    <TablerDelete
+                                                        displaytype='icon'
+                                                        @delete='removeUser(user, user_it)'
+                                                    />
+                                                </div>
+                                                <div
+                                                    v-else
+                                                    class='btn-list'
+                                                >
+                                                    <TablerLoading :inline='true' />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td v-else-if='["last_login", "updated", "created"].includes(h.name)'>
-                                    <TablerEpoch v-if='user[h.name]' :date='user[h.name]'/>
-                                    <span v-else>Never</span>
-                                </td>
-                                <td v-else>
-                                    <span v-text='user[h.name]'></span>
-                                </td>
+                                    </td>
+                                    <td v-else-if='["last_login", "updated", "created"].includes(h.name)'>
+                                        <TablerEpoch
+                                            v-if='user[h.name]'
+                                            :date='user[h.name]'
+                                        />
+                                        <span v-else>Never</span>
+                                    </td>
+                                    <td v-else>
+                                        <span v-text='user[h.name]' />
+                                    </td>
+                                </template>
                             </template>
-                        </template>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </template>
-    <template v-else>
-        <div class='row row-cards'>
-            <div :key='user.id' v-for='user in list.items' class='col-sm-6 col-lg-4'>
-                <div class="card card-sm">
-                    <a @click='$router.push(`/user/${user.id}`)' class="d-block cursor-pointer">
-                        <UserProfile bgstyle='cover' :userid='user.id'/>
-                    </a>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <div @click='$router.push(`/user/${user.id}`)' class='cursor-pointer' v-text='`${user.fname} ${user.lname}`'></div>
-                                <a class='text-muted cursor-pointer' :href='`mailto:${user.email}`' v-text='user.email'></a>
-                                <br/>
-                                <a class='text-muted cursor-pointer' :href='`tel:${user.phone}`' v-text='user.phone'></a>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template v-else>
+            <div class='row row-cards'>
+                <div
+                    v-for='user in list.items'
+                    :key='user.id'
+                    class='col-sm-6 col-lg-4'
+                >
+                    <div class='card card-sm'>
+                        <a
+                            class='d-block cursor-pointer'
+                            @click='$router.push(`/user/${user.id}`)'
+                        >
+                            <UserProfile
+                                bgstyle='cover'
+                                :userid='user.id'
+                            />
+                        </a>
+                        <div class='card-body'>
+                            <div class='d-flex align-items-center'>
+                                <div>
+                                    <div
+                                        class='cursor-pointer'
+                                        @click='$router.push(`/user/${user.id}`)'
+                                        v-text='`${user.fname} ${user.lname}`'
+                                    />
+                                    <a
+                                        class='text-muted cursor-pointer'
+                                        :href='`mailto:${user.email}`'
+                                        v-text='user.email'
+                                    />
+                                    <br>
+                                    <a
+                                        class='text-muted cursor-pointer'
+                                        :href='`tel:${user.phone}`'
+                                        v-text='user.phone'
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </template>
+        </template>
 
-    <TableFooter :limit='paging.limit' :total='list.total' @page='paging.page = $event'/>
-</div>
+        <TableFooter
+            :limit='paging.limit'
+            :total='list.total'
+            @page='paging.page = $event'
+        />
+    </div>
 </template>
 
 <script>
@@ -140,6 +253,21 @@ import UserProfile from '../User/Profile.vue';
 
 export default {
     name: 'CardUsers',
+    components: {
+        TablerNone,
+        TablerEpoch,
+        Avatar,
+        AddressBookIcon,
+        UserDropdownIcon,
+        TablerDelete,
+        SearchIcon,
+        ListIcon,
+        PolaroidIcon,
+        UserProfile,
+        TablerLoading,
+        TableFooter,
+        TableHeader
+    },
     props: {
         dropdown: {
             type: Boolean,
@@ -273,21 +401,6 @@ export default {
             a.click();
             a.remove();
         },
-    },
-    components: {
-        TablerNone,
-        TablerEpoch,
-        Avatar,
-        AddressBookIcon,
-        UserDropdownIcon,
-        TablerDelete,
-        SearchIcon,
-        ListIcon,
-        PolaroidIcon,
-        UserProfile,
-        TablerLoading,
-        TableFooter,
-        TableHeader
     }
 }
 </script>

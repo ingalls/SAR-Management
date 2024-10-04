@@ -1,38 +1,60 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <NoAccess v-if='!is_iam("Equipment:Admin")' title='Equipment Type Editing'/>
-                    <div v-else class="card">
-                        <TablerLoading v-if='loading.type'/>
-                        <div v-else class="card-body">
-                            <div class='row row-cards'>
-                                <div class="col-md-12">
-                                    <TablerInput v-model='type.type' label='Equipment Type' :error='errors.type'/>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <NoAccess
+                            v-if='!is_iam("Equipment:Admin")'
+                            title='Equipment Type Editing'
+                        />
+                        <div
+                            v-else
+                            class='card'
+                        >
+                            <TablerLoading v-if='loading.type' />
+                            <div
+                                v-else
+                                class='card-body'
+                            >
+                                <div class='row row-cards'>
+                                    <div class='col-md-12'>
+                                        <TablerInput
+                                            v-model='type.type'
+                                            label='Equipment Type'
+                                            :error='errors.type'
+                                        />
 
-                                    <TablerInput v-model='type.schema' :rows='10' label='Equipment Schema' :error='errors.schema'/>
-                                </div>
+                                        <TablerInput
+                                            v-model='type.schema'
+                                            :rows='10'
+                                            label='Equipment Schema'
+                                            :error='errors.schema'
+                                        />
+                                    </div>
 
-                                <div class="col-md-12">
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a @click='save' class="cursor-pointer btn btn-primary">
-                                                <span v-text='$route.params.typeid ? "Update Type" : "Create Type"'/>
-                                            </a>
+                                    <div class='col-md-12'>
+                                        <div class='d-flex'>
+                                            <div class='ms-auto'>
+                                                <a
+                                                    class='cursor-pointer btn btn-primary'
+                                                    @click='save'
+                                                >
+                                                    <span v-text='$route.params.typeid ? "Update Type" : "Create Type"' />
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -43,7 +65,6 @@
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -57,6 +78,12 @@ import iam from '../iam.js';
 
 export default {
     name: 'EquipmentTypeEdit',
+    components: {
+        NoAccess,
+        TablerBreadCrumb,
+        TablerInput,
+        TablerLoading
+    },
     props: {
         iam: {
             type: Object,
@@ -139,12 +166,6 @@ export default {
                 this.$router.push(`/equipment/type/${type.id}`);
             }
         }
-    },
-    components: {
-        NoAccess,
-        TablerBreadCrumb,
-        TablerInput,
-        TablerLoading
     }
 }
 </script>

@@ -1,11 +1,14 @@
 <template>
-<div class="card col-12">
-    <div class="card-body">
-        <div class="row">
-            <div id="map" style='height: 350px;'></div>
+    <div class='card col-12'>
+        <div class='card-body'>
+            <div class='row'>
+                <div
+                    id='map'
+                    style='height: 350px;'
+                />
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -17,11 +20,6 @@ let map = null;
 
 export default {
     name: 'HeatMapCard',
-    mounted: async function() {
-        this.$nextTick(() => {
-            this.mountMap();
-        });
-    },
     props: {
         missions: {
             type: Object,
@@ -55,6 +53,11 @@ export default {
                 map.fitBounds(bbox(this.fc))
             }
         }
+    },
+    mounted: async function() {
+        this.$nextTick(() => {
+            this.mountMap();
+        });
     },
     methods: {
         mountMap: function() {

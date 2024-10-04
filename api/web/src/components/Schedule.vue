@@ -1,49 +1,65 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <div class="col-lg-12">
-                    <div class="card">
-                        <NoAccess v-if='!is_iam("Oncall:View")' title='Schedule'/>
-                        <TablerLoading v-else-if='loading.schedule' desc='Loading Schedule'/>
-                        <template v-else>
-                            <div class='card-header'>
-                                <h3 class='card-title' v-text='schedule.name'></h3>
-                                <div class='btn-list ms-auto'>
-                                    <SettingsIcon v-if='is_iam("Oncall:Admin")' @click='$router.push(`/schedule/${$route.params.scheduleid}/edit`)' class='cursor-pointer'/>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <div class='col-lg-12'>
+                        <div class='card'>
+                            <NoAccess
+                                v-if='!is_iam("Oncall:View")'
+                                title='Schedule'
+                            />
+                            <TablerLoading
+                                v-else-if='loading.schedule'
+                                desc='Loading Schedule'
+                            />
+                            <template v-else>
+                                <div class='card-header'>
+                                    <h3
+                                        class='card-title'
+                                        v-text='schedule.name'
+                                    />
+                                    <div class='btn-list ms-auto'>
+                                        <SettingsIcon
+                                            v-if='is_iam("Oncall:Admin")'
+                                            class='cursor-pointer'
+                                            @click='$router.push(`/schedule/${$route.params.scheduleid}/edit`)'
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
-                        <div class="card-body" v-text='schedule.body'></div>
+                            </template>
+                            <div
+                                class='card-body'
+                                v-text='schedule.body'
+                            />
+                        </div>
                     </div>
+                    <template v-if='!loading.schedule && is_iam("Oncall:View")'>
+                        <div class='col-lg-12'>
+                            <CardScheduleCalendar
+                                :schedule='schedule'
+                            />
+                        </div>
+                        <div class='col-lg-12'>
+                            <CardScheduleAssigned />
+                        </div>
+                    </template>
                 </div>
-                <template v-if='!loading.schedule && is_iam("Oncall:View")'>
-                    <div class="col-lg-12">
-                        <CardScheduleCalendar
-                            :schedule='schedule'
-                        />
-                    </div>
-                    <div class="col-lg-12">
-                        <CardScheduleAssigned/>
-                    </div>
-                </template>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -62,6 +78,15 @@ import {
 
 export default {
     name: 'Schedule',
+    components: {
+        CardScheduleAssigned,
+        CardScheduleCalendar,
+        UserPresentSelect,
+        TablerLoading,
+        TablerBreadCrumb,
+        SettingsIcon,
+        NoAccess
+    },
     props: {
         iam: {
             type: Object,
@@ -100,15 +125,6 @@ export default {
             this.assigned = await window.std(`/api/schedule/${this.$route.params.scheduleid}/assigned`);
             this.loading.assigned = false;
         },
-    },
-    components: {
-        CardScheduleAssigned,
-        CardScheduleCalendar,
-        UserPresentSelect,
-        TablerLoading,
-        TablerBreadCrumb,
-        SettingsIcon,
-        NoAccess
     }
 }
 </script>

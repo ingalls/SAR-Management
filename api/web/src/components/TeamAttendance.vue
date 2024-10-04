@@ -1,96 +1,147 @@
 <template>
-<div>
-    <div class='page-wrapper'>
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col d-flex">
-                        <TablerBreadCrumb/>
+    <div>
+        <div class='page-wrapper'>
+            <div class='page-header d-print-none'>
+                <div class='container-xl'>
+                    <div class='row g-2 align-items-center'>
+                        <div class='col d-flex'>
+                            <TablerBreadCrumb />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class='page-body'>
-        <div class='container-xl'>
-            <div class='row row-deck row-cards'>
-                <NoAccess v-if='!is_iam("Team:View")' title='Team'/>
-                <template v-else>
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <template v-if='loading.team'>
-                                <TablerLoading desc='Loading Team'/>
-                            </template>
-                            <template v-else>
-                                <div class='card-header'>
-                                    <h3 class='card-title' v-text='team.name + " Attendance"'></h3>
+        <div class='page-body'>
+            <div class='container-xl'>
+                <div class='row row-deck row-cards'>
+                    <NoAccess
+                        v-if='!is_iam("Team:View")'
+                        title='Team'
+                    />
+                    <template v-else>
+                        <div class='col-lg-12'>
+                            <div class='card'>
+                                <template v-if='loading.team'>
+                                    <TablerLoading desc='Loading Team' />
+                                </template>
+                                <template v-else>
+                                    <div class='card-header'>
+                                        <h3
+                                            class='card-title'
+                                            v-text='team.name + " Attendance"'
+                                        />
 
-                                    <div class='ms-auto'>
-                                        <div class='btn-list'>
-                                            <TeamBadge :team='team'/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class='card-body row'>
-                                    <div class='col-12 col-md-5'>
-                                        <TablerInput label='Start Date' :disabled='loading.attendance' :error='errors.start' type='date' v-model='filter.start'/>
-                                    </div>
-                                    <div class='col-12 col-md-5'>
-                                        <TablerInput label='End Date' :disabled='loading.attendance' :error='errors.end' type='date' v-model='filter.end'/>
-                                    </div>
-                                    <div class='col-12 col-md-2'>
-                                        <TablerInput label='Percent' :disabled='loading.attendance' :error='errors.end' v-model='filter.percent'/>
-                                    </div>
-                                    <div class='col-12 d-flex mt-2'>
-                                        <span v-text='Math.ceil(total * (this.filter.percent / 100)) + " Required Trainings"'/><span class='mx-1' v-text='`(${this.filter.percent}%)`'/> out of <span class='mx-1' v-text='trainings.length'/> Training Opportunities
                                         <div class='ms-auto'>
-                                            <button @click='refresh' class='btn btn-primary'>Filter</button>
+                                            <div class='btn-list'>
+                                                <TeamBadge :team='team' />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <div class='card-body row'>
+                                        <div class='col-12 col-md-5'>
+                                            <TablerInput
+                                                v-model='filter.start'
+                                                label='Start Date'
+                                                :disabled='loading.attendance'
+                                                :error='errors.start'
+                                                type='date'
+                                            />
+                                        </div>
+                                        <div class='col-12 col-md-5'>
+                                            <TablerInput
+                                                v-model='filter.end'
+                                                label='End Date'
+                                                :disabled='loading.attendance'
+                                                :error='errors.end'
+                                                type='date'
+                                            />
+                                        </div>
+                                        <div class='col-12 col-md-2'>
+                                            <TablerInput
+                                                v-model='filter.percent'
+                                                label='Percent'
+                                                :disabled='loading.attendance'
+                                                :error='errors.end'
+                                            />
+                                        </div>
+                                        <div class='col-12 d-flex mt-2'>
+                                            <span v-text='Math.ceil(total * (filter.percent / 100)) + " Required Trainings"' /><span
+                                                class='mx-1'
+                                                v-text='`(${filter.percent}%)`'
+                                            /> out of <span
+                                                class='mx-1'
+                                                v-text='trainings.length'
+                                            /> Training Opportunities
+                                            <div class='ms-auto'>
+                                                <button
+                                                    class='btn btn-primary'
+                                                    @click='refresh'
+                                                >
+                                                    Filter
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <TablerLoading v-if='loading.attendance'/>
-                                <div v-else class="" id="container" datenow="">
-                                    <table class="table table-hover table-header-rotated">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <template v-for='training in trainings'>
-                                                    <th class="rotate">
-                                                        <div @click='$router.push(`/training/${training.id}`)' class='cursor-pointer'>
-                                                            <span v-text='training.title' :class='{
-                                                                "text-red": training.required
-                                                            }'></span>
-                                                        </div>
-                                                    </th>
-                                                </template>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <template v-for='user in users'>
-                                                <tr :class='{
-                                                    "bg-red": totals[user.id] < (total * (filter.percent / 100))
-                                                }'>
-                                                    <th @click='$router.push(`/user/${user.id}`)' class="row-header cursor-pointer" v-text='user.fname + " " + user.lname'></th>
+                                    <TablerLoading v-if='loading.attendance' />
+                                    <div
+                                        v-else
+                                        id='container'
+                                        class=''
+                                        datenow=''
+                                    >
+                                        <table class='table table-hover table-header-rotated'>
+                                            <thead>
+                                                <tr>
+                                                    <th />
                                                     <template v-for='training in trainings'>
-                                                        <th>
-                                                            <CheckIcon v-if='training.users.has(user.id)'/>
+                                                        <th class='rotate'>
+                                                            <div
+                                                                class='cursor-pointer'
+                                                                @click='$router.push(`/training/${training.id}`)'
+                                                            >
+                                                                <span
+                                                                    :class='{
+                                                                        "text-red": training.required
+                                                                    }'
+                                                                    v-text='training.title'
+                                                                />
+                                                            </div>
                                                         </th>
                                                     </template>
                                                 </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </template>
+                                            </thead>
+                                            <tbody>
+                                                <template v-for='user in users'>
+                                                    <tr
+                                                        :class='{
+                                                            "bg-red": totals[user.id] < (total * (filter.percent / 100))
+                                                        }'
+                                                    >
+                                                        <th
+                                                            class='row-header cursor-pointer'
+                                                            @click='$router.push(`/user/${user.id}`)'
+                                                            v-text='user.fname + " " + user.lname'
+                                                        />
+                                                        <template v-for='training in trainings'>
+                                                            <th>
+                                                                <CheckIcon v-if='training.users.has(user.id)' />
+                                                            </th>
+                                                        </template>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -109,6 +160,15 @@ import {
 
 export default {
     name: 'TeamAttendance',
+    components: {
+        CheckIcon,
+        NoAccess,
+        TeamBadge,
+        TablerInput,
+        TablerBreadCrumb,
+        TablerLoading,
+        CardUsers
+    },
     props: {
         iam: {
             type: Object,
@@ -209,15 +269,6 @@ export default {
                 }
             }
         }
-    },
-    components: {
-        CheckIcon,
-        NoAccess,
-        TeamBadge,
-        TablerInput,
-        TablerBreadCrumb,
-        TablerLoading,
-        CardUsers
     }
 }
 </script>

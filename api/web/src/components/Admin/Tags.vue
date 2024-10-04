@@ -1,50 +1,91 @@
 <template>
-<div class="card">
-    <div class="card-header d-flex align-items-center">
-        <h3 class="card-title">Mission Tags</h3>
+    <div class='card'>
+        <div class='card-header d-flex align-items-center'>
+            <h3 class='card-title'>
+                Mission Tags
+            </h3>
 
-        <div class='ms-auto btn-list'>
-            <IconPlus @click='push()' class='cursor-pointer' size='32' :stroke='1'/>
+            <div class='ms-auto btn-list'>
+                <IconPlus
+                    class='cursor-pointer'
+                    size='32'
+                    :stroke='1'
+                    @click='push()'
+                />
+            </div>
         </div>
-    </div>
 
-    <TablerNone v-if='!list.items.length' :create='false' label='Tags'/>
-    <TablerLoading v-else-if='loading'/>
-    <table v-else class="table card-table table-vcenter">
-        <thead>
-            <tr>
-                <th>Role</th>
-                <th>Created</th>
-                <th>Updated</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr :key='tag.id' v-for='(tag, tagit) in list.items'>
-                <td>
-                    <template v-if='tag._edit'>
-                        <TablerInput v-on:keyup.enter='saveTag(tag, tagit)' v-model='tag.name'/>
-                    </template>
-                    <template v-else>
-                        <span v-text='tag.name'/>
-                    </template>
-                </td>
-                <td><TablerEpoch :date='tag.created'/></td>
-                <td>
-                    <div class='d-flex align-items-center'>
-                        <TablerEpoch :date='tag.updated'/>
-                        <div v-if='tag._edit' class='ms-auto btn-list'>
-                            <IconCheck @click='saveTag(tag, tagit)' class='cursor-pointer' size='32' :stroke='1'/>
-                            <IconTrash @click='deleteTag(tag, tagit)' class='cursor-pointer' size='32' :stroke='1'/>
+        <TablerNone
+            v-if='!list.items.length'
+            :create='false'
+            label='Tags'
+        />
+        <TablerLoading v-else-if='loading' />
+        <table
+            v-else
+            class='table card-table table-vcenter'
+        >
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    v-for='(tag, tagit) in list.items'
+                    :key='tag.id'
+                >
+                    <td>
+                        <template v-if='tag._edit'>
+                            <TablerInput
+                                v-model='tag.name'
+                                @keyup.enter='saveTag(tag, tagit)'
+                            />
+                        </template>
+                        <template v-else>
+                            <span v-text='tag.name' />
+                        </template>
+                    </td>
+                    <td><TablerEpoch :date='tag.created' /></td>
+                    <td>
+                        <div class='d-flex align-items-center'>
+                            <TablerEpoch :date='tag.updated' />
+                            <div
+                                v-if='tag._edit'
+                                class='ms-auto btn-list'
+                            >
+                                <IconCheck
+                                    class='cursor-pointer'
+                                    size='32'
+                                    :stroke='1'
+                                    @click='saveTag(tag, tagit)'
+                                />
+                                <IconTrash
+                                    class='cursor-pointer'
+                                    size='32'
+                                    :stroke='1'
+                                    @click='deleteTag(tag, tagit)'
+                                />
+                            </div>
+                            <div
+                                v-else
+                                class='ms-auto btn-list'
+                            >
+                                <IconPencil
+                                    class='cursor-pointer'
+                                    size='32'
+                                    :stroke='1'
+                                    @click='tag._edit = true'
+                                />
+                            </div>
                         </div>
-                        <div v-else class='ms-auto btn-list'>
-                            <IconPencil @click='tag._edit = true' class='cursor-pointer' size='32' :stroke='1'/>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 
 <script>
@@ -63,6 +104,16 @@ import {
 
 export default {
     name: 'AdminRoleCard',
+    components: {
+        TablerNone,
+        IconPlus,
+        IconPencil,
+        IconCheck,
+        IconTrash,
+        TablerEpoch,
+        TablerLoading,
+        TablerInput
+    },
     data: function() {
         return {
             loading: true,
@@ -113,16 +164,6 @@ export default {
                 created: +new Date()
             });
         }
-    },
-    components: {
-        TablerNone,
-        IconPlus,
-        IconPencil,
-        IconCheck,
-        IconTrash,
-        TablerEpoch,
-        TablerLoading,
-        TablerInput
     }
 }
 </script>

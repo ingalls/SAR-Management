@@ -1,42 +1,56 @@
 <template>
-<div class="card">
-    <div class="card-body">
-        <div class="d-flex">
-            <h3 class="card-title">Registered Users</h3>
+    <div class='card'>
+        <div class='card-body'>
+            <div class='d-flex'>
+                <h3 class='card-title'>
+                    Registered Users
+                </h3>
 
-            <div class='ms-auto'>
-                <div class="btn-list">
-                    <TablerSelect
-                        :values='["Last 30 Days", "Month To Date", "Current Quarter", "Year To Date", "All Time"]'
-                    />
+                <div class='ms-auto'>
+                    <div class='btn-list'>
+                        <TablerSelect
+                            :values='["Last 30 Days", "Month To Date", "Current Quarter", "Year To Date", "All Time"]'
+                        />
 
-                    <button data-bs-toggle="dropdown" type="button" class="btn dropdown-toggle dropdown-toggle-split" aria-expanded="false"></button>
-                    <div class="dropdown-menu dropdown-menu-end" style="">
-                        <a @click='getExport' class="dropdown-item" href="#">Export</a>
+                        <button
+                            data-bs-toggle='dropdown'
+                            type='button'
+                            class='btn dropdown-toggle dropdown-toggle-split'
+                            aria-expanded='false'
+                        />
+                        <div
+                            class='dropdown-menu dropdown-menu-end'
+                            style=''
+                        >
+                            <a
+                                class='dropdown-item'
+                                href='#'
+                                @click='getExport'
+                            >Export</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <ApexChart
-                type='line'
-                height='350'
-                :options='{
-                    chart: {
-                        id: "total-users",
-                        zoom: {
-                            enabled: false
+            <div class='row'>
+                <ApexChart
+                    type='line'
+                    height='350'
+                    :options='{
+                        chart: {
+                            id: "total-users",
+                            zoom: {
+                                enabled: false
+                            },
                         },
-                    },
-                    xaxis: {
-                        type: "datetime"
-                    }
-                }'
-                :series='series'
-            />
+                        xaxis: {
+                            type: "datetime"
+                        }
+                    }'
+                    :series='series'
+                />
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -47,6 +61,10 @@ import {
 
 export default {
     name: 'RegisteredCard',
+    components: {
+        TablerSelect,
+        ApexChart: VueApexCharts
+    },
     data: function() {
         return {
             scale: 7,
@@ -73,10 +91,6 @@ export default {
             if (url.hostname === 'localhost') url.port = '4999'
             window.open(url, "_blank")
         }
-    },
-    components: {
-        TablerSelect,
-        ApexChart: VueApexCharts
     }
 }
 </script>
