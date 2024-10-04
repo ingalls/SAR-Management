@@ -41,7 +41,7 @@ mesacountysar.com {
 team.mesacountysar.com {
     header {
         X-Content-Type-Options nosniff
-        X-Frame-Options DENY
+        X-Frame-Options SAMEORIGIN
         Referrer-Policy strict-origin-when-cross-origin
         Permissions-Policy "fullscreen=(self), clipboard-read=(self), clipboard-write=(self)"
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
