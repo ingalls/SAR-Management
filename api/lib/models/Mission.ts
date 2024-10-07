@@ -128,6 +128,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
                     delete t.count;
+                    if (!t.teams_id) t.teams_id = [];
                     if (!t.teams) t.teams = [];
                     if (!t.users) t.users = [];
 
