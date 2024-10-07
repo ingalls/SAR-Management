@@ -85,6 +85,7 @@ export const Application = pgTable('applications', {
     id: serial('id').primaryKey(),
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    group: text('group').notNull().default('unassigned'),
     name: text('name').notNull(),
     phone: text('phone').notNull(),
     email: text('email').notNull(),

@@ -143,9 +143,8 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            const app = await config.models.Application.from(req.params.applicationid);
-            Object.assign(app, app.meta);
-            delete app.meta;
+            const app = await config.models.Application.commit(req.params.applicationid, input);
+
             return res.json(app);
         } catch (err) {
             return Err.respond(err, res);

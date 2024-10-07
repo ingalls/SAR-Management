@@ -51,7 +51,7 @@
                                                     class='badge bg-green text-white'
                                                     style='height: 20px;'
                                                 >Active</span>
-                                           
+
                                                 <div class='card-title mx-2'>
                                                     <span v-text='application.name' />
                                                 </div>
@@ -234,7 +234,7 @@ export default {
 
             try {
                 const body = JSON.parse(JSON.stringify(this.application));
-                for (const prop of ['id', 'schema', 'created', 'updated']) delete body[prop];
+                for (const prop of ['id', 'schema', 'created', 'updated', 'archived']) delete body[prop];
                 if (this.$route.params.applicationid) {
                     this.application = await window.std(`/api/application/${this.$route.params.applicationid}`, {
                         method: 'PATCH', body
