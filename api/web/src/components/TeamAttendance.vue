@@ -236,7 +236,10 @@ export default {
             this.loading.team = false;
         },
         fetchUsers: async function() {
-            const list = await window.std(`/api/user?team=${this.team.id}`);
+            const url = window.stdurl(`/api/user`)
+            url.searchParams.append('team', this.team.id);
+            url.searchParams.append('limit', 1000);
+            const list = await window.std(url);
             this.users = list.items;
 
         },
@@ -244,7 +247,9 @@ export default {
             const url = await window.stdurl(`/api/training`);
             url.searchParams.append('start', new Date(this.filter.start).toISOString());
             url.searchParams.append('end', new Date(this.filter.end).toISOString());
+            url.searchParams.append('limit', 1000);
             url.searchParams.append('team', this.team.id);
+
             const list = await window.std(url);
             this.trainings = list.items;
 
@@ -261,7 +266,7 @@ export default {
 
                 if (training.required) this.total++;
 
-                for (const user of users.assigned) {
+                for (const user of users.items) {
                     if (!user.confirmed) continue;
                     training.users.add(user.uid);
 
