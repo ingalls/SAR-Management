@@ -31,12 +31,6 @@ mesacountysar.com {
         output stdout
     }
 
-    route / {
-        header {
-            Cache-Control "no-store"
-        }
-    }
-
     route * {
         root * /home/eiger/MesaCountySAR/dist
         try_files {path} {path}/ /index.html?{query}
@@ -66,6 +60,10 @@ team.mesacountysar.com {
     }
 
     route * {
+        header {
+            Cache-Control "no-store"
+        }
+
         root * /home/eiger/SAR-Management/api/web/dist
         try_files {path} {path}/ /index.html?{query}
         file_server
