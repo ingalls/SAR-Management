@@ -193,6 +193,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
 
+        if (!pgres[0].teams_id) pgres[0].teams_id = [];
         if (!pgres[0].teams) pgres[0].teams = [];
         if (!pgres[0].users) pgres[0].users = [];
 
