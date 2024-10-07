@@ -246,7 +246,7 @@ export default {
             url.searchParams.append('end', new Date(this.filter.end).toISOString());
             url.searchParams.append('team', this.team.id);
             const list = await window.std(url);
-            this.trainings = list.training;
+            this.trainings = list.items;
 
             this.total = 0;
 
