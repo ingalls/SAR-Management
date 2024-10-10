@@ -1,6 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
-import { GenericListOrder } from '@openaddresses/batch-generic';
+import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import { User } from '../lib/schema.js';
@@ -22,7 +22,8 @@ export default async function router(schema: Schema, config: Config) {
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(User)})),
-            filter: Type.Optional(Type.String({ default: '' }))
+            filter: Type.Optional(Type.String({ default: '' })),
+            disabled: Type.Optional(Type.Boolean({ default: false })),
         }),
         res: Type.Object({
             total: Type.Integer(),
@@ -39,6 +40,8 @@ export default async function router(schema: Schema, config: Config) {
                 sort: req.query.sort,
                 where: sql`
                     teams_id @> ARRAY[${req.params.teamid}::INT]
+                    AND (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
+                    AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
                 `
             });
 

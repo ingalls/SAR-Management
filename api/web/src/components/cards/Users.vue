@@ -7,88 +7,76 @@
                         Users
                     </h3>
 
-                    <div class='ms-auto'>
+                    <div class='ms-auto btn-list align-items-center'>
+                        <TablerInput
+                            icon='search'
+                            v-model='paging.filter'
+                            placeholder='Search…'
+                        />
+
                         <div class='btn-list'>
                             <div
-                                v-if='!edit'
-                                class='input-icon'
+                                class='btn-group'
+                                role='group'
                             >
                                 <input
-                                    v-model='paging.filter'
-                                    style='height: 40px;'
-                                    type='text'
-                                    class='form-control'
-                                    placeholder='Search…'
+                                    v-model='mode'
+                                    type='radio'
+                                    class='btn-check'
+                                    name='btn-radio-toolbar'
+                                    value='list'
                                 >
-                                <span class='input-icon-addon'>
-                                    <SearchIcon />
-                                </span>
-                            </div>
-
-                            <div class='btn-list'>
-                                <div
-                                    class='btn-group'
-                                    role='group'
+                                <label
+                                    class='btn btn-icon'
+                                    @click='mode="list"'
+                                ><ListIcon /></label>
+                                <input
+                                    v-model='mode'
+                                    type='radio'
+                                    class='btn-check'
+                                    name='btn-radio-toolbar'
+                                    value='gallery'
                                 >
-                                    <input
-                                        v-model='mode'
-                                        type='radio'
-                                        class='btn-check'
-                                        name='btn-radio-toolbar'
-                                        value='list'
-                                    >
-                                    <label
-                                        class='btn btn-icon'
-                                        @click='mode="list"'
-                                    ><ListIcon /></label>
-                                    <input
-                                        v-model='mode'
-                                        type='radio'
-                                        class='btn-check'
-                                        name='btn-radio-toolbar'
-                                        value='gallery'
-                                    >
-                                    <label
-                                        class='btn btn-icon'
-                                        @click='mode="gallery"'
-                                    ><PolaroidIcon /></label>
-                                </div>
-
-                                <button class='btn px-2'>
-                                    <AddressBookIcon
-                                        class='cursor-pointer'
-                                        @click='exportUsers("vcard")'
-                                    />
-                                </button>
-                                <template v-if='edit'>
-                                    <TablerLoading
-                                        v-if='loading.add'
-                                        :inline='true'
-                                    />
-                                    <UserDropdownIcon
-                                        v-else
-                                        :button='true'
-                                        @selected='addUser($event)'
-                                    />
-                                </template>
+                                <label
+                                    class='btn btn-icon'
+                                    @click='mode="gallery"'
+                                ><PolaroidIcon /></label>
                             </div>
 
-                            <button
-                                v-if='dropdown && edit'
-                                data-bs-toggle='dropdown'
-                                type='button'
-                                class='btn dropdown-toggle dropdown-toggle-split'
-                                aria-expanded='false'
-                            />
-                            <div
-                                class='dropdown-menu dropdown-menu-end'
-                                style=''
-                            >
-                                <a
-                                    class='dropdown-item'
-                                    @click='$router.push("/user/new")'
-                                >New User</a>
-                            </div>
+                            <button class='btn px-2'>
+                                <AddressBookIcon
+                                    class='cursor-pointer'
+                                    @click='exportUsers("vcard")'
+                                />
+                            </button>
+                            <template v-if='edit'>
+                                <TablerLoading
+                                    v-if='loading.add'
+                                    :inline='true'
+                                />
+                                <UserDropdownIcon
+                                    v-else
+                                    :button='true'
+                                    @selected='addUser($event)'
+                                />
+                            </template>
+                        </div>
+
+                        <button
+                            v-if='dropdown && edit'
+                            data-bs-toggle='dropdown'
+                            type='button'
+                            class='btn dropdown-toggle dropdown-toggle-split'
+                            aria-expanded='false'
+                        />
+                        <div
+                            class='dropdown-menu dropdown-menu-end'
+                            style=''
+                        >
+                            <a
+                                class='dropdown-item'
+                                @click='$router.push("/user/new")'
+                            >New User</a>
                         </div>
                     </div>
                 </div>
@@ -245,6 +233,7 @@ import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
+    TablerInput,
     TablerDelete,
     TablerEpoch,
     TablerLoading
@@ -256,6 +245,7 @@ export default {
     components: {
         TablerNone,
         TablerEpoch,
+        TablerInput,
         Avatar,
         AddressBookIcon,
         UserDropdownIcon,
