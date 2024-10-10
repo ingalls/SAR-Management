@@ -34,7 +34,7 @@ export default async function router(schema: Schema, config: Config) {
         description: 'Get all users on the server',
         query: Type.Object({
             format: Type.Optional(Type.String({ enum: [ "csv", "json", "vcard" ] })),
-            fields: Type.Optional(Type.String({ enum: Object.keys(User) })),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(User) }))),
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
@@ -63,7 +63,6 @@ export default async function router(schema: Schema, config: Config) {
                 (await config.models.User.stream({
                     where: sql`
                         (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
-                        AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                         AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
                     `
                 })).on('data', async (user) => {

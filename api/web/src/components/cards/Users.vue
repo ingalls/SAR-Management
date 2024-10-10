@@ -384,12 +384,20 @@ export default {
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
 
             if (format === 'csv') {
-                url.searchParams.append('fields', this.header.filter((h) => {
+                const fields = [];
+                this.header.filter((h) => {
                     return h.display;
-                }).map((h) => {
-                    if (h.name === 'name') return 'fname,lname';
-                    return h.name;
-                }));
+                }).forEach((h) => {
+                    if (h.name === 'name') {
+                        fields.push('fname', 'lname');
+                    } else {
+                        fields.push(h.name);
+                    }
+                });
+
+                for (const field of fields) {
+                    url.searchParams.append('fields', field)
+                }
             }
 
             const res = await window.std(url);

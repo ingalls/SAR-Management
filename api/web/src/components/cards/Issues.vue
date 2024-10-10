@@ -258,11 +258,20 @@ export default {
             url.searchParams.append('sort', this.paging.sort);
 
             if (format === 'csv') {
-                url.searchParams.append('fields', this.header.filter((h) => {
+                const fields = [];
+                this.header.filter((h) => {
                     return h.display;
-                }).map((h) => {
-                    return h.name;
-                }));
+                }).forEach((h) => {
+                    if (h.name === 'name') {
+                        fields.push('fname', 'lname');
+                    } else {
+                        fields.push(h.name);
+                    }
+                });
+
+                for (const field of fields) {
+                    url.searchParams.append('fields', field)
+                }
             }
 
             const res = await window.std(url);
