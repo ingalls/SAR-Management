@@ -27,14 +27,16 @@ export function userFormat(u: Static<typeof UserResponse>): Static<typeof UserRe
 
 export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
+    const fields = new Set(Object.keys(User))
+    fields.delete('password');
 
     await schema.get('/user', {
         name: 'Get Users',
         group: 'User',
         description: 'Get all users on the server',
         query: Type.Object({
-            format: Type.Optional(Type.String({ enum: [ "csv", "json", "vcard" ] })),
-            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(User) }))),
+            format: Type.String({ enum: [ "csv", "json", "vcard" ], default: 'json' }),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Array.from(fields) }))),
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),

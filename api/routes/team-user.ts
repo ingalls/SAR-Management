@@ -10,6 +10,9 @@ import { StandardResponse, UserResponse } from '../lib/types.js';
 import { userFormat } from './users.js';
 
 export default async function router(schema: Schema, config: Config) {
+    const fields = new Set(Object.keys(User))
+    fields.delete('password');
+
     await schema.get('/team/:teamid/user', {
         name: 'List Users',
         group: 'TeamUsers',
@@ -18,12 +21,14 @@ export default async function router(schema: Schema, config: Config) {
             teamid: Type.Integer(),
         }),
         query: Type.Object({
+            format: Type.String({ enum: [ "csv", "json", "vcard" ], default: 'json' }),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Array.from(fields) }))),
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(User)})),
             filter: Type.Optional(Type.String({ default: '' })),
-            disabled: Type.Optional(Type.Boolean({ default: false })),
+            disabled: Type.Optional(Type.Boolean({ default: false }))
         }),
         res: Type.Object({
             total: Type.Integer(),
@@ -33,17 +38,61 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Team:View');
 
-            const list = await config.models.User.augmented_list({
-                limit: req.query.limit,
-                page: req.query.page,
-                order: req.query.order,
-                sort: req.query.sort,
-                where: sql`
-                    teams_id @> ARRAY[${req.params.teamid}::INT]
-                    AND (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
-                    AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
-                `
-            });
+            if (['vcard', 'csv'].includes(req.query.format)) {
+                if (req.query.format === 'vcard') {
+                    res.set('Content-Type', 'text/x-vcard');
+                    res.set('Content-Disposition', 'attachment; filename="sar-users.vcf"');
+                } else if (req.query.format === 'csv') {
+                    res.set('Content-Type', 'text/csv');
+                    res.set('Content-Disposition', 'attachment; filename="sar-users.csv"');
+                    res.write(stringify([req.query.fields]));
+                }
+                (await config.models.User.stream({
+                    where: sql`
+                        AND (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
+                        AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
+                    `
+                })).on('data', async (u) => {
+                    const user = await config.model.from(u.id);
+
+                    if (req.query.teams_id && !user.teams.includes(req.query.teams_id)) {
+                        return;
+                    }
+
+                    if (req.query.format === 'vcard') {
+                        const card = new VCard();
+                        card.addName(user.lname, user.fname);
+                        card.addCompany('MesaSAR');
+                        card.addEmail(user.email);
+                        card.addPhoneNumber(phone(user.phone).phoneNumber);
+                        res.write(card.toString());
+                    } else if (req.query.format === 'csv') {
+                        const line = [];
+                        for (const field of req.query.fields) {
+                            line.push(user[field] === undefined ? '' : user[field]);
+                        }
+                        res.write(stringify([line]));
+                    }
+                }).on('end', () => {
+                    res.end();
+                });
+            } else {
+                const list = await config.models.User.augmented_list({
+                    limit: req.query.limit,
+                    page: req.query.page,
+                    order: req.query.order,
+                    sort: req.query.sort,
+                    where: sql`
+                        teams_id @> ARRAY[${req.params.teamid}::INT]
+                        AND (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
+                        AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
+                    `
+                });
+
+                list.items.map(userFormat)
+
+                return res.json(list);
+            }
 
             list.items.map(userFormat)
 
