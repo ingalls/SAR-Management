@@ -33,29 +33,27 @@
                                     />
 
                                     <div class='ms-auto'>
-                                        <div class='btn-list'>
-                                            <div class='ms-auto'>
-                                                <span
-                                                    v-if='user.disabled'
-                                                    class='badge bg-red text-white'
-                                                    style='height: 20px;'
-                                                >DISABLED</span>
-                                                <span
-                                                    v-else-if='user.access === "admin"'
-                                                    class='badge bg-red text-white'
-                                                    style='height: 20px;'
-                                                >Admin</span>
-                                                <span
-                                                    v-else-if='user.access === "user"'
-                                                    class='badge bg-blue text-white'
-                                                    style='height: 20px;'
-                                                >User</span>
-                                                <span
-                                                    v-else-if='user.access === "read"'
-                                                    class='badge bg-gray text-white'
-                                                    style='height: 20px;'
-                                                >Read</span>
-                                            </div>
+                                        <div class='btn-list ms-auto align-items-center'>
+                                            <span
+                                                v-if='user.disabled'
+                                                class='badge bg-red text-white'
+                                                style='height: 20px;'
+                                            >DISABLED</span>
+                                            <span
+                                                v-else-if='user.access === "admin"'
+                                                class='badge bg-red text-white'
+                                                style='height: 20px;'
+                                            >Admin</span>
+                                            <span
+                                                v-else-if='user.access === "user"'
+                                                class='badge bg-blue text-white'
+                                                style='height: 20px;'
+                                            >User</span>
+                                            <span
+                                                v-else-if='user.access === "read"'
+                                                class='badge bg-gray text-white'
+                                                style='height: 20px;'
+                                            >Read</span>
 
                                             <button
                                                 data-bs-toggle='dropdown'

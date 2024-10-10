@@ -14,6 +14,19 @@
                             placeholder='Search…'
                         />
 
+                        <TablerDropdown>
+                            <button class='btn px-2 py-1'>
+                                <IconFilter
+                                    :size='32'
+                                    stroke='1'
+                                />
+                            </button>
+
+                            <template #dropdown>
+                                <TablerToggle label='Disabled Users' v-model='paging.disabled'/>
+                            </template>
+                        </TablerDropdown>
+
                         <div class='btn-list'>
                             <div
                                 class='btn-group'
@@ -29,7 +42,7 @@
                                 <label
                                     class='btn btn-icon'
                                     @click='mode="list"'
-                                ><ListIcon /></label>
+                                ><IconList size='32' stroke='1'/></label>
                                 <input
                                     v-model='mode'
                                     type='radio'
@@ -40,13 +53,15 @@
                                 <label
                                     class='btn btn-icon'
                                     @click='mode="gallery"'
-                                ><PolaroidIcon /></label>
+                                ><IconPolaroid size='32' stroke='1'/></label>
                             </div>
 
                             <button class='btn px-2'>
-                                <AddressBookIcon
+                                <IconAddressBook
                                     class='cursor-pointer'
                                     @click='exportUsers("vcard")'
+                                    size='32'
+                                    stroke='1'
                                 />
                             </button>
                             <template v-if='edit'>
@@ -61,36 +76,16 @@
                                 />
                             </template>
                         </div>
-
-                        <button
-                            v-if='dropdown && edit'
-                            data-bs-toggle='dropdown'
-                            type='button'
-                            class='btn dropdown-toggle dropdown-toggle-split'
-                            aria-expanded='false'
-                        />
-                        <div
-                            class='dropdown-menu dropdown-menu-end'
-                            style=''
-                        >
-                            <a
-                                class='dropdown-item'
-                                @click='$router.push("/user/new")'
-                            >New User</a>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <template v-if='loading.list'>
-            <TablerLoading desc='Loading Users' />
-        </template>
-        <template v-else-if='!list.items.length'>
-            <TablerNone
-                label='Users'
-                :create='false'
-            />
-        </template>
+        <TablerLoading v-if='loading.list' desc='Loading Users' />
+        <TablerNone
+            v-else-if='!list.items.length'
+            label='Users'
+            :create='false'
+        />
         <template v-else-if='mode === "list"'>
             <div class='table-responsive'>
                 <table class='table card-table table-hover table-vcenter datatable'>
@@ -112,10 +107,18 @@
                                         v-if='h.name === "name"'
                                         @click='$router.push(`/user/${user.id}`)'
                                     >
-                                        <Avatar
-                                            :link='true'
-                                            :user='user'
-                                        />
+                                        <div class='d-flex align-items-center'>
+                                            <span
+                                                v-if='user.disabled'
+                                                class='badge bg-red text-white me-3'
+                                                style='height: 20px;'
+                                            >DISABLED</span>
+
+                                            <Avatar
+                                                :link='true'
+                                                :user='user'
+                                            />
+                                        </div>
                                     </td>
                                     <td v-else-if='h.name === "email"'>
                                         <a
@@ -223,20 +226,23 @@
 <script>
 import Avatar from '../util/Avatar.vue';
 import {
-    ListIcon,
-    SearchIcon,
-    PolaroidIcon,
-    AddressBookIcon,
-} from 'vue-tabler-icons'
+    IconList,
+    IconFilter,
+    IconSearch,
+    IconPolaroid,
+    IconAddressBook,
+} from '@tabler/icons-vue';
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
     TablerInput,
+    TablerDropdown,
     TablerDelete,
     TablerEpoch,
-    TablerLoading
+    TablerLoading,
+    TablerToggle,
 } from '@tak-ps/vue-tabler'
 import UserProfile from '../User/Profile.vue';
 
@@ -246,15 +252,18 @@ export default {
         TablerNone,
         TablerEpoch,
         TablerInput,
-        Avatar,
-        AddressBookIcon,
-        UserDropdownIcon,
+        TablerDropdown,
         TablerDelete,
-        SearchIcon,
-        ListIcon,
-        PolaroidIcon,
-        UserProfile,
+        TablerToggle,
         TablerLoading,
+        UserDropdownIcon,
+        Avatar,
+        IconList,
+        IconFilter,
+        IconSearch,
+        IconPolaroid,
+        IconAddressBook,
+        UserProfile,
         TableFooter,
         TableHeader
     },
@@ -289,6 +298,7 @@ export default {
                 sort: 'Name',
                 order: 'asc',
                 limit: this.limit,
+                disabled: false,
                 page: 0
             },
             list: {
@@ -356,6 +366,7 @@ export default {
             url.searchParams.append('limit', this.paging.limit);
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('disabled', this.paging.disabled);
 
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
             else url.searchParams.append('sort', this.paging.sort.toLowerCase().replace(' ', '_'));
@@ -368,6 +379,7 @@ export default {
             const url = window.stdurl(this.url);
             if (this.team) url.searchParams.append('team', this.team);
             url.searchParams.append('filter', this.paging.filter);
+            url.searchParams.append('disabled', this.paging.disabled);
             url.searchParams.append('format', format);
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
 
