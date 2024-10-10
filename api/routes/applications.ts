@@ -74,7 +74,7 @@ export default async function router(schema: Schema, config: Config) {
                 meta: {}
             };
             for (const prop in req.body) {
-                if (['name', 'phone', 'email'].includes(prop)) {
+                if (['name', 'phone', 'email', 'group'].includes(prop)) {
                     input[prop] = req.body[prop];
                 } else {
                     input.meta[prop] = req.body[prop];
@@ -136,7 +136,7 @@ export default async function router(schema: Schema, config: Config) {
                 meta: {}
             };
             for (const prop in req.body) {
-                if (['name', 'phone', 'email'].includes(prop)) {
+                if (['name', 'phone', 'email', 'group'].includes(prop)) {
                     input[prop] = req.body[prop];
                 } else {
                     input.meta[prop] = req.body[prop];
@@ -144,6 +144,9 @@ export default async function router(schema: Schema, config: Config) {
             }
 
             const app = await config.models.Application.commit(req.params.applicationid, input);
+
+            Object.assign(app, app.meta);
+            delete app.meta;
 
             return res.json(app);
         } catch (err) {
