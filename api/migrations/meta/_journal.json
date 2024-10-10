@@ -43,6 +43,13 @@
       "when": 1728340423596,
       "tag": "0005_grey_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1728582519150,
+      "tag": "0006_loose_eternals",
+      "breakpoints": true
     }
   ]
 }
