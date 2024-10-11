@@ -1,5 +1,6 @@
 import Modeler from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
+import { Poll } from '../schema.js';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { sql, SQL } from 'drizzle-orm';
