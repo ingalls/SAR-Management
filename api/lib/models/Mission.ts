@@ -77,16 +77,16 @@ export default class MissionModel extends Modeler<typeof Mission> {
         const RootTags = this.pool
             .select({
                 tags_mission_id: max(MissionTagAssigned.mission_id).as('tags_mission_id'),
-                tags_id: sql<Array<number>>`coalesce(array_agg(tags.id), '{}'::INT[])`.as('tags_id'),
+                tags_id: sql<Array<number>>`coalesce(array_agg(mission_tag.id), '{}'::INT[])`.as('tags_id'),
                 tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
-                    'id', teams.id,
-                    'name', teams.name,
-                    'created', teams.created,
-                    'updated', teams.updated,
+                    'id', mission_tag.id,
+                    'name', mission_tag.name,
+                    'created', mission_tag.created,
+                    'updated', mission_tag.updated
                 )), '[]'::JSON)`.as('tags'),
             })
             .from(MissionTag)
-            .leftJoin(MissionTag, eq(MissionTag.id, MissionTagAssigned.tag_id))
+            .leftJoin(MissionTagAssigned, eq(MissionTag.id, MissionTagAssigned.tag_id))
             .groupBy(MissionTagAssigned.mission_id)
             .as("root_tags");
 
@@ -196,19 +196,18 @@ export default class MissionModel extends Modeler<typeof Mission> {
         const RootTags = this.pool
             .select({
                 tags_mission_id: max(MissionTagAssigned.mission_id).as('tags_mission_id'),
-                tags_id: sql<Array<number>>`coalesce(array_agg(tags.id), '{}'::INT[])`.as('tags_id'),
+                tags_id: sql<Array<number>>`coalesce(array_agg(mission_tag.id), '{}'::INT[])`.as('tags_id'),
                 tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
-                    'id', teams.id,
-                    'name', teams.name,
-                    'created', teams.created,
-                    'updated', teams.updated,
+                    'id', mission_tag.id,
+                    'name', mission_tag.name,
+                    'created', mission_tag.created,
+                    'updated', mission_tag.updated
                 )), '[]'::JSON)`.as('tags'),
             })
             .from(MissionTag)
-            .leftJoin(MissionTag, eq(MissionTag.id, MissionTagAssigned.tag_id))
+            .leftJoin(MissionTagAssigned, eq(MissionTag.id, MissionTagAssigned.tag_id))
             .groupBy(MissionTagAssigned.mission_id)
             .as("root_tags");
-
 
         const RootUsers = this.pool
             .select({
