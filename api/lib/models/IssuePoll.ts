@@ -2,8 +2,7 @@ import Modeler from '@openaddresses/batch-generic';
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Poll, PollQuestion, PollVote } from '../schema.js';
-import { sql, eq, is, SQL } from 'drizzle-orm';
+import { sql, SQL } from 'drizzle-orm';
 
 const AugmentedPollQuestion = Type.Object({
     id: Type.Integer(),

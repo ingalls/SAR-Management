@@ -3,7 +3,9 @@ import { Type } from '@sinclair/typebox';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
+import VCard from 'vcard-creator';
 import { stringify } from 'csv-stringify/sync';
+import { phone } from 'phone';
 import { User } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
@@ -102,10 +104,6 @@ export default async function router(schema: Schema, config: Config) {
 
                 return res.json(list);
             }
-
-            list.items.map(userFormat)
-
-            return res.json(list);
         } catch (err) {
             return Err.respond(err, res);
         }

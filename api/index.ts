@@ -18,7 +18,7 @@ try {
 
     Object.assign(process.env, JSON.parse(String(fs.readFileSync(dotfile))));
 } catch (err) {
-    console.log('ok - no .env file loaded');
+    console.log(`ok - no .env file loaded: ${err}`);
 }
 
 import Config from './lib/config.js';
