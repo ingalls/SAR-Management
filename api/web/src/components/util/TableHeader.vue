@@ -15,15 +15,17 @@
                         v-if='h.name === sort'
                         class='ms-auto'
                     >
-                        <ChevronDownIcon
+                        <IconChevronDown
                             v-if='order === "asc"'
-                            height='16'
+                            size='16'
+                            stroke='1'
                             class='cursor-pointer'
                             @click='order = "desc"'
                         />
-                        <ChevronUpIcon
+                        <IconChevronUp
                             v-else
-                            height='16'
+                            size='16'
+                            stroke='1'
                             class='cursor-pointer'
                             @click='order = "asc"'
                         />
@@ -31,14 +33,13 @@
 
                     <template v-if='shown[shown.length - 1] === h'>
                         <div class='ms-auto'>
-                            <div class='dropdown'>
-                                <SettingsIcon
-                                    height='16'
-                                    width='16'
-                                    class='mx-2 dropdown-toggle cursor-pointer'
-                                    data-bs-toggle='dropdown'
+                            <TablerDropdown>
+                                <IconSettings
+                                    size='16'
+                                    stroke='1'
+                                    class='mx-2 cursor-pointer'
                                 />
-                                <div class='dropdown-menu'>
+                                <template #dropdown>
                                     <div
                                         v-for='(h, h_it) of header'
                                         :key='h_it'
@@ -68,8 +69,8 @@
                                             Export
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </template>
+                            </TablerDropdown>
                         </div>
                     </template>
                 </div>
@@ -80,17 +81,21 @@
 
 <script>
 import {
-    ChevronUpIcon,
-    ChevronDownIcon,
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconChevronUp,
+    IconChevronDown,
+    IconSettings
+} from '@tabler/icons-vue';
+import {
+    TablerDropdown
+} from '@tak-ps/vue-tabler';
 
 export default {
     name: 'TableHeader',
     components: {
-        SettingsIcon,
-        ChevronUpIcon,
-        ChevronDownIcon
+        TablerDropdown,
+        IconSettings,
+        IconChevronUp,
+        IconChevronDown
     },
     props: {
         header: {
