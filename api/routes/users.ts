@@ -62,29 +62,44 @@ export default async function router(schema: Schema, config: Config) {
                     res.set('Content-Disposition', 'attachment; filename="sar-users.csv"');
                     res.write(stringify([req.query.fields]));
                 }
-                (await config.models.User.stream({
-                    where: sql`
-                        (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
-                        AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
-                    `
-                })).on('data', async (user) => {
-                    if (req.query.format === 'vcard') {
-                        const card = new VCard();
-                        card.addName(user.lname, user.fname);
-                        card.addCompany('MesaSAR');
-                        card.addEmail(user.email);
-                        card.addPhoneNumber(phone(user.phone).phoneNumber);
-                        res.write(card.toString());
-                    } else if (req.query.format === 'csv') {
-                        const line = [];
-                        for (const field of req.query.fields) {
-                            line.push(user[field] === undefined ? '' : user[field]);
+
+                let total: number;
+                let page = 0;
+                do {
+                    const list = await config.models.User.augmented_list({
+                        page: page,
+                        limit: 100,
+                        where: sql`
+                            (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
+                            AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
+                            AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
+                        `
+                    })
+
+                    total = list.total;
+
+                    for (const user of list.items) {
+                        if (req.query.format === 'vcard') {
+                            const card = new VCard();
+                            card.addName(user.lname, user.fname);
+                            card.addCompany('MesaSAR');
+                            card.addEmail(user.email);
+                            card.addPhoneNumber(phone(user.phone).phoneNumber);
+                            res.write(card.toString());
+                        } else if (req.query.format === 'csv') {
+                            const line = [];
+                            for (const field of req.query.fields) {
+                                line.push(user[field] === undefined ? '' : user[field]);
+                            }
+                            res.write(stringify([line]));
                         }
-                        res.write(stringify([line]));
+
                     }
-                }).on('end', () => {
-                    res.end();
-                });
+
+                    page++
+                } while (total > (page + 1) * 100);
+
+                res.end();
             } else {
                 const list = await config.models.User.augmented_list({
                     limit: req.query.limit,
