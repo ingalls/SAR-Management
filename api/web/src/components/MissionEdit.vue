@@ -73,8 +73,6 @@
                                                 label='Assigned'
                                                 :fieldable='true'
                                             />
-                                        </div>
-                                        <div class='col-12 col-md-4'>
                                             <MissionTagSelect
                                                 v-model='mission.tags'
                                                 label='Tags'
@@ -189,6 +187,7 @@ export default {
         TablerLoading,
         TablerBreadCrumb,
         MissionTagSelect,
+        TeamSelect,
         NoAccess
     },
     props: {

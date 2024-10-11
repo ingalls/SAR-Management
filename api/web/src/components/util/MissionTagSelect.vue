@@ -18,14 +18,15 @@
                             <div class='m-1'>
                                 <TablerInput
                                     v-model='filter'
-                                    placeholder='Filter Teams'
+                                    placeholder='Filter Tags'
                                 />
 
                                 <div
                                     v-for='tag in list.items'
                                     @click='push_tags(team)'
+                                    class='cursor-pointer hover-light mx-1 my-1 px-2 py-2'
                                 >
-                                    <span v-text='tag'/>
+                                    <span v-text='tag.name'/>
                                 </div>
                             </div>
                         </template>
@@ -35,7 +36,7 @@
 
             <template v-if='!tags.length'>
                 <TablerNone
-                    label='Teams Assigned'
+                    label='Tags Assigned'
                     :create='false'
                     :compact='true'
                 />
@@ -46,7 +47,7 @@
                     :key='a.id'
                     class='d-flex align-items-center my-1'
                 >
-                    <TeamBadge :team='a' />
+                    <span v-text='a.name' />
                     <div class='ms-auto'>
                         <IconTrash
                             size='16'
@@ -62,7 +63,6 @@
 </template>
 
 <script>
-import TeamBadge from './TeamBadge.vue';
 import {
     IconSettings,
     IconTrash
@@ -78,7 +78,6 @@ export default {
     components: {
         TablerNone,
         TablerDropdown,
-        TeamBadge,
         IconSettings,
         IconTrash,
         TablerInput
@@ -90,7 +89,7 @@ export default {
         },
         label: {
             type: String,
-            default: 'Teams'
+            default: 'Tags'
         },
         limit: {
             type: Number,
