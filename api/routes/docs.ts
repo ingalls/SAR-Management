@@ -51,7 +51,7 @@ export default async function router(schema: Schema, config: Config) {
 
             const docs = new Set();
 
-            const documents = [];
+            let documents = [];
 
             documents.push(...(s3list.Contents || []).filter((obj) => {
                 return obj.Key !== req.query.prefix;
@@ -82,6 +82,10 @@ export default async function router(schema: Schema, config: Config) {
                         size: 0
                     };
                 }));
+
+            documents = documents.filter((doc) => {
+                return doc.key.toLowerCase().includes(req.query.filter.toLowerCase())
+            })
 
             return res.json({
                 total: documents.length,

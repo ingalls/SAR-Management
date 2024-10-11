@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
             limit: Type.Optional(Type.Integer()),
             assigned: Type.Optional(Type.Integer()),
             container: Type.Optional(Type.Boolean()),
-            archived: Type.Optional(Type.Boolean()),
+            archived: Type.Boolean({ default: false }),
             parent: Type.Optional(Type.Integer({ "description": "By default all equipment regardless of container status is returned. Set to 0 for root containers or to the parent ID for items in a specific container" })),
             page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
             order: Type.Optional(Type.Enum(GenericListOrder)),
