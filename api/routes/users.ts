@@ -80,6 +80,7 @@ export default async function router(schema: Schema, config: Config) {
 
                     for (const user of list.items) {
                         if (req.query.format === 'vcard') {
+                            // @ts-expect-error Old School import problems
                             const card = new VCard.default();
                             card.addName(user.lname, user.fname);
                             card.addCompany('MesaSAR');

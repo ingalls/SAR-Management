@@ -16,6 +16,13 @@ export const PartialTeam = Type.Object({
     fieldable: Type.Boolean()
 });
 
+export const PartialTag = Type.Object({
+    id: Type.Integer(),
+    name: Type.String(),
+    created: Type.String(),
+    updated: Type.String()
+});
+
 export const AugmentedMission = Type.Object({
     id: Type.Integer(),
     created: Type.String(),
@@ -29,9 +36,11 @@ export const AugmentedMission = Type.Object({
     location: Type.String(),
     location_geom: Type.Optional(Type.Any()),
     externalid: Type.Optional(Type.String()),
-    teams: Type.Array(PartialTeam),
     users: Type.Array(Type.Integer()),
-    teams_id: Type.Array(Type.Integer())
+    teams: Type.Array(PartialTeam),
+    teams_id: Type.Array(Type.Integer()),
+    tags: Type.Array(PartialTag),
+    tags_id: Type.Array(Type.Integer())
 });
 
 export default class MissionModel extends Modeler<typeof Mission> {
@@ -69,7 +78,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .select({
                 tags_mission_id: max(MissionTagAssigned.mission_id).as('tags_mission_id'),
                 tags_id: sql<Array<number>>`coalesce(array_agg(tags.id), '{}'::INT[])`.as('tags_id'),
-                teams: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
+                tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
                     'id', teams.id,
                     'name', teams.name,
                     'created', teams.created,
@@ -77,7 +86,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 )), '[]'::JSON)`.as('tags'),
             })
             .from(MissionTag)
-            .leftJoin(Team, eq(Team.id, MissionTagAssigned.team_id))
+            .leftJoin(MissionTag, eq(MissionTag.id, MissionTagAssigned.tag_id))
             .groupBy(MissionTagAssigned.mission_id)
             .as("root_tags");
 
@@ -106,6 +115,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 externalid: Mission.externalid,
                 teams: RootTeams.teams,
                 teams_id: RootTeams.teams_id,
+                tags: RootTags.tags,
+                tags_id: RootTags.tags_id,
                 users: RootUsers.users
             })
             .from(Mission)
@@ -186,7 +197,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .select({
                 tags_mission_id: max(MissionTagAssigned.mission_id).as('tags_mission_id'),
                 tags_id: sql<Array<number>>`coalesce(array_agg(tags.id), '{}'::INT[])`.as('tags_id'),
-                teams: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
+                tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
                     'id', teams.id,
                     'name', teams.name,
                     'created', teams.created,
@@ -194,7 +205,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 )), '[]'::JSON)`.as('tags'),
             })
             .from(MissionTag)
-            .leftJoin(Team, eq(Team.id, MissionTagAssigned.team_id))
+            .leftJoin(MissionTag, eq(MissionTag.id, MissionTagAssigned.tag_id))
             .groupBy(MissionTagAssigned.mission_id)
             .as("root_tags");
 
@@ -224,6 +235,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 externalid: Mission.externalid,
                 teams: RootTeams.teams,
                 teams_id: RootTeams.teams_id,
+                tags: RootTags.tags,
+                tags_id: RootTags.tags_id,
                 users: RootUsers.users
             })
             .from(Mission)
