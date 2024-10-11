@@ -1,4 +1,64 @@
 <template>
+    <TablerModal v-if='modal'>
+        <div class='bg-white'>
+            <div class='modal-status bg-yellow' />
+            <div class='modal-header'>
+                <div class='modal-title'>
+                    Table Columns
+                </div>
+
+                <button
+                    type='button'
+                    class='btn-close'
+                    aria-label='Close'
+                    @click='modal = false'
+                />
+            </div>
+            <div class='modal-body'>
+                <div
+                    v-for='(h, h_it) of header'
+                    :key='h_it'
+                    class='mx-1 my-1'
+                >
+                    <label class='form-check subheader mb-0'>
+                        <input
+                            class='form-check-input'
+                            type='checkbox'
+                            :checked='h.display'
+                            @change='displayHeader(h_it, $event)'
+                        >
+                        <span
+                            class='form-check-label'
+                            v-text='h.name'
+                        />
+                    </label>
+                </div>
+
+                <div class='pt-4'>
+                    <div
+                        v-if='export'
+                        class='px-2 py-1'
+                    >
+                        <div
+                            class='btn btn-secondary w-full'
+                            @click='$emit("export")'
+                        >
+                            Export
+                        </div>
+                    </div>
+                    <div class='px-2 py-1'>
+                        <div
+                            class='btn btn-primary w-full'
+                            @click='modal = false'
+                        >
+                            Done
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </TablerModal>
+
     <thead>
         <tr>
             <th
@@ -33,44 +93,12 @@
 
                     <template v-if='shown[shown.length - 1] === h'>
                         <div class='ms-auto'>
-                            <TablerDropdown>
-                                <IconSettings
-                                    size='16'
-                                    stroke='1'
-                                    class='mx-2 cursor-pointer'
-                                />
-                                <template #dropdown>
-                                    <div
-                                        v-for='(h, h_it) of header'
-                                        :key='h_it'
-                                        class='mx-1 my-1'
-                                    >
-                                        <label class='form-check subheader mb-0'>
-                                            <input
-                                                class='form-check-input'
-                                                type='checkbox'
-                                                :checked='h.display'
-                                                @change='displayHeader(h_it, $event)'
-                                            >
-                                            <span
-                                                class='form-check-label'
-                                                v-text='h.name'
-                                            />
-                                        </label>
-                                    </div>
-                                    <div
-                                        v-if='export'
-                                        class='px-2 py-1'
-                                    >
-                                        <div
-                                            class='btn w-full'
-                                            @click='$emit("export")'
-                                        >
-                                            Export
-                                        </div>
-                                    </div>
-                                </template>
-                            </TablerDropdown>
+                            <IconSettings
+                                size='16'
+                                stroke='1'
+                                class='mx-2 cursor-pointer'
+                                @click='modal = true'
+                            />
                         </div>
                     </template>
                 </div>
@@ -86,16 +114,21 @@ import {
     IconSettings
 } from '@tabler/icons-vue';
 import {
-    TablerDropdown
+    TablerModal
 } from '@tak-ps/vue-tabler';
 
 export default {
     name: 'TableHeader',
     components: {
-        TablerDropdown,
+        TablerModal,
         IconSettings,
         IconChevronUp,
         IconChevronDown
+    },
+    data: function() {
+        return {
+            modal: false
+        }
     },
     props: {
         header: {
