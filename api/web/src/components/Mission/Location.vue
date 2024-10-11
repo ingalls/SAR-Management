@@ -74,25 +74,23 @@ export default {
             }
 
             map.once('load', () => {
-                if (this.modelValue) {
-                    map.addSource('point', {
-                        type: 'geojson',
-                        data: {
-                            type: 'FeatureCollection',
-                            features: [{
-                                type: 'Feature',
-                                properties: {},
-                                geometry: this.modelValue
-                            }]
-                        }
-                    });
+                const source = map.getSource('point');
+
+                const fc = {
+                    type: 'FeatureCollection',
+                    features: this.modelValue ? [{
+                        type: 'Feature',
+                        properties: {},
+                        geometry: this.modelValue
+                    }] : []
+                };
+
+                if (source) {
+                    source.setData(fc)
                 } else {
                     map.addSource('point', {
                         type: 'geojson',
-                        data: {
-                            type: 'FeatureCollection',
-                            features: []
-                        }
+                        data: fc
                     });
                 }
 
