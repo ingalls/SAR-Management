@@ -244,6 +244,12 @@ export const MissionAssigned = pgTable('missions_assigned', {
     uid: integer('uid').notNull().references(() => User.id),
 });
 
+export const MissionTagAssigned = pgTable('missions_tag', {
+    id: serial('id').primaryKey(),
+    mission_id: integer('mission_id').notNull().references(() => Mission.id),
+    tag_id: integer('tag_id').notNull().references(() => MissionTag.id),
+});
+
 export const MissionTeam = pgTable('missions_team', {
     id: serial('id').primaryKey(),
     mission_id: integer('mission_id').notNull().references(() => Mission.id),

@@ -16,10 +16,10 @@
                             data-bs-toggle='dropdown'
                             aria-expanded='false'
                         >
-                            <SettingsIcon
+                            <IconSettings
                                 class='cursor-pointer dropdown-toggle'
-                                height='16'
-                                width='16'
+                                size='16'
+                                stroke='1'
                             />
                         </div>
                         <ul
@@ -62,8 +62,9 @@
                 >
                     <TeamBadge :team='a' />
                     <div class='ms-auto'>
-                        <TrashIcon
-                            height='16'
+                        <IconTrash
+                            size='16'
+                            stroke='1'
                             class='cursor-pointer'
                             @click='delete_teams(a_idx, a)'
                         />
@@ -77,9 +78,9 @@
 <script>
 import TeamBadge from './TeamBadge.vue';
 import {
-    SettingsIcon,
-    TrashIcon
-} from 'vue-tabler-icons';
+    IconSettings,
+    IconTrash
+} from '@tabler/icons-vue';
 import {
     TablerNone,
     TablerInput
@@ -90,8 +91,8 @@ export default {
     components: {
         TablerNone,
         TeamBadge,
-        SettingsIcon,
-        TrashIcon,
+        IconSettings,
+        IconTrash,
         TablerInput
     },
     props: {

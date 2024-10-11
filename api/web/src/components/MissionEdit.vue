@@ -74,6 +74,12 @@
                                                 :fieldable='true'
                                             />
                                         </div>
+                                        <div class='col-12 col-md-4'>
+                                            <MissionTagSelect
+                                                v-model='mission.tags'
+                                                label='Tags'
+                                            />
+                                        </div>
                                         <div class='col-12 col-md-12'>
                                             <MdEditor
                                                 v-model='mission.body'
@@ -163,6 +169,7 @@ import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import TeamSelect from './util/TeamSelect.vue';
+import MissionTagSelect from './util/MissionTagSelect.vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import {
@@ -181,7 +188,7 @@ export default {
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
-        TeamSelect,
+        MissionTagSelect,
         NoAccess
     },
     props: {

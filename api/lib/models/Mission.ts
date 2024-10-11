@@ -2,7 +2,7 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Mission, MissionTeam, MissionAssigned, Team } from '../schema.js';
+import { Mission, MissionTeam, MissionAssigned, MissionTagAssigned, Team } from '../schema.js';
 import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
@@ -65,6 +65,22 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .groupBy(MissionTeam.mission_id)
             .as("root_teams");
 
+        const RootTags = this.pool
+            .select({
+                tags_mission_id: max(MissionTagAssigned.mission_id).as('tags_mission_id'),
+                tags_id: sql<Array<number>>`coalesce(array_agg(tags.id), '{}'::INT[])`.as('tags_id'),
+                teams: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
+                    'id', teams.id,
+                    'name', teams.name,
+                    'created', teams.created,
+                    'updated', teams.updated,
+                )), '[]'::JSON)`.as('tags'),
+            })
+            .from(MissionTag)
+            .leftJoin(Team, eq(Team.id, MissionTagAssigned.team_id))
+            .groupBy(MissionTagAssigned.mission_id)
+            .as("root_teams");
+
         const RootUsers = this.pool
             .select({
                 users_mission_id: max(MissionAssigned.mission_id).as('users_mission_id'),
@@ -95,6 +111,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .from(Mission)
             .leftJoin(RootTeams, eq(Mission.id, RootTeams.teams_mission_id))
             .leftJoin(RootUsers, eq(Mission.id, RootUsers.users_mission_id))
+            .leftJoin(RootTags, eq(Mission.id, RootTags.tags_mission_id))
             .orderBy(orderBy)
             .as('root')
 
@@ -114,6 +131,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
             externalid: Root.externalid,
             teams: Root.teams,
             teams_id: Root.teams_id,
+            tags: Root.tags,
+            tags_id: Root.tags_id,
             users: Root.users
         })
             .from(Root)
@@ -130,6 +149,10 @@ export default class MissionModel extends Modeler<typeof Mission> {
                     delete t.count;
                     if (!t.teams_id) t.teams_id = [];
                     if (!t.teams) t.teams = [];
+
+                    if (!t.tags_id) t.tags_id = [];
+                    if (!t.tags) t.tags = [];
+
                     if (!t.users) t.users = [];
 
                     return t as Static<typeof AugmentedMission>
@@ -158,6 +181,23 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .leftJoin(Team, eq(Team.id, MissionTeam.team_id))
             .groupBy(MissionTeam.mission_id)
             .as("root_teams");
+
+        const RootTags = this.pool
+            .select({
+                tags_mission_id: max(MissionTagAssigned.mission_id).as('tags_mission_id'),
+                tags_id: sql<Array<number>>`coalesce(array_agg(tags.id), '{}'::INT[])`.as('tags_id'),
+                teams: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
+                    'id', teams.id,
+                    'name', teams.name,
+                    'created', teams.created,
+                    'updated', teams.updated,
+                )), '[]'::JSON)`.as('tags'),
+            })
+            .from(MissionTag)
+            .leftJoin(Team, eq(Team.id, MissionTagAssigned.team_id))
+            .groupBy(MissionTagAssigned.mission_id)
+            .as("root_teams");
+
 
         const RootUsers = this.pool
             .select({
@@ -189,6 +229,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .from(Mission)
             .leftJoin(RootTeams, eq(Mission.id, RootTeams.teams_mission_id))
             .leftJoin(RootUsers, eq(Mission.id, RootUsers.users_mission_id))
+            .leftJoin(RootTags, eq(Mission.id, RootTags.tags_mission_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
             .limit(1)
 
@@ -196,6 +237,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
 
         if (!pgres[0].teams_id) pgres[0].teams_id = [];
         if (!pgres[0].teams) pgres[0].teams = [];
+        if (!pgres[0].tags_id) pgres[0].tags_id = [];
+        if (!pgres[0].tags) pgres[0].tags = [];
         if (!pgres[0].users) pgres[0].users = [];
 
         return pgres[0] as Static<typeof AugmentedMission>;
