@@ -2,7 +2,7 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Mission, MissionTeam, MissionAssigned, MissionTagAssigned, Team } from '../schema.js';
+import { Mission, MissionTeam, MissionAssigned, MissionTag, MissionTagAssigned, Team } from '../schema.js';
 import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
@@ -79,7 +79,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .from(MissionTag)
             .leftJoin(Team, eq(Team.id, MissionTagAssigned.team_id))
             .groupBy(MissionTagAssigned.mission_id)
-            .as("root_teams");
+            .as("root_tags");
 
         const RootUsers = this.pool
             .select({
@@ -196,7 +196,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .from(MissionTag)
             .leftJoin(Team, eq(Team.id, MissionTagAssigned.team_id))
             .groupBy(MissionTagAssigned.mission_id)
-            .as("root_teams");
+            .as("root_tags");
 
 
         const RootUsers = this.pool
