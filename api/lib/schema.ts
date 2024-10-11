@@ -329,3 +329,15 @@ export const TrainingTeam = pgTable('trainings_team', {
     training_id: integer('training_id').notNull().references(() => Training.id),
     team_id: integer('team_id').notNull().references(() => Team.id),
 });
+
+export const Notes = pgTable('notes', {
+    id: serial('id').primaryKey(),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    archived: boolean('archived').notNull().default(false)
+    protected: boolean('protected').notNull().default(false)
+    name: text('name').notNull(),
+    phone: text('name'),
+    location_geom: geometry('location_geom', { type: GeometryType.Point, srid: 4326 }),
+    remarks: text('remarks').notNull()
+});
