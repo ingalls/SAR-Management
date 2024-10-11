@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS "notes" (
 	"archived" boolean DEFAULT false NOT NULL,
 	"protected" boolean DEFAULT false NOT NULL,
 	"name" text,
-	"location_geom" "GEOMETRY(POINT, 4326)",
+	"location_geom" GEOMETRY(POINT, 4326),
 	"remarks" text NOT NULL
 );

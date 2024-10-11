@@ -68,7 +68,7 @@ export default async function router(schema: Schema, config: Config) {
 
                     for (const user of list.items) {
                         if (req.query.format === 'vcard') {
-                            const card = new VCard();
+                            const card = new VCard.default();
                             card.addName(user.lname, user.fname);
                             card.addCompany('MesaSAR');
                             card.addEmail(user.email);
