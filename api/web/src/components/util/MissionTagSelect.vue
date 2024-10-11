@@ -23,7 +23,7 @@
 
                                 <div
                                     v-for='tag in list.items'
-                                    @click='push_tags(team)'
+                                    @click='push_tags(tag)'
                                     class='cursor-pointer hover-light mx-1 my-1 px-2 py-2'
                                 >
                                     <span v-text='tag.name'/>
@@ -121,14 +121,14 @@ export default {
         await this.listTags();
     },
     methods: {
-        push_tags: async function(team) {
-            this.tags.push(team);
-            this.$emit('push', team);
+        push_tags: async function(tag) {
+            this.tags.push(tag);
+            this.$emit('push', tag);
             await this.listTags();
         },
-        delete_tags: async function(idx, team) {
+        delete_tags: async function(idx, tag) {
             this.tags.splice(idx, 1);
-            this.$emit('delete', team);
+            this.$emit('delete', tag);
             await this.listTags();
         },
         listTags: async function() {
@@ -140,8 +140,8 @@ export default {
 
             const ids = this.tags.map((a) => a.id);
 
-            this.list.items = list.items.filter((team) => {
-                return !ids.includes(team.id);
+            this.list.items = list.items.filter((tag) => {
+                return !ids.includes(tag.id);
             }).splice(0, this.limit);
         }
     }

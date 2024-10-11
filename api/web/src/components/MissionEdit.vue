@@ -236,12 +236,12 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         deleteMission: async function() {
-            this.loading = true;
+            this.loading.mission = true;
             await window.std(`/api/mission/${this.$route.params.missionid}`, {
                 method: 'DELETE',
             });
 
-            this.loading = false;
+            this.loading.mission = false;
             this.$router.push('/mission');
         },
         validate: function() {
@@ -275,28 +275,30 @@ export default {
         update: async function() {
             if (!this.validate()) return;
 
-            this.loading = true;
+            this.loading.mission = true;
             const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
                 method: 'PATCH',
                 body: {
                     ...this.mission,
                     teams: this.mission.teams.map((team) => { return team.id }),
+                    tags: this.mission.tags.map((tag) => { return tag.id }),
                 }
             });
 
-            this.loading = false;
+            this.loading.mission = false;
             this.$router.push(`/mission/${update.id}`);
         },
         create: async function() {
             if (!this.validate()) return;
 
-            this.loading = true;
+            this.loading.mission = true;
 
             const create = await window.std('/api/mission', {
                 method: 'POST',
                 body: {
                     ...this.mission,
                     teams: this.mission.teams.map((team) => { return team.id }),
+                    tags: this.mission.tags.map((tag) => { return tag.id }),
                     assigned: this.assigned.map((a) => {
                         return {
                             uid: a.id,
@@ -307,7 +309,7 @@ export default {
                 }
             });
 
-            this.loading = false;
+            this.loading.mission = false;
             this.$router.push(`/mission/${create.id}`);
         },
         fetch: async function() {
