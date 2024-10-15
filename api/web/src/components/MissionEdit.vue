@@ -222,6 +222,7 @@ export default {
                 externalid: '',
                 location_geom: null,
                 teams: [],
+                tags: [],
             },
             assigned: []
         }
