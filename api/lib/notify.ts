@@ -34,6 +34,8 @@ export default class Notify {
                     AND key = 'notification'
                 `);
             } catch (err)  {
+                console.error(err);
+
                 setting = {
                     uid,
                     key: 'notification',

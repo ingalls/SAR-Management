@@ -91,7 +91,7 @@ class AuthAugment {
             return iam;
         } catch (err) {
             console.error(err);
-            throw new Err(500, err, 'Server failed to get authentication levels');
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Server failed to get authentication levels');
         }
     }
 }
@@ -106,7 +106,7 @@ export default class Auth {
      * @param {Object} req Express Request
      * @param {boolean} token Should URL query tokens be allowed (usually only for downloads)
      */
-    static async is_auth(config: Config, req: Request<unknown, unknown, unknown, any>, opts: {
+    static async is_auth(config: Config, req: Request<any, any, any, any>, opts: {
         token?: boolean;
     } = {}): Promise<AuthUser> {
         if (!opts.token) opts.token = false;
@@ -124,7 +124,7 @@ export default class Auth {
         return auth;
     }
 
-    static async is_own_or_iam(config: Config, req: Request<unknown, unknown, unknown, any>, uid, permission): Promise<AuthUser> {
+    static async is_own_or_iam(config: Config, req: Request<any, any, any, any>, uid, permission): Promise<AuthUser> {
         const auth = await Auth.is_auth(config, req);
 
         // Admins will be admins
@@ -135,7 +135,7 @@ export default class Auth {
     }
 
     // Ensure IAM permission is at least permission
-    static async is_iam(config: Config, req: Request<unknown, unknown, unknown, any>, permission: string, opts: {
+    static async is_iam(config: Config, req: Request<any, any, any, any>, permission: string, opts: {
         token: boolean
     } = { token: false }): Promise<AuthUser> {
         const auth = await Auth.is_auth(config, req, opts);
@@ -157,7 +157,7 @@ export default class Auth {
     }
 
     // Ensure Scope Of token is respected
-    static async is_scope(config: Config, req: Request<unknown, unknown, unknown, any>, scopes): Promise<AuthUser> {
+    static async is_scope(config: Config, req: Request<any, any, any, any>, scopes): Promise<AuthUser> {
         const auth = await Auth.is_auth(config, req);
 
         for (const scope of scopes) {
@@ -169,7 +169,7 @@ export default class Auth {
         throw new Err(403, null, 'Authentication Level Insufficient');
     }
 
-    static async is_admin(config: Config, req: Request<unknown, unknown, unknown, any>): Promise<AuthUser> {
+    static async is_admin(config: Config, req: Request<any, any, any, any>): Promise<AuthUser> {
         const auth = await Auth.is_auth(config, req);
 
         if (!auth || !auth.access || auth.access !== 'admin') {
@@ -179,13 +179,13 @@ export default class Auth {
         return auth;
     }
 
-    static async #parse(config: Config, req: Request<unknown, unknown, unknown, any>, opts: {
+    static async #parse(config: Config, req: Request<any, any, any, any>, opts: {
         token: boolean
     } = { token: false }): Promise<AuthUser> {
         if (req.header('authorization')) {
-            const authorization = req.header('authorization').split(' ');
+            const authorization = (req.header('authorization') || '').split(' ');
 
-            if (authorization[0].toLowerCase() !== 'bearer') {
+            if (!authorization[0] || authorization[0].toLowerCase() !== 'bearer') {
                 throw new Err(401, null, 'Only "Bearer" authorization header is allowed')
             }
 

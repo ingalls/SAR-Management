@@ -1,6 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import { GenericListOrder } from '@openaddresses/batch-generic';
-import { Type } from '@sinclair/typebox';
+import { Type, Static } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import moment from 'moment';
@@ -13,6 +13,15 @@ import {
     ScheduleEventResponse,
     ScheduleAssignedResponse
 } from '../lib/types.js';
+
+export const Event = Type.Object({
+    title: Type.String(),
+    imageurl: Type.String(),
+    start: Type.String(),
+    end: Type.String(),
+    uid: Type.Integer(),
+    id: Type.Integer()
+});
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/schedule', {
@@ -135,7 +144,7 @@ export default async function router(schema: Schema, config: Config) {
                     AND uid = ${req.body.uid}
                 `);
             } catch (err) {
-                throw new Error('User is not part of On-Call Schedule')
+                throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'User is not part of On-Call Schedule')
             }
 
             const event = await config.models.ScheduleEvent.generate({
@@ -175,7 +184,7 @@ export default async function router(schema: Schema, config: Config) {
                         AND uid = ${req.body.uid}
                     `);
                 } catch (err) {
-                    throw new Error('User is not part of On-Call Schedule')
+                    throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'User is not part of On-Call Schedule')
                 }
             }
 
@@ -230,25 +239,21 @@ export default async function router(schema: Schema, config: Config) {
             start: Type.String(),
             end: Type.String(),
         }),
-        res: Type.Array(Type.Object({
-            title: Type.String(),
-            imageurl: Type.String(),
-            start: Type.String(),
-            end: Type.String(),
-            uid: Type.Integer(),
-            id: Type.Integer()
-        }))
+        res: Type.Array(Event)
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Schedule:View');
 
-            const events = [];
+            const events: Array<Static<typeof Event>> = [];
 
-            const queries = [];
+            const queries: Array<{
+                start: string
+                end: string
+            }> = [];
 
             if (moment(req.query.start).year() !== moment(req.query.end).year()) {
-                queries.push({ start: req.query.start, end: moment(moment(req.query.end).format('YYYY') + '-12-31') });
-                queries.push({ start: moment(moment(req.query.end).format('YYYY')), end: req.query.end });
+                queries.push({ start: req.query.start, end: String(moment(moment(req.query.end).format('YYYY')) + '-12-31') });
+                queries.push({ start: moment(moment(req.query.end).format('YYYY')).format('YYYY-MM-DD'), end: req.query.end });
             } else {
                 queries.push(req.query);
             }
@@ -266,8 +271,8 @@ export default async function router(schema: Schema, config: Config) {
                         uid: event.uid,
                         title: `${event.fname} ${event.lname}`,
                         imageurl: '',
-                        start: moment(event.start_ts),
-                        end: moment(event.end_ts)
+                        start: moment(event.start_ts).toISOString(),
+                        end: moment(event.end_ts).toISOString()
                     });
                 }
             }

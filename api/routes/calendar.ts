@@ -92,6 +92,7 @@ export default async function router(schema: Schema, config: Config) {
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
                 (await config.models.Training.stream({
+                    limit: Infinity,
                     where: sql`
                         (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
                         AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
@@ -150,6 +151,7 @@ export default async function router(schema: Schema, config: Config) {
                     if (query.end_bday) query.end_bday = query.end_bday.split('T')[0]
 
                     for (const user of (await config.models.User.list({
+                        limit: Infinity,
                         where: sql`
                             indexable_month_day(bday) >= indexable_month_day(${Param(query.start_bday)}::DATE)
                             AND indexable_month_day(bday) <= indexable_month_day(${Param(query.end_bday)}::DATE)
@@ -166,6 +168,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             } else if (req.params.calendar === 'mission') {
                 for (const mission of (await config.models.Mission.list({
+                    limit: Infinity,
                     where: sql`
                         (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
                         AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
@@ -181,6 +184,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             } else if (req.params.calendar === 'training') {
                 for (const training of (await config.models.Training.list({
+                    limit: Infinity,
                     where: sql`
                         (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
                         AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)

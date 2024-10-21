@@ -89,7 +89,7 @@ export default async function router(schema: Schema, config: Config) {
                 uid = ${user.id} AND key = 'notification'
             `);
 
-            if (!Object.keys(setting.value).length) {
+            if (!Object.keys(setting.value as object).length) {
                 await config.models.UserSetting.generate({
                     uid: user.id,
                     key: 'notification',

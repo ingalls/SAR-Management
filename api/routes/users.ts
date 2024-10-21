@@ -89,7 +89,8 @@ export default async function router(schema: Schema, config: Config) {
                             res.write(card.toString());
                         } else if (req.query.format === 'csv') {
                             const line = [];
-                            for (const field of req.query.fields) {
+                            for (const field of (req.query.fields || [])) {
+                                // @ts-expect-error Investigate
                                 line.push(user[field] === undefined ? '' : user[field]);
                             }
                             res.write(stringify([line]));

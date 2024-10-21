@@ -25,6 +25,7 @@ export default async function router(schema: Schema, config: Config) {
                 server = await await config.models.Server.from(req.body.key);
                 await server.commit(req.body);
             } catch (err) {
+                console.error(err);
                 server = await await config.models.Server.generate(req.body);
             }
 

@@ -32,6 +32,7 @@ export default async function router(schema: Schema, config: Config) {
                     AND poll_id = ${poll.id}
                 `);
             } catch (err) {
+                console.error(err);
                 vote = null;
             }
 
