@@ -64,7 +64,7 @@ export default class Config {
 
         const pool = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/sar', pgtypes, {
             ssl: process.env.StackName === 'test' ? undefined  : { rejectUnauthorized: false },
-            migrationsFolder: (new URL('./migrations', import.meta.url)).pathname
+            migrationsFolder: (new URL('../migrations', import.meta.url)).pathname
         })
 
         const models = new Models(pool);
