@@ -91,9 +91,8 @@ export default class Config {
             if (!process.env.SigningSecret) throw new Error('SigningSecret env must be set');
             if (!process.env.MailGun) throw new Error('MailGun env must be set');
 
-            const URL = (await models.Server.from('frontend')).value;
+            const BASE_URL = (await models.Server.from('frontend')).value;
 
-            // @ts-expect-error Type 'String' has no construct signatures.
             const APIURL = new URL(((await models.Server.from('frontend')).value));
 
             config = new Config({
@@ -102,7 +101,7 @@ export default class Config {
                 TimeZone: 'America/Denver',
                 StackName: process.env.StackName,
                 SigningSecret: process.env.SigningSecret,
-                URL: URL,
+                URL: BASE_URL,
                 APIURL: APIURL,
                 MailGun: process.env.MailGun,
                 OrgName, pool, models
