@@ -67,6 +67,8 @@ export default async function router(schema: Schema, config: Config) {
             const schema = JSON.parse((await config.models.Server.from('application')).value);
 
             const isValid = ajv.validate(schema, req.body);
+
+            // @ts-expect-error AJV Errors fail
             if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
 
             const input: any = {
@@ -83,6 +85,7 @@ export default async function router(schema: Schema, config: Config) {
 
             const app = await config.models.Application.generate(input);
 
+            // @ts-expect-error Type
             res.json(app);
 
             await notify.users('Application', 'View', {
@@ -129,6 +132,7 @@ export default async function router(schema: Schema, config: Config) {
             const schema = JSON.parse((await config.models.Server.from('application')).value);
 
             const isValid = ajv.validate(schema, req.body);
+            // @ts-expect-error AJV Errors fail
             if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
 
             const input = {

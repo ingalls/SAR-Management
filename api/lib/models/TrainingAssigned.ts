@@ -52,7 +52,6 @@ export default class TrainingAssignedModel extends Modeler<typeof TrainingAssign
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     return t as Static<typeof AugmentedTrainingAssigned>
                 })
             };

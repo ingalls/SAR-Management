@@ -115,7 +115,7 @@ export default class Login {
                 OR Lower(email) = ${body.username.toLowerCase()}
             `);
         } catch (err) {
-            throw new Err(403, err, 'Invalid Username or Pass');
+            throw new Err(403, err instanceof Error ? err : new Error(String(err)), 'Invalid Username or Pass');
         }
 
         if (!await bcrypt.compare(body.password, user.password)) {

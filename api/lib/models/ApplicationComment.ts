@@ -61,7 +61,6 @@ export default class ApplicationCommentModel extends Modeler<typeof ApplicationC
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     return t as Static<typeof AugmentedApplicationComment>
                 })
             };

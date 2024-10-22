@@ -70,7 +70,6 @@ export default class TeamModel extends Modeler<typeof Team> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     if (!t.users) t.users = [];
                     return t as Static<typeof AugmentedTeam>
                 })

@@ -26,7 +26,7 @@ export default class Spaces {
 
         return await this.client.send(new S3.ListObjectsCommand(params));
     } catch (err) {
-        throw new Err(400, err, 'Failed to Head Object');
+        throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Head Object');
     }
 
     async upload(params) {
@@ -36,7 +36,7 @@ export default class Spaces {
             const upload = new Upload({ client: this.client, params });
             return await upload.done();
         } catch (err) {
-            throw new Err(400, err, 'Failed to Put Object');
+            throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Put Object');
         }
     }
 
@@ -45,7 +45,7 @@ export default class Spaces {
         try {
             return await this.client.send(new S3.PutObjectCommand(params));
         } catch (err) {
-            throw new Err(400, err, 'Failed to Put Object');
+            throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Put Object');
         }
     }
 
@@ -54,7 +54,7 @@ export default class Spaces {
         try {
             return await this.client.send(new S3.HeadObjectCommand(params));
         } catch (err) {
-            throw new Err(400, err, 'Failed to Head Object');
+            throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Head Object');
         }
     }
 
@@ -63,7 +63,7 @@ export default class Spaces {
         try {
             return await this.client.send(new S3.GetObjectCommand(params));
         } catch (err) {
-            throw new Err(400, err, 'Failed to Get Object');
+            throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Get Object');
         }
     }
 
@@ -72,7 +72,7 @@ export default class Spaces {
         try {
             return await this.client.send(new S3.DeleteObjectCommand(params));
         } catch (err) {
-            throw new Err(400, err, 'Failed to Head Object');
+            throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Head Object');
         }
     }
 
@@ -93,7 +93,7 @@ export default class Spaces {
                     const deleted = await this.client.send(new S3.DeleteObjectsCommand({
                         Bucket: params.Bucket,
                         Delete: {
-                            Objects: list.Contents.map((item) => ({ Key: item.Key })),
+                            Objects: (list.Contents || []).map((item) => ({ Key: item.Key })),
                             Quiet: false,
                         },
                     }));
@@ -105,7 +105,7 @@ export default class Spaces {
             } while (ContinuationToken);
         } catch (err) {
             console.error(err);
-            throw new Err(400, err, 'Failed to Recursive Delete');
+            throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Recursive Delete');
         }
     }
 }

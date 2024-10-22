@@ -81,7 +81,6 @@ export default class EquipmentModel extends Modeler<typeof Equipment> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     if (!t.assigned) t.assigned = [];
                     return t as Static<typeof AugmentedEquipment>
                 })

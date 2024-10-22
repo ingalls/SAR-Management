@@ -52,7 +52,6 @@ export default class MissionAssignedModel extends Modeler<typeof MissionAssigned
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     return t as Static<typeof AugmentedMissionAssigned>
                 })
             };

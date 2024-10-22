@@ -68,7 +68,7 @@ export default class Email {
         try {
             await this.send(user.email, 'SAR Email Verification', this.mailGenerator.generate(email));
         } catch (err) {
-            throw new Err(500, err, 'Internal User Confirmation Error');
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Internal User Confirmation Error');
         }
     }
 
@@ -96,7 +96,7 @@ export default class Email {
         try {
             await this.send(user.email, 'SAR Password Reset', this.mailGenerator.generate(email));
         } catch (err) {
-            throw new Err(500, err, 'Internal User Forgot Error');
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Internal User Forgot Error');
         }
     }
 
@@ -123,7 +123,7 @@ export default class Email {
         try {
             await this.send(user.email, `Welcome to ${this.config.OrgName}`, this.mailGenerator.generate(email));
         } catch (err) {
-            throw new Err(500, err, 'Internal User Forgot Error');
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Internal User Forgot Error');
         }
     }
 
@@ -139,7 +139,7 @@ export default class Email {
                 html: body
             });
         } catch (err) {
-            throw new Err(500, err, 'Failed to send email');
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Failed to send email');
         }
 
     }
@@ -158,7 +158,7 @@ export default class Email {
         try {
             await this.send(user.email, `${this.config.OrgName} - Account Disabled`, this.mailGenerator.generate(email));
         } catch (err) {
-            throw new Err(500, err, 'Internal User Notification');
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Internal User Notification');
         }
     }
 
@@ -187,7 +187,7 @@ export default class Email {
         try {
             await this.send(user.email, `${this.config.OrgName} - New Notification`, this.mailGenerator.generate(email));
         } catch (err) {
-            throw new Err(500, err, 'Internal User Notification');
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Internal User Notification');
         }
     }
 }

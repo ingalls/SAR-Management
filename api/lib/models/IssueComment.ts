@@ -60,7 +60,6 @@ export default class IssueCommentModel extends Modeler<typeof IssueComment> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     return t as Static<typeof AugmentedIssueComment>
                 })
             };

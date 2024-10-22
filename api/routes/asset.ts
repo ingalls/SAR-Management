@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import { Readable } from 'node:stream';
 import path from 'node:path';
-import { Type } from '@sinclair/typebox';
+import { Static, Type } from '@sinclair/typebox';
 import busboy from 'busboy';
 import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
@@ -47,7 +47,7 @@ export default async function router(schema: Schema, config: Config) {
             return res.json({
                 total: list.total,
                 items: list.items.map((asset) => {
-                    return { asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset };
+                    return { asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset };
                 })
             });
         } catch (err) {
@@ -68,7 +68,7 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_auth(config, req);
 
             const asset = await config.models.Asset.from(req.params.assetid);
-            return res.json({ asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset });
+            return res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -133,8 +133,8 @@ export default async function router(schema: Schema, config: Config) {
         }
 
 
-        let asset;
-        const assets = [];
+        const assets: Array<Promise<unknown>> = [];
+        let asset: Static<typeof AssetResponse>;
         bb.on('file', async (fieldname, file, blob) => {
             asset = await config.models.Asset.generate({
                 name: blob.filename
@@ -151,7 +151,7 @@ export default async function router(schema: Schema, config: Config) {
                 await assets[0];
                 await config.models.Asset.commit(asset.id, { storage: true });
 
-                return res.json({ asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset });
+                return res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
             } catch (err) {
                 Err.respond(err, res);
             }
@@ -176,7 +176,8 @@ export default async function router(schema: Schema, config: Config) {
 
         try {
             const asset = await config.models.Asset.commit(req.params.assetid, req.body);
-            return res.json({ asset_url: `/asset/${this.id}${path.parse(this.name).ext}`, ...asset });
+
+            return res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
         } catch (err) {
             return Err.respond(err, res);
         }

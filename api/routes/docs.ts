@@ -1,5 +1,5 @@
 import Err from '@openaddresses/batch-error';
-import { Type } from '@sinclair/typebox';
+import { Type, Static } from '@sinclair/typebox';
 import { Readable } from 'node:stream';
 import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
@@ -45,31 +45,31 @@ export default async function router(schema: Schema, config: Config) {
             req.query.prefix = 'documents/' + req.query.prefix;
 
             const s3list = await spaces.list({
-                Prefix: req.query.prefix,
+                Prefix: req.query.prefix || '',
                 Delimiter: '/'
             });
 
-            const docs = new Set();
+            const docs: Set<string> = new Set();
 
-            let documents = [];
+            let documents: Array<Static<typeof DocResponse>> = [];
 
             documents.push(...(s3list.Contents || []).filter((obj) => {
                 return obj.Key !== req.query.prefix;
             }).map((obj) => {
-                const key = obj.Key.replace(req.query.prefix, '');
+                const key = (obj.Key || '').replace(req.query.prefix, '');
                 docs.add(key);
 
                 return {
                     type: 'file',
                     key: key,
-                    last_modified: obj.LastModified,
-                    size: obj.Size
+                    last_modified: obj.LastModified || '',
+                    size: obj.Size || 0
                 };
             }));
 
             documents.push(...(s3list.CommonPrefixes || [])
                 .filter((dir) => {
-                    const prefix = dir.Prefix
+                    const prefix = (dir.Prefix || '')
                         .replace(/\/$/, '')
                         .replace(req.query.prefix, '');
 
@@ -77,7 +77,7 @@ export default async function router(schema: Schema, config: Config) {
                 }).map((dir) => {
                     return {
                         type: 'dir',
-                        key: dir.Prefix.replace(req.query.prefix, ''),
+                        key: (dir.Prefix || '').replace(req.query.prefix, ''),
                         last_modified: '',
                         size: 0
                     };
@@ -245,7 +245,7 @@ export default async function router(schema: Schema, config: Config) {
             return Err.respond(err, res);
         }
 
-        const uploads = [];
+        const uploads: Array<Promise<unknown>> = [];
         bb.on('file', async (fieldname, file, blob) => {
             uploads.push(spaces.upload({
                 Key: `documents/${req.query.prefix}${blob.filename}`,

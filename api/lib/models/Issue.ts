@@ -86,7 +86,6 @@ export default class IssueModel extends Modeler<typeof Issue> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     if (!t.assigned) t.assigned = [];
                     return t as Static<typeof AugmentedIssue>
                 })

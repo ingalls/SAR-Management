@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import busboy from 'busboy';
+import stream2buffer from '../lib/stream.js';
 import Auth from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import sharp from 'sharp';
@@ -44,6 +45,7 @@ export default async function router(schema: Schema, config: Config) {
 
                 body.pipe(res);
             } catch (err) {
+                // @ts-expect-error AWS Code
                 if (err.Code === 'NoSuchKey') {
                     res.writeHead(200, {
                         'Content-Type': 'image/webp'
@@ -130,14 +132,5 @@ export default async function router(schema: Schema, config: Config) {
         });
 
         return req.pipe(bb);
-    });
-}
-
-function stream2buffer(stream) {
-    return new Promise((resolve, reject) => {
-        const _buf = [];
-        stream.on('data', (chunk) => _buf.push(chunk));
-        stream.on('end', () => resolve(Buffer.concat(_buf)));
-        stream.on('error', (err) => reject(err));
     });
 }

@@ -2,12 +2,27 @@ import { Pool } from '@openaddresses/batch-generic';
 import * as pgtypes from './schema.js';
 import Models from './models.js';
 
+export type ConfigOpts = {
+    email: boolean;
+    silent: boolean;
+    TimeZone: string;
+    StackName: string;
+    SigningSecret: string;
+    URL: string;
+    APIURL: URL;
+    MailGun: string;
+    pool: Pool<typeof pgtypes>;
+    models: Models;
+
+    OrgName?: string;
+}
+
 /**
  * @class
  */
 export default class Config {
     silent: boolean;
-    email: string;
+    email: boolean;
     TimeZone: string;
     StackName: string;
     SigningSecret: string;
@@ -17,44 +32,79 @@ export default class Config {
     MailGun: string;
     models: Models;
 
-    pool?: Pool<typeof pgtypes>;
+    pool: Pool<typeof pgtypes>;
 
-    static env(args: {
-        email?: string;
+    constructor(opts: ConfigOpts) {
+        this.email = opts.email;
+        this.silent = opts.silent;
+        this.TimeZone = opts.TimeZone;
+        this.StackName = opts.StackName;
+        this.SigningSecret = opts.SigningSecret;
+        this.URL = opts.URL;
+        this.APIURL = opts.APIURL;
+        this.MailGun = opts.MailGun;
+        this.pool = opts.pool;
+        this.models = opts.models;
+
+        this.OrgName = opts.OrgName || 'Search and Rescue';
+        
+    }
+
+    static async env(args: {
+        email?: boolean;
         silent?: boolean;
-    } = {}) {
-        const config = new Config();
+        postgres?: string;
+    } = {}): Promise<Config> {
+        let config: Config;
 
-        config.silent = args.silent || false;
-        config.email = args.email || '';
-        config.TimeZone = 'America/Denver';
+        if (!process.env.AWS_DEFAULT_REGION) {
+            if (!config.silent) console.error('ok - set env AWS_DEFAULT_REGION: us-east-1');
+            process.env.AWS_DEFAULT_REGION = 'us-east-1';
+        }
 
-        try {
-            if (!process.env.AWS_DEFAULT_REGION) {
-                if (!config.silent) console.error('ok - set env AWS_DEFAULT_REGION: us-east-1');
-                process.env.AWS_DEFAULT_REGION = 'us-east-1';
-            }
+        const pool = await Pool.connect(process.env.POSTGRES || args.postgres || 'postgres://postgres@localhost:5432/sar', pgtypes, {
+            ssl: process.env.StackName === 'test' ? undefined  : { rejectUnauthorized: false },
+            migrationsFolder: (new URL('./migrations', import.meta.url)).pathname
+        })
 
-            if (!process.env.StackName || process.env.StackName === 'test') {
-                if (!config.silent) console.error('ok - set env StackName: test');
-                process.env.StackName = 'test';
+        const models = new Models(pool);
+        const OrgName = (await models.Server.from('name')).value;
 
-                config.StackName = 'test';
-                config.SigningSecret = 'mesa-sar-test-token';
-                config.URL = 'http://localhost:8080/';
-                config.APIURL = new URL('http://localhost:5000/');
-                config.MailGun = process.env.MailGun || '';
-            } else {
-                if (!process.env.StackName) throw new Error('StackName env must be set');
-                if (!process.env.SigningSecret) throw new Error('SigningSecret env must be set');
-                if (!process.env.MailGun) throw new Error('MailGun env must be set');
+        if (!process.env.StackName || process.env.StackName === 'test') {
+            if (!args.silent) console.error('ok - set env StackName: test');
+            process.env.StackName = 'test';
 
-                config.MailGun = process.env.MailGun;
-                config.StackName = process.env.StackName;
-                config.SigningSecret = process.env.SigningSecret;
-            }
-        } catch (err) {
-            throw new Error(err);
+            config = new Config({
+                silent: args.silent || false,
+                email: args.email || false,
+                TimeZone: 'America/Denver',
+                StackName: 'test',
+                SigningSecret: 'mesa-sar-test-token',
+                URL: 'http://localhost:8080/',
+                APIURL: new URL('http://localhost:5000/'),
+                MailGun: process.env.MailGun || '',
+                OrgName, pool, models
+            });
+
+        } else {
+            if (!process.env.StackName) throw new Error('StackName env must be set');
+            if (!process.env.SigningSecret) throw new Error('SigningSecret env must be set');
+            if (!process.env.MailGun) throw new Error('MailGun env must be set');
+
+            const URL = (await models.Server.from('frontend')).value;
+            const APIURL = new URL((await models.Server.from('frontend')).value);
+
+            config = new Config({
+                silent: args.silent || false,
+                email: args.email || false,
+                TimeZone: 'America/Denver',
+                StackName: process.env.StackName,
+                SigningSecret: process.env.SigningSecret,
+                URL: URL,
+                APIURL: APIURL,
+                MailGun: process.env.MailGun,
+                OrgName, pool, models
+            });
         }
 
         return config;

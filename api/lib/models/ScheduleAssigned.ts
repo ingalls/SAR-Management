@@ -47,7 +47,6 @@ export default class ScheduleAssignedModel extends Modeler<typeof ScheduleAssign
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    delete t.count;
                     return t as Static<typeof AugmentedScheduleAssigned>
                 })
             };

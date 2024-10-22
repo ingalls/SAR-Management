@@ -210,7 +210,7 @@ export default class Auth {
                         iam: await AuthAugment.iam(config.pool, user.id)
                     };
                 } catch (err) {
-                    throw new Err(401, err, 'Invalid Token');
+                    throw new Err(401, err instanceof Error ? err : new Error(String(err)), 'Invalid Token');
                 }
             }
         } else if (req.query.token && opts.token) {
@@ -231,7 +231,7 @@ export default class Auth {
                     iam: await AuthAugment.iam(config.pool, user.id)
                 };
             } catch (err) {
-                throw new Err(401, err, 'Invalid Token');
+                throw new Err(401, err instanceof Error ? err : new Error(String(err)), 'Invalid Token');
             }
         } else {
             throw new Err(401, null, 'No Token Present');

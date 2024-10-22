@@ -1,13 +1,21 @@
 import Err from '@openaddresses/batch-error';
 import { Param } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
-import { Type } from '@sinclair/typebox';
+import { Type, Static } from '@sinclair/typebox';
 import Auth, { AuthUserType } from '../lib/auth.js';
 import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
 import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+
+export const Event = Type.Object({
+    title: Type.String(),
+    color: Type.Optional(Type.String()),
+    start: Type.String(),
+    path: Type.String(),
+    end: Type.String(),
+})
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/calendar', {
@@ -92,7 +100,6 @@ export default async function router(schema: Schema, config: Config) {
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
                 (await config.models.Training.stream({
-                    limit: Infinity,
                     where: sql`
                         (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
                         AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
@@ -127,34 +134,32 @@ export default async function router(schema: Schema, config: Config) {
             calendar: Type.String()
         }),
         query: Type.Object({
-            start: Type.Optional(Type.String()),
-            end: Type.Optional(Type.String()),
-        })
+            start: Type.String(),
+            end: Type.String(),
+        }),
+        res: Type.Array(Event)
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, 'Calendar:View');
 
-            const events = [];
+            const events: Array<Static<typeof Event>> = [];
 
             if (req.params.calendar === 'birthday') {
-                const queries = [];
+                const queries: Array<{ start: string; end: string; }> = [];
 
                 if (moment(req.query.start).year() !== moment(req.query.end).year()) {
-                    queries.push({ start: req.query.start, end: moment(moment(req.query.end).format('YYYY') + '-12-31') });
-                    queries.push({ start: moment(moment(req.query.end).format('YYYY')), end: req.query.end });
+                    queries.push({ start: req.query.start, end: String(moment(moment(req.query.end).format('YYYY') + '-12-31')) });
+                    queries.push({ start: moment(moment(req.query.end).format('YYYY')).format('YYYY-MM-DD'), end: req.query.end });
                 } else {
                     queries.push(req.query);
                 }
 
                 for (const query of queries) {
-                    if (query.start_bday) query.start_bday = query.start_bday.split('T')[0]
-                    if (query.end_bday) query.end_bday = query.end_bday.split('T')[0]
-
                     for (const user of (await config.models.User.list({
                         limit: Infinity,
                         where: sql`
-                            indexable_month_day(bday) >= indexable_month_day(${Param(query.start_bday)}::DATE)
-                            AND indexable_month_day(bday) <= indexable_month_day(${Param(query.end_bday)}::DATE)
+                            indexable_month_day(bday) >= indexable_month_day(${Param(query.start)}::DATE)
+                            AND indexable_month_day(bday) <= indexable_month_day(${Param(query.end)}::DATE)
                             AND disabled IS False
                         `
                     })).items) {
