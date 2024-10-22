@@ -39,11 +39,12 @@ export default class NotificationModel extends Modeler<typeof Notification> {
             lname: User.lname,
             perm: SubTable.perm
         }).from(SubTable)
-            .leftJoin(UserTeam, eq(Team.id, UserTeam.tid))
+            .innerJoin(UserTeam, eq(Team.id, UserTeam.tid))
             .leftJoin(User, eq(User.id, UserTeam.uid))
 
         return {
             total: pgres.length,
+            // @ts-expect-error TODO Investigate
             items: pgres
         }
     }

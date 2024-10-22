@@ -7,7 +7,6 @@ import express from 'express';
 import Schema from '@openaddresses/batch-schema';
 import minimist from 'minimist';
 import SwaggerUI from 'swagger-ui-express';
-import Models from './lib/models.js';
 
 try {
     const dotfile = new URL('.env', import.meta.url);

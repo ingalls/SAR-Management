@@ -94,8 +94,10 @@ export default class UserModel extends Modeler<typeof User> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    if (!t.generic.teams) t.generic.teams = [];
-                    return t.generic as Static<typeof AugmentedUser>
+                    const generic = t.generic as Static<typeof AugmentedUser>
+                    if (!generic.teams) generic.teams = [];
+
+                    return generic
                 })
             };
         }

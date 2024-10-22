@@ -58,7 +58,7 @@ export default class Config {
         let config: Config;
 
         if (!process.env.AWS_DEFAULT_REGION) {
-            if (!config.silent) console.error('ok - set env AWS_DEFAULT_REGION: us-east-1');
+            if (!args.silent) console.error('ok - set env AWS_DEFAULT_REGION: us-east-1');
             process.env.AWS_DEFAULT_REGION = 'us-east-1';
         }
 
@@ -92,7 +92,9 @@ export default class Config {
             if (!process.env.MailGun) throw new Error('MailGun env must be set');
 
             const URL = (await models.Server.from('frontend')).value;
-            const APIURL = new URL((await models.Server.from('frontend')).value);
+
+            // @ts-expect-error Type 'String' has no construct signatures.
+            const APIURL = new URL(((await models.Server.from('frontend')).value));
 
             config = new Config({
                 silent: args.silent || false,

@@ -10,6 +10,7 @@ export default class Spaces {
     }
 
     static newclient() {
+        // @ts-expect-error Typing
         return new S3.S3Client({
             forcePathStyle: false,
             endpoint: "https://sfo3.digitaloceanspaces.com",

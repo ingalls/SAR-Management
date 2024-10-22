@@ -50,6 +50,8 @@ export default async function router(schema: Schema, config: Config) {
                     )
                 `
             });
+               
+            // @ts-expect-error Type
             return res.json(list);
         } catch (err) {
             return Err.respond(err, res);

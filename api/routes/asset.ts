@@ -136,9 +136,14 @@ export default async function router(schema: Schema, config: Config) {
         const assets: Array<Promise<unknown>> = [];
         let asset: Static<typeof AssetResponse>;
         bb.on('file', async (fieldname, file, blob) => {
-            asset = await config.models.Asset.generate({
+            const a = await config.models.Asset.generate({
                 name: blob.filename
             });
+
+            asset = {
+                ...a,
+                asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`,
+            };
 
             assets.push(spaces.upload({
                 Key: `assets/${asset.id}-${asset.name}`,
@@ -151,7 +156,7 @@ export default async function router(schema: Schema, config: Config) {
                 await assets[0];
                 await config.models.Asset.commit(asset.id, { storage: true });
 
-                return res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
+                return res.json(asset);
             } catch (err) {
                 Err.respond(err, res);
             }

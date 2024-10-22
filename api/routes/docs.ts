@@ -62,7 +62,7 @@ export default async function router(schema: Schema, config: Config) {
                 return {
                     type: 'file',
                     key: key,
-                    last_modified: obj.LastModified || '',
+                    last_modified: obj.LastModified ? obj.LastModified.toISOString() : '',
                     size: obj.Size || 0
                 };
             }));
