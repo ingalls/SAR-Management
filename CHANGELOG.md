@@ -12,6 +12,10 @@
 
 ### Pending Release
 
+### v1.1.2
+
+- :bug: `API`: Fix Calendar Token usage
+
 ### v1.1.1
 
 - :rocket: `API`: Set X-Frame-Options to Same-Origin to allow document viewer

@@ -157,8 +157,10 @@ export default class Auth {
     }
 
     // Ensure Scope Of token is respected
-    static async is_scope(config: Config, req: Request<any, any, any, any>, scopes): Promise<AuthUser> {
-        const auth = await Auth.is_auth(config, req);
+    static async is_scope(config: Config, req: Request<any, any, any, any>, scopes, opts: {
+        token: boolean
+    } = { token: false }): Promise<AuthUser> {
+        const auth = await Auth.is_auth(config, req, opts);
 
         for (const scope of scopes) {
             const { pathname } = new URL(req.url, 'https://fake.com');

@@ -95,7 +95,9 @@ export default async function router(schema: Schema, config: Config) {
             const user = await Auth.is_auth(config, req, { token: true });
             await Auth.is_iam(config, req, 'Calendar:View', { token: true });
 
-            if (user.type === AuthUserType.TOKEN) await Auth.is_scope(config, req, user.scopes);
+            if (user.type === AuthUserType.TOKEN) {
+                await Auth.is_scope(config, req, user.scopes, { token: true });
+            }
 
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
