@@ -288,7 +288,7 @@ export default {
                 this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
 
-            this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).assigned;
+            this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).items;
 
             this.loading.equipment = false;
         },
