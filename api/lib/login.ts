@@ -76,7 +76,7 @@ export default class Login {
 
         const u = await config.models.User.from(sql`
             Lower(username) = ${username.toLowerCase()}
-            OR Lower(username) = ${username.toLowerCase()}
+            OR Lower(email) = ${username.toLowerCase()}
         `);
 
         await config.models.UserReset.delete(sql`uid = ${u.id}`);
