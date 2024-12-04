@@ -27,7 +27,7 @@ export default async function router(schema: Schema, config: Config) {
                 where: sql`training_id = ${req.params.trainingid}`
             }))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -53,9 +53,9 @@ export default async function router(schema: Schema, config: Config) {
                 ...req.body
             });
 
-            return res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
+            res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -78,9 +78,9 @@ export default async function router(schema: Schema, config: Config) {
                 confirmed: false
             });
 
-            return res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
+            res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -107,9 +107,9 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.TrainingAssigned.commit(req.params.assignedid, req.body);
 
-            return res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
+            res.json(await config.models.TrainingAssigned.augmented_from(assigned.id))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -132,12 +132,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.TrainingAssigned.delete(req.params.assignedid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Assignment Removed'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

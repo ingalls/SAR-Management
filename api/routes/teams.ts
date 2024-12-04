@@ -16,9 +16,9 @@ export default async function router(schema: Schema, config: Config) {
         res: Type.Any()
     }, async (req, res) => {
         try {
-            return res.json(Permissions);
+            res.json(Permissions);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -55,9 +55,9 @@ export default async function router(schema: Schema, config: Config) {
                 `
             });
 
-            return res.json(list)
+            res.json(list)
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -81,7 +81,7 @@ export default async function router(schema: Schema, config: Config) {
             const team = await config.models.Team.generate(req.body);
             res.json(await config.models.Team.augmented_from(team.id));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -99,7 +99,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(await config.models.Team.augmented_from(req.params.teamid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -132,7 +132,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(await config.models.Team.augmented_from(team.id));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -150,12 +150,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.Team.delete(req.params.teamid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Team Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

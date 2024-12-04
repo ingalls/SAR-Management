@@ -117,10 +117,10 @@ export default async function router(schema: Schema, config: Config) {
 
                 list.items.map(userFormat)
 
-                return res.json(list);
+                res.json(list);
             }
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -169,9 +169,9 @@ export default async function router(schema: Schema, config: Config) {
 
             if (config.email) await email.newuser(user);
 
-            return res.json(userFormat(await config.models.User.augmented_from(user.id)));
+            res.json(userFormat(await config.models.User.augmented_from(user.id)));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -208,9 +208,9 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.User.commit(req.params.userid, req.body);
 
-            return res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
+            res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -226,9 +226,9 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'User:View');
 
-            return res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
+            res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -250,9 +250,9 @@ export default async function router(schema: Schema, config: Config) {
 
             if (config.email) await email.user_disabled(user);
 
-            return res.json(await config.models.User.augmented_from(req.params.userid));
+            res.json(await config.models.User.augmented_from(req.params.userid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

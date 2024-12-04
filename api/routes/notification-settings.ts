@@ -47,7 +47,7 @@ export default async function router(schema: Schema, config: Config) {
                 settings: Array.from(settingsMap.values())
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -103,7 +103,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(req.body);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

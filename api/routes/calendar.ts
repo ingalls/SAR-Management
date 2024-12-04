@@ -45,7 +45,7 @@ export default async function router(schema: Schema, config: Config) {
                 }]
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -74,7 +74,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json({ token });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -124,7 +124,7 @@ export default async function router(schema: Schema, config: Config) {
                 throw new Err(400, null, 'ICal export disabled');
             }
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -209,7 +209,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(events);
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 }

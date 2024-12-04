@@ -104,10 +104,10 @@ export default async function router(schema: Schema, config: Config) {
 
                 list.items.map(userFormat)
 
-                return res.json(list);
+                res.json(list);
             }
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -129,41 +129,12 @@ export default async function router(schema: Schema, config: Config) {
                 AND uid = ${req.params.userid}
             `);
 
-            return res.json({
+             res.json({
                 status: 200,
                 message: 'User Removed'
             });
         } catch (err) {
-            return Err.respond(err, res);
-        }
-    });
-
-    await schema.post('/team/:teamid/user', {
-        name: 'Add User',
-        group: 'TeamUsers',
-        description: 'Add a user to a team',
-        params: Type.Object({
-            teamid: Type.Integer(),
-        }),
-        body: Type.Object({
-            uid: Type.Integer()
-        }),
-        res: StandardResponse
-    }, async (req, res) => {
-        try {
-            await Auth.is_iam(config, req, 'Team:Manage');
-
-            await config.models.UserTeam.generate({
-                tid: req.params.teamid,
-                uid: req.body.uid
-            });
-
-            return res.json({
-                status: 200,
-                message: 'User Added'
-            });
-        } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

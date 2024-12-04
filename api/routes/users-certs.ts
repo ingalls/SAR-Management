@@ -42,7 +42,7 @@ export default async function router(schema: Schema, config: Config) {
                 `
             }));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -62,9 +62,9 @@ export default async function router(schema: Schema, config: Config) {
             const cert = await config.models.Cert.from(req.params.certid);
             if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
 
-            return res.json(cert);
+            res.json(cert);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -93,7 +93,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(cert);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

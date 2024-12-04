@@ -29,7 +29,7 @@ export default async function router(schema: Schema, config: Config) {
                 iam: auth.iam
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -60,7 +60,7 @@ export default async function router(schema: Schema, config: Config) {
                 last_login: sql`Now()`
             });
 
-            return res.json({
+            res.json({
                 id: auth.id,
                 username: auth.username,
                 email: auth.email,
@@ -69,7 +69,7 @@ export default async function router(schema: Schema, config: Config) {
                 iam: await AuthAugment.iam(config.pool, auth.id)
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -85,12 +85,12 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Login.verify(config, req.body.token);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'User Verified'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -111,12 +111,12 @@ export default async function router(schema: Schema, config: Config) {
             }
 
             // To avoid email scraping - this will always return true, regardless of success
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Password Email Sent'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -136,12 +136,12 @@ export default async function router(schema: Schema, config: Config) {
                 password: req.body.password
             });
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'User Reset'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

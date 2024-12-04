@@ -44,14 +44,14 @@ export default async function router(schema: Schema, config: Config) {
                 `
             });
 
-            return res.json({
+            res.json({
                 total: list.total,
                 items: list.items.map((asset) => {
                     return { asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset };
                 })
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -68,9 +68,9 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_auth(config, req);
 
             const asset = await config.models.Asset.from(req.params.assetid);
-            return res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
+            res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -98,7 +98,7 @@ export default async function router(schema: Schema, config: Config) {
             const body = raw.Body as Readable;
             body.pipe(res);
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -129,7 +129,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
 
 
@@ -156,7 +156,7 @@ export default async function router(schema: Schema, config: Config) {
                 await assets[0];
                 await config.models.Asset.commit(asset.id, { storage: true });
 
-                return res.json(asset);
+                res.json(asset);
             } catch (err) {
                 Err.respond(err, res);
             }
@@ -182,9 +182,9 @@ export default async function router(schema: Schema, config: Config) {
         try {
             const asset = await config.models.Asset.commit(req.params.assetid, req.body);
 
-            return res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
+            res.json({ asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`, ...asset });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -208,12 +208,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await await config.models.Asset.delete(req.params.assetid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Asset Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 }

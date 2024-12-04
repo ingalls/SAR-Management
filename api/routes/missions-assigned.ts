@@ -27,7 +27,7 @@ export default async function router(schema: Schema, config: Config) {
                 where: sql`mission_id = ${req.params.missionid}`
             }))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -53,9 +53,9 @@ export default async function router(schema: Schema, config: Config) {
                 ...req.body
             });
 
-            return res.json(await config.models.MissionAssigned.augmented_from(assigned.id))
+            res.json(await config.models.MissionAssigned.augmented_from(assigned.id))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -82,9 +82,9 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.MissionAssigned.commit(req.params.assignedid, req.body);
 
-            return res.json(await config.models.MissionAssigned.augmented_from(assigned.id))
+            res.json(await config.models.MissionAssigned.augmented_from(assigned.id))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -107,12 +107,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.MissionAssigned.delete(req.params.assignedid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Assignment Removed'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

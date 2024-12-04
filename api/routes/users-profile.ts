@@ -51,13 +51,13 @@ export default async function router(schema: Schema, config: Config) {
                         'Content-Type': 'image/webp'
                     });
                     res.write(generic);
-                    return res.end();
+                    res.end();
                 } else {
                     throw err;
                 }
             }
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -92,49 +92,50 @@ export default async function router(schema: Schema, config: Config) {
                 }
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
 
+        if (bb) {
+            bb.on('file', async (fieldname, file, blob) => {
+                const Body = await stream2buffer(file);
 
-        bb.on('file', async (fieldname, file, blob) => {
-            const Body = await stream2buffer(file);
+                try {
+                    await spaces.upload({
+                        Key: `users/${req.params.userid}/profile-orig-${blob.filename}`,
+                        Body
+                    });
 
-            try {
-                await spaces.upload({
-                    Key: `users/${req.params.userid}/profile-orig-${blob.filename}`,
-                    Body
-                });
+                    const jpeg = await sharp(Body)
+                        .jpeg({ mozjpeg: true })
+                        .withMetadata()
+                        .toBuffer();
 
-                const jpeg = await sharp(Body)
-                    .jpeg({ mozjpeg: true })
-                    .withMetadata()
-                    .toBuffer();
+                    await spaces.upload({
+                        Key: `users/${req.params.userid}/profile.jpg`,
+                        Body: jpeg
+                    });
 
-                await spaces.upload({
-                    Key: `users/${req.params.userid}/profile.jpg`,
-                    Body: jpeg
-                });
+                    const jpegmini = await sharp(Body)
+                        .resize(100)
+                        .jpeg({ mozjpeg: true })
+                        .withMetadata()
+                        .toBuffer();
 
-                const jpegmini = await sharp(Body)
-                    .resize(100)
-                    .jpeg({ mozjpeg: true })
-                    .withMetadata()
-                    .toBuffer();
+                    await spaces.upload({
+                        Key: `users/${req.params.userid}/profile-mini.jpg`,
+                        Body: jpegmini
+                    });
 
-                await spaces.upload({
-                    Key: `users/${req.params.userid}/profile-mini.jpg`,
-                    Body: jpegmini
-                });
+                    res.json({
+                        status: 200,
+                        message: 'Profile Updated'
+                    });
+                } catch (err) {
+                    Err.respond(err, res);
+                }
+            });
 
-                return res.json({
-                    status: 200,
-                    message: 'Profile Updated'
-                });
-            } catch (err) {
-                Err.respond(err, res);
-            }
-        });
-
-        return req.pipe(bb);
+            return req.pipe(bb);
+        }
     });
 }

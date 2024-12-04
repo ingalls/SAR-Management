@@ -46,7 +46,7 @@ export default async function router(schema: Schema, config: Config) {
                 `
             }))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -65,9 +65,9 @@ export default async function router(schema: Schema, config: Config) {
             const mission = await config.models.Mission.augmented_from(req.params.missionid);
             if (!mission.users) mission.users = [];
 
-            return res.json(mission);
+            res.json(mission);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -139,7 +139,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(await config.models.Mission.augmented_from(mission.id));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -197,7 +197,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(await config.models.Mission.augmented_from(req.params.missionid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -215,12 +215,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.Mission.delete(req.params.missionid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Mission Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

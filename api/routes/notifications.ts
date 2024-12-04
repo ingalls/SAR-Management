@@ -23,7 +23,7 @@ export default async function router(schema: Schema, config: Config) {
                 where: sql`uid = ${user.id}`
             }));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -38,12 +38,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.Notification.delete(sql`uid = ${user.id}`);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Notifications Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -67,12 +67,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.Notification.delete(req.params.notificationid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Notifications Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
                 `
             }));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -56,7 +56,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(await config.models.MissionTag.from(req.params.tagid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -74,9 +74,9 @@ export default async function router(schema: Schema, config: Config) {
 
             const tag = await config.models.MissionTag.generate(req.body);
 
-            return res.json(tag);
+            res.json(tag);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -96,9 +96,9 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Mission:Admin');
 
             const tag = await config.models.MissionTag.commit(req.params.tagid, req.body);
-            return res.json(tag);
+            res.json(tag);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -116,12 +116,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.MissionTag.delete(req.params.tagid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Mission Tag Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

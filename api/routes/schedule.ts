@@ -44,7 +44,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
 
-            return res.json(await config.models.Schedule.list({
+            res.json(await config.models.Schedule.list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,
@@ -55,7 +55,7 @@ export default async function router(schema: Schema, config: Config) {
                 `
             }));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -89,9 +89,9 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(schedule);
+            res.json(schedule);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -113,9 +113,9 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Oncall:Manage');
 
             const schedule = await config.models.Schedule.commit(req.params.scheduleid, req.body);
-            return res.json(schedule);
+            res.json(schedule);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -152,9 +152,9 @@ export default async function router(schema: Schema, config: Config) {
                 schedule_id: req.params.scheduleid
             });
 
-            return res.json(await config.models.ScheduleEvent.augmented_from(event.id))
+            res.json(await config.models.ScheduleEvent.augmented_from(event.id))
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -193,9 +193,9 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.ScheduleEvent.commit(req.params.eventid, req.body);
 
-            return res.json(await config.models.ScheduleEvent.augmented_from(req.params.eventid));
+            res.json(await config.models.ScheduleEvent.augmented_from(req.params.eventid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -224,7 +224,7 @@ export default async function router(schema: Schema, config: Config) {
                 message: 'Event Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -279,7 +279,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(events);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -295,9 +295,9 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
 
-            return res.json(await config.models.Schedule.from(req.params.scheduleid));
+            res.json(await config.models.Schedule.from(req.params.scheduleid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -322,7 +322,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, 'Oncall:View');
 
-            return res.json(await config.models.ScheduleAssigned.augmented_list({
+            res.json(await config.models.ScheduleAssigned.augmented_list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,
@@ -332,7 +332,7 @@ export default async function router(schema: Schema, config: Config) {
                 `
             }));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

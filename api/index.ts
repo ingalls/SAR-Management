@@ -77,7 +77,7 @@ export default async function server() {
      * @apiSchema {jsonschema=./schema/res.Server.json} apiSuccess
      */
     app.get('/api', (req, res) => {
-        return res.json({
+        res.json({
             version: pkg.version
         });
     });

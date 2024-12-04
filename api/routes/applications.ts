@@ -52,9 +52,9 @@ export default async function router(schema: Schema, config: Config) {
             });
                
             // @ts-expect-error Type
-            return res.json(list);
+            res.json(list);
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -70,32 +70,34 @@ export default async function router(schema: Schema, config: Config) {
 
             const isValid = ajv.validate(schema, req.body);
 
-            // @ts-expect-error AJV Errors fail
-            if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
-
-            const input: any = {
-                schema,
-                meta: {}
-            };
-            for (const prop in req.body) {
-                if (['name', 'phone', 'email', 'group'].includes(prop)) {
-                    input[prop] = req.body[prop];
-                } else {
-                    input.meta[prop] = req.body[prop];
+            if (!isValid) {
+                // @ts-expect-error AJV Errors fail
+                Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
+            } else {
+                const input: any = {
+                    schema,
+                    meta: {}
+                };
+                for (const prop in req.body) {
+                    if (['name', 'phone', 'email', 'group'].includes(prop)) {
+                        input[prop] = req.body[prop];
+                    } else {
+                        input.meta[prop] = req.body[prop];
+                    }
                 }
+
+                const app = await config.models.Application.generate(input);
+
+                // @ts-expect-error Type
+                res.json(app);
+
+                await notify.users('Application', 'View', {
+                    text: 'A new application has been submitted',
+                    url: `application/${app.id}`
+                });
             }
-
-            const app = await config.models.Application.generate(input);
-
-            // @ts-expect-error Type
-            res.json(app);
-
-            await notify.users('Application', 'View', {
-                text: 'A new application has been submitted',
-                url: `application/${app.id}`
-            });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -114,9 +116,9 @@ export default async function router(schema: Schema, config: Config) {
             const app = await config.models.Application.from(req.params.applicationid);
             Object.assign(app, app.meta);
             delete app.meta;
-            return res.json(app);
+            res.json(app);
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -154,7 +156,7 @@ export default async function router(schema: Schema, config: Config) {
             Object.assign(app, app.meta);
             delete app.meta;
 
-            return res.json(app);
+            res.json(app);
         } catch (err) {
             return Err.respond(err, res);
         }
@@ -177,7 +179,7 @@ export default async function router(schema: Schema, config: Config) {
                 archived: true
             });
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Application Archived'
             });

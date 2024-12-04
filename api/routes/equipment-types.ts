@@ -26,7 +26,7 @@ export default async function router(schema: Schema, config: Config) {
             // @ts-expect-error TODO Fix Type
             res.json(await config.models.EquipmentType.list(req.query));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -45,7 +45,7 @@ export default async function router(schema: Schema, config: Config) {
             // @ts-expect-error TODO Fix Type
             res.json(await config.models.EquipmentType.from(req.params.typeid));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -65,9 +65,9 @@ export default async function router(schema: Schema, config: Config) {
             const type = await config.models.EquipmentType.generate(req.body);
 
             // @ts-expect-error TODO Fix Type
-            return res.json(type);
+            res.json(type);
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -90,9 +90,9 @@ export default async function router(schema: Schema, config: Config) {
             const type = await config.models.EquipmentType.commit(req.params.typeid, req.body);
 
             // @ts-expect-error TODO Fix Type
-            return res.json(type);
+            res.json(type);
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 }

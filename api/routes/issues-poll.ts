@@ -36,12 +36,12 @@ export default async function router(schema: Schema, config: Config) {
                 vote = null;
             }
 
-            return res.json({
+            res.json({
                 ...poll,
                 vote: vote.question_id
             })
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -73,12 +73,12 @@ export default async function router(schema: Schema, config: Config) {
                 question_id: req.body.question
             });
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Vote Cast'
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 }

@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
                 `
             }));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -56,7 +56,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(await config.models.MissionRole.from(req.params.roleid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -74,9 +74,9 @@ export default async function router(schema: Schema, config: Config) {
 
             const role = await config.models.MissionRole.generate(req.body);
 
-            return res.json(role);
+            res.json(role);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -96,9 +96,9 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Mission:Admin');
 
             const role = await config.models.MissionRole.commit(req.params.roleid, req.body);
-            return res.json(role);
+            res.json(role);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -116,12 +116,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.MissionRole.delete(req.params.roleid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Mission Role Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

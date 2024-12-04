@@ -20,9 +20,9 @@ export default async function router(schema: Schema, config: Config) {
 
             const list = await config.models.Leadership.augmented_list();
 
-            return res.json(list)
+            res.json(list)
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -40,9 +40,9 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Leadership:Admin');
 
             const leader = await config.models.Leadership.generate(req.body);
-            return res.json(await config.models.Leadership.augmented_from(leader.id));
+            res.json(await config.models.Leadership.augmented_from(leader.id));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -63,9 +63,9 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Leadership:Admin');
 
             const leader = await config.models.Leadership.commit(req.params.leaderid, req.body);
-            return res.json(await config.models.Leadership.augmented_from(leader.id));
+            res.json(await config.models.Leadership.augmented_from(leader.id));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -82,12 +82,12 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, 'Leadership:Admin');
 
             await config.models.Leadership.delete(req.params.leaderid);
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Leader Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

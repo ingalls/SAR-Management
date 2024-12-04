@@ -42,16 +42,16 @@ export default async function router(schema: Schema, config: Config) {
                 .offset((req.query.page || 0) * (req.query.limit || 10))
 
             if (pgres.length === 0) {
-                return res.json({ total: 0, items: [] });
+                res.json({ total: 0, items: [] });
             } else {
-                return res.json({
+                res.json({
                     total: pgres.length,
                     items: pgres
                 });
             }
 
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

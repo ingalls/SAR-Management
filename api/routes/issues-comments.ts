@@ -40,7 +40,7 @@ export default async function router(schema: Schema, config: Config) {
                 `
             }));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -64,12 +64,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.IssueComment.delete(req.params.commentid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Comment Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -99,9 +99,9 @@ export default async function router(schema: Schema, config: Config) {
                 ...req.body
             })
 
-            return res.json(await config.models.IssueComment.augmented_from(comment.id));
+            res.json(await config.models.IssueComment.augmented_from(comment.id));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -126,9 +126,9 @@ export default async function router(schema: Schema, config: Config) {
                 ...req.body
             });
 
-            return res.json(await config.models.IssueComment.augmented_from(comment.id));
+            res.json(await config.models.IssueComment.augmented_from(comment.id));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 }

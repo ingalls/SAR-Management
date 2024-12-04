@@ -29,9 +29,9 @@ export default async function router(schema: Schema, config: Config) {
                 server = await await config.models.Server.generate(req.body);
             }
 
-            return res.json(server);
+            res.json(server);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -47,13 +47,15 @@ export default async function router(schema: Schema, config: Config) {
         try {
             const server = await config.models.Server.from(req.params.key);
 
-            if (server.public) return res.json(server);
+            if (server.public) {
+                res.json(server);
+            } else {
+                await Auth.is_auth(config, req);
 
-            await Auth.is_auth(config, req);
-
-            return res.json(server);
+                res.json(server);
+            }
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -71,12 +73,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.Server.delete(req.params.key);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

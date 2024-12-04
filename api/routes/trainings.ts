@@ -48,9 +48,9 @@ export default async function router(schema: Schema, config: Config) {
                 `
             })
 
-            return res.json(list);
+            res.json(list);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -68,9 +68,9 @@ export default async function router(schema: Schema, config: Config) {
 
             const training = await config.models.Training.augmented_from(req.params.trainingid);
             if (!training.users) training.users = [];
-            return res.json(training);
+            res.json(training);
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -128,9 +128,9 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(await config.models.Training.augmented_from(training.id));
+            res.json(await config.models.Training.augmented_from(training.id));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -172,9 +172,9 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(await config.models.Training.augmented_from(req.params.trainingid));
+            res.json(await config.models.Training.augmented_from(req.params.trainingid));
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 
@@ -200,12 +200,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.Training.delete(req.params.trainingid);
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Training Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+             Err.respond(err, res);
         }
     });
 }

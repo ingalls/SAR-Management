@@ -51,13 +51,13 @@ export default async function router(schema: Schema, config: Config) {
                         'Content-Type': 'image/webp'
                     });
                     res.write(generic);
-                    return res.end();
+                    res.end();
                 } else {
                     throw err;
                 }
             }
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -88,49 +88,51 @@ export default async function router(schema: Schema, config: Config) {
                 }
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
 
 
-        bb.on('file', async (fieldname, file, blob) => {
-            try {
-                const Body = await stream2buffer(file);
+        if (bb) {
+            bb.on('file', async (fieldname, file, blob) => {
+                try {
+                    const Body = await stream2buffer(file);
 
-                await spaces.upload({
-                    Key: `equipment/${req.params.equipmentid}/profile-orig-${blob.filename}`,
-                    Body
-                });
+                    await spaces.upload({
+                        Key: `equipment/${req.params.equipmentid}/profile-orig-${blob.filename}`,
+                        Body
+                    });
 
-                const jpeg = await sharp(Body)
-                    .jpeg({ mozjpeg: true })
-                    .withMetadata()
-                    .toBuffer();
+                    const jpeg = await sharp(Body)
+                        .jpeg({ mozjpeg: true })
+                        .withMetadata()
+                        .toBuffer();
 
-                await spaces.upload({
-                    Key: `equipment/${req.params.equipmentid}/profile.jpg`,
-                    Body: jpeg
-                });
+                    await spaces.upload({
+                        Key: `equipment/${req.params.equipmentid}/profile.jpg`,
+                        Body: jpeg
+                    });
 
-                const jpegmini = await sharp(Body)
-                    .resize(100)
-                    .jpeg({ mozjpeg: true })
-                    .withMetadata()
-                    .toBuffer();
+                    const jpegmini = await sharp(Body)
+                        .resize(100)
+                        .jpeg({ mozjpeg: true })
+                        .withMetadata()
+                        .toBuffer();
 
-                await spaces.upload({
-                    Key: `equipment/${req.params.equipmentid}/profile-mini.jpg`,
-                    Body: jpegmini
-                });
+                    await spaces.upload({
+                        Key: `equipment/${req.params.equipmentid}/profile-mini.jpg`,
+                        Body: jpegmini
+                    });
 
-                return res.json({
-                    status: 200,
-                    message: 'Profile Updated'
-                });
-            } catch (err) {
-                Err.respond(err, res);
-            }
-        });
+                    res.json({
+                        status: 200,
+                        message: 'Profile Updated'
+                    });
+                } catch (err) {
+                    Err.respond(err, res);
+                }
+            });
 
-        return req.pipe(bb);
+            return req.pipe(bb);
+        }
     });
 }

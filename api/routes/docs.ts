@@ -87,12 +87,12 @@ export default async function router(schema: Schema, config: Config) {
                 return doc.key.toLowerCase().includes(req.query.filter.toLowerCase())
             })
 
-            return res.json({
+            res.json({
                 total: documents.length,
                 items: documents
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -116,7 +116,7 @@ export default async function router(schema: Schema, config: Config) {
                 });
 
                 const body = file.Body as Readable;
-                return body.pipe(res);
+                body.pipe(res);
             } else {
                 const user = await Auth.is_auth(config, req, { token: true });
                 await Auth.is_iam(config, req, 'Doc:Manage', { token: true });
@@ -140,13 +140,13 @@ export default async function router(schema: Schema, config: Config) {
                     Body: file.body
                 });
 
-                return res.json({
+                res.json({
                     status: 200,
                     message: 'Conversion Complete'
                 });
             }
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -173,16 +173,16 @@ export default async function router(schema: Schema, config: Config) {
 
             if (!req.query.download) {
                 const body = file.Body as Readable;
-                return body.pipe(res);
+                body.pipe(res);
             } else {
                 res.writeHead(200, {
                     'Content-Disposition': `attachment; filename="${req.query.file}"`
                 });
                 const body = file.Body as Readable;
-                return body.pipe(res);
+                body.pipe(res);
             }
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -205,7 +205,7 @@ export default async function router(schema: Schema, config: Config) {
                 Body: ''
             });
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Document Uploaded'
             });
@@ -242,7 +242,7 @@ export default async function router(schema: Schema, config: Config) {
                 }
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
 
         const uploads: Array<Promise<unknown>> = [];
@@ -257,7 +257,7 @@ export default async function router(schema: Schema, config: Config) {
 
                 await uploads[0];
 
-                return res.json({
+                res.json({
                     status: 200,
                     message: 'Document Uploaded'
                 });
@@ -266,7 +266,7 @@ export default async function router(schema: Schema, config: Config) {
             }
         });
 
-        return req.pipe(bb);
+        req.pipe(bb);
     });
 
     await schema.delete('/doc', {
@@ -287,12 +287,12 @@ export default async function router(schema: Schema, config: Config) {
 
             await spaces.deleteRecursive({ Prefix: req.query.file + '/' });
 
-            return res.json({
+            res.json({
                 status: 200,
                 message: 'Document Deleted'
             });
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 }

@@ -53,9 +53,9 @@ export default async function router(schema: Schema, config: Config) {
                 `
             })
 
-            return res.json(list);
+            res.json(list);
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -73,7 +73,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json(await config.models.Equipment.augmented_from(req.params.equipmentid));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -112,9 +112,9 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(await config.models.Equipment.augmented_from(equipment.id));
+            res.json(await config.models.Equipment.augmented_from(equipment.id));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 
@@ -185,9 +185,9 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            return res.json(await config.models.Equipment.augmented_from(equipment.id));
+            res.json(await config.models.Equipment.augmented_from(equipment.id));
         } catch (err) {
-            return Err.respond(err, res);
+            Err.respond(err, res);
         }
     });
 }
