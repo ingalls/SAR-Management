@@ -111,6 +111,33 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
+    await schema.post('/team/:teamid/user/:userid', {
+        name: 'Add User',
+        group: 'TeamUsers',
+        description: 'Add a user to a team',
+        params: Type.Object({
+            teamid: Type.Integer(),
+            userid: Type.Integer()
+        }),
+        res: StandardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, 'Team:Manage');
+
+            await config.models.UserTeam.generate({
+                uid: req.params.userid,
+                tid: req.params.teamid
+            })
+
+             res.json({
+                status: 200,
+                message: 'User Added'
+            });
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
     await schema.delete('/team/:teamid/user/:userid', {
         name: 'Remove User',
         group: 'TeamUsers',
