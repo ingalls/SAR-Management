@@ -126,7 +126,11 @@
                                                         />
                                                         <template v-for='training in trainings'>
                                                             <th>
-                                                                <CheckIcon v-if='training.users.has(user.id)' />
+                                                                <IconCheck
+                                                                    v-if='training.users.has(user.id)' 
+                                                                    :size='32'
+                                                                    stroke='1'
+                                                                />
                                                             </th>
                                                         </template>
                                                     </tr>
@@ -155,13 +159,13 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    CheckIcon
-} from 'vue-tabler-icons';
+    IconCheck
+} from '@tabler/icons-vue';
 
 export default {
     name: 'TeamAttendance',
     components: {
-        CheckIcon,
+        IconCheck,
         NoAccess,
         TeamBadge,
         TablerInput,

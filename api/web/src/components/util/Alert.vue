@@ -7,15 +7,15 @@
                     "mt-4 mb-2": !compact
                 }'
             >
-                <AlertTriangleIcon
+                <IconAlertTriangle
                     v-if='compact'
-                    width='32'
-                    height='32'
+                    :size='32'
+                    stroke='1'
                 />
-                <AlertTriangleIcon
+                <IconAlertTriangle
                     v-else
-                    width='48'
-                    height='48'
+                    :size='48'
+                    stroke='1'
                 />
             </div>
 
@@ -33,13 +33,13 @@
 
 <script>
 import {
-    AlertTriangleIcon
-} from 'vue-tabler-icons'
+    IconAlertTriangle
+} from '@tabler/icons-vue'
 
 export default {
     name: 'Alert',
     components: {
-        AlertTriangleIcon
+        IconAlertTriangle
     },
     props: {
         label: {

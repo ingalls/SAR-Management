@@ -14,9 +14,9 @@
                                 </template>
                                 <template v-else-if='submitted'>
                                     <div class='d-flex justify-content-center mb-4'>
-                                        <CheckIcon
-                                            width='48'
-                                            height='48'
+                                        <IconCheck
+                                            :size='48'
+                                            stroke='2'
                                         />
                                     </div>
 
@@ -72,13 +72,13 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    CheckIcon
-} from 'vue-tabler-icons';
+    IconCheck
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Forgot',
     components: {
-        CheckIcon,
+        IconCheck,
         TablerLoading
     },
     data: function() {

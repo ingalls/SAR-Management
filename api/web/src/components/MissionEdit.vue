@@ -227,6 +227,13 @@ export default {
             assigned: []
         }
     },
+    watch: {
+        'mission.start_ts': function() {
+            if (this.mission.start_ts && !this.mission.end_ts) {
+                this.mission.end_ts = this.mission.start_ts;
+            }
+        }
+    },
     mounted: async function() {
         if (this.$route.params.missionid && this.is_iam('Mission:Manage')) {
             await this.fetch();

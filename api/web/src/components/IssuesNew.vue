@@ -63,9 +63,11 @@
                                                 Poll
                                             </h3>
                                             <div class='ms-auto btn-list'>
-                                                <PlusIcon
+                                                <IconPlus
                                                     v-tooltip='"Add Question"'
                                                     class='cursor-pointer'
+                                                    :size='32'
+                                                    stroke='1'
                                                     @click='poll.questions.push({
                                                         "name": ""
                                                     })'
@@ -83,9 +85,11 @@
                                                     class='w-full mx-2'
                                                 />
                                                 <div class='ms-auto'>
-                                                    <TrashIcon
+                                                    <IconTrash
                                                         v-tooltip='"Remove Question"'
                                                         class='cursor-pointer my-1'
+                                                        :size='32'
+                                                        stroke='1'
                                                         @click='poll.questions.splice(qit, 1)'
                                                     />
                                                 </div>
@@ -100,7 +104,10 @@
                                             class='btn'
                                             @click='poll.shown = true'
                                         >
-                                            <GraphIcon />
+                                            <IconGraph
+                                                :size='32'
+                                                stroke='1'
+                                            />
                                         </button>
                                         <button
                                             v-else
@@ -108,7 +115,10 @@
                                             class='btn'
                                             @click='poll.shown = false'
                                         >
-                                            <GraphOffIcon />
+                                            <IconGraphOff
+                                                :size='32'
+                                                stroke='1'
+                                            />
                                         </button>
 
                                         <div class='ms-auto'>
@@ -141,24 +151,24 @@ import {
     TablerInput,
 } from '@tak-ps/vue-tabler';
 import {
-    GraphIcon,
-    GraphOffIcon,
-    TrashIcon,
-    PlusIcon,
-} from 'vue-tabler-icons';
+    IconGraph,
+    IconGraphOff,
+    IconTrash,
+    IconPlus,
+} from '@tabler/icons-vue';
 
 export default {
     name: 'IssuesNew',
     components: {
         NoAccess,
         TablerInput,
-        GraphIcon,
-        GraphOffIcon,
+        IconGraph,
+        IconGraphOff,
         TablerBreadCrumb,
         UserSelect,
-        TrashIcon,
+        IconTrash,
         MdEditor,
-        PlusIcon
+        IconPlus
 
     },
     props: {

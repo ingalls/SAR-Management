@@ -59,10 +59,6 @@ export default {
         TablerLoading,
         TablerProgress
     },
-    emits: [
-        'cancel',
-        'done'
-    ],
     props: {
         url: {
             type: [String, URL],
@@ -87,6 +83,10 @@ export default {
             default: '*'
         }
     },
+    emits: [
+        'cancel',
+        'done'
+    ],
     data: function() {
         return {
             name: '',

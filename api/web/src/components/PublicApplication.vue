@@ -29,10 +29,10 @@
                                 />
                                 <template v-else-if='success'>
                                     <div class='d-flex justify-content-center mb-4'>
-                                        <CheckIcon
+                                        <IconCheck
                                             class='text-green'
-                                            width='70'
-                                            height='70'
+                                            :size='70'
+                                            stroke='2'
                                         />
                                     </div>
 
@@ -72,13 +72,13 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
-    CheckIcon
-} from 'vue-tabler-icons';
+    IconCheck
+} from '@tabler/icons-vue';
 
 export default {
     name: 'PublicApplication',
     components: {
-        CheckIcon,
+        IconCheck,
         TablerSchema,
         TablerLoading
     },

@@ -75,7 +75,10 @@
                                 </td>
                                 <td v-else-if='h.name === "title"'>
                                     <div class='d-flex align-items-center'>
-                                        <span v-if='attendance' class='me-3'>
+                                        <span
+                                            v-if='attendance'
+                                            class='me-3'
+                                        >
                                             <IconUserCheck
                                                 v-if='training.users.includes(auth.id)'
                                                 v-tooltip='"Attended"'
@@ -185,10 +188,6 @@ export default {
         dragHandle: {
             type: Boolean,
             default: false
-        },
-        limit: {
-            type: Number,
-            default: 10
         },
         footer: {
             type: Boolean,

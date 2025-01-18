@@ -191,6 +191,13 @@ export default {
             }
         }
     },
+    watch: {
+        'training.start_ts': function() {
+            if (this.training.start_ts && !this.training.end_ts) {
+                this.training.end_ts = this.training.start_ts;
+            }
+        }
+    },
     mounted: async function() {
         if (this.$route.params.trainingid && this.is_iam('Training:Manage')) {
             await this.fetch();

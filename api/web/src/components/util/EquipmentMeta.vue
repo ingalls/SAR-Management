@@ -50,8 +50,10 @@
                                     v-text='key'
                                 />
                                 <div class='ms-auto'>
-                                    <PlusIcon
+                                    <IconPlus
                                         v-if='!disabled'
+                                        stroke='1'
+                                        :size='32'
                                         class='cursor-pointer'
                                         @click='meta[key].push("")'
                                     />
@@ -92,13 +94,13 @@ import {
     TablerInput,
 } from '@tak-ps/vue-tabler';
 import {
-    PlusIcon
-} from 'vue-tabler-icons'
+    IconPlus
+} from '@tabler/icons-vue'
 
 export default {
     name: 'EquipmentMetadata',
     components: {
-        PlusIcon,
+        IconPlus,
         TablerToggle,
         TablerInput,
     },

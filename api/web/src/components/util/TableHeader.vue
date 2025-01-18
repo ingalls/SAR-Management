@@ -125,11 +125,6 @@ export default {
         IconChevronUp,
         IconChevronDown
     },
-    data: function() {
-        return {
-            modal: false
-        }
-    },
     props: {
         header: {
             type: Array,
@@ -153,6 +148,11 @@ export default {
             description: 'Export Events',
             default: false,
         },
+    },
+    data: function() {
+        return {
+            modal: false
+        }
     },
     computed: {
         shown: function() {

@@ -46,9 +46,9 @@
 
                 <template v-if='asset'>
                     <div class='d-flex justify-content-center mb-4'>
-                        <CheckIcon
-                            width='48'
-                            height='48'
+                        <IconCheck
+                            :size='48'
+                            stroke='2'
                         />
                     </div>
 
@@ -90,14 +90,14 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    CheckIcon
-} from 'vue-tabler-icons';
+    IconCheck
+} from '@tabler/icons-vue';
 import UploadDefault from './UploadDefault.vue';
 
 export default {
     name: 'UploadCertificateModal',
     components: {
-        CheckIcon,
+        IconCheck,
         TablerModal,
         TablerInput,
         TablerLoading,

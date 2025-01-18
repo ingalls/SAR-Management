@@ -50,10 +50,7 @@ import TableFooter from './util/TableFooter.vue';
 import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
 import TeamBadge from './util/TeamBadge.vue';
-import {
-    SearchIcon,
-    PlusIcon
-} from 'vue-tabler-icons';
+
 import {
     TablerNone,
     TablerEpochRange,
@@ -64,8 +61,6 @@ export default {
     name: 'Missions',
     components: {
         TablerNone,
-        SearchIcon,
-        PlusIcon,
         NoAccess,
         TablerEpochRange,
         TableFooter,

@@ -23,10 +23,10 @@
 
                                 <div
                                     v-for='tag in list.items'
-                                    @click='push_tags(tag)'
                                     class='cursor-pointer hover-light mx-1 my-1 px-2 py-2'
+                                    @click='push_tags(tag)'
                                 >
-                                    <span v-text='tag.name'/>
+                                    <span v-text='tag.name' />
                                 </div>
                             </div>
                         </template>

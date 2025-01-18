@@ -8,8 +8,10 @@
                     </h3>
 
                     <div class='ms-auto'>
-                        <PlusIcon
+                        <IconPlus
                             v-if='$route.name === "profile"'
+                            :size='32'
+                            stroke='1'
                             class='cursor-pointer'
                             @click='upload = true'
                         />
@@ -66,15 +68,15 @@ import {
 } from '@tak-ps/vue-tabler';
 import UploadCertificate from '../util/UploadCertificate.vue';
 import {
-    PlusIcon
-} from 'vue-tabler-icons'
+    IconPlus
+} from '@tabler/icons-vue'
 
 export default {
     name: 'CertsCard',
     components: {
         TablerNone,
         UploadCertificate,
-        PlusIcon
+        IconPlus
     },
     props: {
         limit: {

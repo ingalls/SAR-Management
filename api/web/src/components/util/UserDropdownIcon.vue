@@ -9,9 +9,9 @@
             data-bs-toggle='dropdown'
             aria-expanded='false'
         >
-            <PlusIcon
-                height='24'
-                width='24'
+            <IconPlus
+                :size='24'
+                stroke='1'
             />
         </div>
         <ul
@@ -44,14 +44,14 @@ import {
     TablerInput
 } from '@tak-ps/vue-tabler';
 import {
-    PlusIcon
-} from 'vue-tabler-icons'
+    IconPlus
+} from '@tabler/icons-vue'
 
 export default {
     name: 'UserDropdown',
     components: {
         Avatar,
-        PlusIcon,
+        IconPlus,
         TablerInput
     },
     props: {

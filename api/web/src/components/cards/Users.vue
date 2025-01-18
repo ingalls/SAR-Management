@@ -9,8 +9,8 @@
 
                     <div class='ms-auto btn-list align-items-center'>
                         <TablerInput
-                            icon='search'
                             v-model='paging.filter'
+                            icon='search'
                             placeholder='Search…'
                         />
 
@@ -23,7 +23,10 @@
                             </button>
 
                             <template #dropdown>
-                                <TablerToggle label='Disabled Users' v-model='paging.disabled'/>
+                                <TablerToggle
+                                    v-model='paging.disabled'
+                                    label='Disabled Users'
+                                />
                             </template>
                         </TablerDropdown>
 
@@ -42,7 +45,10 @@
                                 <label
                                     class='btn btn-icon'
                                     @click='mode="list"'
-                                ><IconList size='32' stroke='1'/></label>
+                                ><IconList
+                                    size='32'
+                                    stroke='1'
+                                /></label>
                                 <input
                                     v-model='mode'
                                     type='radio'
@@ -53,15 +59,18 @@
                                 <label
                                     class='btn btn-icon'
                                     @click='mode="gallery"'
-                                ><IconPolaroid size='32' stroke='1'/></label>
+                                ><IconPolaroid
+                                    size='32'
+                                    stroke='1'
+                                /></label>
                             </div>
 
                             <button class='btn px-2'>
                                 <IconAddressBook
                                     class='cursor-pointer'
-                                    @click='exportUsers("vcard")'
                                     size='32'
                                     stroke='1'
+                                    @click='exportUsers("vcard")'
                                 />
                             </button>
                             <template v-if='edit'>
@@ -80,7 +89,10 @@
                 </div>
             </div>
         </div>
-        <TablerLoading v-if='loading.list' desc='Loading Users' />
+        <TablerLoading
+            v-if='loading.list'
+            desc='Loading Users'
+        />
         <TablerNone
             v-else-if='!list.items.length'
             label='Users'

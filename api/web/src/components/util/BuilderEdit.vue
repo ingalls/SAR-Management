@@ -10,16 +10,28 @@
         <div class='modal-body text-center py-4'>
             <div class='d-flex my-2'>
                 <template v-if='edit.type === "string"'>
-                    <AlphabetLatinIcon />
+                    <IconAlphabetLatin
+                        :size='32'
+                        stroke='1'
+                    />
                 </template>
                 <template v-else-if='edit.type === "number"'>
-                    <DecimalIcon />
+                    <DecimalIcon
+                        :size='32'
+                        stroke='1'
+                    />
                 </template>
                 <template v-else-if='edit.type === "integer"'>
-                    <Sort09Icon />
+                    <Sort09Icon
+                        :size='32'
+                        stroke='1'
+                    />
                 </template>
                 <template v-else>
-                    <BinaryIcon />
+                    <BinaryIcon
+                        :size='32'
+                        stroke='1'
+                    />
                 </template>
                 <span
                     class='my-1 mx-2 strong'
@@ -60,11 +72,11 @@
 
 <script>
 import {
-    AlphabetLatinIcon,
-    DecimalIcon,
-    Sort09Icon,
-    BinaryIcon,
-} from 'vue-tabler-icons';
+    IconAlphabetLatin,
+    IconDecimal,
+    IconSort09,
+    IconBinary,
+} from '@tabler/icons-vue';
 import {
     TablerModal,
     TablerInput,
@@ -74,10 +86,10 @@ import {
 export default {
     name: 'BuilderEdit',
     components: {
-        AlphabetLatinIcon,
-        DecimalIcon,
-        Sort09Icon,
-        BinaryIcon,
+        IconAlphabetLatin,
+        IconDecimal,
+        IconSort09,
+        IconBinary,
         TablerModal,
         TablerInput,
         TablerToggle

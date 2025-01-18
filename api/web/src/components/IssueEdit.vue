@@ -83,10 +83,6 @@ import {
     TablerLoading,
     TablerInput,
 } from '@tak-ps/vue-tabler';
-import {
-    TrashIcon,
-    PlusIcon,
-} from 'vue-tabler-icons';
 
 export default {
     name: 'IssuesEdit',
@@ -97,9 +93,6 @@ export default {
         MdEditor,
         TablerBreadCrumb,
         UserSelect,
-        TrashIcon,
-        PlusIcon
-
     },
     props: {
         iam: {

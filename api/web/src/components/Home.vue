@@ -63,7 +63,6 @@ import iam from '../iam.js';
 import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
-import NoAccess from './util/NoAccess.vue';
 import Draggable from 'vuedraggable';
 import moment from 'moment';
 
@@ -74,7 +73,6 @@ export default {
         IssuesCard,
         CalendarCard,
         TrainingsCard,
-        NoAccess
     },
     props: {
         iam: {

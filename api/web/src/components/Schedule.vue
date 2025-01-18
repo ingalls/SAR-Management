@@ -32,8 +32,10 @@
                                         v-text='schedule.name'
                                     />
                                     <div class='btn-list ms-auto'>
-                                        <SettingsIcon
+                                        <IconSettings
                                             v-if='is_iam("Oncall:Admin")'
+                                            :size='32'
+                                            stroke='1'
                                             class='cursor-pointer'
                                             @click='$router.push(`/schedule/${$route.params.scheduleid}/edit`)'
                                         />
@@ -73,8 +75,8 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
-    SettingsIcon
-} from 'vue-tabler-icons';
+    IconSettings
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Schedule',
@@ -84,7 +86,7 @@ export default {
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
-        SettingsIcon,
+        IconSettings,
         NoAccess
     },
     props: {

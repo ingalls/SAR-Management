@@ -8,9 +8,9 @@
                             <div class='card-body'>
                                 <template v-if='err'>
                                     <div class='text-center py-4'>
-                                        <AlertCircleIcon
-                                            height='48'
-                                            width='48'
+                                        <IconAlertCircle
+                                            :size='48'
+                                            stroke='1'
                                         />
                                         <h3 class='pt-3'>
                                             Password Reset Failed
@@ -40,9 +40,9 @@
                                     </template>
                                     <template v-else-if='success'>
                                         <div class='d-flex justify-content-center mb-4'>
-                                            <CheckIcon
-                                                width='48'
-                                                height='48'
+                                            <IconCheck
+                                                :size='48'
+                                                stroke='1'
                                             />
                                         </div>
 
@@ -103,16 +103,16 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    CheckIcon,
-    AlertCircleIcon
-} from 'vue-tabler-icons';
+    IconCheck,
+    IconAlertCircle
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Reset',
     components: {
-        CheckIcon,
+        IconCheck,
         TablerLoading,
-        AlertCircleIcon
+        IconAlertCircle
     },
     data: function() {
         return {

@@ -123,9 +123,9 @@
                                                     <div class='d-flex my-1'>
                                                         Emergency Contacts
                                                         <div class='ms-auto'>
-                                                            <PlusIcon
-                                                                width='24'
-                                                                height='24'
+                                                            <IconPlus
+                                                                :size='24'
+                                                                stroke='1'
                                                                 class='cursor-pointer'
                                                                 @click='user.emergency.push({name: "", relationship: "", phone: ""})'
                                                             />
@@ -166,9 +166,9 @@
                                                                         class='mx-2'
                                                                         style='padding-top: 32px;'
                                                                     >
-                                                                        <TrashIcon
-                                                                            height='24'
-                                                                            width='24'
+                                                                        <IconTrash
+                                                                            :size='24'
+                                                                            stroke='1'
                                                                             class='cursor-pointer'
                                                                             @click='user.emergency.splice(em_it, 1)'
                                                                         />
@@ -226,9 +226,9 @@ import {
     TablerInput,
 } from '@tak-ps/vue-tabler'
 import {
-    PlusIcon,
-    TrashIcon
-} from 'vue-tabler-icons';
+    IconPlus,
+    IconTrash
+} from '@tabler/icons-vue';
 import UserProfile from './User/Profile.vue';
 
 export default {
@@ -236,8 +236,8 @@ export default {
     components: {
         TablerNone,
         Upload,
-        PlusIcon,
-        TrashIcon,
+        IconPlus,
+        IconTrash,
         UserProfile,
         TablerLoading,
         TablerInput,

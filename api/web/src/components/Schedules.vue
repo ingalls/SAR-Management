@@ -23,7 +23,9 @@
                                 </h1>
 
                                 <div class='ms-auto btn-list'>
-                                    <PlusIcon
+                                    <IconPlus
+                                        :size='32'
+                                        stroke='1'
                                         class='cursor-pointer'
                                         @click='$router.push("/schedule/new")'
                                     />
@@ -87,8 +89,8 @@ import NoAccess from './util/NoAccess.vue';
 import TableHeader from './util/TableHeader.vue';
 import TableFooter from './util/TableFooter.vue';
 import {
-    PlusIcon
-} from 'vue-tabler-icons';
+    IconPlus
+} from '@tabler/icons-vue';
 import {
     TablerNone,
     TablerLoading,
@@ -99,7 +101,7 @@ export default {
     name: 'OnCall',
     components: {
         TablerNone,
-        PlusIcon,
+        IconPlus,
         TablerLoading,
         TablerBreadCrumb,
         TableHeader,

@@ -127,7 +127,11 @@
                                     Team Fieldability Requirements
                                 </h2>
                                 <div class='ms-auto'>
-                                    <PlusIcon class='cursor-pointer' />
+                                    <IconPlus
+                                        :size='32'
+                                        stroke='1'
+                                        class='cursor-pointer'
+                                    />
                                 </div>
                             </div>
                             <table class='table card-table table-vcenter'>
@@ -217,8 +221,8 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
-    PlusIcon
-} from 'vue-tabler-icons';
+    IconPlus
+} from '@tabler/icons-vue';
 import {
     TablerBreadCrumb,
     TablerLoading,
@@ -229,7 +233,7 @@ import {
 export default {
     name: 'TeamEdit',
     components: {
-        PlusIcon,
+        IconPlus,
         NoAccess,
         TablerLoading,
         TablerToggle,

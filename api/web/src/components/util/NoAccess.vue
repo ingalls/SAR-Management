@@ -16,15 +16,15 @@
                     "mt-4 mb-2": !compact
                 }'
             >
-                <EyeOffIcon
+                <IconEyeOff
                     v-if='compact'
-                    width='32'
-                    height='32'
+                    :size='32'
+                    stroke='1'
                 />
-                <EyeOffIcon
+                <IconEyeOff
                     v-else
-                    width='48'
-                    height='48'
+                    :size='32'
+                    stroke='1'
                 />
             </div>
 
@@ -42,13 +42,13 @@
 
 <script>
 import {
-    EyeOffIcon
-} from 'vue-tabler-icons'
+    IconEyeOff
+} from '@tabler/icons-vue'
 
 export default {
     name: 'NoAccess',
     components: {
-        EyeOffIcon
+        IconEyeOff
     },
     props: {
         title: String,

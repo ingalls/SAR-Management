@@ -34,14 +34,19 @@
                                             placeholder='Search…'
                                         >
                                         <span class='input-icon-addon'>
-                                            <SearchIcon width='24' />
+                                            <IconSearch
+                                                :size='24'
+                                                stroke='1'
+                                            />
                                         </span>
                                     </div>
                                     <div
                                         v-if='is_iam("Equipment:Admin")'
                                         class='ms-auto'
                                     >
-                                        <PlusIcon
+                                        <IconPlus
+                                            :size='32'
+                                            stroke='1'
                                             class='cursor-pointer'
                                             @click='$router.push("/equipment/type/new")'
                                         />
@@ -96,9 +101,9 @@ import {
 } from '@tak-ps/vue-tabler';
 import iam from '../iam.js';
 import {
-    PlusIcon,
-    SearchIcon
-} from 'vue-tabler-icons'
+    IconPlus,
+    IconSearch
+} from '@tabler/icons-vue'
 
 export default {
     name: 'EquipmentTypes',
@@ -106,9 +111,9 @@ export default {
         TablerNone,
         TablerEpoch,
         TablerBreadCrumb,
-        PlusIcon,
+        IconPlus,
         NoAccess,
-        SearchIcon
+        IconSearch
     },
     props: {
         iam: {

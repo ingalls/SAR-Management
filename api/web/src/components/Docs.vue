@@ -34,8 +34,8 @@
                             <div class='card-body'>
                                 <div class='d-flex'>
                                     <TablerInput
-                                        icon='search'
                                         v-model='paging.filter'
+                                        icon='search'
                                         placeholder='Search…'
                                     />
 
@@ -68,7 +68,7 @@
                             </div>
 
                             <TablerLoading v-if='loading.list' />
-                            <template v-else >
+                            <template v-else>
                                 <table class='table table-hover card-table table-vcenter'>
                                     <thead>
                                         <tr>
@@ -169,10 +169,8 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    IconDotsVertical,
     IconPlus,
     IconFolderPlus,
-    IconSearch,
     IconFileFilled,
     IconFolderFilled
 } from '@tabler/icons-vue';
@@ -188,7 +186,6 @@ export default {
         IconDotsVertical,
         IconPlus,
         IconFolderPlus,
-        IconSearch,
         IconFileFilled,
         IconFolderFilled,
         TablerInput,

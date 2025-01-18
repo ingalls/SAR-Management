@@ -15,7 +15,11 @@
                         data-bs-toggle='dropdown'
                         aria-expanded='false'
                     >
-                        <PlusIcon class='cursor-pointer' />
+                        <IconPlus
+                            :size='32'
+                            stroke='1'
+                            class='cursor-pointer'
+                        />
                     </div>
                     <ul
                         class='dropdown-menu'
@@ -119,9 +123,8 @@
 
 <script>
 import {
-    PlusIcon,
-    TrashIcon,
-} from 'vue-tabler-icons';
+    IconPlus,
+} from '@tabler/icons-vue';
 import BuilderEdit from './BuilderEdit.vue';
 import {
     TablerNone,
@@ -131,8 +134,7 @@ import {
 export default {
     name: 'Builder',
     components: {
-        PlusIcon,
-        TrashIcon,
+        IconPlus,
         TablerNone,
         TablerSchema,
         BuilderEdit,

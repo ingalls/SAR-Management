@@ -24,7 +24,11 @@
                             />
 
                             <div class='ms-auto'>
-                                <CheckIcon v-if='selected === question.id' />
+                                <IconCheck
+                                    v-if='selected === question.id'
+                                    :size='32'
+                                    stroke='1'
+                                />
                             </div>
                         </div>
                     </template>
@@ -63,13 +67,13 @@ import {
     TablerProgress
 } from '@tak-ps/vue-tabler';
 import {
-    CheckIcon,
-} from 'vue-tabler-icons';
+    IconCheck,
+} from '@tabler/icons-vue';
 
 export default {
     name: 'Poll',
     components: {
-        CheckIcon,
+        IconCheck,
         TablerProgress,
         TablerLoading
     },

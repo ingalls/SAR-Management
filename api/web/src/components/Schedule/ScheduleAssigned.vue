@@ -5,8 +5,10 @@
                 Assigned
             </h3>
             <div class='ms-auto'>
-                <SettingsIcon
+                <IconSettings
                     v-tooltip='"Edit"'
+                    :size='32'
+                    stroke='1'
                     class='cursor-pointer'
                     @click='edit = !edit'
                 />
@@ -89,10 +91,7 @@
 <script>
 import Avatar from '../util/Avatar.vue';
 import {
-    SettingsIcon,
-    ListIcon,
-    SearchIcon,
-    TrashIcon
+    IconSettings,
 } from 'vue-tabler-icons'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableHeader from '../util/TableHeader.vue';
@@ -108,14 +107,11 @@ import UserProfile from '../User/Profile.vue';
 export default {
     name: 'CardScheduleAssigned',
     components: {
-        SettingsIcon,
+        IconSettings,
         TablerNone,
         TablerEpoch,
         Avatar,
         UserDropdownIcon,
-        TrashIcon,
-        SearchIcon,
-        ListIcon,
         UserProfile,
         TablerLoading,
         TableFooter,
