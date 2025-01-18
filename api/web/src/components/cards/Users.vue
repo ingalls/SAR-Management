@@ -240,7 +240,6 @@ import Avatar from '../util/Avatar.vue';
 import {
     IconList,
     IconFilter,
-    IconSearch,
     IconPolaroid,
     IconAddressBook,
 } from '@tabler/icons-vue';
@@ -272,7 +271,6 @@ export default {
         Avatar,
         IconList,
         IconFilter,
-        IconSearch,
         IconPolaroid,
         IconAddressBook,
         UserProfile,

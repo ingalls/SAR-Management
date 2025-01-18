@@ -30,6 +30,7 @@
                         <div class='col-lg-12'>
                             <CardMissions
                                 label='Missions'
+                                :search='true'
                                 :auth='auth'
                                 :iam='iam'
                                 :limit='20'

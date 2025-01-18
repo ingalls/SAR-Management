@@ -35,6 +35,7 @@
                 <div class='col-8'>
                     <TablerInput
                         v-model='paging.filter'
+                        icon='search'
                         label='Issue Search'
                     />
                 </div>

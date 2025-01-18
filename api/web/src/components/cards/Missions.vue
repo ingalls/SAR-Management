@@ -33,6 +33,30 @@
             </div>
         </div>
 
+        <div v-if='search'class='row g-2'>
+            <div class='col-auto' style='width: calc(100% - 48px)'>
+            <TablerInput
+                v-model='paging.filter'
+                icon='search'
+                placeholder='Search…'
+            />
+            </div>
+            <div class='col-auto'>
+            <TablerDropdown>
+                <TablerIconButton
+                    title='Search Filters'
+                >
+                    <IconFilter
+                        :size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
+                <template #dropdown>
+                </template>
+            </TablerDropdown>
+            </div>
+        </div>
+
         <NoAccess
             v-if='!is_iam("Mission:View")'
             title='Missions'
@@ -140,10 +164,14 @@ import {
     TablerNone,
     TablerEpoch,
     TablerEpochRange,
+    TablerIconButton,
+    TablerDropdown,
+    TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
 import {
+    IconFilter,
     IconGripVertical,
     IconPlus,
     IconRefresh,
@@ -156,12 +184,16 @@ export default {
     components: {
         TableHeader,
         TableFooter,
+        TablerDropdown,
+        TablerIconButton,
         TablerLoading,
         TablerEpoch,
         TablerEpochRange,
+        TablerInput,
         TeamBadge,
         TablerNone,
         NoAccess,
+        IconFilter,
         IconGripVertical,
         IconRefresh,
         IconPlus,
@@ -206,6 +238,10 @@ export default {
         limit: {
             type: Number,
             default: 10
+        },
+        search: {
+            type: Boolean,
+            default: false
         },
         assigned: {
             type: Number
