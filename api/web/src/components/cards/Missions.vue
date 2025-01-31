@@ -33,27 +33,32 @@
             </div>
         </div>
 
-        <div v-if='search'class='row g-2'>
-            <div class='col-auto' style='width: calc(100% - 48px)'>
-            <TablerInput
-                v-model='paging.filter'
-                icon='search'
-                placeholder='Search…'
-            />
+        <div
+            v-if='search'
+            class='row g-2'
+        >
+            <div
+                class='col-auto'
+                style='width: calc(100% - 48px)'
+            >
+                <TablerInput
+                    v-model='paging.filter'
+                    icon='search'
+                    placeholder='Search…'
+                />
             </div>
             <div class='col-auto'>
-            <TablerDropdown>
-                <TablerIconButton
-                    title='Search Filters'
-                >
-                    <IconFilter
-                        :size='32'
-                        stroke='1'
-                    />
-                </TablerIconButton>
-                <template #dropdown>
-                </template>
-            </TablerDropdown>
+                <TablerDropdown>
+                    <TablerIconButton
+                        title='Search Filters'
+                    >
+                        <IconFilter
+                            :size='32'
+                            stroke='1'
+                        />
+                    </TablerIconButton>
+                    <template #dropdown />
+                </TablerDropdown>
             </div>
         </div>
 

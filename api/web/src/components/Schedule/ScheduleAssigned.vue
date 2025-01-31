@@ -92,7 +92,7 @@
 import Avatar from '../util/Avatar.vue';
 import {
     IconSettings,
-} from 'vue-tabler-icons'
+} from '@tabler/icons-vue'
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
