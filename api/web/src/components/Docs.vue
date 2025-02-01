@@ -172,7 +172,8 @@ import {
     IconPlus,
     IconFolderPlus,
     IconFileFilled,
-    IconFolderFilled
+    IconFolderFilled,
+    IconDotsVertical,
 } from '@tabler/icons-vue';
 
 export default {
