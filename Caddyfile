@@ -2,42 +2,6 @@
     admin off
 }
 
-www.mesacountysar.com {
-    redir https://mesacountysar.com{uri}
-}
-
-mesacountysar.com {
-    header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options DENY
-        Referrer-Policy strict-origin-when-cross-origin
-        Permissions-Policy "fullscreen=(self)"
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    }
-
-    encode zstd gzip {
-        match {
-            header Content-Type text/*
-            header Content-Type application/json*
-            header Content-Type application/javascript*
-            header Content-Type application/xhtml+xml*
-            header Content-Type application/atom+xml*
-            header Content-Type application/rss+xml*
-            header Content-Type image/svg+xml*
-        }
-    }
-
-    log {
-        output stdout
-    }
-
-    route * {
-        root * /home/eiger/MesaCountySAR/dist
-        try_files {path} {path}/ /index.html?{query}
-        file_server
-    }
-}
-
 team.mesacountysar.com {
     header {
         X-Content-Type-Options nosniff
