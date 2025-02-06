@@ -140,8 +140,8 @@ export default {
         getKnown: async function() {
             this.loading = true;
             const known = await window.std('/api/certs');
-            this.knownNames = known.certs.map((k) => k.name).concat(['Other']);
-            for (const cert of known.certs) {
+            this.knownNames = known.items.map((k) => k.name).concat(['Other']);
+            for (const cert of known.items) {
                 this.knownMap.set(cert.name, cert);
             }
 
