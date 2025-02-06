@@ -30,6 +30,7 @@ export const AugmentedUser = Type.Object({
     username: Type.String(),
     created: Type.String(),
     updated: Type.String(),
+    bday: Type.Optional(Type.String()),
     phone: Type.String(),
     email: Type.String(),
     lname: Type.String(),
