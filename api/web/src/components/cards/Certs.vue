@@ -13,7 +13,7 @@
 
                     <div class='ms-auto'>
                         <TablerIconButton
-                            v-if='$route.name === "profile" || !is_iam("User:Manage")'
+                            v-if='$route.name === "profile" || is_iam("User:Manage")'
                             title='Upload Certificate'
                             @click='upload = true'
                         >
