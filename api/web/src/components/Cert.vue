@@ -24,11 +24,17 @@
                             <div class='card'>
                                 <TablerLoading v-if='loading.cert' />
                                 <template v-else>
-                                    <div class='card-header'>
+                                    <div class='card-header d-flex align-items-center'>
                                         <h3
                                             class='card-title'
                                             v-text='cert.name'
                                         />
+
+                                        <div class='ms-auto'>
+                                            <TablerDelete
+                                                displaytype='icon'
+                                            />
+                                        </div>
                                     </div>
                                     <div class='card-body' />
                                     <div class='card-footer' />
@@ -45,8 +51,10 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
+import DocFile from './Docs/File.vue';
 import {
     TablerBreadCrumb,
+    TablerDelete,
     TablerLoading,
 } from '@tak-ps/vue-tabler'
 import Avatar from './util/Avatar.vue';
@@ -56,6 +64,8 @@ export default {
     components: {
         Avatar,
         NoAccess,
+        DocFile,
+        TablerDelete,
         TablerLoading,
         TablerBreadCrumb,
     },

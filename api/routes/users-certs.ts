@@ -4,11 +4,14 @@ import { sql } from 'drizzle-orm';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
+import Spaces from '../lib/aws/spaces.js';
 import { Type } from '@sinclair/typebox';
-import { CertResponse } from '../lib/types.js';
+import { StandardResponse, CertResponse } from '../lib/types.js';
 import { Cert } from '../lib/schema.js';
 
 export default async function router(schema: Schema, config: Config) {
+    const spaces = new Spaces();
+
     await schema.get('/user/:userid/cert', {
         name: 'Get Certs',
         group: 'Cert',
@@ -47,9 +50,9 @@ export default async function router(schema: Schema, config: Config) {
     });
 
     await schema.get('/user/:userid/cert/:certid', {
-        name: 'Get Certs',
+        name: 'Get Cert',
         group: 'Cert',
-        description: 'Get all certs for the given user',
+        description: 'Get a cert for the given user',
         params: Type.Object({
             userid: Type.Integer(),
             certid: Type.Integer()
@@ -63,6 +66,39 @@ export default async function router(schema: Schema, config: Config) {
             if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
 
             res.json(cert);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.delete('/user/:userid/cert/:certid', {
+        name: 'Delete Cert',
+        group: 'Cert',
+        description: 'Delete a cert for the given user',
+        params: Type.Object({
+            userid: Type.Integer(),
+            certid: Type.Integer()
+        }),
+        res: StandardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_own_or_iam(config, req, req.params.userid, 'Users:Manage');
+
+            const cert = await config.models.Cert.from(req.params.certid);
+            if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
+
+            const asset = await config.models.Asset.from(cert.asset);
+
+            await spaces.delete({
+                Key: `assets/${asset.id}-${asset.name}`
+            });
+
+            config.models.Cert.delete(req.params.certid)
+
+            res.json({
+                status: 200,
+                message: 'Asset Deleted'
+            });
         } catch (err) {
              Err.respond(err, res);
         }
@@ -84,7 +120,7 @@ export default async function router(schema: Schema, config: Config) {
         res: CertResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'User:View');
+            const user = await Auth.is_own_or_iam(config, req, req.params.userid, 'Users:Manage');
 
             const cert = await config.models.Cert.generate({
                 uid: user.id,

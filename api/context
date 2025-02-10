@@ -1,0 +1,8 @@
+set -euo pipefail
+
+ssh "sar" -t "./dump.sh"
+scp "sar:~/sar-latest.dump" .
+
+npm run loaddb
+
+npm run dev
