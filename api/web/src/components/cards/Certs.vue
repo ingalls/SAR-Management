@@ -1,4 +1,8 @@
 <template>
+    <NoAccess
+        v-if='!is_iam("User:View")'
+        title='Certificates'
+    />
     <div class='card'>
         <div class='card-header'>
             <div class='col'>
@@ -8,13 +12,16 @@
                     </h3>
 
                     <div class='ms-auto'>
-                        <IconPlus
-                            v-if='$route.name === "profile"'
-                            :size='32'
-                            stroke='1'
-                            class='cursor-pointer'
+                        <TablerIconButton
+                            v-if='$route.name === "profile" || !is_iam("User:Manage")'
+                            title='Upload Certificate'
                             @click='upload = true'
-                        />
+                        >
+                            <IconPlus
+                                :size='32'
+                                stroke='1'
+                            />
+                        </TablerIconButton>
                     </div>
                 </div>
             </div>
@@ -63,8 +70,10 @@
 </template>
 
 <script>
+import iam from '../../iam.js';
 import {
-    TablerNone 
+    TablerNone ,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 import UploadCertificate from '../util/UploadCertificate.vue';
 import {
@@ -75,6 +84,7 @@ export default {
     name: 'CertsCard',
     components: {
         TablerNone,
+        TablerIconButton,
         UploadCertificate,
         IconPlus
     },
@@ -82,6 +92,10 @@ export default {
         limit: {
             type: Number,
             default: 10
+        },
+        auth: {
+            type: Object,
+            required: true
         },
         assigned: {
             type: Number,
@@ -104,9 +118,12 @@ export default {
         }
     },
     mounted: async function() {
-        await this.fetch();
+        if (this.is_iam("User:View")) {
+            await this.fetch();
+        }
     },
     methods: {
+        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetch: async function() {
             const url = window.stdurl(`/api/user/${this.assigned}/cert`);
             url.searchParams.append('limit', this.limit);

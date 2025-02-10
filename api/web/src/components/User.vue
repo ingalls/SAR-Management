@@ -278,6 +278,7 @@
                         />
                         <CardCerts
                             v-else
+                            :auth='auth'
                             :assigned='userid'
                         />
                     </div>
