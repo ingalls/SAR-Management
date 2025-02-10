@@ -33,6 +33,7 @@
                                         <div class='ms-auto'>
                                             <TablerDelete
                                                 displaytype='icon'
+                                                @delete='deleteCert'
                                             />
                                         </div>
                                     </div>
@@ -96,6 +97,15 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        deleteCert: async function() {
+            this.loading.cert = true;
+
+            await window.std(`/api/user/${this.$route.params.userid}/cert/${this.$route.params.certid}`, {
+                method: 'DELETE'
+            });
+
+            this.$router.push(`/user/${this.$route.params.userid}/cert/`);
+        },
         fetch: async function() {
             this.loading.cert = true;
             this.cert = await window.std(`/api/user/${this.$route.params.userid}/cert/${this.$route.params.certid}`);
