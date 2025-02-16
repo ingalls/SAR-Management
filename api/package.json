@@ -9,6 +9,10 @@
         "build": "tsc --build && cp package.json ./dist/ && cp migrations/ dist/ -r && cp lib/user.webp dist/lib/",
         "lint": "eslint index.ts routes/ lib/",
         "loaddb": "echo 'DROP DATABASE sar' | psql && echo 'CREATE DATABASE sar' | psql && psql sar < sar-latest.dump && echo \"UPDATE users SET email = username || '@ingalls.ca'\" | psql sar",
+        "migratedb": "npm run migratedb-pre && drizzle-kit generate && npm run migratedb-commit",
+        "migratedb-custom": "npm run migratedb-pre && drizzle-kit generate --custom && npm run migratedb-commit",
+        "migratedb-pre": "npm run lint && git stash && tsc --outDir .",
+        "migratedb-commit": "git add migrations/* && git commit -m 'Custom DB Migration' && git clean -f && git stash",
         "prod": "node dist/index.js",
         "dev": "StackName=test tsx watch --ignore web/ index.ts"
     },
