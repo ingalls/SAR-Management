@@ -109,9 +109,10 @@ export default async function router(schema: Schema, config: Config) {
         res: AssetResponse
     }, async (req, res) => {
         let bb;
+        let user;
 
         try {
-            await Auth.is_auth(config, req);
+            user = await Auth.is_auth(config, req);
 
             if (req.headers['content-type']) {
                 req.headers['content-type'] = req.headers['content-type'].split(',')[0];
@@ -127,6 +128,7 @@ export default async function router(schema: Schema, config: Config) {
             });
         } catch (err) {
             Err.respond(err, res);
+            return;
         }
 
 
@@ -134,6 +136,7 @@ export default async function router(schema: Schema, config: Config) {
         let asset: Static<typeof AssetResponse>;
         bb.on('file', async (fieldname, file, blob) => {
             const a = await config.models.Asset.generate({
+                uid: user.id,
                 name: blob.filename
             });
 
