@@ -29,7 +29,7 @@
                 <div class='ms-auto btn-list mt-1'>
                     <TablerSelect
                         v-model='range'
-                        :options='["Current Year", "1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]'
+                        :options='["Current Year", "1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter", "All Time"]'
                     />
                 </div>
             </div>
@@ -91,7 +91,7 @@ export default {
                 const { start, end } = this.getQuarterRange(q);
                 url.searchParams.append('start', start);
                 url.searchParams.append('end', end);
-            } else {
+            } else if (this.range !== 'All Time') {
                 url.searchParams.append('start', moment().format('YYYY') + '-01-01');
                 url.searchParams.append('end', moment().format('YYYY-MM-DD'));
             }
