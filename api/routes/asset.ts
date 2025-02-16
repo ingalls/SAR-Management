@@ -106,9 +106,6 @@ export default async function router(schema: Schema, config: Config) {
         name: 'Create Asset',
         group: 'Assets',
         description: 'Create a new asset',
-        params: Type.Object({
-            assetid: Type.Integer()
-        }),
         res: AssetResponse
     }, async (req, res) => {
         let bb;

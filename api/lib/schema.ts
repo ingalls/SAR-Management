@@ -107,6 +107,7 @@ export const ApplicationComment = pgTable('application_comments', {
 
 export const Asset = pgTable('assets', {
     id: serial('id').primaryKey(),
+    uid: integer('uid').notNull().references(() => User.id),
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text('name').notNull(),
