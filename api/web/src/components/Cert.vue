@@ -30,15 +30,44 @@
                                             v-text='cert.name'
                                         />
 
-                                        <div class='ms-auto'>
+                                        <div class='ms-auto btn-list'>
+                                            <IconDownload
+                                                v-tooltip='"Download File"'
+                                                class='cursor-pointer'
+                                                :stroke='1'
+                                                :size='32'
+                                                @click='download'
+                                            />
                                             <TablerDelete
                                                 displaytype='icon'
                                                 @delete='deleteCert'
                                             />
                                         </div>
                                     </div>
-                                    <div class='card-body' />
-                                    <div class='card-footer' />
+                                    <div class='card-body'>
+                                        <div v-if='loading.cert'>
+                                            <TablerLoading desc='Loading Preview' />
+                                        </div>
+                                        <div v-else-if='is_pdf'>
+                                            <embed
+                                                :src='preview'
+                                                width='100%'
+                                                height='1000px'
+                                            >
+                                        </div>
+                                        <div v-else>
+                                            <div class='d-flex justify-content-center mt-4 mb-2'>
+                                                <IconEyeOff
+                                                    :size='48'
+                                                    :stroke='1'
+                                                />
+                                            </div>
+
+                                            <div class='text-center mb-4 mt-2'>
+                                                <div>Unsupported Preview Format</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </template>
                             </div>
                         </div>
@@ -54,6 +83,10 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import DocFile from './Docs/File.vue';
 import {
+    IconEyeOff,
+    IconDownload
+} from '@tabler/icons-vue';
+import {
     TablerBreadCrumb,
     TablerDelete,
     TablerLoading,
@@ -66,6 +99,8 @@ export default {
         Avatar,
         NoAccess,
         DocFile,
+        IconEyeOff,
+        IconDownload,
         TablerDelete,
         TablerLoading,
         TablerBreadCrumb,
@@ -85,10 +120,21 @@ export default {
             cert: {
                 id: '',
             },
+            asset: null,
             loading: {
                 cert: true,
             },
         }
+    },
+    computed: {
+        is_pdf: function() {
+            return this.asset.name.endsWith('.pdf')
+        },
+        preview: function() {
+            const url = window.stdurl(`/api/asset/${this.cert.asset}/raw`);
+            url.searchParams.append('token', localStorage.token);
+            return url;
+        },
     },
     mounted: async function() {
         if (this.is_iam("User:View")) {
@@ -106,9 +152,19 @@ export default {
 
             this.$router.push(`/user/${this.$route.params.userid}/cert/`);
         },
+        url: function(download = true) {
+            const url = window.stdurl(`/api/asset/${this.cert.asset}/raw`);
+            url.searchParams.append('download', download);
+            url.searchParams.append('token', localStorage.token);
+            return String(url);
+        },
+        download: function() {
+            window.open(this.url(true), '_blank');
+        },
         fetch: async function() {
             this.loading.cert = true;
             this.cert = await window.std(`/api/user/${this.$route.params.userid}/cert/${this.$route.params.certid}`);
+            this.asset = await window.std(`/api/asset/${this.cert.asset}`);
             this.loading.cert = false;
         },
     }
