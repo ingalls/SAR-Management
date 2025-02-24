@@ -42,7 +42,7 @@ export default async function router(schema: Schema, config: Config) {
                 order: req.query.order,
                 sort: req.query.sort,
                 where: sql`
-                    name ~* ${req.query.filter}
+                    (name ~* ${req.query.filter} OR email ~* ${req.query.filter})
                     AND (
                         ${req.query.status || null}::TEXT IS NULL
                         OR (${req.query.status || null}::TEXT = 'archived'::TEXT AND archived = True)
