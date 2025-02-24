@@ -142,11 +142,11 @@ export default async function router(schema: Schema, config: Config) {
 
             asset = {
                 ...a,
-                asset_url: `/asset/${asset.id}${path.parse(asset.name).ext}`,
+                asset_url: `/asset/${a.id}${path.parse(a.name).ext}`,
             };
 
             assets.push(spaces.upload({
-                Key: `assets/${asset.id}-${asset.name}`,
+                Key: `assets/${a.id}-${a.name}`,
                 Body: file
             }));
         }).on('finish', async () => {
