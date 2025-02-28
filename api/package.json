@@ -41,7 +41,7 @@
         "connect-history-api-fallback": "^2.0.0",
         "cors": "^2.8.5",
         "csv-stringify": "^6.2.1",
-        "drizzle-orm": "^0.39.0",
+        "drizzle-orm": "^0.40.0",
         "drizzle-kit": "^0.30.0",
         "drizzle-typebox": "^0.1.1",
         "express": "^4.0.0",
