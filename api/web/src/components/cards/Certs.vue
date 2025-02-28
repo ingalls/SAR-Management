@@ -75,6 +75,7 @@ import {
     TablerNone ,
     TablerIconButton
 } from '@tak-ps/vue-tabler';
+import NoAccess from '../util/NoAccess.vue';
 import UploadCertificate from '../util/UploadCertificate.vue';
 import {
     IconPlus
@@ -86,12 +87,17 @@ export default {
         TablerNone,
         TablerIconButton,
         UploadCertificate,
+        NoAccess,
         IconPlus
     },
     props: {
         limit: {
             type: Number,
             default: 10
+        },
+        iam: {
+            type: Object,
+            required: true
         },
         auth: {
             type: Object,

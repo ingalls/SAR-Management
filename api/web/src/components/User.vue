@@ -272,12 +272,8 @@
                         />
                     </div>
                     <div class='col-lg-12'>
-                        <NoAccess
-                            v-if='!is_iam("User:View")'
-                            title='Certificates'
-                        />
                         <CardCerts
-                            v-else
+                            :iam='iam'
                             :auth='auth'
                             :assigned='userid'
                         />
