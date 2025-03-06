@@ -57,7 +57,7 @@
                                                         :initial='type'
                                                         label='Equipment Type'
                                                         url='/api/equipment-type'
-                                                        listkey='types'
+                                                        listkey='items'
                                                         namekey='type'
                                                         @selected='equipment.type_id = $event.id'
                                                     />

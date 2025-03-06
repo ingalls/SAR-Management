@@ -23,6 +23,7 @@
                             </button>
 
                             <template #dropdown>
+                                <label class='mx-2 subheader'>Filter Options</label>
                                 <TablerToggle
                                     v-model='paging.disabled'
                                     label='Disabled Users'
