@@ -59,6 +59,13 @@
                 </tbody>
             </table>
         </template>
+
+        <TableFooter
+            :limit='limit'
+            :total='list.total'
+            @page='page = $event'
+        />
+
         <UploadCertificate
             v-if='upload'
             :uid='assigned'
@@ -77,6 +84,7 @@ import {
 } from '@tak-ps/vue-tabler';
 import NoAccess from '../util/NoAccess.vue';
 import UploadCertificate from '../util/UploadCertificate.vue';
+import TableFooter from '../util/TableFooter.vue';
 import {
     IconPlus
 } from '@tabler/icons-vue'
@@ -85,6 +93,7 @@ export default {
     name: 'CertsCard',
     components: {
         TablerNone,
+        TableFooter,
         TablerIconButton,
         UploadCertificate,
         NoAccess,
@@ -119,6 +128,9 @@ export default {
         }
     },
     watch: {
+        page: async function() {
+            await this.fetch();
+        },
         upload: async function() {
             await this.fetch();
         }

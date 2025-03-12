@@ -47,7 +47,6 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardMissions from './cards/Missions.vue';
-import TableFooter from './util/TableFooter.vue';
 import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
 import TeamBadge from './util/TeamBadge.vue';
@@ -64,7 +63,6 @@ export default {
         TablerNone,
         NoAccess,
         TablerEpochRange,
-        TableFooter,
         TableHeader,
         HeatMap,
         CardMissions,
