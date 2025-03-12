@@ -71,6 +71,13 @@
       "when": 1739730145711,
       "tag": "0009_magical_dragon_lord",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1741807473222,
+      "tag": "0010_left_warstar",
+      "breakpoints": true
     }
   ]
 }
