@@ -115,7 +115,9 @@ export default async function router(schema: Schema, config: Config) {
             name: Type.String(),
             asset: Type.Integer(),
             known: Type.Optional(Type.Integer()),
-            expiry: Type.Optional(Type.String())
+            expiry: Type.Optional(Type.String({
+                format: 'date'
+            }))
         }),
         res: CertResponse
     }, async (req, res) => {
