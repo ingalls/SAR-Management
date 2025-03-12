@@ -22,6 +22,8 @@
                         />
                         <CardCerts
                             v-else
+                            :iam='iam'
+                            :auth='auth'
                             :assigned='userid'
                         />
                     </div>
