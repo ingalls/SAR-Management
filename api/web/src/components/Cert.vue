@@ -48,13 +48,16 @@
                                         <div v-if='loading.cert'>
                                             <TablerLoading desc='Loading Preview' />
                                         </div>
-                                        <div v-else-if='is_pdf'>
-                                            <embed
-                                                :src='preview'
-                                                width='100%'
-                                                height='1000px'
-                                            >
-                                        </div>
+                                        <img
+                                            v-else-if='is_img'
+                                            :src='preview'
+                                        />
+                                        <embed
+                                            v-else-if='is_pdf'
+                                            :src='preview'
+                                            width='100%'
+                                            height='1000px'
+                                        >
                                         <div v-else>
                                             <div class='d-flex justify-content-center mt-4 mb-2'>
                                                 <IconEyeOff
@@ -127,6 +130,11 @@ export default {
         }
     },
     computed: {
+        is_img: function() {
+            return this.asset.name.toLowerCase().endsWith('.jpg')
+                || this.asset.name.toLowerCase().endsWith('.jpeg')
+                || this.asset.name.toLowerCase().endsWith('.png')
+        },
         is_pdf: function() {
             return this.asset.name.endsWith('.pdf')
         },
