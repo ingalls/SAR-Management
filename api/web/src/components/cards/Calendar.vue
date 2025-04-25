@@ -223,6 +223,8 @@ onMounted(async () => {
             }
         },
         select: function(info) {
+            if (!is_iam(props.iam, props.auth, "Calendar:Manage")) return
+
             const start = new Date(info.start);
             const end = new Date(info.end);
 
