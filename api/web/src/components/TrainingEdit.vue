@@ -202,6 +202,20 @@ export default {
         if (this.$route.params.trainingid && this.is_iam('Training:Manage')) {
             await this.fetch();
         } else {
+            const url = new URL(window.location);
+
+            if (url.searchParams.has('title')) {
+                this.training.title = url.searchParams.get('title')
+            }
+
+            if (url.searchParams.has('start')) {
+                this.training.start_ts = url.searchParams.get('start')
+            }
+
+            if (url.searchParams.has('end')) {
+                this.training.end_ts = url.searchParams.get('end')
+            }
+
             this.loading.training = false;
         }
     },

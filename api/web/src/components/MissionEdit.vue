@@ -238,6 +238,20 @@ export default {
         if (this.$route.params.missionid && this.is_iam('Mission:Manage')) {
             await this.fetch();
         } else {
+            const url = new URL(window.location);
+
+            if (url.searchParams.has('title')) {
+                this.mission.title = url.searchParams.get('title')
+            }
+
+            if (url.searchParams.has('start')) {
+                this.mission.start_ts = url.searchParams.get('start')
+            }
+
+            if (url.searchParams.has('end')) {
+                this.mission.end_ts = url.searchParams.get('end')
+            }
+
             this.loading.mission = false;
         }
     },
