@@ -6,16 +6,6 @@
                     <div class='row g-2 align-items-center'>
                         <div class='col d-flex'>
                             <TablerBreadCrumb />
-
-                            <div class='ms-auto btn-list'>
-                                <a
-                                    v-if='is_iam("Training:Manage")'
-                                    class='cursor-pointer btn btn-primary'
-                                    @click='$router.push("/training/new")'
-                                >
-                                    New Training
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -37,31 +27,21 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import is_iam from '../iam.js';
 import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import CardCalendar from './cards/Calendar.vue';
 
-export default {
-    name: 'Calendar',
-    components: {
-        TablerBreadCrumb,
-        CardCalendar
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+    auth: {
+        type: Object,
+        required: true
     }
-}
+});
 </script>

@@ -12,34 +12,30 @@
             </h1>
 
             <div
-                v-if='is_iam("Calendar:View")'
+                v-if='is_iam(props.iam, props.auth, "Calendar:View")'
                 class='ms-auto btn-list'
             >
-                <IconFileExport
-                    v-tooltip='"Google Calendar Export"'
-                    class='cursor-pointer'
-                    size='32'
-                    stroke='1'
+                <TablerIconButton
+                    title='Google Calendar Export'
                     @click='createExport'
-                />
-                <div class='dropdown'>
-                    <div
-                        id='dropdownLocation'
-                        type='button'
-                        data-bs-toggle='dropdown'
-                        aria-expanded='false'
+                >
+                    <IconFileExport
+                        :size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
+
+                <TablerDropdown>
+                    <TablerIconButton
+                        title='Calendar Layers'
                     >
                         <IconMenu2
-                            v-tooltip='"Options"'
-                            class='cursor-pointer'
-                            size='32'
+                            :size='32'
                             stroke='1'
                         />
-                    </div>
-                    <ul
-                        class='dropdown-menu'
-                        aria-labelledby='dropdownLocation'
-                    >
+                    </TablerIconButton>
+
+                    <template #dropdown>
                         <div class='m-1'>
                             <div class='d-flex'>
                                 <IconAmbulance
@@ -90,12 +86,12 @@
                                 />
                             </div>
                         </div>
-                    </ul>
-                </div>
+                    </template>
+                </TablerDropdown>
             </div>
         </div>
         <div
-            v-if='is_iam("Calendar:View")'
+            v-if='is_iam(props.iam, props.auth, "Calendar:View")'
             class='card-body'
         >
             <pre
@@ -110,10 +106,19 @@
         </div>
         <NoAccess v-else />
     </div>
+
+    <NewEvent
+        v-if='selected.shown'
+        :start='selected.start'
+        :end='selected.end'
+        @close='selected.shown = false'
+    />
 </template>
 
-<script>
-import iam from '../../iam.js';
+<script setup>
+import { ref, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import is_iam from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
 import { Calendar } from '@fullcalendar/core';
 import {
@@ -128,124 +133,137 @@ import {
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
+import NewEvent from '../Calendar/NewEvent.vue'
 import {
     TablerToggle,
+    TablerDropdown,
+    TablerIconButton,
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'Calendar',
-    components: {
-        IconTruck,
-        IconAmbulance,
-        IconCalendarTime,
-        IconFileExport,
-        TablerToggle,
-        IconBalloon,
-        IconMenu2,
-        NoAccess,
-        IconGripVertical,
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        },
-        dragHandle: {
-            type: Boolean,
-            default: false 
-        },
+    auth: {
+        type: Object,
+        required: true
     },
-    data: function() {
-        return {
-            calendar: null,
-            showExport: false,
-            exportURL: '',
-            calendars: {
-                mission: true,
-                training: true,
-                birthday: true,
-                schedule: true
-            },
-            layers: {
-                layers: []
-            }
-        }
+    dragHandle: {
+        type: Boolean,
+        default: false
     },
-    watch: {
-        calendars: {
-            deep: true,
-            handler: async function() {
-                this.calendar.refetchEvents();
-            }
+});
+
+const router = useRouter();
+const calendar = ref();
+const showExport = ref(false);
+const exportURL = ref('');
+const selected = ref({
+    shown: false,
+    start: '',
+    end: ''
+})
+
+const calendars = ref({
+    mission: true,
+    training: true,
+    birthday: true,
+    schedule: true
+})
+
+const layers = ref({
+    layers: []
+})
+
+watch(calendars.value, async () => {
+    calendar.value.refetchEvents();
+});
+
+watch(layers, async () => {
+    calendar.value.refetchEvents();
+});
+
+onMounted(async () => {
+    if (!is_iam(props.iam, props.auth, "Calendar:View")) return;
+
+    calendar.value = new Calendar(document.getElementById('calendar'), {
+        plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        selectable: true,
+        unselectAuto: true,
+        eventClick: async (event) => {
+            router.push(event.event._def.extendedProps.path);
         },
-        layers: async function() {
-            this.calendar.refetchEvents();
-        }
-    },
-    mounted: async function() {
-        if (!this.is_iam("Calendar:View")) return;
+        eventSources: async (fetchInfo, resolve, reject) => {
+            try {
+                let events = [];
+                for (const layer of layers.value.layers) {
+                    if (calendars.value[layer.id] === false) continue;
 
-        this.calendar = new Calendar(document.getElementById('calendar'), {
-            plugins: [dayGridPlugin, interactionPlugin, listPlugin],
-            selectable: true,
-            unselectAuto: true,
-            eventClick: async (event) => {
-                this.$router.push(event.event._def.extendedProps.path);
-            },
-            eventSources: async (fetchInfo, resolve, reject) => {
-                try {
-                    let events = [];
-                    for (const layer of this.layers.layers) {
-                        if (this.calendars[layer.id] === false) continue;
-
-                        const url = window.stdurl(`/api/calendar/${layer.id}/events`)
-                        url.searchParams.append('start', fetchInfo.startStr);
-                        url.searchParams.append('end', fetchInfo.endStr);
-                        events = events.concat(await window.std(url));
-                    }
-
-                    return resolve(events.map((event) => {
-                        event.start = (new Date(event.start)).toISOString()
-                            .replace('T', ' ')
-                            .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-                        event.end = (new Date(event.end)).toISOString()
-                            .replace('T', ' ')
-                            .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-
-                        return event;
-                    }));
-                } catch (err) {
-                    return reject(err);
+                    const url = window.stdurl(`/api/calendar/${layer.id}/events`)
+                    url.searchParams.append('start', fetchInfo.startStr);
+                    url.searchParams.append('end', fetchInfo.endStr);
+                    events = events.concat(await window.std(url));
                 }
+
+                return resolve(events.map((event) => {
+                    event.start = (new Date(event.start)).toISOString()
+                        .replace('T', ' ')
+                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
+
+                    event.end = (new Date(event.end)).toISOString()
+                        .replace('T', ' ')
+                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
+
+
+                    return event;
+                }));
+            } catch (err) {
+                return reject(err);
             }
-        });
-
-        this.calendar.render();
-
-        await this.fetchCalendars();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        createExport: async function() {
-            const body = await window.std('/api/calendar/training/ical', {
-                method: 'POST'
-            });
-
-            const exportURL = window.stdurl('/api/calendar/training/ical');
-            exportURL.searchParams.append('token', body.token);
-            this.exportURL = exportURL;
-            this.showExport = true;
         },
-        fetchCalendars: async function() {
-            this.layers = await window.std('/api/calendar');
+        select: function(info) {
+            const start = new Date(info.start);
+            const end = new Date(info.end);
+
+            if (
+                start.getFullYear() === end.getFullYear()
+                && start.getMonth() === end.getMonth()
+                && start.getDate() === end.getDate()
+            ) {
+                start.setUTCHours(18)
+                start.setUTCMinutes(0)
+
+                end.setUTCHours(21)
+                end.setUTCMinutes(0)
+            } else {
+                start.setUTCHours(8)
+                start.setUTCMinutes(0)
+
+                end.setUTCHours(17)
+                end.setUTCMinutes(0)
+            }
+
+            selected.value.start = start.toISOString();
+            selected.value.end = end.toISOString();
+            selected.value.shown = true;
         },
-    },
+    });
+
+    calendar.value.render();
+
+    layers.value = await window.std('/api/calendar');
+});
+
+async function createExport() {
+    const body = await window.std('/api/calendar/training/ical', {
+        method: 'POST'
+    });
+
+    const exportURL = window.stdurl('/api/calendar/training/ical');
+    exportURL.searchParams.append('token', body.token);
+    exportURL.value = exportURL;
+    showExport.value = true;
 }
 </script>
 
