@@ -420,7 +420,7 @@ export default {
                 this.user = null;
                 this.$router.push("/login");
             } else if (!this.user && !localStorage.token && !this.$route.name.includes('login')) {
-                this.$router.push("/login");
+                this.$router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
             }
         }
     },
