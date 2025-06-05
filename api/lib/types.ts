@@ -77,6 +77,10 @@ export const CertKnownResponse = createSelectSchema(schemas.CertKnown, {
     id: Type.Integer(),
 });
 
+export const RolodexResponse = createSelectSchema(schemas.Rolodex, {
+    id: Type.Integer(),
+});
+
 export const CertResponse = createSelectSchema(schemas.Cert, {
     id: Type.Integer(),
     uid: Type.Integer(),

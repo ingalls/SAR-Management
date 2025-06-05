@@ -35,6 +35,7 @@ export type AuthUser = {
 
 const Permissions = {
     Application: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Rolodex: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
     Calendar: [PermissionsLevel.VIEW, PermissionsLevel.NONE],
     Doc: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE],
     Equipment: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
@@ -49,6 +50,7 @@ const Permissions = {
 
 export const Iam = Type.Object({
     Application: Type.Optional(Type.Enum(PermissionsLevel)),
+    Rolodex: Type.Optional(Type.Enum(PermissionsLevel)),
     Calendar: Type.Optional(Type.Enum(PermissionsLevel)),
     Doc: Type.Optional(Type.Enum(PermissionsLevel)),
     Equipment: Type.Optional(Type.Enum(PermissionsLevel)),

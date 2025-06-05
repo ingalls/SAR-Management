@@ -37,6 +37,7 @@ export default class Models {
     Schedule: Modeler<typeof pgtypes.Schedule>;
     Server: Modeler<typeof pgtypes.Server>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
+    Rolodex: Modeler<typeof pgtypes.Rolodex>;
 
     Poll: PollModel;
     Team: TeamModel;
@@ -80,6 +81,7 @@ export default class Models {
         this.UserTeam = new Modeler(pg, pgtypes.UserTeam);
         this.Application = new Modeler(pg, pgtypes.Application);
         this.Asset = new Modeler(pg, pgtypes.Asset);
+        this.Rolodex = new Modeler(pg, pgtypes.Rolodex);
         this.CertKnown = new Modeler(pg, pgtypes.CertKnown);
         this.Cert = new Modeler(pg, pgtypes.Cert);
         this.EquipmentType = new Modeler(pg, pgtypes.EquipmentType);
