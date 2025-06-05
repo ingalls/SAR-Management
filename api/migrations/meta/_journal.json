@@ -78,6 +78,13 @@
       "when": 1741807473222,
       "tag": "0010_left_warstar",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1749161728043,
+      "tag": "0011_fat_richard_fisk",
+      "breakpoints": true
     }
   ]
 }

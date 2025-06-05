@@ -1,0 +1,1 @@
+ALTER TABLE "notes" RENAME TO "rolodex";
