@@ -29,17 +29,11 @@
         <NoAccess v-if='!is_iam("Rolodex:View")' />
         <template v-else>
             <div class='px-2 py-2 row g-2'>
-                <div class='col-12 col-md-8'>
+                <div class='col-12'>
                     <TablerInput
                         v-model='paging.filter'
                         placeholder='Filter Rolodex'
                         icon='search'
-                    />
-                </div>
-                <div class='col-12 col-md-4'>
-                    <TablerEnum
-                        v-model='paging.status'
-                        :options='["all", "archived", "active"]'
                     />
                 </div>
             </div>
@@ -154,15 +148,9 @@ export default {
             type: Object,
             required: true
         },
-        start: {
-            type: Number
-        },
         order: {
             type: String,
             default: 'desc'
-        },
-        end: {
-            type: Number
         },
         dragHandle: {
             type: Boolean,
@@ -201,9 +189,6 @@ export default {
                 sort: 'created',
                 order: this.order,
                 limit: this.limit,
-                start: this.start,
-                status: 'all',
-                end: this.end,
                 page: 0
 
             },
@@ -266,12 +251,6 @@ export default {
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('sort', this.paging.sort);
             url.searchParams.append('order', this.paging.order);
-            if (this.paging.status !== 'all') {
-                url.searchParams.append('status', this.paging.status);
-            }
-
-            if (this.paging.start) url.searchParams.append('start', this.paging.start);
-            if (this.paging.end) url.searchParams.append('end', this.paging.end);
             const list = await window.std(url);
 
             list.items.map((i) => {
