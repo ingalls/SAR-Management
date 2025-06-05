@@ -81,6 +81,10 @@
                                 class='dropdown-item'
                                 @click='$router.push("/application")'
                             >Applications</a>
+                            <a
+                                class='dropdown-item'
+                                @click='$router.push("/rolodex")'
+                            >Rolodex</a>
                         </div>
 
 
@@ -292,6 +296,18 @@
                                             </span>
                                             <span class='nav-link-title'>Applications</span>
                                         </a>
+                                        <a
+                                            class='nav-link cursor-pointer'
+                                            @click='$router.push("/rolodex")'
+                                        >
+                                            <span class='nav-link-icon'>
+                                                <IconUserPlus
+                                                    size='32'
+                                                    stroke='2'
+                                                />
+                                            </span>
+                                            <span class='nav-link-title'>Rolodex</span>
+                                        </a>
                                     </template>
                                 </TablerDropdown>
                             </li>
@@ -367,6 +383,7 @@ import {
     IconShovel,
     IconNotebook,
     IconCalendar,
+    IconAddressBook,
     IconCalendarTime,
     IconTruck,
     IconAmbulance,
@@ -380,6 +397,7 @@ export default {
         IconBug,
         IconHome,
         IconUserPlus,
+        IconAddressBook,
         IconMenu,
         IconUsers,
         IconUser,

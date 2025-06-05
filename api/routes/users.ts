@@ -72,8 +72,8 @@ export default async function router(schema: Schema, config: Config) {
                         where: sql`
                             (
                                 ${Param(req.query.filter)}::TEXT IS NULL
-                                OR  fname||' '||lname ~* ${Param(req.query.filter)})
-                                OR email  ~* ${Param(req.query.filter)})
+                                OR (fname||' '||lname ~* ${Param(req.query.filter)})
+                                OR (email  ~* ${Param(req.query.filter)})
                             )
                             AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                             AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})

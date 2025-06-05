@@ -77,6 +77,8 @@ const router = new VueRouter.createRouter({
         { path: '/user/:userid', name: 'user', component: () => import('./components/User.vue') },
         { path: '/user/:userid/edit', name: 'user-edit', component: () => import('./components/UserEdit.vue') },
 
+        { path: '/rolodex', name: 'rolodex', component: () => import('./components/Rolodex.vue') },
+
         { path: '/user/:userid/cert', name: 'certs', component: () => import('./components/Certs.vue') },
         { path: '/user/:userid/cert/:certid', name: 'cert', component: () => import('./components/Cert.vue') },
 
