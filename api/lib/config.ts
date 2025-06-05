@@ -5,7 +5,6 @@ import Models from './models.js';
 export type ConfigOpts = {
     email: boolean;
     silent: boolean;
-    TimeZone: string;
     StackName: string;
     SigningSecret: string;
     URL: string;
@@ -23,7 +22,6 @@ export type ConfigOpts = {
 export default class Config {
     silent: boolean;
     email: boolean;
-    TimeZone: string;
     StackName: string;
     SigningSecret: string;
     URL: string;
@@ -37,7 +35,6 @@ export default class Config {
     constructor(opts: ConfigOpts) {
         this.email = opts.email;
         this.silent = opts.silent;
-        this.TimeZone = opts.TimeZone;
         this.StackName = opts.StackName;
         this.SigningSecret = opts.SigningSecret;
         this.URL = opts.URL;
@@ -77,7 +74,6 @@ export default class Config {
             config = new Config({
                 silent: args.silent || false,
                 email: args.email || false,
-                TimeZone: 'America/Denver',
                 StackName: 'test',
                 SigningSecret: 'mesa-sar-test-token',
                 URL: 'http://localhost:8080/',
@@ -98,7 +94,6 @@ export default class Config {
             config = new Config({
                 silent: args.silent || false,
                 email: args.email || false,
-                TimeZone: 'America/Denver',
                 StackName: process.env.StackName,
                 SigningSecret: process.env.SigningSecret,
                 URL: BASE_URL,

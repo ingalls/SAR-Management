@@ -20,7 +20,6 @@ export default async function router(schema: Schema, config: Config) {
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Rolodex)})),
             filter: Type.Optional(Type.String({ default: '' })),
-            status: Type.Optional(Type.String())
         }),
         res: Type.Object({
             total: Type.Integer(),
@@ -37,11 +36,7 @@ export default async function router(schema: Schema, config: Config) {
                 sort: req.query.sort,
                 where: sql`
                     (name ~* ${req.query.filter} OR email ~* ${req.query.filter})
-                    AND (
-                        ${req.query.status || null}::TEXT IS NULL
-                        OR (${req.query.status || null}::TEXT = 'archived'::TEXT AND archived = True)
-                        OR (${req.query.status || null}::TEXT = 'active'::TEXT AND archived = False)
-                    )
+                    AND archived = False
                 `
             });
 
