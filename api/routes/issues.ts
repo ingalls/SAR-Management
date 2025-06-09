@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import { IssueResponse } from '../lib/types.js';
 import { stringify } from 'csv-stringify/sync';
 import Schema from '@openaddresses/batch-schema';
@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:View');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
 
             if (['csv'].includes(req.query.format)) {
                 if (req.query.format === 'csv') {
@@ -97,7 +97,7 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Issue:Manage');
+            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -151,7 +151,7 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Issue:Manage');
+            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
 
             const issue = await config.models.Issue.from(req.params.issueid);
 

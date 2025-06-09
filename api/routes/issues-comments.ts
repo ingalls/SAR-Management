@@ -1,7 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { IssueComment } from '../lib/schema.js';
 import Err from '@openaddresses/batch-error';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import { sql } from 'drizzle-orm';
 import Schema from '@openaddresses/batch-schema';
 import { GenericListOrder } from '@openaddresses/batch-generic';
@@ -28,7 +28,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:View');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
 
             res.json(await config.models.IssueComment.augmented_list({
                 limit: req.query.limit,
@@ -55,12 +55,12 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:Manage');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
 
             const comment = await config.models.IssueComment.from(req.params.commentid);
             if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
 
-            await Auth.is_own_or_iam(config, req, comment.author, 'Admin');
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Issue, PermissionsLevel.Admin);
 
             await config.models.IssueComment.delete(req.params.commentid);
 
@@ -87,12 +87,12 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueCommentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:Manage');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
 
             const comment = await config.models.IssueComment.from(req.params.commentid);
             if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
 
-            await Auth.is_own_or_iam(config, req, comment.author, 'Admin');
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Issue, PermissionsLevel.Admin);
 
             await config.models.IssueComment.commit(req.params.commentid, {
                 updated: sql`Now()`,
@@ -118,7 +118,7 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueCommentResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Issue:Manage');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
 
             const comment = await config.models.IssueComment.generate({
                 issue: req.params.issueid,

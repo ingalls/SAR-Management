@@ -48,6 +48,21 @@ const Permissions = {
     OnCall: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE]
 }
 
+export enum IamGroup {
+    Application = 'Application',
+    Rolodex = 'Rolodex',
+    Calendar = 'Calendar',
+    Doc = 'Doc',
+    Equipment = 'Equipment',
+    Issue = 'Issue',
+    Leadership = 'Leadership',
+    Mission = 'Mission',
+    Team = 'Team',
+    Training = 'Training',
+    User = 'User',
+    OnCall = 'OnCall'
+}
+
 export const Iam = Type.Object({
     Application: Type.Optional(Type.Enum(PermissionsLevel)),
     Rolodex: Type.Optional(Type.Enum(PermissionsLevel)),
@@ -126,31 +141,45 @@ export default class Auth {
         return auth;
     }
 
-    static async is_own_or_iam(config: Config, req: Request<any, any, any, any>, uid, permission): Promise<AuthUser> {
-        const auth = await Auth.is_auth(config, req);
+    static async is_own_or_iam(
+        config: Config,
+        req: Request<any, any, any, any>,
+        uid: number,
+        group: IamGroup,
+        level: PermissionsLevel,
+        opts: {
+            token: boolean
+        } = { token: false }
+    ): Promise<AuthUser> {
+        const auth = await Auth.is_auth(config, req, opts);
 
         // Admins will be admins
         if (auth && auth.access && auth.access === 'admin') return auth;
         if (auth.id === uid) return auth;
 
-        return await this.is_iam(config, req, permission);
+        return await this.is_iam(config, req, permission, opts);
     }
 
     // Ensure IAM permission is at least permission
-    static async is_iam(config: Config, req: Request<any, any, any, any>, permission: string, opts: {
-        token: boolean
-    } = { token: false }): Promise<AuthUser> {
+    static async is_iam(
+        config: Config,
+        req: Request<any, any, any, any>,
+        group: IamGroup,
+        level: PermissionsLevel,
+        opts: {
+            token: boolean
+        } = { token: false }
+    ): Promise<AuthUser> {
         const auth = await Auth.is_auth(config, req, opts);
 
         // Admins will be admins
         if (auth && auth.access && auth.access === 'admin') return auth;
 
-        const iam = permission.split(':');
         if (
             auth.iam
             && iam.length === 2
-            && auth.iam[iam[0]]
-            && Permissions[iam[0]].indexOf(iam[1]) >= Permissions[iam[0]].indexOf(auth.iam[iam[0]])
+            && auth.iam[group]
+            && Permissions[group].indexOf(level) >= Permissions[group].indexOf(auth.iam[group])
         ) {
             return auth;
         }

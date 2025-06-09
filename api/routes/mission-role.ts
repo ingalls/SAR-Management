@@ -1,6 +1,6 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { sql } from 'drizzle-orm';
@@ -26,7 +26,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:View');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
 
             res.json(await config.models.MissionRole.list({
                 limit: req.query.limit,
@@ -52,7 +52,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionRoleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:View');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
 
             res.json(await config.models.MissionRole.from(req.params.roleid));
         } catch (err) {
@@ -70,7 +70,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionRoleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:Admin');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
 
             const role = await config.models.MissionRole.generate(req.body);
 
@@ -93,7 +93,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionRoleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:Admin');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
 
             const role = await config.models.MissionRole.commit(req.params.roleid, req.body);
             res.json(role);
@@ -112,7 +112,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:Admin');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
 
             await config.models.MissionRole.delete(req.params.roleid);
 

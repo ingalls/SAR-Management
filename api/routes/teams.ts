@@ -3,7 +3,7 @@ import { Type } from '@sinclair/typebox';
 import { Team } from '../lib/schema.js';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
-import Auth, { Permissions } from '../lib/auth.js';
+import Auth, { Permissions, PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, TeamResponse } from '../lib/types.js';
@@ -41,7 +41,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:View');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.View);
 
             const list = await config.models.Team.augmented_list({
                 limit: req.query.limit,
@@ -76,7 +76,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TeamResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:Manage');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Manage);
 
             const team = await config.models.Team.generate(req.body);
             res.json(await config.models.Team.augmented_from(team.id));
@@ -95,7 +95,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TeamResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:View');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.View);
 
             res.json(await config.models.Team.augmented_from(req.params.teamid));
         } catch (err) {
@@ -122,7 +122,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TeamResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Team:Manage');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Manage);
 
             if (user.access !== 'admin') {
                 delete req.body.iam;
@@ -146,7 +146,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:Admin');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Admin);
 
             await config.models.Team.delete(req.params.teamid);
 

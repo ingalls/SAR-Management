@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { Param } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import { Type, Static } from '@sinclair/typebox';
-import Auth, { AuthUserType } from '../lib/auth.js';
+import Auth, { AuthUserType, PermissionsLevel, IamGroup } from '../lib/auth.js';
 import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
 import moment from 'moment';
@@ -30,7 +30,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Calendar:View');
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View);
 
             res.json({
                 layers: [{
@@ -65,7 +65,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             const user = await Auth.is_auth(config, req, { token: true });
-            await Auth.is_iam(config, req, 'Calendar:View', { token: true });
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View, { token: true });
 
             const token = jwt.sign({
                 u: user.id,
@@ -93,7 +93,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             const user = await Auth.is_auth(config, req, { token: true });
-            await Auth.is_iam(config, req, 'Calendar:View', { token: true });
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View, { token: true });
 
             if (user.type === AuthUserType.TOKEN) {
                 await Auth.is_scope(config, req, user.scopes, { token: true });
@@ -141,7 +141,7 @@ export default async function router(schema: Schema, config: Config) {
         res: Type.Array(Event)
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Calendar:View');
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View);
 
             const events: Array<Static<typeof Event>> = [];
 

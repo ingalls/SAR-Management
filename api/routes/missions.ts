@@ -3,7 +3,7 @@ import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { Type } from '@sinclair/typebox';
 import { Mission } from '../lib/schema.js';
 import { sql } from 'drizzle-orm';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, MissionResponse } from '../lib/types.js';
@@ -30,7 +30,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:View');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
 
             res.json(await config.models.Mission.augmented_list({
                 limit: req.query.limit,
@@ -60,7 +60,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:View');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
 
             const mission = await config.models.Mission.augmented_from(req.params.missionid);
             if (!mission.users) mission.users = [];
@@ -94,7 +94,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Mission:Manage');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Manage);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -164,7 +164,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:Manage');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Manage);
 
             const teams = req.body.teams;
             delete req.body.teams;
@@ -211,7 +211,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:Admin');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
 
             await config.models.Mission.delete(req.params.missionid);
 

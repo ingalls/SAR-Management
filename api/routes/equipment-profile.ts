@@ -3,7 +3,7 @@ import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import busboy from 'busboy';
 import stream2buffer from '../lib/stream.js';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import sharp from 'sharp';
 import Schema from '@openaddresses/batch-schema';
@@ -73,7 +73,7 @@ export default async function router(schema: Schema, config: Config) {
         let bb;
 
         try {
-            await Auth.is_iam(config, req, 'Equipment:Manage');
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Manage);
 
             if (req.headers['content-type']) {
                 req.headers['content-type'] = req.headers['content-type'].split(',')[0];

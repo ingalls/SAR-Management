@@ -3,7 +3,7 @@ import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
 import { Rolodex } from '../lib/schema.js';
 import { RolodexResponse } from '../lib/types.js';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Config from '../lib/config.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import Schema from '@openaddresses/batch-schema';
@@ -27,7 +27,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Rolodex:View');
+            await Auth.is_iam(config, req, IamGroup.Rolodex, PermissionsLevel.View);
 
             const list = await config.models.Rolodex.list({
                 limit: req.query.limit,

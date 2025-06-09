@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import VCard from 'vcard-creator';
 import { stringify } from 'csv-stringify/sync';
 import { phone } from 'phone';
@@ -39,7 +39,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:View');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.View);
 
             if (['vcard', 'csv'].includes(req.query.format)) {
                 if (req.query.format === 'vcard') {
@@ -124,7 +124,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:Manage');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Manage);
 
             await config.models.UserTeam.generate({
                 uid: req.body.uid,
@@ -151,7 +151,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:Manage');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Manage);
 
             await config.models.UserTeam.delete(sql`
                 tid = ${req.params.teamid}

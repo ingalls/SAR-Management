@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, PollResponse } from '../lib/types.js';
@@ -17,7 +17,7 @@ export default async function router(schema: Schema, config: Config) {
         res: PollResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Issue:View');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
 
             const issue = await config.models.Issue.from(req.params.issueid);
 
@@ -58,7 +58,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Issue:View');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
 
             const issue = await config.models.Issue.from(req.params.issueid);
             if (!issue.poll_id) throw new Err(400, null, 'Issue does not have a poll');

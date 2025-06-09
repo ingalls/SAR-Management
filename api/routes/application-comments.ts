@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { ApplicationComment } from '../lib/schema.js';
 import { Type } from '@sinclair/typebox';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import { sql } from 'drizzle-orm';
 import { StandardResponse, ApplicationCommentResponse } from '../lib/types.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
@@ -28,7 +28,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Application:View');
+            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.View);
 
             res.json(await config.models.ApplicationComment.augmented_list({
                 limit: req.query.limit,
@@ -55,12 +55,12 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Application:Manage');
+            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.Manage);
 
             const comment = await config.models.ApplicationComment.from(req.params.commentid);
             if (comment.application !== req.params.applicationid) throw new Err(400, null, 'Comment does not belong to given application');
 
-            await Auth.is_own_or_iam(config, req, comment.author, 'Admin');
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Application, PermissionsLevel.Admin);
 
             await config.models.ApplicationComment.delete(comment.id);
 
@@ -87,12 +87,12 @@ export default async function router(schema: Schema, config: Config) {
         res: ApplicationCommentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:Manage');
+            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.Manage);
 
             const comment = await config.models.ApplicationComment.from(req.params.commentid);
             if (comment.application !== req.params.applicationid) throw new Err(400, null, 'Comment does not belong to given application');
 
-            await Auth.is_own_or_iam(config, req, comment.author, 'Admin');
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Application, PermissionsLevel.Admin);
 
             await config.models.ApplicationComment.commit(comment.id, {
                 updated: sql`Now()`,
@@ -118,7 +118,7 @@ export default async function router(schema: Schema, config: Config) {
         res: ApplicationCommentResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Application:Manage');
+            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.Manage);
 
             const comment = await config.models.ApplicationComment.generate({
                 application: req.params.applicationid,

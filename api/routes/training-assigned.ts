@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, TrainingAssignedResponse } from '../lib/types.js';
@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:View');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.View);
 
             res.json(await config.models.TrainingAssigned.augmented_list({
                 limit: 1000,
@@ -46,7 +46,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TrainingAssignedResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:Manage');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.Manage);
 
             const assigned = await config.models.TrainingAssigned.generate({
                 training_id: req.params.trainingid,
@@ -69,7 +69,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TrainingAssignedResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Training:View');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.View);
 
             const assigned = await config.models.TrainingAssigned.generate({
                 training_id: req.params.trainingid,
@@ -99,7 +99,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TrainingAssignedResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:Manage');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.Manage);
 
             const training = await config.models.Training.from(req.params.trainingid);
             const assigned = await config.models.TrainingAssigned.from(req.params.assignedid);
@@ -124,7 +124,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:Manage');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.Manage);
 
             const training = await config.models.Training.from(req.params.trainingid);
             const assigned = await config.models.TrainingAssigned.from(req.params.assignedid);

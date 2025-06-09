@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm'
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, IssueAssignedResponse } from '../lib/types.js';
@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:View');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
 
             res.json(await config.models.IssueAssigned.augmented_list({
                 where: sql`
@@ -45,7 +45,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:Manage');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
 
             await config.models.IssueAssigned.generate({
                 issue_id: req.params.issueid,
@@ -72,7 +72,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:Manage');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
 
             const issue = await config.models.Issue.from(req.params.issueid);
             const assigned = await config.models.IssueAssigned.from(req.params.assignedid)

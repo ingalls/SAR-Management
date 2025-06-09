@@ -2,7 +2,7 @@ import { Type } from '@sinclair/typebox';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import { FieldabilityResponse } from '../lib/types.js';
 import Err from '@openaddresses/batch-error';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import { sql } from 'drizzle-orm';
 import { Fieldability } from '../lib/schema.js';
@@ -29,7 +29,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Team:View');
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.View);
 
             res.json(await config.models.Fieldability.list({
                 limit: req.query.limit,

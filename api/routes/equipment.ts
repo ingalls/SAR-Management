@@ -3,7 +3,7 @@ import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import Notify from '../lib/notify.js';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { EquipmentResponse } from '../lib/types.js';
@@ -33,7 +33,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Equipment:View');
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.View);
 
             const list = await config.models.Equipment.augmented_list({
                 limit: req.query.limit,
@@ -69,7 +69,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Equipment:View');
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.View);
 
             res.json(await config.models.Equipment.augmented_from(req.params.equipmentid));
         } catch (err) {
@@ -95,7 +95,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Equipment:Manage');
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Manage);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -140,7 +140,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Equipment:Manage');
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Manage);
 
             const equipment = await config.models.Equipment.from(req.params.equipmentid);
 

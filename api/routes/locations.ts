@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { Training, Mission } from '../lib/schema.js';
@@ -19,8 +19,8 @@ export default async function router(schema: Schema, config: Config) {
         res: Type.Any()
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Mission:View');
-            await Auth.is_iam(config, req, 'Training:View');
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.View);
 
             const pgres = await config.pool
                 .select({

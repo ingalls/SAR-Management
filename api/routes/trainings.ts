@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { GenericListOrder, Param } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
 import { Type } from '@sinclair/typebox';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import { Training } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
@@ -31,7 +31,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:View');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.View);
 
             const list = await config.models.Training.augmented_list({
                 limit: req.query.limit,
@@ -64,7 +64,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TrainingResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:View');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.View);
 
             const training = await config.models.Training.augmented_from(req.params.trainingid);
             if (!training.users) training.users = [];
@@ -96,7 +96,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TrainingResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, 'Training:Manage');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.Manage);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -154,7 +154,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TrainingResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:Manage');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.Manage);
 
             const teams = req.body.teams;
             delete req.body.teams;
@@ -188,7 +188,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Training:Admin');
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.Admin);
 
             await config.models.TrainingTeam.delete(sql`
                 training_id = ${req.params.trainingid}

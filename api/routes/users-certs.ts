@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import { sql } from 'drizzle-orm';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import Spaces from '../lib/aws/spaces.js';
@@ -32,7 +32,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'User:View');
+            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.View);
 
             res.json(await config.models.Cert.list({
                 limit: req.query.limit,
@@ -60,7 +60,7 @@ export default async function router(schema: Schema, config: Config) {
         res: CertResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'User:View');
+            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.View);
 
             const cert = await config.models.Cert.from(req.params.certid);
             if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
@@ -82,7 +82,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_own_or_iam(config, req, req.params.userid, 'Users:Manage');
+            await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.User, PermissionsLevel.Manage);
 
             const cert = await config.models.Cert.from(req.params.certid);
             if (cert.uid !== req.params.userid) throw new Err(400, null, 'Mismatch between UserID and Cert');
@@ -122,7 +122,7 @@ export default async function router(schema: Schema, config: Config) {
         res: CertResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_own_or_iam(config, req, req.params.userid, 'Users:Manage');
+            await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.User, PermissionsLevel.Manage);
 
             const cert = await config.models.Cert.generate({
                 uid: user.id,

@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
-import Auth from '../lib/auth.js';
+import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import Schema from '@openaddresses/batch-schema';
 import { CertKnownResponse } from '../lib/types.js'
@@ -26,7 +26,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'User:View');
+            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.View);
 
             res.json(await config.models.CertKnown.list({
                 limit: req.query.limit,
