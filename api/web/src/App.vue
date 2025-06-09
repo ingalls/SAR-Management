@@ -301,7 +301,7 @@
                                             @click='$router.push("/rolodex")'
                                         >
                                             <span class='nav-link-icon'>
-                                                <IconUserPlus
+                                                <IconAddressBook
                                                     size='32'
                                                     stroke='2'
                                                 />

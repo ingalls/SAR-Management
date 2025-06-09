@@ -3,7 +3,7 @@
         <div class='card-header'>
             <div class='col'>
                 <div class='d-flex'>
-                    <h3 class='card-title'>
+                    <h3 class='card-title user-select-none'>
                         Users
                     </h3>
 
@@ -23,11 +23,17 @@
                             </button>
 
                             <template #dropdown>
-                                <label class='mx-2 subheader'>Filter Options</label>
-                                <TablerToggle
-                                    v-model='paging.disabled'
-                                    label='Disabled Users'
-                                />
+                                <div class='card'>
+                                    <div class='card-header'>
+                                        <div class='card-title'>Filter Options</div>
+                                    </div>
+                                    <div class='card-body row g-2'>
+                                        <TablerToggle
+                                            v-model='paging.disabled'
+                                            label='Disabled Users'
+                                        />
+                                    </div>
+                                </div>
                             </template>
                         </TablerDropdown>
 
