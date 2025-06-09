@@ -44,7 +44,7 @@ const Permissions = {
     Mission: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
     Team: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
     Training: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
-    User: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    User: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
     OnCall: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE]
 }
 
