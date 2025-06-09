@@ -33,7 +33,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.VIEW);
 
             const list = await config.models.Equipment.augmented_list({
                 limit: req.query.limit,
@@ -69,7 +69,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.VIEW);
 
             res.json(await config.models.Equipment.augmented_from(req.params.equipmentid));
         } catch (err) {
@@ -95,7 +95,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.MANAGE);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -140,7 +140,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.MANAGE);
 
             const equipment = await config.models.Equipment.from(req.params.equipmentid);
 

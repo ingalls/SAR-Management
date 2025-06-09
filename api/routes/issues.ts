@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.VIEW);
 
             if (['csv'].includes(req.query.format)) {
                 if (req.query.format === 'csv') {
@@ -97,7 +97,7 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
+            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.MANAGE);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -151,7 +151,7 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
+            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.MANAGE);
 
             const issue = await config.models.Issue.from(req.params.issueid);
 
@@ -183,7 +183,7 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, 'Issue:View');
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.VIEW);
 
             res.json(await config.models.Issue.augmented_from(req.params.issueid));
         } catch (err) {

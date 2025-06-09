@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.VIEW);
 
             res.json(await config.models.EquipmentAssigned.augmented_list({
                 where: sql`

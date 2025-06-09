@@ -16,7 +16,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.VIEW);
 
             const list = await config.models.Leadership.augmented_list();
 
@@ -37,7 +37,7 @@ export default async function router(schema: Schema, config: Config) {
         res: LeadershipResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.ADMIN);
 
             const leader = await config.models.Leadership.generate(req.body);
             res.json(await config.models.Leadership.augmented_from(leader.id));
@@ -60,7 +60,7 @@ export default async function router(schema: Schema, config: Config) {
         res: LeadershipResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.ADMIN);
 
             const leader = await config.models.Leadership.commit(req.params.leaderid, req.body);
             res.json(await config.models.Leadership.augmented_from(leader.id));
@@ -79,7 +79,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Leadership, PermissionsLevel.ADMIN);
 
             await config.models.Leadership.delete(req.params.leaderid);
             res.json({

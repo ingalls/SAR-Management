@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
             res.json(await config.models.MissionAssigned.augmented_list({
                 limit: 1000,
@@ -46,7 +46,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionAssignedResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
 
             const assigned = await config.models.MissionAssigned.generate({
                 mission_id: req.params.missionid,
@@ -74,7 +74,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionAssignedResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
 
             const mission = await config.models.Mission.from(req.params.missionid);
             const assigned = await config.models.MissionAssigned.from(req.params.assignedid);
@@ -99,7 +99,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
 
             const mission = await config.models.Mission.from(req.params.missionid);
             const assigned = await config.models.MissionAssigned.from(req.params.assignedid);

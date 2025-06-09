@@ -28,7 +28,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.VIEW);
 
             res.json(await config.models.ApplicationComment.augmented_list({
                 limit: req.query.limit,
@@ -55,12 +55,12 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.MANAGE);
 
             const comment = await config.models.ApplicationComment.from(req.params.commentid);
             if (comment.application !== req.params.applicationid) throw new Err(400, null, 'Comment does not belong to given application');
 
-            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Application, PermissionsLevel.Admin);
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Application, PermissionsLevel.ADMIN);
 
             await config.models.ApplicationComment.delete(comment.id);
 
@@ -87,12 +87,12 @@ export default async function router(schema: Schema, config: Config) {
         res: ApplicationCommentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.MANAGE);
 
             const comment = await config.models.ApplicationComment.from(req.params.commentid);
             if (comment.application !== req.params.applicationid) throw new Err(400, null, 'Comment does not belong to given application');
 
-            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Application, PermissionsLevel.Admin);
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Application, PermissionsLevel.ADMIN);
 
             await config.models.ApplicationComment.commit(comment.id, {
                 updated: sql`Now()`,
@@ -118,7 +118,7 @@ export default async function router(schema: Schema, config: Config) {
         res: ApplicationCommentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.Manage);
+            const user = await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.MANAGE);
 
             const comment = await config.models.ApplicationComment.generate({
                 application: req.params.applicationid,

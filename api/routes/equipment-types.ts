@@ -21,7 +21,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.VIEW);
 
             // @ts-expect-error TODO Fix Type
             res.json(await config.models.EquipmentType.list(req.query));
@@ -40,7 +40,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentTypeResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.VIEW);
 
             // @ts-expect-error TODO Fix Type
             res.json(await config.models.EquipmentType.from(req.params.typeid));
@@ -60,7 +60,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentTypeResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.ADMIN);
 
             const type = await config.models.EquipmentType.generate(req.body);
 
@@ -85,7 +85,7 @@ export default async function router(schema: Schema, config: Config) {
         res: EquipmentTypeResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.ADMIN);
 
             const type = await config.models.EquipmentType.commit(req.params.typeid, req.body);
 

@@ -41,7 +41,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.VIEW);
 
             const list = await config.models.Team.augmented_list({
                 limit: req.query.limit,
@@ -76,7 +76,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TeamResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.MANAGE);
 
             const team = await config.models.Team.generate(req.body);
             res.json(await config.models.Team.augmented_from(team.id));
@@ -95,7 +95,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TeamResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.VIEW);
 
             res.json(await config.models.Team.augmented_from(req.params.teamid));
         } catch (err) {
@@ -122,7 +122,7 @@ export default async function router(schema: Schema, config: Config) {
         res: TeamResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Manage);
+            const user = await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.MANAGE);
 
             if (user.access !== 'admin') {
                 delete req.body.iam;
@@ -146,7 +146,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.ADMIN);
 
             await config.models.Team.delete(req.params.teamid);
 

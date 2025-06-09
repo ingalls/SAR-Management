@@ -26,7 +26,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
             res.json(await config.models.MissionRole.list({
                 limit: req.query.limit,
@@ -52,7 +52,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionRoleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
             res.json(await config.models.MissionRole.from(req.params.roleid));
         } catch (err) {
@@ -70,7 +70,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionRoleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             const role = await config.models.MissionRole.generate(req.body);
 
@@ -93,7 +93,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionRoleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             const role = await config.models.MissionRole.commit(req.params.roleid, req.body);
             res.json(role);
@@ -112,7 +112,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             await config.models.MissionRole.delete(req.params.roleid);
 

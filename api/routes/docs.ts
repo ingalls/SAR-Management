@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.VIEW);
 
             req.query.prefix = prefix(req.query.prefix);
 
@@ -119,7 +119,7 @@ export default async function router(schema: Schema, config: Config) {
                 body.pipe(res);
             } else {
                 const user = await Auth.is_auth(config, req, { token: true });
-                await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.Manage, { token: true });
+                await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.MANAGE, { token: true });
 
                 req.query.prefix = prefix(req.query.prefix);
 
@@ -163,7 +163,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             await Auth.is_auth(config, req, { token: true });
-            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.View, { token: true });
+            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.VIEW, { token: true });
 
             req.query.prefix = prefix(req.query.prefix);
 
@@ -196,7 +196,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.MANAGE);
 
             req.query.prefix = prefix(req.query.prefix);
 
@@ -223,7 +223,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
         res: StandardResponse
     }, async (req, res) => {
-            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.MANAGE);
 
         req.query.prefix = prefix(req.query.prefix);
 
@@ -279,7 +279,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Doc, PermissionsLevel.MANAGE);
 
             req.query.file = 'documents/' + req.query.file;
 

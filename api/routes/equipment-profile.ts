@@ -73,7 +73,7 @@ export default async function router(schema: Schema, config: Config) {
         let bb;
 
         try {
-            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.MANAGE);
 
             if (req.headers['content-type']) {
                 req.headers['content-type'] = req.headers['content-type'].split(',')[0];

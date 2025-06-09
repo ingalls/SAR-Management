@@ -30,7 +30,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.VIEW);
 
             res.json({
                 layers: [{
@@ -65,7 +65,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             const user = await Auth.is_auth(config, req, { token: true });
-            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View, { token: true });
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.VIEW, { token: true });
 
             const token = jwt.sign({
                 u: user.id,
@@ -93,7 +93,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             const user = await Auth.is_auth(config, req, { token: true });
-            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View, { token: true });
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.VIEW, { token: true });
 
             if (user.type === AuthUserType.TOKEN) {
                 await Auth.is_scope(config, req, user.scopes, { token: true });
@@ -141,7 +141,7 @@ export default async function router(schema: Schema, config: Config) {
         res: Type.Array(Event)
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Calendar, PermissionsLevel.VIEW);
 
             const events: Array<Static<typeof Event>> = [];
 

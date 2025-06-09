@@ -51,7 +51,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.VIEW);
 
             if (['vcard', 'csv'].includes(req.query.format)) {
                 if (req.query.format === 'vcard') {
@@ -155,7 +155,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.ADMIN);
 
             req.body.email = req.body.email.toLowerCase();
             req.body.username = req.body.username.toLowerCase();
@@ -209,7 +209,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.User, PermissionsLevel.Admin);
+            const user = await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.User, PermissionsLevel.ADMIN);
 
             // Non-Admins can't upgrade their own accounts
             if (user.access !== 'admin') delete req.body.access;
@@ -232,7 +232,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.VIEW);
 
             res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
         } catch (err) {
@@ -250,7 +250,7 @@ export default async function router(schema: Schema, config: Config) {
         res: UserResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.ADMIN);
 
             const user = await config.models.User.commit(req.params.userid, {
                 disabled: true

@@ -29,7 +29,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Team, PermissionsLevel.VIEW);
 
             res.json(await config.models.Fieldability.list({
                 limit: req.query.limit,

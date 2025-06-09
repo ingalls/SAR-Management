@@ -17,7 +17,7 @@ export default async function router(schema: Schema, config: Config) {
         res: PollResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
+            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.VIEW);
 
             const issue = await config.models.Issue.from(req.params.issueid);
 
@@ -58,7 +58,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
+            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.VIEW);
 
             const issue = await config.models.Issue.from(req.params.issueid);
             if (!issue.poll_id) throw new Err(400, null, 'Issue does not have a poll');

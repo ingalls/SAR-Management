@@ -42,7 +42,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             res.json(await config.models.Schedule.list({
                 limit: req.query.limit,
@@ -72,7 +72,7 @@ export default async function router(schema: Schema, config: Config) {
         res: ScheduleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.ADMIN);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -110,7 +110,7 @@ export default async function router(schema: Schema, config: Config) {
         res: ScheduleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.MANAGE);
 
             const schedule = await config.models.Schedule.commit(req.params.scheduleid, req.body);
             res.json(schedule);
@@ -134,7 +134,7 @@ export default async function router(schema: Schema, config: Config) {
         res: ScheduleEventResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             await config.models.Schedule.from(req.params.scheduleid);
 
@@ -174,7 +174,7 @@ export default async function router(schema: Schema, config: Config) {
         res: ScheduleEventResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             const schedule = await config.models.Schedule.from(req.params.scheduleid);
             if (req.body.uid) {
@@ -210,7 +210,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             const schedule = await config.models.Schedule.from(req.params.scheduleid);
 
@@ -242,7 +242,7 @@ export default async function router(schema: Schema, config: Config) {
         res: Type.Array(Event)
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             const events: Array<Static<typeof Event>> = [];
 
@@ -293,7 +293,7 @@ export default async function router(schema: Schema, config: Config) {
         res: ScheduleResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             res.json(await config.models.Schedule.from(req.params.scheduleid));
         } catch (err) {
@@ -320,7 +320,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Oncall, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             res.json(await config.models.ScheduleAssigned.augmented_list({
                 limit: req.query.limit,

@@ -30,7 +30,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
             res.json(await config.models.Mission.augmented_list({
                 limit: req.query.limit,
@@ -60,7 +60,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
             const mission = await config.models.Mission.augmented_from(req.params.missionid);
             if (!mission.users) mission.users = [];
@@ -94,7 +94,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Manage);
+            const user = await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
@@ -164,7 +164,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
 
             const teams = req.body.teams;
             delete req.body.teams;
@@ -211,7 +211,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             await config.models.Mission.delete(req.params.missionid);
 

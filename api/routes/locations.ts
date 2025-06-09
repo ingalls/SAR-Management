@@ -19,8 +19,8 @@ export default async function router(schema: Schema, config: Config) {
         res: Type.Any()
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
-            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
+            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.VIEW);
 
             const pgres = await config.pool
                 .select({

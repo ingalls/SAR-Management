@@ -28,7 +28,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.VIEW);
 
             res.json(await config.models.IssueComment.augmented_list({
                 limit: req.query.limit,
@@ -55,12 +55,12 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.MANAGE);
 
             const comment = await config.models.IssueComment.from(req.params.commentid);
             if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
 
-            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Issue, PermissionsLevel.Admin);
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Issue, PermissionsLevel.ADMIN);
 
             await config.models.IssueComment.delete(req.params.commentid);
 
@@ -87,12 +87,12 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueCommentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.MANAGE);
 
             const comment = await config.models.IssueComment.from(req.params.commentid);
             if (comment.issue !== req.params.issueid) throw new Err(400, null, 'Comment does not belong to given issue');
 
-            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Issue, PermissionsLevel.Admin);
+            await Auth.is_own_or_iam(config, req, comment.author, IamGroup.Issue, PermissionsLevel.ADMIN);
 
             await config.models.IssueComment.commit(req.params.commentid, {
                 updated: sql`Now()`,
@@ -118,7 +118,7 @@ export default async function router(schema: Schema, config: Config) {
         res: IssueCommentResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
+            const user = await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.MANAGE);
 
             const comment = await config.models.IssueComment.generate({
                 issue: req.params.issueid,

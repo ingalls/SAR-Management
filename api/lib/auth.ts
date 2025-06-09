@@ -157,7 +157,7 @@ export default class Auth {
         if (auth && auth.access && auth.access === 'admin') return auth;
         if (auth.id === uid) return auth;
 
-        return await this.is_iam(config, req, permission, opts);
+        return await this.is_iam(config, req, group, level, opts);
     }
 
     // Ensure IAM permission is at least permission
@@ -177,7 +177,6 @@ export default class Auth {
 
         if (
             auth.iam
-            && iam.length === 2
             && auth.iam[group]
             && Permissions[group].indexOf(level) >= Permissions[group].indexOf(auth.iam[group])
         ) {

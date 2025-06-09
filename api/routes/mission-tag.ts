@@ -26,7 +26,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
             res.json(await config.models.MissionTag.list({
                 limit: req.query.limit,
@@ -52,7 +52,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionTagResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
             res.json(await config.models.MissionTag.from(req.params.tagid));
         } catch (err) {
@@ -70,7 +70,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionTagResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             const tag = await config.models.MissionTag.generate(req.body);
 
@@ -93,7 +93,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionTagResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             const tag = await config.models.MissionTag.commit(req.params.tagid, req.body);
             res.json(tag);
@@ -112,7 +112,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.Admin);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             await config.models.MissionTag.delete(req.params.tagid);
 

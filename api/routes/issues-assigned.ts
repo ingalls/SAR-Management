@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.View);
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.VIEW);
 
             res.json(await config.models.IssueAssigned.augmented_list({
                 where: sql`
@@ -45,7 +45,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.MANAGE);
 
             await config.models.IssueAssigned.generate({
                 issue_id: req.params.issueid,
@@ -72,7 +72,7 @@ export default async function router(schema: Schema, config: Config) {
         res: StandardResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.Manage);
+            await Auth.is_iam(config, req, IamGroup.Issue, PermissionsLevel.MANAGE);
 
             const issue = await config.models.Issue.from(req.params.issueid);
             const assigned = await config.models.IssueAssigned.from(req.params.assignedid)
