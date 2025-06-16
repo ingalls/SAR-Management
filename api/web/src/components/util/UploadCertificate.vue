@@ -139,8 +139,10 @@ export default {
     methods: {
         getKnown: async function() {
             this.loading = true;
-            const known = await window.std('/api/certs');
-            known.items('limit', String(100));
+
+            const url = await window.stdurl('/api/certs');
+            url.searchParams.append(('limit', String(100));
+            const known = await window.std(url);
             this.knownNames = known.items.map((k) => k.name).concat(['Other']);
             for (const cert of known.items) {
                 this.knownMap.set(cert.name, cert);
