@@ -141,7 +141,7 @@ export default {
             this.loading = true;
 
             const url = await window.stdurl('/api/certs');
-            url.searchParams.append(('limit', String(100));
+            url.searchParams.append('limit', String(100));
             const known = await window.std(url);
             this.knownNames = known.items.map((k) => k.name).concat(['Other']);
             for (const cert of known.items) {
