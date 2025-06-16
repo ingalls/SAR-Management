@@ -7,43 +7,47 @@
                     v-text='label'
                 />
 
-                <div class='ms-auto'>
-                    <div class='dropdown'>
-                        <div
-                            id='dropdownMenuButton1'
-                            class='dropdown-toggle'
-                            type='button'
-                            data-bs-toggle='dropdown'
-                            aria-expanded='false'
-                        >
-                            <IconSettings
+                <div
+                    v-if='!disabled'
+                    class='ms-auto'
+                >
+                    <TablerDropdown>
+                        <template #default>
+                            <IconPlus
+                                v-tooltip='"Add User"'
                                 class='cursor-pointer dropdown-toggle'
                                 :size='16'
-                                stroke='1'
+                                :stroke='1'
                             />
-                        </div>
-                        <ul
-                            class='dropdown-menu'
-                            aria-labelledby='dropdownMenuButton1'
-                        >
-                            <div class='m-1'>
-                                <TablerInput
-                                    v-model='filter'
-                                    placeholder='Filter Users'
-                                />
+                        </template>
+                        <template #dropdown>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <TablerInput
+                                        v-model='filter'
+                                        icon='search'
+                                        placeholder='Filter Users'
+                                    />
 
-                                <div
-                                    v-for='user in list.items'
-                                    :key='user.id'
-                                    @click='push_assigned(user)'
-                                >
-                                    <div class='d-flex align-items-center my-1 cursor-pointer'>
-                                        <Avatar :user='user' />
-                                    </div>
+                                    <TablerNone
+                                        v-if='list.items.length === 0'
+                                        label='Users'
+                                        :create='false'
+                                    />
+                                    <template v-else >
+                                        <div
+                                            v-for='user in list.items'
+                                            :key='user.id'
+                                            class='py-2 px-2 rounded cursor-pointer hover-light'
+                                            @click='push_assigned(user)'
+                                        >
+                                            <Avatar :user='user' />
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
-                        </ul>
-                    </div>
+                        </template>
+                    </TablerDropdown>
                 </div>
             </div>
 
@@ -79,12 +83,13 @@
 <script>
 import Avatar from './Avatar.vue';
 import {
-    IconSettings,
+    IconPlus,
     IconTrash
 } from '@tabler/icons-vue';
 import {
     TablerNone,
-    TablerInput
+    TablerInput,
+    TablerDropdown
 } from '@tak-ps/vue-tabler'
 
 export default {
@@ -92,7 +97,8 @@ export default {
     components: {
         TablerNone,
         Avatar,
-        IconSettings,
+        IconPlus,
+        TablerDropdown,
         IconTrash,
         TablerInput
     },
@@ -100,6 +106,10 @@ export default {
         modelValue: {
             type: Array,
             required: true
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         },
         label: {
             type: String,
@@ -119,7 +129,7 @@ export default {
         return {
             filter: '',
             list: {
-                users: []
+                items: []
             },
             assigned: []
         }

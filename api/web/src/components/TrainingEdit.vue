@@ -148,7 +148,6 @@ import {
     TablerToggle,
     TablerLoading
 } from '@tak-ps/vue-tabler';
-import moment from 'moment-timezone';
 
 export default {
     name: 'TrainingsEdit',

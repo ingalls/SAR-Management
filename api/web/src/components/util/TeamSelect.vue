@@ -7,43 +7,47 @@
                     v-text='label'
                 />
 
-                <div class='ms-auto'>
-                    <div class='dropdown'>
-                        <div
-                            id='dropdownMenuButton1'
-                            class='dropdown-toggle'
-                            type='button'
-                            data-bs-toggle='dropdown'
-                            aria-expanded='false'
-                        >
-                            <IconSettings
+                <div
+                    v-if='!disabled'
+                    class='ms-auto'
+                >
+                    <TablerDropdown>
+                        <template #default>
+                            <IconPlus
+                                v-tooltip='"Add User"'
                                 class='cursor-pointer dropdown-toggle'
-                                size='16'
-                                stroke='1'
+                                :size='16'
+                                :stroke='1'
                             />
-                        </div>
-                        <ul
-                            class='dropdown-menu'
-                            aria-labelledby='dropdownMenuButton1'
-                        >
-                            <div class='m-1'>
-                                <TablerInput
-                                    v-model='filter'
-                                    placeholder='Filter Teams'
-                                />
+                        </template>
+                        <template #dropdown>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <TablerInput
+                                        v-model='filter'
+                                        icon='search'
+                                        placeholder='Filter Teams'
+                                    />
 
-                                <div
-                                    v-for='team in list.items'
-                                    :key='team.id'
-                                    @click='push_teams(team)'
-                                >
-                                    <div class='d-flex align-items-center my-1 cursor-pointer'>
-                                        <TeamBadge :team='team' />
-                                    </div>
+                                    <TablerNone
+                                        v-if='list.items.length === 0'
+                                        label='Users'
+                                        :create='false'
+                                    />
+                                    <template v-else >
+                                        <div
+                                            v-for='team in list.items'
+                                            :key='team.id'
+                                            class='py-2 px-2 rounded cursor-pointer hover-light'
+                                            @click='push_teams(team)'
+                                        >
+                                            <TeamBadge :team='team' />
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
-                        </ul>
-                    </div>
+                        </template>
+                    </TablerDropdown>
                 </div>
             </div>
 
@@ -78,7 +82,7 @@
 <script>
 import TeamBadge from './TeamBadge.vue';
 import {
-    IconSettings,
+    IconPlus,
     IconTrash
 } from '@tabler/icons-vue';
 import {
@@ -91,7 +95,7 @@ export default {
     components: {
         TablerNone,
         TeamBadge,
-        IconSettings,
+        IconPlus,
         IconTrash,
         TablerInput
     },

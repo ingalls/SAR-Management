@@ -158,7 +158,7 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        deleteMission: async function() {
+        deleteSchedule: async function() {
             this.loading = true;
             await window.std(`/api/schedule/${this.$route.params.scheduleid}`, {
                 method: 'DELETE',

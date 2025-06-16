@@ -23,15 +23,24 @@
                             </button>
 
                             <template #dropdown>
-                                <div class='card'>
+                                <div @click.stop='' class='card'>
                                     <div class='card-header'>
                                         <div class='card-title'>Filter Options</div>
                                     </div>
                                     <div class='card-body row g-2'>
-                                        <TablerToggle
-                                            v-model='paging.disabled'
-                                            label='Disabled Users'
-                                        />
+                                        <div class='col-12'>
+                                            <TablerToggle
+                                                v-model='paging.disabled'
+                                                label='Disabled Users'
+                                            />
+                                        </div>
+                                        <div class='col-12'>
+                                            <TeamSelect
+                                                label='Teams'
+                                                :autoclose='false'
+                                                v-model='paging.teams'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </template>
@@ -251,6 +260,7 @@ import {
     IconAddressBook,
 } from '@tabler/icons-vue';
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
+import TeamSelect from '../util/TeamSelect.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
@@ -274,6 +284,7 @@ export default {
         TablerDelete,
         TablerToggle,
         TablerLoading,
+        TeamSelect,
         UserDropdownIcon,
         Avatar,
         IconList,
@@ -314,6 +325,7 @@ export default {
                 filter: '',
                 sort: 'Name',
                 order: 'asc',
+                teams: [],
                 limit: this.limit,
                 disabled: false,
                 page: 0
