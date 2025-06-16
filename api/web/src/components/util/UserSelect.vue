@@ -15,7 +15,6 @@
                         <template #default>
                             <IconPlus
                                 v-tooltip='"Add User"'
-                                class='cursor-pointer dropdown-toggle'
                                 :size='16'
                                 :stroke='1'
                             />

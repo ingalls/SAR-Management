@@ -14,8 +14,7 @@
                     <TablerDropdown>
                         <template #default>
                             <IconPlus
-                                v-tooltip='"Add User"'
-                                class='cursor-pointer dropdown-toggle'
+                                v-tooltip='"Add Team"'
                                 :size='16'
                                 :stroke='1'
                             />
@@ -66,12 +65,15 @@
                 >
                     <TeamBadge :team='a' />
                     <div class='ms-auto'>
-                        <IconTrash
-                            size='16'
-                            stroke='1'
-                            class='cursor-pointer'
+                        <TablerIconButton
+                            title='Remove Team'
                             @click='delete_teams(a_idx, a)'
-                        />
+                        >
+                            <IconTrash
+                                size='16'
+                                stroke='1'
+                            />
+                        </TablerIconButton>
                     </div>
                 </div>
             </template>
@@ -86,6 +88,8 @@ import {
     IconTrash
 } from '@tabler/icons-vue';
 import {
+    TablerDropdown,
+    TablerIconButton,
     TablerNone,
     TablerInput
 } from '@tak-ps/vue-tabler'
@@ -93,6 +97,8 @@ import {
 export default {
     name: 'TeamSelect',
     components: {
+        TablerDropdown,
+        TablerIconButton,
         TablerNone,
         TeamBadge,
         IconPlus,
