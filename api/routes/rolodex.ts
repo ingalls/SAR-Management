@@ -45,4 +45,75 @@ export default async function router(schema: Schema, config: Config) {
             Err.respond(err, res);
         }
     });
+
+    await schema.get('/rolodex/:rolodexid', {
+        name: 'Get Rolodex Item',
+        group: 'Rolodex',
+        description: 'Get a rolodex item',
+        params: Type.Object({
+            rolodexid: Type.Integer(),
+        }),
+        res: RolodexResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.Rolodex, PermissionsLevel.VIEW);
+
+            const item = await config.models.Rolodex.from(req.params.rolodexid);
+
+            res.json(item);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.post('/rolodex', {
+        name: 'Create Rolodex Item',
+        group: 'Rolodex',
+        description: 'Create a new rolodex item',
+        body: Type.Object({
+            name: Type.String(),
+            remarks: Type.Optional(Type.String()),
+            phone: Type.Optional(Type.String()),
+            email: Type.Optional(Type.String()),
+        }),
+        res: RolodexResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.Rolodex, PermissionsLevel.MANAGE);
+
+            const item = await config.models.Rolodex.generate({
+                ...req.body,
+            });
+
+            res.json(item);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.patch('/rolodex/:rolodexid', {
+        name: 'Patch Rolodex',
+        group: 'User',
+        description: 'Update an existing rolodex item',
+        params: Type.Object({
+            rolodexid: Type.Integer(),
+        }),
+        body: Type.Object({
+            name: Type.Optional(Type.String()),
+            remarks: Type.Optional(Type.String()),
+            phone: Type.Optional(Type.String()),
+            email: Type.Optional(Type.String()),
+        }),
+        res: RolodexResponse
+    }, async (req, res) => {
+        try {
+            const user = await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.Rolodex, PermissionsLevel.MANAGE);
+
+            const item = await config.models.Rolodex.commit(req.params.rolodexid, req.body);
+
+            res.json(item);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
 }

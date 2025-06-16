@@ -37,10 +37,26 @@
                                         <div class='col-md-12'>
                                             <TablerInput
                                                 v-model='rolodex.remarks'
-                                                :rows='5'
-                                                :required='true'
+                                                :rows='Math.max(2, rolodex.remarks.split("\n").length)'
+                                                :required='false'
                                                 label='Remarks'
                                                 description='A Human Readable remarks for the rolodex'
+                                            />
+                                        </div>
+                                        <div class='col-md-12'>
+                                            <TablerInput
+                                                v-model='rolodex.phone'
+                                                :required='false'
+                                                label='Phone Number'
+                                                description='An associated phone number if applicable'
+                                            />
+                                        </div>
+                                        <div class='col-md-12'>
+                                            <TablerInput
+                                                v-model='rolodex.email'
+                                                :required='false'
+                                                label='Email'
+                                                description='An associated email if applicable'
                                             />
                                         </div>
                                     </div>
@@ -122,8 +138,9 @@ export default {
             rolodex: {
                 name: '',
                 body: '',
+                phone: '',
+                email: ''
             },
-            assigned: []
         }
     },
     mounted: async function() {
@@ -145,7 +162,7 @@ export default {
             this.$router.push('/rolodex');
         },
         validate: function() {
-            for (const field of ['name', 'body']) {
+            for (const field of ['name']) {
                 if (!this.rolodex[field]) this.errors[field] = 'Cannot be empty';
                 else this.errors[field] = '';
             }

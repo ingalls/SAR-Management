@@ -216,7 +216,7 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         listSchema: async function() {
             const schema = await window.std('/api/schema?method=GET&url=/rolodex');
-            this.header = ['archived', 'name', 'created', 'phone', 'email', 'group'].map((h) => {
+            this.header = ['archived', 'name', 'created'].map((h) => {
                 return { name: h, display: true };
             });
 
