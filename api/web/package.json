@@ -24,7 +24,7 @@
         "floating-vue": "^2.0.0-beta.17",
         "imask": "^7.6.1",
         "mapbox-gl": "^3.0.0",
-        "md-editor-v3": "^4.9.0",
+        "md-editor-v3": "^5.0.0",
         "moment": "^2.29.3",
         "moment-timezone": "^0.5.43",
         "phone": "^3.1.45",

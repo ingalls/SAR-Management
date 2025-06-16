@@ -38,9 +38,8 @@
                                             <TablerInput
                                                 v-model='rolodex.remarks'
                                                 :rows='5'
-                                                :error='errors.remakrs'
                                                 :required='true'
-                                                label='Body'
+                                                label='Remarks'
                                                 description='A Human Readable remarks for the rolodex'
                                             />
                                         </div>
@@ -119,8 +118,6 @@ export default {
             },
             errors: {
                 name: '',
-                body: '',
-                handoff: ''
             },
             rolodex: {
                 name: '',
