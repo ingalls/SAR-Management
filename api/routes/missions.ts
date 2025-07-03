@@ -214,6 +214,8 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
             await config.models.MissionAssigned.delete(sql`mission_id = ${req.params.missionid}`);
+            await config.models.MissionTeam.delete(sql`mission_id = ${req.params.missionid}`);
+            await config.models.MissionTag.delete(sql`mission_id = ${req.params.missionid}`);
 
             await config.models.Mission.delete(req.params.missionid);
 
