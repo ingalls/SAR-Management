@@ -107,7 +107,7 @@ export default async function router(schema: Schema, config: Config) {
         res: RolodexResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.Rolodex, PermissionsLevel.MANAGE);
+            await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.Rolodex, PermissionsLevel.MANAGE);
 
             const item = await config.models.Rolodex.commit(req.params.rolodexid, req.body);
 
