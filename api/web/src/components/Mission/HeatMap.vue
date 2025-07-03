@@ -5,21 +5,31 @@
 
             <div class='ms-auto btn-list'>
                 <TablerIconButton
+                    :title='large ? "Minimize" : "Maximize"'
+                    @click='large = !large'
                 >
                     <IconArrowsMaximize
+                        v-if='!large'
+                        :size='32'
+                        stroke='1'
+                    />
+                    <IconArrowsMinimize
+                        v-else
                         :size='32'
                         stroke='1'
                     />
                 </TablerIconButton>
             </div>
         </div>
-        <div class='card-body'>
-            <div class='row'>
-                <div
-                    id='map'
-                    style='height: 350px;'
-                />
-            </div>
+        <div 
+            :style='{
+                "height": large ? 600 + "px" : 350 + "px"
+            }'
+        >
+            <div
+                id='map'
+                class='h-full w-full'
+            />
         </div>
     </div>
 </template>
@@ -33,7 +43,8 @@ import {
     TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
-    IconArrowsMaximize
+    IconArrowsMaximize,
+    IconArrowsMinimize
 } from '@tabler/icons-vue'
 
 let map = null;
@@ -48,6 +59,7 @@ export default {
     },
     data: function() {
         return {
+            large: false,
             fc: {
                 type: 'FeatureCollection',
                 features: []
@@ -55,6 +67,17 @@ export default {
         }
     },
     watch: {
+        large: function() {
+            this.$nextTick(() => {
+                map.resize();
+
+                if (this.large) {
+                    map.scrollZoom.enable();
+                } else {
+                    map.scrollZoom.disable();
+                }
+            });
+        },
         missions: function() {
             this.fc.features = this.missions.items.filter((mission) => {
                 return !!mission.location_geom;
@@ -78,6 +101,11 @@ export default {
         this.$nextTick(() => {
             this.mountMap();
         });
+    },
+    components: {
+        TablerIconButton,
+        IconArrowsMaximize,
+        IconArrowsMinimize
     },
     methods: {
         mountMap: function() {
