@@ -23,7 +23,24 @@
                     <template v-else>
                         <div class='col-lg-12'>
                             <div class='card'>
-                                <div class='card-body'>
+                                <div class='card-header'>
+                                    <h3 class='card-title' v-text='rolodex.name'/>
+
+                                    <div class='ms-auto btn-list'>
+                                        <TablerIconButton
+                                            v-if='$route.params.rolodexid && is_iam("Rolodex:Manage")'
+                                            :icon='IconPencil'
+                                            :title="'Edit ' + rolodex.name"
+                                            @click='$router.push(`/rolodex/${rolodex.id}/edit`)'
+                                        >
+                                            <IconPencil
+                                                :size='32'
+                                                stroke='1'
+                                            />
+                                        </TablerIconButton>
+                                    </div>
+                                </div>
+                                <div v-if='$route.name === "rolodex-edit"' class='card-body'>
                                     <div class='row row-cards'>
                                         <div class='col-md-12'>
                                             <TablerInput
@@ -61,8 +78,49 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div v-else class='card-body'>
+                                    <div class='datagrid'>
+                                        <div class='datagrid-item'>
+                                            <div class='datagrid-title'>
+                                                Remarks
+                                            </div>
+                                            <div
+                                                class='datagrid-content'
+                                                v-text='rolodex.remarks'
+                                            />
+                                        </div>
+                                        <div
+                                            v-if='rolodex.email'
+                                            class='datagrid-item'
+                                        >
+                                            <div class='datagrid-title'>
+                                                Email
+                                            </div>
+                                            <div class='datagrid-content'>
+                                                <a
+                                                    :href='`mailto:${rolodex.email}`'
+                                                    v-text='rolodex.email'
+                                                />
+                                            </div>
+                                        </div>
+                                        <div
+                                            v-if='rolodex.phone'
+                                            class='datagrid-item'
+                                        >
+                                            <div class='datagrid-title'>
+                                                Phone
+                                            </div>
+                                            <div class='datagrid-content'>
+                                                <a
+                                                    :href='`tel:${rolodex.phone}`'
+                                                    v-text='rolodex.phone'
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                <div class='col-12 py-1 pb-4 px-4'>
+                                <div v-if='$route.name === "rolodex-edit"' class='col-12 py-1 pb-4 px-4'>
                                     <div class='d-flex'>
                                         <a
                                             v-if='$route.params.scheduleid && is_iam("Rolodex:Admin")'
@@ -103,7 +161,11 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
+    IconPencil
+} from '@tabler/icons-vue';
+import {
     TablerBreadCrumb,
+    TablerIconButton,
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -115,6 +177,8 @@ export default {
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
+        IconPencil,
+        TablerIconButton,
         NoAccess
     },
     props: {
@@ -137,6 +201,7 @@ export default {
             },
             rolodex: {
                 name: '',
+                remarks: '',
                 body: '',
                 phone: '',
                 email: ''

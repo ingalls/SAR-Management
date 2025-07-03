@@ -77,9 +77,10 @@ const router = new VueRouter.createRouter({
         { path: '/user/:userid', name: 'user', component: () => import('./components/User.vue') },
         { path: '/user/:userid/edit', name: 'user-edit', component: () => import('./components/UserEdit.vue') },
 
-        { path: '/rolodex', name: 'rolodex', component: () => import('./components/Rolodex.vue') },
+        { path: '/rolodex', name: 'rolodexes', component: () => import('./components/Rolodex.vue') },
         { path: '/rolodex/new', name: 'rolodex-new', component: () => import('./components/RolodexEdit.vue') },
-        { path: '/rolodex/:rolodexid', name: 'rolodex-edit', component: () => import('./components/RolodexEdit.vue') },
+        { path: '/rolodex/:rolodexid', name: 'rolodex', component: () => import('./components/RolodexEdit.vue') },
+        { path: '/rolodex/:rolodexid/edit', name: 'rolodex-edit', component: () => import('./components/RolodexEdit.vue') },
 
         { path: '/user/:userid/cert', name: 'certs', component: () => import('./components/Certs.vue') },
         { path: '/user/:userid/cert/:certid', name: 'cert', component: () => import('./components/Cert.vue') },

@@ -1,5 +1,18 @@
 <template>
     <div class='card col-12'>
+        <div class='card-header'>
+            <h3 class='card-title'>Heat Map</h3>
+
+            <div class='ms-auto btn-list'>
+                <TablerIconButton
+                >
+                    <IconArrowsMaximize
+                        :size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
+            </div>
+        </div>
         <div class='card-body'>
             <div class='row'>
                 <div
@@ -15,6 +28,13 @@
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import bbox from '@turf/bbox';
+
+import {
+    TablerIconButton
+} from '@tak-ps/vue-tabler';
+import {
+    IconArrowsMaximize
+} from '@tabler/icons-vue'
 
 let map = null;
 
