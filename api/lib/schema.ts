@@ -349,5 +349,5 @@ export const Rolodex = pgTable('rolodex', {
     phone: text('phone'),
     email: text('email'),
     location_geom: geometry('location_geom', { type: GeometryType.Point, srid: 4326 }),
-    remarks: text('remarks').notNull()
+    remarks: text('remarks')
 });
