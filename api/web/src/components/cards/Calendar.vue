@@ -16,7 +16,7 @@
                 class='ms-auto btn-list'
             >
                 <TablerIconButton
-                    title='Google Calendar Export'
+                    title='Calendar Export'
                     @click='createExport'
                 >
                     <IconFileExport
@@ -95,7 +95,7 @@
             class='card-body'
         >
             <pre
-                v-if='showExport'
+                v-if='exportURL'
                 v-text='exportURL'
             />
 
@@ -157,7 +157,7 @@ const props = defineProps({
 
 const router = useRouter();
 const calendar = ref();
-const showExport = ref(false);
+const showExport = ref('');
 const exportURL = ref('');
 const selected = ref({
     shown: false,
@@ -260,10 +260,9 @@ async function createExport() {
         method: 'POST'
     });
 
-    const exportURL = window.stdurl('/api/calendar/training/ical');
-    exportURL.searchParams.append('token', body.token);
-    exportURL.value = exportURL;
-    showExport.value = true;
+    const exportURLBuilder = window.stdurl('/api/calendar/training/ical');
+    exportURLBuilder.searchParams.append('token', body.token);
+    exportURL.value = String(exportURLBuilder);
 }
 </script>
 
