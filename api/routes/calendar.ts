@@ -5,7 +5,7 @@ import { Type, Static } from '@sinclair/typebox';
 import Auth, { AuthUserType, PermissionsLevel, IamGroup } from '../lib/auth.js';
 import jwt from 'jsonwebtoken';
 import ical from 'ical-generator';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 
@@ -99,6 +99,14 @@ export default async function router(schema: Schema, config: Config) {
                 await Auth.is_scope(config, req, user.scopes, { token: true });
             }
 
+            let timezone = 'America/Denver';
+            try {
+                timezone = (await config.models.Server.from('timezone')).value;
+            } catch (err) {
+                console.error(err);
+                timezone = 'America/Denver';
+            }
+
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
                 (await config.models.Training.stream({
@@ -108,8 +116,8 @@ export default async function router(schema: Schema, config: Config) {
                     `
                 })).on('data', (training) => {
                     calendar.createEvent({
-                        start: moment(training.start_ts),
-                        end: moment(training.end_ts),
+                        start: moment(training_start_ts).tz(timezone, true),
+                        end: moment(end_ts).tz(timezone, true),
                         description: training.body,
                         summary: training.title,
                         location: training.location,
