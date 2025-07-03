@@ -396,6 +396,9 @@ export default {
             url.searchParams.append('page', this.paging.page);
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('disabled', this.paging.disabled);
+	    if (this.paging.teams.length) {
+	    url.searchParams.append('teams', this.paging.teams.map(t => t.id).join(','));
+	    }
 
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
             else url.searchParams.append('sort', this.paging.sort.toLowerCase().replace(' ', '_'));

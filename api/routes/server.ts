@@ -2,6 +2,7 @@ import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
+import { GenerateUpsert } from '@openaddresses/batch-generic';
 import Config from '../lib/config.js';
 import { StandardResponse, ServerResponse } from '../lib/types.js';
 
@@ -20,14 +21,9 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_admin(config, req);
 
-            let server;
-            try {
-                server = await await config.models.Server.from(req.body.key);
-                await server.commit(req.body);
-            } catch (err) {
-                console.error(err);
-                server = await await config.models.Server.generate(req.body);
-            }
+            const server = await config.models.Server.generate(req.body, {
+                upsert: GenerateUpsert.UPDATE
+            });
 
             res.json(server);
         } catch (err) {

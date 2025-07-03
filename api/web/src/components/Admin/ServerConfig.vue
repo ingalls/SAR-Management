@@ -23,7 +23,7 @@
                     />
                 </div>
                 <div class='col-12 pb-3'>
-                    <TimeZone
+                    <TablerTimeZone
                         v-model='keys.timezone.value'
                         label='Default Timezone'
                         :disabled='auth.access !== "admin"'
@@ -50,14 +50,14 @@
 <script>
 import {
     TablerLoading,
+    TablerTimeZone,
     TablerInput,
 } from '@tak-ps/vue-tabler';
-import TimeZone from '../util/TimeZone.vue';
 
 export default {
     name: 'AdminServerConfig',
     components: {
-        TimeZone,
+        TablerTimeZone,
         TablerLoading,
         TablerInput
     },
