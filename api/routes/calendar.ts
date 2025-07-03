@@ -116,8 +116,8 @@ export default async function router(schema: Schema, config: Config) {
                     `
                 })).on('data', (training) => {
                     calendar.createEvent({
-                        start: moment(training_start_ts).tz(timezone, true),
-                        end: moment(end_ts).tz(timezone, true),
+                        start: moment(training.start_ts).tz(timezone, true),
+                        end: moment(training.end_ts).tz(timezone, true),
                         description: training.body,
                         summary: training.title,
                         location: training.location,
