@@ -38,6 +38,7 @@
         "api2pdf": "^2.0.3",
         "bcrypt": "^5.1.0",
         "busboy": "^1.6.0",
+        "chart.js": "^4.5.0",
         "connect-history-api-fallback": "^2.0.0",
         "cors": "^2.8.5",
         "csv-stringify": "^6.2.1",

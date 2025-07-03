@@ -213,6 +213,8 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
 
+            await config.models.MissionAssigned.delete(sql`mission_id = ${req.params.missionid}`);
+
             await config.models.Mission.delete(req.params.missionid);
 
             res.json({
