@@ -41,6 +41,18 @@
                                                 v-model='paging.teams'
                                             />
                                         </div>
+                                        <div class='col-12'>
+                                            <CertSelect
+                                                label='Required Certificates'
+                                                v-model='paging.certificates'
+                                            />
+                                        </div>
+                                        <div class='col-12'>
+                                            <TablerToggle
+                                                v-model='paging.cert_not_expired'
+                                                label='Exclude Expired Certificates'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </template>
@@ -261,6 +273,7 @@ import {
 } from '@tabler/icons-vue';
 import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TeamSelect from '../util/TeamSelect.vue'
+import CertSelect from '../util/CertSelect.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
@@ -285,6 +298,7 @@ export default {
         TablerToggle,
         TablerLoading,
         TeamSelect,
+        CertSelect,
         UserDropdownIcon,
         Avatar,
         IconList,
@@ -326,6 +340,8 @@ export default {
                 sort: 'Name',
                 order: 'asc',
                 teams: [],
+                certificates: [],
+                cert_not_expired: true,
                 limit: this.limit,
                 disabled: false,
                 page: 0
@@ -400,6 +416,12 @@ export default {
 	    url.searchParams.append('teams', this.paging.teams.map(t => t.id).join(','));
 	    }
 
+            // Add certificate filtering parameters
+            if (this.paging.certificates.length) {
+                url.searchParams.append('cert_known', JSON.stringify(this.paging.certificates.map(c => c.id)));
+            }
+            url.searchParams.append('cert_not_expired', this.paging.cert_not_expired);
+
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
             else url.searchParams.append('sort', this.paging.sort.toLowerCase().replace(' ', '_'));
             url.searchParams.append('order', this.paging.order);
@@ -413,6 +435,13 @@ export default {
             url.searchParams.append('filter', this.paging.filter);
             url.searchParams.append('disabled', this.paging.disabled);
             url.searchParams.append('format', format);
+
+            // Add certificate filtering parameters for export
+            if (this.paging.certificates.length) {
+                url.searchParams.append('cert_known', JSON.stringify(this.paging.certificates.map(c => c.id)));
+            }
+            url.searchParams.append('cert_not_expired', this.paging.cert_not_expired);
+
             if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
 
             if (format === 'csv') {
