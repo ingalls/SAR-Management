@@ -37,42 +37,38 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, nextTick, onMounted } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-export default {
-    name: 'LocationCard',
-    data: function() {
-        return {
-            map: false,
-            scale: 7,
-        }
-    },
-    mounted: function() {
-        this.fetch();
-        this.$nextTick(() => { this.mountMap(); });
-    },
-    methods: {
-        mountMap: function() {
-            mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJsUDF2STRrIn0.S0c3ZNH4HmseIdPXY-CTlA';
-            this.map = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [-74.5, 40],
-                zoom: 9,
-                projection: 'globe'
-            });
-        },
-        fetch: async function() {
-            //const list = await window.std('/api/location');
-        },
-        getExport: async function() {
-            const url = new URL('/api/total/export', window.location.origin);
-            // Allow serving through Vue for hotloading
-            if (url.hostname === 'localhost') url.port = '4999'
-            window.open(url, "_blank")
-        }
-    }
+const map = ref(false)
+const scale = ref(7)
+
+const mountMap = () => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJsUDF2STRrIn0.S0c3ZNH4HmseIdPXY-CTlA';
+    map.value = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-74.5, 40],
+        zoom: 9,
+        projection: 'globe'
+    });
 }
+
+const fetch = async () => {
+    //const list = await window.std('/api/location');
+}
+
+const getExport = async () => {
+    const url = new URL('/api/total/export', window.location.origin);
+    // Allow serving through Vue for hotloading
+    if (url.hostname === 'localhost') url.port = '4999'
+    window.open(url, "_blank")
+}
+
+onMounted(() => {
+    fetch();
+    nextTick(() => { mountMap(); });
+})
 </script>
