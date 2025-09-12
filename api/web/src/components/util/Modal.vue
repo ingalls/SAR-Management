@@ -17,8 +17,6 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Modal',
-}
+<script setup>
+defineEmits(['close'])
 </script>

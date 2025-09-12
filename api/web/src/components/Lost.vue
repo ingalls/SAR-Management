@@ -24,8 +24,6 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Lost'
-}
+<script setup>
+// Lost - migrated to Composition API
 </script>
