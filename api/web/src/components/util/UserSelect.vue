@@ -79,96 +79,87 @@
     </div>
 </template>
 
-<script>
-import Avatar from './Avatar.vue';
+<script setup>
+import { ref, watch, onMounted, computed } from 'vue'
+import Avatar from './Avatar.vue'
 import {
     IconPlus,
     IconTrash
-} from '@tabler/icons-vue';
+} from '@tabler/icons-vue'
 import {
     TablerNone,
     TablerInput,
     TablerDropdown
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'UserSelect',
-    components: {
-        TablerNone,
-        Avatar,
-        IconPlus,
-        TablerDropdown,
-        IconTrash,
-        TablerInput
+const props = defineProps({
+    modelValue: {
+        type: Array,
+        required: true
     },
-    props: {
-        modelValue: {
-            type: Array,
-            required: true
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-        label: {
-            type: String,
-            default: 'Users'
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
+    disabled: {
+        type: Boolean,
+        default: false
     },
-    emits: [
-        'update:modelValue',
-        'push',
-        'delete'
-    ],
-    data: function() {
-        return {
-            filter: '',
-            list: {
-                items: []
-            },
-            assigned: []
-        }
+    label: {
+        type: String,
+        default: 'Users'
     },
-    watch: {
-        modelValue: function() {
-            this.assigned = this.modelValue;
-        },
-        filter: async function() {
-            await this.listUsers();
-        },
-        assigned: function() {
-            this.$emit('update:modelValue', this.assigned);
-        }
-    },
-    mounted: async function() {
-        this.assigned = this.modelValue;
-        await this.listUsers();
-    },
-    methods: {
-        push_assigned: async function(user) {
-            this.assigned.push(user);
-            this.$emit('push', user);
-        },
-        delete_assigned: async function(idx, user) {
-            this.assigned.splice(idx, 1);
-            this.$emit('delete', user);
-            await this.listUsers();
-        },
-        listUsers: async function() {
-            const url = window.stdurl('/api/user');
-            url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit + this.assigned.length);
-            const list = await window.std(url);
-
-            const ids = this.assigned.map((a) => a.uid);
-            this.list.items = list.items.filter((user) => {
-                return !ids.includes(user.id);
-            }).splice(0, this.limit);
-        }
+    limit: {
+        type: Number,
+        default: 10
     }
+})
+
+const emit = defineEmits([
+    'update:modelValue',
+    'push',
+    'delete'
+])
+
+const filter = ref('')
+const list = ref({
+    items: []
+})
+const assigned = ref([])
+
+const push_assigned = async (user) => {
+    assigned.value.push(user)
+    emit('push', user)
 }
+
+const delete_assigned = async (idx, user) => {
+    assigned.value.splice(idx, 1)
+    emit('delete', user)
+    await listUsers()
+}
+
+const listUsers = async () => {
+    const url = window.stdurl('/api/user')
+    url.searchParams.append('filter', filter.value)
+    url.searchParams.append('limit', props.limit + assigned.value.length)
+    const listResult = await window.std(url)
+
+    const ids = assigned.value.map((a) => a.uid)
+    list.value.items = listResult.items.filter((user) => {
+        return !ids.includes(user.id)
+    }).splice(0, props.limit)
+}
+
+watch(() => props.modelValue, () => {
+    assigned.value = props.modelValue
+})
+
+watch(filter, async () => {
+    await listUsers()
+})
+
+watch(assigned, () => {
+    emit('update:modelValue', assigned.value)
+}, { deep: true })
+
+onMounted(async () => {
+    assigned.value = props.modelValue
+    await listUsers()
+})
 </script>

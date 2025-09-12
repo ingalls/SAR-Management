@@ -34,7 +34,8 @@
     </TablerDropdown>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted } from 'vue'
 import {
     TablerNone,
     TablerInput,
@@ -42,68 +43,66 @@ import {
     TablerDropdown
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'LocationDropdown',
-    components: {
-        TablerNone,
-        TablerInput,
-        TablerLoading,
-        TablerDropdown
+const props = defineProps({
+    modelValue: {
+        type: String,
+        required: true
     },
-    props: {
-        modelValue: {
-            type: String,
-            required: true
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-        required: {
-            type: Boolean,
-            default: false
-        },
-        error: {
-            type: String,
-            default: ''
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
+    disabled: {
+        type: Boolean,
+        default: false
     },
-    data: function() {
-        return {
-            filter: '',
-            list: {
-                items: []
-            }
-        }
+    required: {
+        type: Boolean,
+        default: false
     },
-    watch: {
-        modelValue: function() {
-            this.filter = this.modelValue || '';
-        },
-        filter: async function() {
-            this.$emit("update:modelValue", this.filter)
-            await this.listLocs();
-        }
+    error: {
+        type: String,
+        default: ''
     },
-    mounted: async function() {
-        this.filter = this.modelValue || '';
-        await this.listLocs();
-    },
-    methods: {
-        select: function(loc) {
-            this.filter = loc.location;
-            this.$emit("locGeom", loc.location_geom)
-        },
-        listLocs: async function() {
-            const url = window.stdurl('/api/location');
-            url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit);
-            this.list = await window.std(url);
-        }
+    limit: {
+        type: Number,
+        default: 10
+    }
+})
+
+const emit = defineEmits(['update:modelValue', 'locGeom'])
+
+const filter = ref('')
+const loading = ref(false)
+const list = ref({
+    items: [],
+    total: 0
+})
+
+const select = (loc) => {
+    filter.value = loc.location
+    emit('locGeom', loc.location_geom)
+}
+
+const listLocs = async () => {
+    loading.value = true
+    try {
+        const url = window.stdurl('/api/location')
+        url.searchParams.append('filter', filter.value)
+        url.searchParams.append('limit', props.limit)
+        list.value = await window.std(url)
+    } finally {
+        loading.value = false
     }
 }
+
+watch(() => props.modelValue, () => {
+    filter.value = props.modelValue || ''
+})
+
+watch(filter, async () => {
+    emit('update:modelValue', filter.value)
+    await listLocs()
+})
+
+onMounted(async () => {
+    filter.value = props.modelValue || ''
+    await listLocs()
+})
 </script>

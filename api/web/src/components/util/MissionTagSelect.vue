@@ -62,88 +62,81 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted } from 'vue'
 import {
     IconSettings,
     IconTrash
-} from '@tabler/icons-vue';
+} from '@tabler/icons-vue'
 import {
     TablerNone,
     TablerInput,
     TablerDropdown
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'MissionTagSelect',
-    components: {
-        TablerNone,
-        TablerDropdown,
-        IconSettings,
-        IconTrash,
-        TablerInput
+const props = defineProps({
+    modelValue: {
+        type: Array,
+        required: true
     },
-    props: {
-        modelValue: {
-            type: Array,
-            required: true
-        },
-        label: {
-            type: String,
-            default: 'Tags'
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
+    label: {
+        type: String,
+        default: 'Tags'
     },
-    data: function() {
-        return {
-            filter: '',
-            list: {
-                items: []
-            },
-            tags: []
-        }
-    },
-    watch: {
-        modelValue: function() {
-            this.tags = this.modelValue;
-        },
-        filter: async function() {
-            await this.listTags();
-        },
-        tags: function() {
-            this.$emit('update:modelValue', this.tags);
-        }
-    },
-    mounted: async function() {
-        this.tags = this.modelValue;
-        await this.listTags();
-    },
-    methods: {
-        push_tags: async function(tag) {
-            this.tags.push(tag);
-            this.$emit('push', tag);
-            await this.listTags();
-        },
-        delete_tags: async function(idx, tag) {
-            this.tags.splice(idx, 1);
-            this.$emit('delete', tag);
-            await this.listTags();
-        },
-        listTags: async function() {
-            const url = window.stdurl('/api/mission-tag');
-            url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit + this.tags.length);
-
-            const list = await window.std(url);
-
-            const ids = this.tags.map((a) => a.id);
-
-            this.list.items = list.items.filter((tag) => {
-                return !ids.includes(tag.id);
-            }).splice(0, this.limit);
-        }
+    limit: {
+        type: Number,
+        default: 10
     }
+})
+
+const emit = defineEmits(['update:modelValue', 'push', 'delete'])
+
+const filter = ref('')
+const list = ref({
+    items: []
+})
+const tags = ref([])
+
+const push_tags = async (tag) => {
+    tags.value.push(tag)
+    emit('push', tag)
+    await listTags()
 }
+
+const delete_tags = async (idx, tag) => {
+    tags.value.splice(idx, 1)
+    emit('delete', tag)
+    await listTags()
+}
+
+const listTags = async () => {
+    const url = window.stdurl('/api/mission-tag')
+    url.searchParams.append('filter', filter.value)
+    url.searchParams.append('limit', props.limit + tags.value.length)
+
+    const listResult = await window.std(url)
+
+    const ids = tags.value.map((a) => a.id)
+
+    list.value.items = listResult.items.filter((tag) => {
+        return !ids.includes(tag.id)
+    }).splice(0, props.limit)
+}
+
+watch(() => props.modelValue, () => {
+    tags.value = props.modelValue
+})
+
+watch(filter, async () => {
+    await listTags()
+})
+
+watch(tags, () => {
+    emit('update:modelValue', tags.value)
+}, { deep: true })
+
+onMounted(async () => {
+    tags.value = props.modelValue
+    await listTags()
+})
 </script>

@@ -22,21 +22,15 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'TablerList',
-    props: {
-        header: {
-            type: Array,
-            default: []
-        },
-        items: {
-            type: Array,
-            default: []
-        }
+<script setup>
+defineProps({
+    header: {
+        type: Array,
+        default: () => []
     },
-    data: function() {
-        return { };
-    },
-}
+    items: {
+        type: Array,
+        default: () => []
+    }
+})
 </script>

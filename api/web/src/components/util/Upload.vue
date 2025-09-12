@@ -19,36 +19,28 @@
     </TablerModal>
 </template>
 
-<script>
-import { TablerModal } from '@tak-ps/vue-tabler';
-import UploadDefault from './UploadDefault.vue';
+<script setup>
+import { TablerModal } from '@tak-ps/vue-tabler'
+import UploadDefault from './UploadDefault.vue'
 
-export default {
-    name: 'UploadModal',
-    components: {
-        TablerModal,
-        UploadDefault
+defineProps({
+    url: {
+        type: [String, URL],
+        default: '/api/asset'
     },
-    props: {
-        url: {
-            type: [String, URL],
-            default: '/api/asset'
-        },
-        headers: {
-            type: Object,
-            default: function() {
-                return {};
-            }
-        },
-        prefix: {
-            type: String,
-            default: ''
-        }
+    headers: {
+        type: Object,
+        default: () => ({})
     },
-    methods: {
-        close: function() {
-            this.$emit('close');
-        }
+    prefix: {
+        type: String,
+        default: ''
     }
+})
+
+const emit = defineEmits(['done', 'cancel', 'close'])
+
+const close = () => {
+    emit('close')
 }
 </script>

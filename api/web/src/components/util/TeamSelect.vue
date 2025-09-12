@@ -81,12 +81,13 @@
     </div>
 </template>
 
-<script>
-import TeamBadge from './TeamBadge.vue';
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+import TeamBadge from './TeamBadge.vue'
 import {
     IconPlus,
     IconTrash
-} from '@tabler/icons-vue';
+} from '@tabler/icons-vue'
 import {
     TablerDropdown,
     TablerIconButton,
@@ -94,85 +95,78 @@ import {
     TablerInput
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'TeamSelect',
-    components: {
-        TablerDropdown,
-        TablerIconButton,
-        TablerNone,
-        TeamBadge,
-        IconPlus,
-        IconTrash,
-        TablerInput
+const props = defineProps({
+    modelValue: {
+        type: Array,
+        required: true
     },
-    props: {
-        modelValue: {
-            type: Array,
-            required: true
-        },
-        label: {
-            type: String,
-            default: 'Teams'
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
-        fieldable: {
-            type: Boolean,
-            default: undefined
-        },
+    label: {
+        type: String,
+        default: 'Teams'
     },
-    data: function() {
-        return {
-            filter: '',
-            list: {
-                items: []
-            },
-            teams: []
-        }
+    limit: {
+        type: Number,
+        default: 10
     },
-    watch: {
-        modelValue: function() {
-            this.teams = this.modelValue;
-        },
-        filter: async function() {
-            await this.listTeams();
-        },
-        teams: function() {
-            this.$emit('update:modelValue', this.teams);
-        }
+    fieldable: {
+        type: Boolean,
+        default: undefined
     },
-    mounted: async function() {
-        this.teams = this.modelValue;
-        await this.listTeams();
-    },
-    methods: {
-        push_teams: async function(team) {
-            this.teams.push(team);
-            this.$emit('push', team);
-            await this.listTeams();
-        },
-        delete_teams: async function(idx, team) {
-            this.teams.splice(idx, 1);
-            this.$emit('delete', team);
-            await this.listTeams();
-        },
-        listTeams: async function() {
-            const url = window.stdurl('/api/team');
-            url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit + this.teams.length);
-
-
-            if (this.fieldable !== undefined) url.searchParams.append('fieldable', String(this.fieldable));
-            const list = await window.std(url);
-
-            const ids = this.teams.map((a) => a.id);
-
-            this.list.items = list.items.filter((team) => {
-                return !ids.includes(team.id);
-            }).splice(0, this.limit);
-        }
+    disabled: {
+        type: Boolean,
+        default: false
     }
+})
+
+const emit = defineEmits(['update:modelValue', 'push', 'delete'])
+
+const filter = ref('')
+const list = ref({
+    items: []
+})
+const teams = ref([])
+
+const push_teams = async (team) => {
+    teams.value.push(team)
+    emit('push', team)
+    await listTeams()
 }
+
+const delete_teams = async (idx, team) => {
+    teams.value.splice(idx, 1)
+    emit('delete', team)
+    await listTeams()
+}
+
+const listTeams = async () => {
+    const url = window.stdurl('/api/team')
+    url.searchParams.append('filter', filter.value)
+    url.searchParams.append('limit', props.limit + teams.value.length)
+
+    if (props.fieldable !== undefined) url.searchParams.append('fieldable', String(props.fieldable))
+    const listResult = await window.std(url)
+
+    const ids = teams.value.map((a) => a.id)
+
+    list.value.items = listResult.items.filter((team) => {
+        return !ids.includes(team.id)
+    }).splice(0, props.limit)
+}
+
+watch(() => props.modelValue, () => {
+    teams.value = props.modelValue
+})
+
+watch(filter, async () => {
+    await listTeams()
+})
+
+watch(teams, () => {
+    emit('update:modelValue', teams.value)
+}, { deep: true })
+
+onMounted(async () => {
+    teams.value = props.modelValue
+    await listTeams()
+})
 </script>

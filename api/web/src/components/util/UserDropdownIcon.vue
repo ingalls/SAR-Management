@@ -38,67 +38,56 @@
     </div>
 </template>
 
-<script>
-import Avatar from './Avatar.vue';
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+import Avatar from './Avatar.vue'
 import {
     TablerInput
-} from '@tak-ps/vue-tabler';
+} from '@tak-ps/vue-tabler'
 import {
     IconPlus
 } from '@tabler/icons-vue'
 
-export default {
-    name: 'UserDropdown',
-    components: {
-        Avatar,
-        IconPlus,
-        TablerInput
+const props = defineProps({
+    button: {
+        type: Boolean,
+        description: 'Style as a standalone icon if false or a button if true',
+        default: false
     },
-    props: {
-        button: {
-            type: Boolean,
-            description: 'Style as a standalone icon if false or a button if true',
-            default: false
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
+    disabled: {
+        type: Boolean,
+        default: false
     },
-    emits: [
-        'selected'
-    ],
-    data: function() {
-        return {
-            filter: '',
-            list: {
-                items: []
-            }
-        }
-    },
-    watch: {
-        filter: async function() {
-            await this.listUsers();
-        }
-    },
-    mounted: async function() {
-        await this.listUsers();
-    },
-    methods: {
-        select: function(user) {
-            this.filter = '';
-            this.$emit("selected", user)
-        },
-        listUsers: async function() {
-            const url = window.stdurl('/api/user');
-            url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit);
-            this.list = await window.std(url);
-        }
+    limit: {
+        type: Number,
+        default: 10
     }
+})
+
+const emit = defineEmits(['selected'])
+
+const filter = ref('')
+const list = ref({
+    items: []
+})
+
+const select = (user) => {
+    filter.value = ''
+    emit('selected', user)
 }
+
+const listUsers = async () => {
+    const url = window.stdurl('/api/user')
+    url.searchParams.append('filter', filter.value)
+    url.searchParams.append('limit', props.limit)
+    list.value = await window.std(url)
+}
+
+watch(filter, async () => {
+    await listUsers()
+})
+
+onMounted(async () => {
+    await listUsers()
+})
 </script>
