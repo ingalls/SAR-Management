@@ -23,71 +23,60 @@
     </TablerDropdown>
 </template>
 
-<script>
-import Avatar from './Avatar.vue';
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+import Avatar from './Avatar.vue'
 import {
     TablerDropdown,
     TablerInput
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'UserDropdown',
-    components: {
-        Avatar,
-        TablerDropdown,
-        TablerInput
+const props = defineProps({
+    modelValue: {
+        type: String,
+        required: true
     },
-    props: {
-        modelValue: {
-            type: String,
-            required: true
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-        url: {
-            type: String,
-            default: '/api/user'
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
+    disabled: {
+        type: Boolean,
+        default: false
     },
-    emits: [
-        'selected'
-    ],
-    data: function() {
-        return {
-            filter: '',
-            list: {
-                users: []
-            }
-        }
+    url: {
+        type: String,
+        default: '/api/user'
     },
-    watch: {
-        filter: async function() {
-            await this.listUsers();
-        }
-    },
-    mounted: async function() {
-        this.filter = this.modelValue;
-        await this.listUsers();
-    },
-    methods: {
-        select: function(user) {
-            this.filter = user.fname + ' ' + user.lname;
-            this.$emit("selected", user)
-        },
-        listUsers: async function() {
-            const url = window.stdurl(this.url);
-            if (this.filter) url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit);
-            const list = await window.std(url);
-            if (list.assigned) list.items = list.assigned;
-            this.list = list;
-        }
+    limit: {
+        type: Number,
+        default: 10
     }
+})
+
+const emit = defineEmits(['selected'])
+
+const filter = ref('')
+const list = ref({
+    users: []
+})
+
+const select = (user) => {
+    filter.value = user.fname + ' ' + user.lname
+    emit('selected', user)
 }
+
+const listUsers = async () => {
+    const url = window.stdurl(props.url)
+    if (filter.value) url.searchParams.append('filter', filter.value)
+    url.searchParams.append('limit', props.limit)
+    const listResult = await window.std(url)
+    if (listResult.assigned) listResult.items = listResult.assigned
+    list.value = listResult
+}
+
+watch(filter, async () => {
+    await listUsers()
+})
+
+onMounted(async () => {
+    filter.value = props.modelValue
+    await listUsers()
+})
 </script>
