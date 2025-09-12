@@ -23,30 +23,28 @@
                     <template v-else>
                         <div
                             v-if='!loading.assigned && is_roster'
-                            class='col-lg-12'
+                            class='col-12'
                         >
-                            <div class='card'>
-                                <div
-                                    class='alert alert-info alert-dismissible'
-                                    role='alert'
-                                >
-                                    <h3 class='mb-1'>
-                                        Roster Correction
-                                    </h3>
+                            <div
+                                class='alert alert-info col-12 d-flex align-items-center'
+                                role='alert'
+                            >
+                                <div>
+                                    <h3>Roster Correction</h3>
                                     <p>You aren't marked as present for this mission. If this is incorrect, request to be added to the mission roster</p>
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <a
-                                                href='#'
-                                                class='btn btn-info'
-                                            >Request Inclusion</a>
-                                        </div>
-                                    </div>
-                                    <a
-                                        class='btn-close'
-                                        data-bs-dismiss='alert'
-                                        aria-label='close'
+                                </div>
+                                <div class='ms-auto'>
+                                    <TablerLoading
+                                        v-if='loading.request'
+                                        :inline='true'
                                     />
+                                    <button
+                                        v-else
+                                        class='btn btn-info cursor-pointer'
+                                        @click='request'
+                                    >
+                                        Request Inclusion
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -235,6 +233,16 @@ export default {
             this.loading.mission = true;
             this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
             this.loading.mission = false;
+        },
+        request: async function() {
+            this.loading.request = true;
+            await window.std(`/api/mission/${this.$route.params.missionid}/assigned/request`, {
+                method: 'POST'
+            })
+
+            await this.fetchAssigned();
+
+            this.loading.request = false;
         },
         fetchAssigned: async function() {
             this.loading.assigned = true;

@@ -59,6 +59,31 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
+    await schema.post('/mission/:missionid/assigned/request', {
+        name: 'Request Assignment',
+        group: 'MissionAssigned',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
+        description: 'Request an assignment',
+        res: MissionAssignedResponse
+    }, async (req, res) => {
+        try {
+            const user = await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
+
+            const assigned = await config.models.MissionAssigned.generate({
+                mission_id: req.params.missionid,
+                uid: user.id,
+                role: 'Present',
+                confirmed: false
+            });
+
+            res.json(await config.models.MissionAssigned.augmented_from(assigned.id))
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
     await schema.patch('/mission/:missionid/assigned/:assignedid', {
         name: 'Update Assigned',
         group: 'MissionAssigned',
