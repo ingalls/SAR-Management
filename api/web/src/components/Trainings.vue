@@ -29,27 +29,20 @@
     </div>
 </template>
 
-<script>
-import CardTrainings from './cards/Trainings.vue';
+<script setup>
+import CardTrainings from './cards/Trainings.vue'
 import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'Trainings',
-    components: {
-        CardTrainings,
-        TablerBreadCrumb
+defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
+    auth: {
+        type: Object,
+        required: true
     }
-}
+})
 </script>

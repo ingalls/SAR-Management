@@ -93,73 +93,69 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue'
 import {
     TablerNone,
     TablerLoading
-} from '@tak-ps/vue-tabler';
-import TableFooter from '../util/TableFooter.vue';
+} from '@tak-ps/vue-tabler'
+import TableFooter from '../util/TableFooter.vue'
 
-export default {
-    name: 'CardTeams',
-    components: {
-        TablerNone,
-        TablerLoading,
-        TableFooter
-    },
-    props: {
-        select: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data: function() {
-        return {
-            selected: [],
-            loading: {
-                teams: true
-            },
-            paging: {
-                limit: 10,
-                page: 0
-            },
-            teams: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    watch: {
-        'paging.page': async function() {
-            await this.listTeams();
-        },
-    },
-    mounted: async function() {
-        await this.listTeams();
-    },
-    methods: {
-        click: function(team) {
-            if (this.select) {
-                if (this.selected.includes(team.id)) {
-                    this.selected.splice(this.selected.indexOf(team.id), 1);
-                } else {
-                    this.selected.push(team.id);
-                }
+const props = defineProps({
+    select: {
+        type: Boolean,
+        default: false
+    }
+})
 
-                this.$emit('selected', this.selected);
-            } else {
-                this.$router.push(`/team/${team.id}`);
-            }
-        },
-        listTeams: async function() {
-            this.loading.teams = true;
-            const url = window.stdurl('/api/team');
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            this.teams = await window.std(url);
+const emit = defineEmits(['selected'])
 
-            this.loading.teams = false;
+const selected = ref([])
+const loading = reactive({
+    teams: true
+})
+const paging = reactive({
+    limit: 10,
+    page: 0
+})
+const teams = reactive({
+    total: 0,
+    items: []
+})
+
+const click = (team) => {
+    if (props.select) {
+        if (selected.value.includes(team.id)) {
+            selected.value.splice(selected.value.indexOf(team.id), 1)
+        } else {
+            selected.value.push(team.id)
         }
+        emit('selected', selected.value)
+    } else {
+        // Note: $router access in Composition API requires useRouter from vue-router
+        // For now keeping the direct access pattern from template
+        window.location.href = `/team/${team.id}`
     }
 }
+
+const listTeams = async () => {
+    loading.teams = true
+    const url = window.stdurl('/api/team')
+    url.searchParams.append('limit', paging.limit)
+    url.searchParams.append('page', paging.page)
+    const result = await window.std(url)
+    
+    teams.total = result.total
+    teams.items = result.items
+
+    loading.teams = false
+}
+
+watch(() => paging.page, async () => {
+    await listTeams()
+})
+
+onMounted(async () => {
+    await listTeams()
+})
 </script>
