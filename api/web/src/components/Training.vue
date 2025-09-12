@@ -22,37 +22,28 @@
                     <template v-else>
                         <div
                             v-if='!loading.assigned && is_roster'
-                            class='col-lg-12'
+                            class='col-12'
                         >
-                            <div class='card'>
-                                <div
-                                    class='alert alert-info alert-dismissible'
-                                    role='alert'
-                                >
-                                    <h3 class='mb-1'>
-                                        Roster Correction
-                                    </h3>
+                            <div
+                                class='alert alert-info col-12 d-flex align-items-center'
+                                role='alert'
+                            >
+                                <div>
+                                    <h3>Roster Correction</h3>
                                     <p>You aren't marked as present for this training. If this is incorrect, request to be added to the training roster</p>
-                                    <div class='d-flex'>
-                                        <div class='ms-auto'>
-                                            <TablerLoading
-                                                v-if='loading.request'
-                                                :inline='true'
-                                            />
-                                            <button
-                                                v-else
-                                                class='btn btn-info cursor-pointer'
-                                                @click='request'
-                                            >
-                                                Request Inclusion
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <a
-                                        class='btn-close'
-                                        data-bs-dismiss='alert'
-                                        aria-label='close'
+                                </div>
+                                <div class='ms-auto'>
+                                    <TablerLoading
+                                        v-if='loading.request'
+                                        :inline='true'
                                     />
+                                    <button
+                                        v-else
+                                        class='btn btn-info cursor-pointer'
+                                        @click='request'
+                                    >
+                                        Request Inclusion
+                                    </button>
                                 </div>
                             </div>
                         </div>
