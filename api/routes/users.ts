@@ -44,6 +44,8 @@ export default async function router(schema: Schema, config: Config) {
             filter: Type.Optional(Type.String({ default: '' })),
             disabled: Type.Optional(Type.Boolean({ default: false })),
             team: Type.Optional(Type.Integer({ description: 'Only show users part of a specific team' })),
+            cert_known: Type.Optional(Type.Array(Type.Integer(), { description: 'Filter users by known certificate IDs' })),
+            cert_not_expired: Type.Optional(Type.Boolean({ default: true, description: 'Filter only certificates that are not expired' })),
         }),
         res: Type.Object({
             total: Type.Integer(),
@@ -77,6 +79,19 @@ export default async function router(schema: Schema, config: Config) {
                             )
                             AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                             AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
+                            AND (
+                                ${Param(req.query.cert_known)}::INT[] IS NULL 
+                                OR EXISTS (
+                                    SELECT 1 FROM certs 
+                                    WHERE certs.uid = users.id 
+                                    AND certs.known = ANY(${Param(req.query.cert_known)}::INT[])
+                                    AND (
+                                        ${Param(req.query.cert_not_expired)}::BOOLEAN IS FALSE 
+                                        OR certs.expiry IS NULL 
+                                        OR certs.expiry > NOW()
+                                    )
+                                )
+                            )
                         `
                     })
 
@@ -120,6 +135,19 @@ export default async function router(schema: Schema, config: Config) {
                         )
                         AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                         AND (${Param(req.query.disabled)}::BOOLEAN IS NULL OR users.disabled = ${Param(req.query.disabled)})
+                        AND (
+                            ${Param(req.query.cert_known)}::INT[] IS NULL 
+                            OR EXISTS (
+                                SELECT 1 FROM certs 
+                                WHERE certs.uid = users.id 
+                                AND certs.known = ANY(${Param(req.query.cert_known)}::INT[])
+                                AND (
+                                    ${Param(req.query.cert_not_expired)}::BOOLEAN IS FALSE 
+                                    OR certs.expiry IS NULL 
+                                    OR certs.expiry > NOW()
+                                )
+                            )
+                        )
                     `
                 });
 
