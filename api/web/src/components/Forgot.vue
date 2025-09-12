@@ -67,7 +67,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -75,35 +76,22 @@ import {
     IconCheck
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'Forgot',
-    components: {
-        IconCheck,
-        TablerLoading
-    },
-    data: function() {
-        return {
-            submitted: false,
-            loading: false,
-            username: '',
+const submitted = ref(false)
+const loading = ref(false)
+const username = ref('')
+
+const reset = async () => {
+    if (!username.value.length) return;
+    loading.value = true;
+
+    await window.std('/api/login/forgot', {
+        method: 'POST',
+        body: {
+            username: username.value
         }
-    },
-    methods: {
-        reset: async function() {
-            if (!this.username.length) return;
-            this.loading = true;
+    }, false);
 
-            await window.std('/api/login/forgot', {
-                method: 'POST',
-                body: {
-                    username: this.username
-                }
-            }, false);
-
-            this.submitted = true;
-
-            this.loading = false;
-        }
-    }
+    submitted.value = true;
+    loading.value = false;
 }
 </script>
