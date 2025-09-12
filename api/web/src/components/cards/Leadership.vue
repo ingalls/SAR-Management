@@ -58,32 +58,22 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
 import Avatar from '../util/Avatar.vue';
 
-export default {
-    name: 'CardLeadership',
-    components: {
-        Avatar
-    },
-    data: function() {
-        return {
-            leaders: {}
-        }
-    },
-    mounted: async function() {
-        await this.listLeaders();
-    },
-    methods: {
-        listLeaders: async function() {
-            const list = await window.std('/api/leadership');
+const leaders = ref({})
 
-            for (const leader of list.items) {
-                if (!this.leaders[leader.position]) this.leaders[leader.position] = [];
-                this.leaders[leader.position].push(leader);
+const listLeaders = async () => {
+    const list = await window.std('/api/leadership');
 
-            }
-        },
+    for (const leader of list.items) {
+        if (!leaders.value[leader.position]) leaders.value[leader.position] = [];
+        leaders.value[leader.position].push(leader);
     }
 }
+
+onMounted(async () => {
+    await listLeaders();
+})
 </script>
