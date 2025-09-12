@@ -1,5 +1,6 @@
 import formData from 'form-data';
-import Mailgun, { Interfaces } from 'mailgun.js';
+import Mailgun from 'mailgun.js';
+import { Interfaces } from 'mailgun.js/definitions';
 import Mailgen from 'mailgen';
 import Err from '@openaddresses/batch-error';
 import Config from './config.js';
