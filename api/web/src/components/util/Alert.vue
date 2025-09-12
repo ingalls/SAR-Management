@@ -31,25 +31,19 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import {
     IconAlertTriangle
 } from '@tabler/icons-vue'
 
-export default {
-    name: 'Alert',
-    components: {
-        IconAlertTriangle
+defineProps({
+    label: {
+        type: String,
+        default: 'Something is amiss'
     },
-    props: {
-        label: {
-            type: String,
-            default: 'Something is amiss'
-        },
-        compact: {
-            type: Boolean,
-            default: false
-        },
-    }
-}
+    compact: {
+        type: Boolean,
+        default: false
+    },
+})
 </script>

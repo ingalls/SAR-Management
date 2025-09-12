@@ -66,62 +66,54 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
 import { 
     TablerSelect
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'TopStats',
-    components: {
-        TablerSelect
-    },
-    data: function() {
-        return {
-            agg: {},
-            current: 'Agency',
-            convert: {
-                Category: 'businesscategory',
-                Agency: 'o',
-                SubAgency: 'ou',
-                Title: 'title',
-                ZipCode: 'postalcode'
-            }
-        }
-    },
-    mounted: function() {
-        this.fetch();
-    },
-    methods: {
-        fetch: async function(current) {
-            if (this.current === current) return;
-            if (current) this.current = current;
+const agg = ref({})
+const current = ref('Agency')
+const convert = reactive({
+    Category: 'businesscategory',
+    Agency: 'o',
+    SubAgency: 'ou',
+    Title: 'title',
+    ZipCode: 'postalcode'
+})
 
-            const agg = await window.std(`/api/aggregate/${this.convert[this.current]}`);
+const fetch = async (newCurrent) => {
+    if (current.value === newCurrent) return;
+    if (newCurrent) current.value = newCurrent;
 
-            let aggs = [];
-            let total = 0;
-            for (const name in agg) {
-                total += agg[name];
-                aggs.push({
-                    name,
-                    count: agg[name]
-                });
-            }
+    const aggData = await window.std(`/api/aggregate/${convert[current.value]}`);
 
-            this.agg = aggs.map((agg) => {
-                agg.percent = agg.count / total;
-                return agg;
-            }).sort((a, b) => {
-                return b.percent - a.percent;
-            }).splice(0, 6);
-        },
-        getExport: async function() {
-            const url = new URL('/api/total/export', window.location.origin);
-            // Allow serving through Vue for hotloading
-            if (url.hostname === 'localhost') url.port = '4999'
-            window.open(url, "_blank")
-        }
+    let aggs = [];
+    let total = 0;
+    for (const name in aggData) {
+        total += aggData[name];
+        aggs.push({
+            name,
+            count: aggData[name]
+        });
     }
+
+    agg.value = aggs.map((aggItem) => {
+        aggItem.percent = aggItem.count / total;
+        return aggItem;
+    }).sort((a, b) => {
+        return b.percent - a.percent;
+    }).splice(0, 6);
 }
+
+const getExport = async () => {
+    const url = new URL('/api/total/export', window.location.origin);
+    // Allow serving through Vue for hotloading
+    if (url.hostname === 'localhost') url.port = '4999'
+    window.open(url, "_blank")
+}
+
+onMounted(() => {
+    fetch();
+})
 </script>

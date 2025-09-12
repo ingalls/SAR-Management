@@ -10,14 +10,11 @@
     />
 </template>
 
-<script>
-export default {
-    name: 'TeamBadge',
-    props: {
-        team: {
-            type: Object,
-            required: true
-        }
+<script setup>
+defineProps({
+    team: {
+        type: Object,
+        required: true
     }
-}
+})
 </script>
