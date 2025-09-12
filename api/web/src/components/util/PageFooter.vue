@@ -36,8 +36,6 @@
     </footer>
 </template>
 
-<script>
-export default {
-    name: 'PageFooter'
-}
+<script setup>
+// PageFooter - migrated to Composition API
 </script>

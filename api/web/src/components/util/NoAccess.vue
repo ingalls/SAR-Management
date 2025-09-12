@@ -40,22 +40,16 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import {
     IconEyeOff
 } from '@tabler/icons-vue'
 
-export default {
-    name: 'NoAccess',
-    components: {
-        IconEyeOff
-    },
-    props: {
-        title: String,
-        compact: {
-            type: Boolean,
-            default: false
-        }
+defineProps({
+    title: String,
+    compact: {
+        type: Boolean,
+        default: false
     }
-}
+})
 </script>

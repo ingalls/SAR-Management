@@ -16,15 +16,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import { 
     TablerLoading
 } from '@tak-ps/vue-tabler';
-
-export default {
-    name: 'Logout',
-    components: {
-        TablerLoading
-    }
-}
 </script>

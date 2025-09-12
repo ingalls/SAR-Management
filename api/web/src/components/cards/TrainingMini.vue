@@ -37,7 +37,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted } from 'vue'
 import {
     TablerSelect,
     TablerLoading,
@@ -45,74 +46,63 @@ import {
 } from '@tak-ps/vue-tabler';
 import moment from 'moment';
 
-export default {
-    name: 'TrainingCardMini',
-    components: {
-        TablerSelect,
-        TablerLoading,
-        TablerProgress
+const props = defineProps({
+    label: {
+        type: String,
+        default: 'Annual Training Rate (To Date)'
     },
-    props: {
-        label: {
-            type: String,
-            default: 'Annual Training Rate (To Date)'
-        },
-        assigned: {
-            type: Number,
-            default: null
-        },
+    assigned: {
+        type: Number,
+        default: null
     },
-    data: function() {
-        return {
-            range: 'Current Year',
-            loading: true,
-            total: 0,
-            attended: 0,
-            percent: 0
-        }
-    },
-    watch: {
-        range: async function() {
-            await this.fetch();
-        }
-    },
-    mounted: async function() {
-        await this.fetch();
-    },
-    methods: {
-        fetch: async function() {
-            this.loading = true;
-            const url = window.stdurl('/api/training');
-            url.searchParams.append('limit', 1);
-            url.searchParams.append('required', 'true');
+})
 
-            if (this.range.includes('Quarter')) {
-                const q = parseInt(this.range[0]);
-                const { start, end } = this.getQuarterRange(q);
-                url.searchParams.append('start', start);
-                url.searchParams.append('end', end);
-            } else if (this.range !== 'All Time') {
-                url.searchParams.append('start', moment().format('YYYY') + '-01-01');
-                url.searchParams.append('end', moment().format('YYYY-MM-DD'));
-            }
+const range = ref('Current Year')
+const loading = ref(true)
+const total = ref(0)
+const attended = ref(0)
+const percent = ref(0)
 
-            this.total = (await window.std(url)).total;
-
-            url.searchParams.delete('required');
-            url.searchParams.append('assigned', this.assigned);
-
-            this.attended = (await window.std(url)).total;
-
-            if (this.total === 0) this.percent = 1;
-            else this.percent = this.attended / this.total;
-
-            this.loading = false;
-        },
-        getQuarterRange: function(quarter) {
-            const start = moment().quarter(quarter).startOf('quarter').format('YYYY-MM-DD');
-            const end = moment().quarter(quarter).endOf('quarter').format('YYYY-MM-DD');
-            return {start, end};
-        }
-    }
+const getQuarterRange = (quarter) => {
+    const start = moment().quarter(quarter).startOf('quarter').format('YYYY-MM-DD');
+    const end = moment().quarter(quarter).endOf('quarter').format('YYYY-MM-DD');
+    return {start, end};
 }
+
+const fetch = async () => {
+    loading.value = true;
+    const url = window.stdurl('/api/training');
+    url.searchParams.append('limit', 1);
+    url.searchParams.append('required', 'true');
+
+    if (range.value.includes('Quarter')) {
+        const q = parseInt(range.value[0]);
+        const { start, end } = getQuarterRange(q);
+        url.searchParams.append('start', start);
+        url.searchParams.append('end', end);
+    } else if (range.value !== 'All Time') {
+        url.searchParams.append('start', moment().format('YYYY') + '-01-01');
+        url.searchParams.append('end', moment().format('YYYY-MM-DD'));
+    }
+
+    total.value = (await window.std(url)).total;
+
+    url.searchParams.delete('required');
+    url.searchParams.append('assigned', props.assigned);
+
+    attended.value = (await window.std(url)).total;
+
+    if (total.value === 0) percent.value = 1;
+    else percent.value = attended.value / total.value;
+
+    loading.value = false;
+}
+
+watch(range, async () => {
+    await fetch();
+})
+
+onMounted(async () => {
+    await fetch();
+})
 </script>

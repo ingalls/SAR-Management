@@ -35,19 +35,14 @@
     </Modal>
 </template>
 
-<script>
+<script setup>
 import Modal from './util/Modal.vue';
 
-export default {
-    name: 'Err',
-    components: {
-        Modal
-    },
-    props: ['err'],
-    methods: {
-        close: function() {
-            this.$emit('close');
-        }
-    }
+defineProps(['err'])
+
+const emit = defineEmits(['close'])
+
+const close = () => {
+    emit('close');
 }
 </script>

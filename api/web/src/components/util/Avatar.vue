@@ -34,28 +34,24 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Avatar',
-    props: {
-        user: {
-            type: Object,
-            required: true
-        },
-        color: {
-            type: String,
-            default: 'rgb(0, 67, 133)'
-        },
-        link: {
-            type: Boolean,
-            default: false
-        }
+<script setup>
+import { ref } from 'vue'
+
+defineProps({
+    user: {
+        type: Object,
+        required: true
     },
-    data: function() {
-        return {
-            token: localStorage.token,
-            base: window.stdurl('/').origin,
-        }
+    color: {
+        type: String,
+        default: 'rgb(0, 67, 133)'
+    },
+    link: {
+        type: Boolean,
+        default: false
     }
-}
+})
+
+const token = ref(localStorage.token)
+const base = ref(window.stdurl('/').origin)
 </script>
