@@ -284,7 +284,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import iam from '../iam.js';
 import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
@@ -302,65 +304,50 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'User',
-    components: {
-        TablerEpoch,
-        UserProfile,
-        CardIssues,
-        CardMission,
-        CardTraining,
-        CardMissionMini,
-        CardTrainingMini,
-        CardEquipment,
-        CardCerts,
-        TablerLoading,
-        TablerBreadCrumb,
-        TeamBadge,
-        NoAccess
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            userid: this.$route.name === 'profile' ? this.auth.id : parseInt(this.$route.params.userid),
-            loading: {
-                user: true,
-                teams: true
-            },
-            user: {},
-            teams: {
-                total: 0,
-                teams: []
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam('User:View')) await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        googleMaps: function() {
-            const addr = this.user.address_street.replace(/ /, '+')
-                + '+' + this.user.address_city.replace(/ /, '+')
-                + '+' + this.user.address_state.replace(/ /, '+')
-                + '+' + this.user.address_zip.replace(/ /, '+');
-
-            window.open(new URL(`/maps/search/${addr}`, 'https://www.google.com'), '_blank');
-        },
-        fetch: async function() {
-            this.loading.user = true;
-            this.user = await window.std(`/api/user/${this.userid}`);
-            this.loading.user = false;
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const route = useRoute()
+
+const userid = ref(route.name === 'profile' ? props.auth.id : parseInt(route.params.userid))
+const loading = reactive({
+    user: true,
+    teams: true
+})
+const user = ref({})
+const teams = reactive({
+    total: 0,
+    teams: []
+})
+
+const is_iam = (permission) => {
+    return iam(props.iam, props.auth, permission)
 }
+
+const googleMaps = () => {
+    const addr = user.value.address_street.replace(/ /, '+')
+        + '+' + user.value.address_city.replace(/ /, '+')
+        + '+' + user.value.address_state.replace(/ /, '+')
+        + '+' + user.value.address_zip.replace(/ /, '+');
+
+    window.open(new URL(`/maps/search/${addr}`, 'https://www.google.com'), '_blank');
+}
+
+const fetch = async () => {
+    loading.user = true;
+    user.value = await window.std(`/api/user/${userid.value}`);
+    loading.user = false;
+}
+
+onMounted(async () => {
+    if (is_iam('User:View')) await fetch();
+})
 </script>

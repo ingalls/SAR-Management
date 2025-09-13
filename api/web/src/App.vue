@@ -362,7 +362,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, computed, watch, onMounted, onErrorCaptured } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
 import PageFooter from './components/util/PageFooter.vue';
@@ -391,108 +393,87 @@ import {
     IconCaretDown,
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'SearchAndRescue',
-    components: {
-        IconBug,
-        IconHome,
-        IconUserPlus,
-        IconAddressBook,
-        IconMenu,
-        IconUsers,
-        IconUser,
-        IconBell,
-        IconShovel,
-        IconNotebook,
-        IconCalendar,
-        IconCalendarTime,
-        IconTruck,
-        IconAmbulance,
-        IconAdjustments,
-        IconCaretDown,
-        TablerError,
-        TablerDropdown,
-        TablerLoading,
-        PageFooter
-    },
-    data: function() {
-        return {
-            loading: false,
-            notifications: false,
-            name: 'Search & Rescue',
-            iam: {},
-            user: null,
-            err: false,
-        }
-    },
-    computed: {
-        enableNav() {
-            if (!this.$route || !this.$route.name) return false;
-            return this.$route.name.includes("login") || this.user;
-        }
-    },
-    watch: {
-        $route: async function() {
-            if (this.$route.name === 'logout') {
-                delete localStorage.token;
-                this.user = null;
-                this.$router.push("/login");
-            } else if (!this.user && !localStorage.token && !this.$route.name.includes('login')) {
-                this.$router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
-            }
-        }
-    },
-    errorCaptured: function(err) {
-        this.err = err;
-    },
-    mounted: async function() {
-        window.addEventListener('error', (evt) => {
-            evt.preventDefault();
-            this.err = evt;
-        });
+const route = useRoute()
+const router = useRouter()
 
-        await this.fetchName();
+const loading = ref(false)
+const notifications = ref(false)
+const name = ref('Search & Rescue')
+const iam = reactive({})
+const user = ref(null)
+const err = ref(false)
 
-        if (localStorage.token) {
-            await this.refetch();
-        }
-    },
-    methods: {
-        refetch: async function() {
-            this.loading = true;
-            await this.getIAM();
-            await this.fetchNotify();
-            await this.getUser();
-        },
-        fetchName: async function() {
-            this.name = (await window.std('/api/server/name')).value;
-        },
-        fetchNotify: async function() {
-            this.notifications = !!(await window.std('/api/notification')).total;
-        },
-        getIAM: async function() {
-            this.iam = await window.std('/api/iam');
-        },
-        getUser: async function() {
-            try {
-                this.loading = true;
-                this.user = await window.std('/api/login');
-                this.loading = false;
-            } catch (err) {
-                this.loading = false;
-                this.user = null;
+const enableNav = computed(() => {
+    if (!route || !route.name) return false;
+    return route.name.includes("login") || user.value;
+})
 
-                if (err.message === 'Authentication Required') {
-                    if (this.$route.path.split('/')[1] !== 'login') return this.$router.push('/login');
-                }
-            }
+const refetch = async () => {
+    loading.value = true;
+    await getIAM();
+    await fetchNotify();
+    await getUser();
+}
 
-            if (this.$route.name && this.$route.name.includes('login')) {
-                this.$router.push("/");
-            }
+const fetchName = async () => {
+    name.value = (await window.std('/api/server/name')).value;
+}
+
+const fetchNotify = async () => {
+    notifications.value = !!(await window.std('/api/notification')).total;
+}
+
+const getIAM = async () => {
+    Object.assign(iam, await window.std('/api/iam'));
+}
+
+const getUser = async () => {
+    try {
+        loading.value = true;
+        user.value = await window.std('/api/login');
+        loading.value = false;
+    } catch (error) {
+        loading.value = false;
+        user.value = null;
+
+        if (error.message === 'Authentication Required') {
+            if (route.path.split('/')[1] !== 'login') return router.push('/login');
         }
     }
+
+    if (route.name && route.name.includes('login')) {
+        router.push("/");
+    }
 }
+
+// Watch for route changes
+watch(route, async () => {
+    if (route.name === 'logout') {
+        delete localStorage.token;
+        user.value = null;
+        router.push("/login");
+    } else if (!user.value && !localStorage.token && !route.name.includes('login')) {
+        router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+    }
+})
+
+onErrorCaptured((error) => {
+    err.value = error;
+    return false;
+})
+
+onMounted(async () => {
+    window.addEventListener('error', (evt) => {
+        evt.preventDefault();
+        err.value = evt;
+    });
+
+    await fetchName();
+
+    if (localStorage.token) {
+        await refetch();
+    }
+})
 </script>
 
 <style>

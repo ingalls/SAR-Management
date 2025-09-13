@@ -251,7 +251,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue'
 import Avatar from '../util/Avatar.vue';
 import {
     IconList,
@@ -274,175 +275,153 @@ import {
 } from '@tak-ps/vue-tabler'
 import UserProfile from '../User/Profile.vue';
 
-export default {
-    name: 'CardUsers',
-    components: {
-        TablerNone,
-        TablerEpoch,
-        TablerInput,
-        TablerDropdown,
-        TablerDelete,
-        TablerToggle,
-        TablerLoading,
-        TeamSelect,
-        UserDropdownIcon,
-        Avatar,
-        IconList,
-        IconFilter,
-        IconPolaroid,
-        IconAddressBook,
-        UserProfile,
-        TableFooter,
-        TableHeader
+const props = defineProps({
+    dropdown: {
+        type: Boolean,
+        default: true
     },
-    props: {
-        dropdown: {
-            type: Boolean,
-            default: true
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
-        url: {
-            type: String,
-            default: '/api/user'
-        },
-        edit: {
-            type: Boolean,
-            default: false,
-        },
-        team: Number
+    limit: {
+        type: Number,
+        default: 10
     },
-    data: function() {
-        return {
-            mode: 'list',
-            loading: {
-                list: true,
-            },
-            header: [],
-            paging: {
-                filter: '',
-                sort: 'Name',
-                order: 'asc',
-                teams: [],
-                limit: this.limit,
-                disabled: false,
-                page: 0
-            },
-            list: {
-                total: 0,
-                items: []
-            },
-        }
+    url: {
+        type: String,
+        default: '/api/user'
     },
-    watch: {
-        paging: {
-            deep: true,
-            handler: async function() {
-                await this.listUsers();
-            }
-        }
+    edit: {
+        type: Boolean,
+        default: false,
     },
-    mounted: async function() {
-        await this.listUsersSchema();
-        await this.listUsers();
-    },
-    methods: {
-        removeUser: async function(user, user_it) {
-            user._loading = true;
-            await window.std(`${this.url}/${user.id}`, {
-                method: 'DELETE',
-            });
-            user._loading = false;
+    team: Number
+})
 
-            this.list.items.splice(user_it, 1);
-            this.list.total--;
-        },
-        addUser: async function(user) {
-            this.loading.add = true;
-            await window.std(`${this.url}`, {
-                method: 'POST',
-                body: { uid: user.id }
-            });
+const mode = ref('list')
+const loading = reactive({
+    list: true,
+})
+const header = ref([])
+const paging = reactive({
+    filter: '',
+    sort: 'Name',
+    order: 'asc',
+    teams: [],
+    limit: props.limit,
+    disabled: false,
+    page: 0
+})
+const list = reactive({
+    total: 0,
+    items: []
+})
 
-            this.list.items.splice(0, 0, user);
-            this.list.total++;
-            this.loading.add = false;
-        },
-        listUsersSchema: async function() {
-            const schema = await window.std('/api/schema?method=GET&url=/user');
-            this.header = ['name', 'email', 'last_login', 'phone'].map((h) => {
-                return { name: h, display: true };
-            });
+const removeUser = async (user, user_it) => {
+    user._loading = true;
+    await window.std(`${props.url}/${user.id}`, {
+        method: 'DELETE',
+    });
+    user._loading = false;
 
-            this.header.push(...schema.query.properties.sort.enum.map((h) => {
-                return {
-                    name: h,
-                    display: false
-                }
-            }).filter((h) => {
-                for (const hknown of this.header) {
-                    if (hknown.name === h.name) return false;
-                }
-                return true;
-            }));
-        },
-        listUsers: async function() {
-            this.loading.list = true;
-            const url = window.stdurl(this.url);
-            if (this.team) url.searchParams.append('team', this.team);
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('disabled', this.paging.disabled);
-	    if (this.paging.teams.length) {
-	    url.searchParams.append('teams', this.paging.teams.map(t => t.id).join(','));
-	    }
-
-            if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
-            else url.searchParams.append('sort', this.paging.sort.toLowerCase().replace(' ', '_'));
-            url.searchParams.append('order', this.paging.order);
-
-            this.list = await window.std(url);
-            this.loading.list = false;
-        },
-        exportUsers: async function(format='vcard') {
-            const url = window.stdurl(this.url);
-            if (this.team) url.searchParams.append('team', this.team);
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('disabled', this.paging.disabled);
-            url.searchParams.append('format', format);
-            if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
-
-            if (format === 'csv') {
-                const fields = [];
-                this.header.filter((h) => {
-                    return h.display;
-                }).forEach((h) => {
-                    if (h.name === 'name') {
-                        fields.push('fname', 'lname');
-                    } else {
-                        fields.push(h.name);
-                    }
-                });
-
-                for (const field of fields) {
-                    url.searchParams.append('fields', field)
-                }
-            }
-
-            const res = await window.std(url);
-            const blob = await res.blob()
-
-            const durl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = durl;
-            a.download = `sar-users.${format === 'vcard' ? 'vcf' : format}`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        },
-    }
+    list.items.splice(user_it, 1);
+    list.total--;
 }
+
+const addUser = async (user) => {
+    loading.add = true;
+    await window.std(`${props.url}`, {
+        method: 'POST',
+        body: { uid: user.id }
+    });
+
+    list.items.splice(0, 0, user);
+    list.total++;
+    loading.add = false;
+}
+
+const listUsersSchema = async () => {
+    const schema = await window.std('/api/schema?method=GET&url=/user');
+    header.value = ['name', 'email', 'last_login', 'phone'].map((h) => {
+        return { name: h, display: true };
+    });
+
+    header.value.push(...schema.query.properties.sort.enum.map((h) => {
+        return {
+            name: h,
+            display: false
+        }
+    }).filter((h) => {
+        for (const hknown of header.value) {
+            if (hknown.name === h.name) return false;
+        }
+        return true;
+    }));
+}
+
+const listUsers = async () => {
+    loading.list = true;
+    const url = window.stdurl(props.url);
+    if (props.team) url.searchParams.append('team', props.team);
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('disabled', paging.disabled);
+    if (paging.teams.length) {
+        url.searchParams.append('teams', paging.teams.map(t => t.id).join(','));
+    }
+
+    if (paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
+    else url.searchParams.append('sort', paging.sort.toLowerCase().replace(' ', '_'));
+    url.searchParams.append('order', paging.order);
+
+    const result = await window.std(url);
+    list.total = result.total;
+    list.items = result.items;
+    loading.list = false;
+}
+
+const exportUsers = async (format='vcard') => {
+    const url = window.stdurl(props.url);
+    if (props.team) url.searchParams.append('team', props.team);
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('disabled', paging.disabled);
+    url.searchParams.append('format', format);
+    if (paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
+
+    if (format === 'csv') {
+        const fields = [];
+        header.value.filter((h) => {
+            return h.display;
+        }).forEach((h) => {
+            if (h.name === 'name') {
+                fields.push('fname', 'lname');
+            } else {
+                fields.push(h.name);
+            }
+        });
+
+        for (const field of fields) {
+            url.searchParams.append('fields', field)
+        }
+    }
+
+    const res = await window.std(url);
+    const blob = await res.blob()
+
+    const durl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = durl;
+    a.download = `sar-users.${format === 'vcard' ? 'vcf' : format}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+// Watch for changes in paging to reload users
+watch(paging, async () => {
+    await listUsers();
+}, { deep: true })
+
+onMounted(async () => {
+    await listUsersSchema();
+    await listUsers();
+})
 </script>
