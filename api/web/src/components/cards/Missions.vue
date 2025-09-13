@@ -159,7 +159,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import TeamBadge from '../util/TeamBadge.vue'
 import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
@@ -184,149 +186,129 @@ import {
     IconUserOff
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'MissionCard',
-    components: {
-        TableHeader,
-        TableFooter,
-        TablerDropdown,
-        TablerIconButton,
-        TablerLoading,
-        TablerEpoch,
-        TablerEpochRange,
-        TablerInput,
-        TeamBadge,
-        TablerNone,
-        NoAccess,
-        IconFilter,
-        IconGripVertical,
-        IconRefresh,
-        IconPlus,
-        IconUserCheck,
-        IconUserOff
+const props = defineProps({
+    label: {
+        type: String,
+        default: 'Recent Missions'
     },
-    props: {
-        label: {
-            type: String,
-            default: 'Recent Missions'
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        start: {
-            type: Number
-        },
-        order: {
-            type: String,
-            default: 'desc'
-        },
-        end: {
-            type: Number
-        },
-        dragHandle: {
-            type: Boolean,
-            default: false
-        },
-        footer: {
-            type: Boolean,
-            default: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        },
-        create: {
-            type: Boolean,
-            default: true
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
-        search: {
-            type: Boolean,
-            default: false
-        },
-        assigned: {
-            type: Number
-        },
-        attendance: {
-            type: Boolean,
-            default: true
-        }
+    iam: {
+        type: Object,
+        required: true
     },
-    data: function() {
-        return {
-            loading: true,
-            header: [],
-            paging: {
-                filter: '',
-                sort: 'start_ts',
-                order: this.order,
-                limit: this.limit,
-                start: this.start,
-                end: this.end,
-                page: 0
-
-            },
-            list: {
-                total: 0,
-                items: []
-            },
-        }
+    start: {
+        type: Number
     },
-    watch: {
-        paging: {
-            deep: true,
-            handler: async function() {
-                await this.fetch();
-            }
-        }
+    order: {
+        type: String,
+        default: 'desc'
     },
-    mounted: async function() {
-        await this.listSchema();
-        await this.fetch();
+    end: {
+        type: Number
     },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        goto: function() {
-            if (this.assigned) this.$router.push(`/mission?assigned=${this.assigned}`);
-            else this.$router.push('/mission');
-        },
-        listSchema: async function() {
-            const schema = await window.std('/api/schema?method=GET&url=/mission');
-            this.header = ['title', 'dates'].map((h) => {
-                return { name: h, display: true };
-            });
-
-            this.header.push(...schema.query.properties.sort.enum.map((h) => {
-                return {
-                    name: h,
-                    display: false
-                }
-            }).filter((h) => {
-                for (const hknown of this.header) {
-                    if (hknown.name === h.name) return false;
-                }
-                return true;
-            }));
-        },
-        fetch: async function() {
-            this.loading = true;
-            const url = window.stdurl('/api/mission');
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('sort', this.paging.sort);
-            url.searchParams.append('order', this.paging.order);
-
-            if (this.paging.start) url.searchParams.append('start', this.paging.start);
-            if (this.paging.end) url.searchParams.append('end', this.paging.end);
-            if (this.assigned) url.searchParams.append('assigned', this.assigned);
-            this.list = await window.std(url);
-            this.loading = false;
-        }
+    dragHandle: {
+        type: Boolean,
+        default: false
+    },
+    footer: {
+        type: Boolean,
+        default: true
+    },
+    auth: {
+        type: Object,
+        required: true
+    },
+    create: {
+        type: Boolean,
+        default: true
+    },
+    limit: {
+        type: Number,
+        default: 10
+    },
+    search: {
+        type: Boolean,
+        default: false
+    },
+    assigned: {
+        type: Number
+    },
+    attendance: {
+        type: Boolean,
+        default: true
     }
+})
+
+const router = useRouter()
+
+const loading = ref(true)
+const header = ref([])
+const paging = reactive({
+    filter: '',
+    sort: 'start_ts',
+    order: props.order,
+    limit: props.limit,
+    start: props.start,
+    end: props.end,
+    page: 0
+})
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+const is_iam = (permission) => {
+    return iam(props.iam, props.auth, permission)
 }
+
+const goto = () => {
+    if (props.assigned) router.push(`/mission?assigned=${props.assigned}`);
+    else router.push('/mission');
+}
+
+const listSchema = async () => {
+    const schema = await window.std('/api/schema?method=GET&url=/mission');
+    header.value = ['title', 'dates'].map((h) => {
+        return { name: h, display: true };
+    });
+
+    header.value.push(...schema.query.properties.sort.enum.map((h) => {
+        return {
+            name: h,
+            display: false
+        }
+    }).filter((h) => {
+        for (const hknown of header.value) {
+            if (hknown.name === h.name) return false;
+        }
+        return true;
+    }));
+}
+
+const fetch = async () => {
+    loading.value = true;
+    const url = window.stdurl('/api/mission');
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('sort', paging.sort);
+    url.searchParams.append('order', paging.order);
+
+    if (paging.start) url.searchParams.append('start', paging.start);
+    if (paging.end) url.searchParams.append('end', paging.end);
+    if (props.assigned) url.searchParams.append('assigned', props.assigned);
+    
+    const result = await window.std(url);
+    list.total = result.total;
+    list.items = result.items;
+    loading.value = false;
+}
+
+watch(paging, async () => {
+    await fetch();
+}, { deep: true })
+
+onMounted(async () => {
+    await listSchema();
+    await fetch();
+})
 </script>
