@@ -117,7 +117,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import phoneFormat from 'phone';
 import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
@@ -137,159 +139,137 @@ import {
     IconSettings
 } from '@tabler/icons-vue';
 
+const props = defineProps({
+    label: {
+        type: String,
+        default: 'Team Applications'
+    },
+    iam: {
+        type: Object,
+        required: true
+    },
+    start: {
+        type: Number
+    },
+    order: {
+        type: String,
+        default: 'desc'
+    },
+    end: {
+        type: Number
+    },
+    dragHandle: {
+        type: Boolean,
+        default: false
+    },
+    limit: {
+        type: Number,
+        default: 10
+    },
+    footer: {
+        type: Boolean,
+        default: true
+    },
+    auth: {
+        type: Object,
+        required: true
+    },
+    create: {
+        type: Boolean,
+        default: true
+    },
+    assigned: {
+        type: Number
+    }
+})
 
-export default {
-    name: 'ApplicationCard',
-    components: {
-        IconPlus,
-        IconSettings,
-        IconGripVertical,
-        TableHeader,
-        TableFooter,
-        TablerEnum,
-        TablerInput,
-        TablerLoading,
-        TablerEpoch,
-        TablerNone,
-        NoAccess,
-    },
-    props: {
-        label: {
-            type: String,
-            default: 'Team Applications'
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        start: {
-            type: Number
-        },
-        order: {
-            type: String,
-            default: 'desc'
-        },
-        end: {
-            type: Number
-        },
-        dragHandle: {
-            type: Boolean,
-            default: false
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
-        footer: {
-            type: Boolean,
-            default: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        },
-        create: {
-            type: Boolean,
-            default: true
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
-        assigned: {
-            type: Number
-        }
-    },
-    data: function() {
+const router = useRouter()
+
+const loading = ref(true)
+const header = ref([])
+const paging = reactive({
+    filter: '',
+    sort: 'created',
+    order: props.order,
+    limit: props.limit,
+    start: props.start,
+    status: 'all',
+    end: props.end,
+    page: 0
+})
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+const is_iam = (permission) => {
+    return iam(props.iam, props.auth, permission)
+}
+
+const listSchema = async () => {
+    const schema = await window.std('/api/schema?method=GET&url=/application');
+    header.value = ['archived', 'name', 'created', 'phone', 'email', 'group'].map((h) => {
+        return { name: h, display: true };
+    });
+
+    header.value.push(...schema.query.properties.sort.enum.map((h) => {
         return {
-            loading: true,
-            header: [],
-            paging: {
-                filter: '',
-                sort: 'created',
-                order: this.order,
-                limit: this.limit,
-                start: this.start,
-                status: 'all',
-                end: this.end,
-                page: 0
-
-            },
-            list: {
-                total: 0,
-                items: []
-            },
+            name: h,
+            display: false
         }
-    },
-    watch: {
-        paging: {
-            deep: true,
-            handler: async function() {
-                await this.fetch();
-            }
+    }).filter((h) => {
+        for (const hknown of header.value) {
+            if (hknown.name === h.name) return false;
         }
-    },
-    mounted: async function() {
-        await this.listSchema();
-        if (this.is_iam("Application:View")) {
-            await this.fetch();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        listSchema: async function() {
-            const schema = await window.std('/api/schema?method=GET&url=/application');
-            this.header = ['archived', 'name', 'created', 'phone', 'email', 'group'].map((h) => {
-                return { name: h, display: true };
-            });
+        return true;
+    }));
+}
 
-            this.header.push(...schema.query.properties.sort.enum.map((h) => {
-                return {
-                    name: h,
-                    display: false
-                }
-            }).filter((h) => {
-                for (const hknown of this.header) {
-                    if (hknown.name === h.name) return false;
-                }
-                return true;
-            }));
-        },
-        format: function(number) {
-            const p = phoneFormat(number);
+const format = (number) => {
+    const p = phoneFormat(number);
 
-            if (!p.isValid) return number;
+    if (!p.isValid) return number;
 
-            if (p.countryCode === '+1') {
-                return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
-            } else {
-                return p;
-            }
-        },
-        fetch: async function() {
-            this.loading = true;
-            const url = window.stdurl('/api/application');
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('sort', this.paging.sort);
-            url.searchParams.append('order', this.paging.order);
-            if (this.paging.status !== 'all') {
-                url.searchParams.append('status', this.paging.status);
-            }
-
-            if (this.paging.start) url.searchParams.append('start', this.paging.start);
-            if (this.paging.end) url.searchParams.append('end', this.paging.end);
-            const list = await window.std(url);
-
-            list.items.map((i) => {
-                i.phone = this.format(i.phone);
-            })
-
-            this.list = list;
-
-            this.loading = false;
-        }
+    if (p.countryCode === '+1') {
+        return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
+    } else {
+        return p;
     }
 }
+
+const fetch = async () => {
+    loading.value = true;
+    const url = window.stdurl('/api/application');
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('sort', paging.sort);
+    url.searchParams.append('order', paging.order);
+    if (paging.status !== 'all') {
+        url.searchParams.append('status', paging.status);
+    }
+
+    if (paging.start) url.searchParams.append('start', paging.start);
+    if (paging.end) url.searchParams.append('end', paging.end);
+    const result = await window.std(url);
+
+    result.items.map((i) => {
+        i.phone = format(i.phone);
+    })
+
+    list.total = result.total;
+    list.items = result.items;
+    loading.value = false;
+}
+
+watch(paging, async () => {
+    await fetch();
+}, { deep: true })
+
+onMounted(async () => {
+    await listSchema();
+    if (is_iam("Application:View")) {
+        await fetch();
+    }
+})
 </script>
