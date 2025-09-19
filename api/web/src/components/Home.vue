@@ -58,50 +58,35 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
-import IssuesCard from './cards/Issues.vue';
-import TrainingsCard from './cards/Trainings.vue';
-import CalendarCard from './cards/Calendar.vue';
-import Draggable from 'vuedraggable';
-import moment from 'moment';
+<script setup>
+import { ref } from 'vue'
+import iam from '../iam.js'
+import IssuesCard from './cards/Issues.vue'
+import TrainingsCard from './cards/Trainings.vue'
+import CalendarCard from './cards/Calendar.vue'
+import Draggable from 'vuedraggable'
+import moment from 'moment'
 
-export default {
-    name: 'Home',
-    components: {
-        Draggable,
-        IssuesCard,
-        CalendarCard,
-        TrainingsCard,
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            cards: [{
-                id: 1,
-                size: 6,
-                name: 'Issues'
-            },{
-                id: 2,
-                size: 6,
-                name: 'Trainings'
-            }]
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        moment: function() {
-            return moment();
-        }
+    auth: {
+        type: Object,
+        required: true
     }
-}
+})
+
+const cards = ref([{
+    id: 1,
+    size: 6,
+    name: 'Issues'
+},{
+    id: 2,
+    size: 6,
+    name: 'Trainings'
+}])
+
+const is_iam = (permission) => iam(props.iam, props.auth, permission)
 </script>

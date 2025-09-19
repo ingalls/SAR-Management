@@ -121,79 +121,69 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue'
 import {
     IconPlus,
-} from '@tabler/icons-vue';
-import BuilderEdit from './BuilderEdit.vue';
+} from '@tabler/icons-vue'
+import BuilderEdit from './BuilderEdit.vue'
 import {
     TablerNone,
     TablerSchema
-} from '@tak-ps/vue-tabler';
+} from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'Builder',
-    components: {
-        IconPlus,
-        TablerNone,
-        TablerSchema,
-        BuilderEdit,
+const props = defineProps({
+    title: {
+        type: String,
+        default: 'JSON Schema Builder'
     },
-    props: {
-        title: {
-            type: String,
-            default: 'JSON Schema Builder'
-        },
-        modelValue: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            modal: null,
-            loading: true,
-            input: {},
-            schema: [],
-        }
-    },
-    computed: {
-        computedSchema: function() {
-            const res = {
-                type: 'object',
-                required: [],
-                additionalProperties: false,
-                properties: {}
-            }
-
-            for (const prop of JSON.parse(JSON.stringify(this.schema))) {
-                const name = prop.name;
-                delete prop.name;
-
-                if (prop.required) res.required.push(name);
-                delete prop.required;
-                res.properties[name] = prop;
-            }
-
-            return res;
-        }
-    },
-    mounted: function() {
-        for (const prop in this.modelValue.properties) {
-            this.schema.push({
-                name: prop,
-                required: (this.modelValue.required || []).includes(prop),
-                ...this.modelValue.properties[prop]
-            });
-        }
-    },
-    methods: {
-        push: function(prop) {
-            this.schema.push(prop);
-            this.modal = null;
-        }
+    modelValue: {
+        type: Object,
+        required: true
     }
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const modal = ref(null)
+const loading = ref(true)
+const input = reactive({})
+const schema = reactive([])
+
+const computedSchema = computed(() => {
+    const res = {
+        type: 'object',
+        required: [],
+        additionalProperties: false,
+        properties: {}
+    }
+
+    for (const prop of JSON.parse(JSON.stringify(schema))) {
+        const name = prop.name
+        delete prop.name
+
+        if (prop.required) res.required.push(name)
+        delete prop.required
+        res.properties[name] = prop
+    }
+
+    return res
+})
+
+const push = (prop) => {
+    schema.push(prop)
+    modal.value = null
 }
+
+onMounted(() => {
+    for (const prop in props.modelValue.properties) {
+        schema.push({
+            name: prop,
+            required: (props.modelValue.required || []).includes(prop),
+            ...props.modelValue.properties[prop]
+        })
+    }
+})
 </script>
 
 <style>

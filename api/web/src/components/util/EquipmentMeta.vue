@@ -88,72 +88,58 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted } from 'vue'
 import {
     TablerToggle,
     TablerInput,
-} from '@tak-ps/vue-tabler';
+} from '@tak-ps/vue-tabler'
 import {
     IconPlus
 } from '@tabler/icons-vue'
 
-export default {
-    name: 'EquipmentMetadata',
-    components: {
-        IconPlus,
-        TablerToggle,
-        TablerInput,
+const props = defineProps({
+    modelValue: {
+        type: Object,
+        required: true
     },
-    props: {
-        modelValue: {
-            type: Object,
-            required: true
-        },
-        schema: {
-            type: Object,
-            required: true
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        }
+    schema: {
+        type: Object,
+        required: true
     },
-    data: function() {
-        return {
-            meta: this.modelValue,
-        };
-    },
-    watch: {
-        schema: {
-            deep: true,
-            handler: function() {
-                this.format();
-            }
-        },
-        meta: {
-            deep: true,
-            handler: function() {
-                this.$emit('update:modelValue', this.meta);
-            }
-        },
-    },
-    mounted: async function() {
-        this.format();
-    },
-    methods: {
-        format: function() {
-            if (this.schema && this.schema.type === 'object' && this.schema.properties) {
-                for (const key in this.schema.properties) {
-                    if (!this.meta[key] && this.schema.properties[key].type === 'array') {
-                        this.meta[key] = [];
-                    }
+    disabled: {
+        type: Boolean,
+        default: false
+    }
+})
 
-                    if (!this.meta[key] && this.schema.properties[key].type === 'boolean') {
-                        this.meta[key] = this.schema.properties[key].default || false;
-                    }
-                }
+const emit = defineEmits(['update:modelValue'])
+
+const meta = ref(props.modelValue)
+
+const format = () => {
+    if (props.schema && props.schema.type === 'object' && props.schema.properties) {
+        for (const key in props.schema.properties) {
+            if (!meta.value[key] && props.schema.properties[key].type === 'array') {
+                meta.value[key] = []
+            }
+
+            if (!meta.value[key] && props.schema.properties[key].type === 'boolean') {
+                meta.value[key] = props.schema.properties[key].default || false
             }
         }
     }
 }
+
+watch(() => props.schema, () => {
+    format()
+}, { deep: true })
+
+watch(meta, () => {
+    emit('update:modelValue', meta.value)
+}, { deep: true })
+
+onMounted(async () => {
+    format()
+})
 </script>

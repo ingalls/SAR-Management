@@ -161,71 +161,60 @@
     </div>
 </template>
 
-<script>
-import NoAccess from './util/NoAccess.vue';
-import iam from '../iam.js';
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import NoAccess from './util/NoAccess.vue'
+import iam from '../iam.js'
 import {
     TablerLoading,
     TablerBreadCrumb
-} from '@tak-ps/vue-tabler';
+} from '@tak-ps/vue-tabler'
 import {
     IconSettings
-} from '@tabler/icons-vue';
-import CardEquipment from './cards/Equipment.vue';
-import EquipmentMeta from './util/EquipmentMeta.vue';
-import EquipmentProfile from './Equipment/Profile.vue';
-import Avatar from './util/Avatar.vue';
+} from '@tabler/icons-vue'
+import CardEquipment from './cards/Equipment.vue'
+import EquipmentMeta from './util/EquipmentMeta.vue'
+import EquipmentProfile from './Equipment/Profile.vue'
+import Avatar from './util/Avatar.vue'
 
-export default {
-    name: 'Equipment',
-    components: {
-        NoAccess,
-        Avatar,
-        IconSettings,
-        CardEquipment,
-        TablerLoading,
-        EquipmentMeta,
-        EquipmentProfile,
-        TablerBreadCrumb
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                equipment: true
-            },
-            type: {},
-            parent: {},
-            equipment: {},
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Equipment:View")) await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.equipment = true;
-            this.equipment = await window.std(`/api/equipment/${this.$route.params.equipid}`);
-
-            if (this.equipment.type_id) {
-                this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
-            }
-            if (this.equipment.parent) {
-                this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
-            }
-
-            this.loading.equipment = false;
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const route = useRoute()
+
+const loading = reactive({
+    equipment: true
+})
+const type = ref({})
+const parent = ref({})
+const equipment = ref({})
+
+const is_iam = (permission) => iam(props.iam, props.auth, permission)
+
+const fetch = async () => {
+    loading.equipment = true
+    equipment.value = await window.std(`/api/equipment/${route.params.equipid}`)
+
+    if (equipment.value.type_id) {
+        type.value = await window.std(`/api/equipment-type/${equipment.value.type_id}`)
+    }
+    if (equipment.value.parent) {
+        parent.value = await window.std(`/api/equipment/${equipment.value.parent}`)
+    }
+
+    loading.equipment = false
 }
+
+onMounted(async () => {
+    if (is_iam("Equipment:View")) await fetch()
+})
 </script>
