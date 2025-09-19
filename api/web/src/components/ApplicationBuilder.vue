@@ -32,67 +32,52 @@
     </div>
 </template>
 
-<script>
-import Builder from './util/Builder.vue';
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+import Builder from './util/Builder.vue'
 import {
-    TablerInput,
     TablerLoading,
     TablerBreadCrumb,
-} from '@tak-ps/vue-tabler';
+} from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'ApplicationBuilder',
-    components: {
-        Builder,
-        TablerInput,
-        TablerLoading,
-        TablerBreadCrumb,
+defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: true,
-            schema: {}
-        }
-    },
-    watch: {
-        schema: {
-            deep: true,
-            handler: async function() {
-                await this.saveSchema();
-            }
-        }
-    },
-    mounted: async function() {
-        await this.fetch();
-    },
-    methods: {
-        fetch: async function() {
-            this.loading = true;
-            this.schema = JSON.parse((await window.std('/api/server/application')).value);
-            this.loading = false;
-        },
-        saveSchema: async function() {
-            this.loading = true;
-            await window.std('/api/server', {
-                method: 'PUT',
-                body: {
-                    key: 'application',
-                    value: JSON.stringify(this.schema),
-                    public: true
-                }
-            });
-            this.loading = false;
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = ref(true)
+const schema = ref({})
+
+const fetch = async () => {
+    loading.value = true
+    schema.value = JSON.parse((await window.std('/api/server/application')).value)
+    loading.value = false
 }
+
+const saveSchema = async () => {
+    loading.value = true
+    await window.std('/api/server', {
+        method: 'PUT',
+        body: {
+            key: 'application',
+            value: JSON.stringify(schema.value),
+            public: true
+        }
+    })
+    loading.value = false
+}
+
+watch(schema, async () => {
+    await saveSchema()
+}, { deep: true })
+
+onMounted(async () => {
+    await fetch()
+})
 </script>

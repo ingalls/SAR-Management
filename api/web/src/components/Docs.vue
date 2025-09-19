@@ -154,139 +154,125 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
-import NoAccess from './util/NoAccess.vue';
-import TableFooter from './util/TableFooter.vue';
-import Upload from './util/Upload.vue';
-import NewFolder from './Docs/NewFolder.vue';
-import File from './Docs/File.vue';
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import iam from '../iam.js'
+import NoAccess from './util/NoAccess.vue'
+import TableFooter from './util/TableFooter.vue'
+import Upload from './util/Upload.vue'
+import NewFolder from './Docs/NewFolder.vue'
+import File from './Docs/File.vue'
 import {
     TablerNone,
     TablerInput,
     TablerDelete,
     TablerBreadCrumb,
     TablerLoading
-} from '@tak-ps/vue-tabler';
+} from '@tak-ps/vue-tabler'
 import {
     IconPlus,
     IconFolderPlus,
     IconFileFilled,
     IconFolderFilled,
-    IconDotsVertical,
-} from '@tabler/icons-vue';
+} from '@tabler/icons-vue'
 
-export default {
-    name: 'Docs',
-    components: {
-        TablerNone,
-        File,
-        Upload,
-        NewFolder,
-        NoAccess,
-        IconDotsVertical,
-        IconPlus,
-        IconFolderPlus,
-        IconFileFilled,
-        IconFolderFilled,
-        TablerInput,
-        TableFooter,
-        TablerDelete,
-        TablerBreadCrumb,
-        TablerLoading
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            file: null,
-            upload: false,
-            folder: false,
-            headers: {
-                Authorization: `Bearer ${localStorage.token}`
-            },
-            paging: {
-                filter: '',
-                prefix: '',
-                limit: 100,
-                page: 0
-            },
-            loading: {
-                list: true
-            },
-            list: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    watch: {
-       paging: {
-           deep: true,
-           handler: async function() {
-              await this.listDocs();
-           }
-       },
-    },
-    mounted: async function() {
-        let path = (this.$route.params.pathMatch ? this.$route.params.pathMatch : []).filter((p) => { return !!p.trim() });
-
-        if (path.length && path[path.length - 1].includes('.')) this.file = path.pop();
-        path = path.join('/') + '/';
-        if (path !== '/') this.paging.prefix = path;
-
-        if (this.is_iam("Doc:View")) await this.listDocs();
-    },
-    methods: {
-        url: function() {
-            return window.stdurl(`api/doc?prefix=${this.paging.prefix}`);
-        },
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        human(size) {
-            var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
-        },
-        deleteFile: async function() {
-            this.loading.list = true;
-            this.file = null;
-            await this.sleep();
-            await this.listDocs();
-        },
-        sleep: function() {
-            return new Promise(resolve => setTimeout(resolve, 1000));
-        },
-        deleteFolder: async function() {
-
-        },
-        error: function($event) {
-            this.upload = null;
-            throw $event;
-        },
-        listDocs: async function() {
-            if (this.paging.prefix) {
-                this.$router.push(`/doc/${this.paging.prefix}${this.file ? this.file : ''}`);
-            } else {
-                this.$router.push(`/doc/${this.file ? this.file : ''}`);
-            }
-
-            this.loading.list = true;
-            const url = window.stdurl('/api/doc');
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('prefix', this.paging.prefix);
-
-            this.list = await window.std(url);
-            this.loading.list = false;
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const route = useRoute()
+const router = useRouter()
+
+const file = ref(null)
+const upload = ref(false)
+const folder = ref(false)
+const headers = reactive({
+    Authorization: `Bearer ${localStorage.token}`
+})
+const paging = reactive({
+    filter: '',
+    prefix: '',
+    limit: 100,
+    page: 0
+})
+const loading = reactive({
+    list: true
+})
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+const url = () => {
+    return window.stdurl(`api/doc?prefix=${paging.prefix}`)
 }
+
+const is_iam = (permission) => iam(props.iam, props.auth, permission)
+
+const human = (size) => {
+    var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024))
+    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i]
+}
+
+const deleteFile = async () => {
+    loading.list = true
+    file.value = null
+    await sleep()
+    await listDocs()
+}
+
+const sleep = () => {
+    return new Promise(resolve => setTimeout(resolve, 1000))
+}
+
+const deleteFolder = async () => {
+    // Implementation would go here
+}
+
+const error = ($event) => {
+    upload.value = null
+    throw $event
+}
+
+const listDocs = async () => {
+    if (paging.prefix) {
+        router.push(`/doc/${paging.prefix}${file.value ? file.value : ''}`)
+    } else {
+        router.push(`/doc/${file.value ? file.value : ''}`)
+    }
+
+    loading.list = true
+    const url = window.stdurl('/api/doc')
+    url.searchParams.append('limit', paging.limit)
+    url.searchParams.append('page', paging.page)
+    url.searchParams.append('filter', paging.filter)
+    url.searchParams.append('prefix', paging.prefix)
+
+    const result = await window.std(url)
+    list.total = result.total
+    list.items = result.items
+    loading.list = false
+}
+
+watch(paging, async () => {
+    await listDocs()
+}, { deep: true })
+
+onMounted(async () => {
+    let path = (route.params.pathMatch ? route.params.pathMatch : []).filter((p) => { return !!p.trim() })
+
+    if (path.length && path[path.length - 1].includes('.')) file.value = path.pop()
+    path = path.join('/') + '/'
+    if (path !== '/') paging.prefix = path
+
+    if (is_iam("Doc:View")) await listDocs()
+})
 </script>
