@@ -50,7 +50,7 @@
                         <td>
                             <a
                                 class='cursor-pointer'
-                                @click='$router.push(`/user/${cert.uid}/cert/${cert.id}`)'
+                                @click='router.push(`/user/${cert.uid}/cert/${cert.id}`)'
                                 v-text='cert.name'
                             />
                         </td>
@@ -76,79 +76,76 @@
     </div>
 </template>
 
-<script>
-import iam from '../../iam.js';
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import iam from '../../iam.js'
 import {
     TablerNone ,
     TablerIconButton
-} from '@tak-ps/vue-tabler';
-import NoAccess from '../util/NoAccess.vue';
-import UploadCertificate from '../util/UploadCertificate.vue';
-import TableFooter from '../util/TableFooter.vue';
+} from '@tak-ps/vue-tabler'
+import NoAccess from '../util/NoAccess.vue'
+import UploadCertificate from '../util/UploadCertificate.vue'
+import TableFooter from '../util/TableFooter.vue'
 import {
     IconPlus
 } from '@tabler/icons-vue'
 
-export default {
-    name: 'CertsCard',
-    components: {
-        TablerNone,
-        TableFooter,
-        TablerIconButton,
-        UploadCertificate,
-        NoAccess,
-        IconPlus
+const props = defineProps({
+    limit: {
+        type: Number,
+        default: 10
     },
-    props: {
-        limit: {
-            type: Number,
-            default: 10
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        },
-        assigned: {
-            type: Number,
-            default: null
-        }
+    iam: {
+        type: Object,
+        required: true
     },
-    data: function() {
-        return {
-            page: 0,
-            upload: null,
-            list: {
-                total: 0,
-                items: []
-            }
-        }
+    auth: {
+        type: Object,
+        required: true
     },
-    watch: {
-        page: async function() {
-            await this.fetch();
-        },
-        upload: async function() {
-            await this.fetch();
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("User:View")) {
-            await this.fetch();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            const url = window.stdurl(`/api/user/${this.assigned}/cert`);
-            url.searchParams.append('limit', this.limit);
-            url.searchParams.append('page', this.page);
-
-            this.list = await window.std(url);
-        }
+    assigned: {
+        type: Number,
+        default: null
     }
+})
+
+const router = useRouter()
+
+const page = ref(0)
+const upload = ref(null)
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+const is_iam = (permission) => iam(props.iam, props.auth, permission)
+
+const fetch = async () => {
+    const url = window.stdurl(`/api/user/${props.assigned}/cert`)
+    url.searchParams.append('limit', props.limit)
+    url.searchParams.append('page', page.value)
+
+    const result = await window.std(url)
+    list.total = result.total
+    list.items = result.items
 }
+
+const error = (event) => {
+    throw event
+}
+
+watch(page, async () => {
+    await fetch()
+})
+
+watch(upload, async () => {
+    await fetch()
+})
+
+onMounted(async () => {
+    if (is_iam("User:View")) {
+        await fetch()
+    }
+})
 </script>
