@@ -1,107 +1,124 @@
 <template>
     <div>
         <div class='page-body'>
-            <div class='container-xl'>
-                <Draggable
-                    v-model='cards'
-                    item-key='id'
-                    handle='.drag-handle'
-                    class='row row-cards'
+            <div
+                class='container-xl'
+            >
+                <div
+                    ref='gridstack'
+                    class='row g-2 align-items-center'
                 >
-                    <template #item='{element}'>
+                    <template
+                        v-for='card in cards'
+                        :key="card.id"
+                    >
                         <div
-                            v-if='element.name === "Issues"'
-                            :class='`col-12 col-lg-${element.size}`'
+                            :class='`col-${card.w}`'
+                            :gs-x="card.x"
+                            :gs-y="card.y"
+                            :gs-w="card.w"
+                            :gs-h="card.h"
+                            :gs-id="card.id"
                         >
-                            <IssuesCard
-                                :limit='5'
-                                :iam='iam'
-                                :auth='auth'
-                                :drag-handle='true'
-                                :create='false'
-                                :footer='false'
-                            />
-                        </div>
-                        <div
-                            v-else-if='element.name === "Trainings"'
-                            :class='`col-12 col-lg-${element.size}`'
-                        >
-                            <TrainingsCard
-                                :iam='iam'
-                                :auth='auth'
-                                :limit='5'
-                                order='asc'
-                                :attendance='false'
-                                :start='moment().subtract(1, "day").format()'
-                                :end='moment().add(1, "month").format()'
-                                :drag-handle='true'
-                                :create='false'
-                                :footer='false'
-                            />
-                        </div>
-                        <div
-                            v-else-if='element.name === "Calendar"'
-                            :class='`col-12 col-lg-${element.size}`'
-                        >
-                            <CalendarCard
-                                v-if='is_iam("Training:View")'
-                                :limit='5'
-                                :iam='iam'
-                                :auth='auth'
-                                :drag-handle='true'
-                            />
+                            <template v-if='card.name === "Issues"'>
+                                <IssuesCard
+                                    :limit='5'
+                                    :iam='iam'
+                                    :auth='auth'
+                                    :drag-handle='true'
+                                    :create='false'
+                                    :footer='false'
+                                />
+                            </template>
+                            <template v-else-if='card.name === "Trainings"'>
+                                <TrainingsCard
+                                    :iam='iam'
+                                    :auth='auth'
+                                    :limit='5'
+                                    order='asc'
+                                    :attendance='false'
+                                    :start='moment().subtract(1, "day").format()'
+                                    :end='moment().add(1, "month").format()'
+                                    :drag-handle='true'
+                                    :create='false'
+                                    :footer='false'
+                                />
+                            </template>
+                            <template v-else-if='card.name === "Calendar"'>
+                                <CalendarCard
+                                    v-if='is_iam("Training:View")'
+                                    :limit='5'
+                                    :iam='iam'
+                                    :auth='auth'
+                                    :drag-handle='true'
+                                />
+                            </template>
                         </div>
                     </template>
-                </Draggable>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, useTemplateRef } from 'vue';
+import 'gridstack/dist/gridstack.min.css';
 import iam from '../iam.js';
 import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
+import { GridStack } from 'gridstack';
+
 import Draggable from 'vuedraggable';
 import moment from 'moment';
 
-export default {
-    name: 'Home',
-    components: {
-        Draggable,
-        IssuesCard,
-        CalendarCard,
-        TrainingsCard,
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            cards: [{
-                id: 1,
-                size: 6,
-                name: 'Issues'
-            },{
-                id: 2,
-                size: 6,
-                name: 'Trainings'
-            }]
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        moment: function() {
-            return moment();
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const gridstack = useTemplateRef('gridstack');
+
+const cards = ref([{
+    id: 1,
+    name: 'Issues',
+    x: 0,
+    y: 0,
+    w: 6,
+    h: 1,
+},{
+    id: 2,
+    name: 'Trainings',
+    x: 6,
+    y: 0,
+    w: 6,
+    h: 1
+}]);
+
+onMounted(() => {
+    const grid = GridStack.init({
+        column: 12,
+        minRow: 1,
+        margin: '10px',
+        float: true,
+        cellHeight: 200,
+        disableOneColumnMode: true,
+        resizable: {
+            handles: 'e, se, s, sw, w'
+        }
+    }, gridstack.value);
+
+    grid.load(cards.value);
+});
+
+function is_iam(permission) {
+    return iam(props.iam, props.auth, permission)
 }
 </script>
