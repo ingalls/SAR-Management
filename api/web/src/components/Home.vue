@@ -6,14 +6,14 @@
             >
                 <div
                     ref='gridstack'
-                    class='row g-2 align-items-center'
+                    class='d-flex'
                 >
                     <template
                         v-for='card in cards'
                         :key="card.id"
                     >
                         <div
-                            :class='`col-${card.w}`'
+                            :class='`col-${card.w} mx-2 my-2`'
                             :gs-x="card.x"
                             :gs-y="card.y"
                             :gs-w="card.w"
@@ -92,14 +92,14 @@ const cards = ref([{
     x: 0,
     y: 0,
     w: 6,
-    h: 1,
+    h: 2,
 },{
     id: 2,
     name: 'Trainings',
     x: 6,
     y: 0,
     w: 6,
-    h: 1
+    h: 2
 }]);
 
 onMounted(() => {
