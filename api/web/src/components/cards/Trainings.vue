@@ -1,5 +1,5 @@
 <template>
-    <div class='card'>
+    <div class='card h-100'>
         <div class='card-header'>
             <IconGripVertical
                 v-if='dragHandle'
@@ -44,80 +44,82 @@
             />
         </template>
         <template v-else>
-            <table class='table card-table table-hover table-vcenter'>
-                <TableHeader
-                    v-model:sort='paging.sort'
-                    v-model:order='paging.order'
-                    v-model:header='header'
-                    :export='false'
-                />
-                <tbody>
-                    <tr
-                        v-for='training in list.items'
-                        :key='training.id'
-                        class='cursor-pointer'
-                        @click='$router.push(`/training/${training.id}`)'
-                    >
-                        <template v-for='(h, h_it) in header'>
-                            <template v-if='h.display'>
-                                <td v-if='["updated", "created"].includes(h.name)'>
-                                    <TablerEpoch
-                                        v-if='training[h.name]'
-                                        :date='training[h.name]'
-                                    />
-                                    <span v-else>Never</span>
-                                </td>
-                                <td v-else-if='h.name === "dates"'>
-                                    <TablerEpochRange
-                                        :start='training.start_ts'
-                                        :end='training.end_ts'
-                                    />
-                                </td>
-                                <td v-else-if='h.name === "title"'>
-                                    <div class='d-flex align-items-center'>
-                                        <span
-                                            v-if='attendance'
-                                            class='me-3'
-                                        >
-                                            <IconUserCheck
-                                                v-if='training.users.includes(auth.id)'
-                                                v-tooltip='"Attended"'
-                                                size='32'
-                                                stroke='1'
-                                                color='green'
-                                            />
-                                            <IconUserOff
-                                                v-else
-                                                v-tooltip='"Did not attend"'
-                                                size='32'
-                                                stroke='1'
-                                            />
-                                        </span>
-
-                                        <span v-text='training.title' />
-                                        <div class='ms-auto btn-list h-25'>
-                                            <template v-for='team in training.teams'>
-                                                <TeamBadge
-                                                    :team='team'
-                                                    class='ms-auto'
-                                                />
-                                            </template>
+            <div class='overflow-auto'>
+                <table class='table card-table table-hover table-vcenter'>
+                    <TableHeader
+                        v-model:sort='paging.sort'
+                        v-model:order='paging.order'
+                        v-model:header='header'
+                        :export='false'
+                    />
+                    <tbody>
+                        <tr
+                            v-for='training in list.items'
+                            :key='training.id'
+                            class='cursor-pointer'
+                            @click='$router.push(`/training/${training.id}`)'
+                        >
+                            <template v-for='(h, h_it) in header'>
+                                <template v-if='h.display'>
+                                    <td v-if='["updated", "created"].includes(h.name)'>
+                                        <TablerEpoch
+                                            v-if='training[h.name]'
+                                            :date='training[h.name]'
+                                        />
+                                        <span v-else>Never</span>
+                                    </td>
+                                    <td v-else-if='h.name === "dates"'>
+                                        <TablerEpochRange
+                                            :start='training.start_ts'
+                                            :end='training.end_ts'
+                                        />
+                                    </td>
+                                    <td v-else-if='h.name === "title"'>
+                                        <div class='d-flex align-items-center'>
                                             <span
-                                                v-if='training.required'
-                                                class='ms-auto badge bg-red text-white'
-                                                style='height: 20px;'
-                                            >Required</span>
+                                                v-if='attendance'
+                                                class='me-3'
+                                            >
+                                                <IconUserCheck
+                                                    v-if='training.users.includes(auth.id)'
+                                                    v-tooltip='"Attended"'
+                                                    size='32'
+                                                    stroke='1'
+                                                    color='green'
+                                                />
+                                                <IconUserOff
+                                                    v-else
+                                                    v-tooltip='"Did not attend"'
+                                                    size='32'
+                                                    stroke='1'
+                                                />
+                                            </span>
+
+                                            <span v-text='training.title' />
+                                            <div class='ms-auto btn-list h-25'>
+                                                <template v-for='team in training.teams'>
+                                                    <TeamBadge
+                                                        :team='team'
+                                                        class='ms-auto'
+                                                    />
+                                                </template>
+                                                <span
+                                                    v-if='training.required'
+                                                    class='ms-auto badge bg-red text-white'
+                                                    style='height: 20px;'
+                                                >Required</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td v-else>
-                                    <span v-text='training[h.name]' />
-                                </td>
+                                    </td>
+                                    <td v-else>
+                                        <span v-text='training[h.name]' />
+                                    </td>
+                                </template>
                             </template>
-                        </template>
-                    </tr>
-                </tbody>
-            </table>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <TableFooter
                 v-if='footer'
                 :limit='paging.limit'
