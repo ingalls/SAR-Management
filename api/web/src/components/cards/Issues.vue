@@ -116,7 +116,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue'
 import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
@@ -133,159 +134,142 @@ import {
     IconPlus
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'IssueCard',
-    components: {
-        IconPlus,
-        IconGripVertical,
-        TablerEnum,
-        TablerNone,
-        TablerEpoch,
-        TablerInput,
-        TablerLoading,
-        NoAccess,
-        TableHeader,
-        TableFooter,
+const props = defineProps({
+    label: {
+        type: String,
+        default: 'Recent Issues'
     },
-    props: {
-        label: {
-            type: String,
-            default: 'Recent Issues'
-        },
-        search: {
-            type: Boolean,
-            default: false
-        },
-        dragHandle: {
-            type: Boolean,
-            default: false,
-        },
-        create: {
-            type: Boolean,
-            default: true,
-        },
-        limit: {
-            type: Number,
-            default: 10,
-        },
-        footer: {
-            type: Boolean,
-            default: true,
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        },
-        assigned: {
-            type: Number,
-            default: null
-        }
+    search: {
+        type: Boolean,
+        default: false
     },
-    data: function() {
-        return {
-            loading: true,
-            header: [],
-            paging: {
-                filter: '',
-                sort: 'id',
-                order: 'desc',
-                limit: this.limit,
-                status: 'open',
-                page: 0
-            },
-            list: {
-                total: 0,
-                items: []
-            }
-        }
+    dragHandle: {
+        type: Boolean,
+        default: false,
     },
-    watch: {
-        paging: {
-            deep: true,
-            handler: async function() {
-                await this.fetch();
-            }
-        }
+    create: {
+        type: Boolean,
+        default: true,
     },
-    mounted: async function() {
-        await this.listSchema();
-        if (this.is_iam("Issue:View")) {
-            await this.fetch();
-        }
+    limit: {
+        type: Number,
+        default: 10,
     },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        listSchema: async function() {
-            const schema = await window.std('/api/schema?method=GET&url=/issue');
-            this.header = ['title', 'status'].map((h) => {
-                return { name: h, display: true };
-            });
-
-            this.header.push(...schema.query.properties.sort.enum.map((h) => {
-                return {
-                    name: h,
-                    display: false
-                }
-            }).filter((h) => {
-                for (const hknown of this.header) {
-                    if (hknown.name === h.name) return false;
-                }
-                return true;
-            }));
-        },
-        fetch: async function() {
-            this.loading = true;
-            const url = window.stdurl('/api/issue');
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('order', this.paging.order);
-            url.searchParams.append('sort', this.paging.sort);
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('status', this.paging.status);
-            if (this.assigned) url.searchParams.append('assigned', this.assigned);
-            this.list = await window.std(url);
-            this.loading = false;
-        },
-        exportIssues: async function(format) {
-            const url = window.stdurl('/api/issue');
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('format', format);
-            url.searchParams.append('status', this.paging.status);
-            url.searchParams.append('order', this.paging.order);
-            url.searchParams.append('sort', this.paging.sort);
-
-            if (format === 'csv') {
-                const fields = [];
-                this.header.filter((h) => {
-                    return h.display;
-                }).forEach((h) => {
-                    if (h.name === 'name') {
-                        fields.push('fname', 'lname');
-                    } else {
-                        fields.push(h.name);
-                    }
-                });
-
-                for (const field of fields) {
-                    url.searchParams.append('fields', field)
-                }
-            }
-
-            const res = await window.std(url);
-            const blob = await res.blob()
-
-            const durl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = durl;
-            a.download = `sar-issues.${format}`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        },
+    footer: {
+        type: Boolean,
+        default: true,
+    },
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
+    },
+    assigned: {
+        type: Number,
+        default: null
     }
+})
+
+const loading = ref(true)
+const header = ref([])
+const paging = reactive({
+    filter: '',
+    sort: 'id',
+    order: 'desc',
+    limit: props.limit,
+    status: 'open',
+    page: 0
+})
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+const is_iam = (permission) => iam(props.iam, props.auth, permission)
+
+const listSchema = async () => {
+    const schema = await window.std('/api/schema?method=GET&url=/issue');
+    header.value = ['title', 'status'].map((h) => {
+        return { name: h, display: true };
+    });
+
+    header.value.push(...schema.query.properties.sort.enum.map((h) => {
+        return {
+            name: h,
+            display: false
+        }
+    }).filter((h) => {
+        for (const hknown of header.value) {
+            if (hknown.name === h.name) return false;
+        }
+        return true;
+    }));
 }
+
+const fetch = async () => {
+    loading.value = true;
+    const url = window.stdurl('/api/issue');
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('order', paging.order);
+    url.searchParams.append('sort', paging.sort);
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('status', paging.status);
+    if (props.assigned) url.searchParams.append('assigned', props.assigned);
+    const result = await window.std(url);
+    list.total = result.total;
+    list.items = result.items;
+    loading.value = false;
+}
+
+const exportIssues = async (format) => {
+    const url = window.stdurl('/api/issue');
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('format', format);
+    url.searchParams.append('status', paging.status);
+    url.searchParams.append('order', paging.order);
+    url.searchParams.append('sort', paging.sort);
+
+    if (format === 'csv') {
+        const fields = [];
+        header.value.filter((h) => {
+            return h.display;
+        }).forEach((h) => {
+            if (h.name === 'name') {
+                fields.push('fname', 'lname');
+            } else {
+                fields.push(h.name);
+            }
+        });
+
+        for (const field of fields) {
+            url.searchParams.append('fields', field)
+        }
+    }
+
+    const res = await window.std(url);
+    const blob = await res.blob()
+
+    const durl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = durl;
+    a.download = `sar-issues.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+watch(paging, async () => {
+    await fetch();
+}, { deep: true })
+
+onMounted(async () => {
+    await listSchema();
+    if (is_iam("Issue:View")) {
+        await fetch();
+    }
+})
 </script>
