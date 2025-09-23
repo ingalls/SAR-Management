@@ -98,7 +98,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive, watch, onMounted } from 'vue'
 import TableFooter from '../util/TableFooter.vue';
 import {
     IconPlus,
@@ -110,82 +111,70 @@ import {
 } from '@tak-ps/vue-tabler';
 import Avatar from '../util/Avatar.vue';
 
-export default {
-    name: 'EquipmentCard',
-    components: {
-        TablerNone,
-        Avatar,
-        IconPlus,
-        IconSearch,
-        TableFooter,
-        TablerLoading
+const props = defineProps({
+    label: {
+        type: String,
+        default: 'Equipment'
     },
-    props: {
-        label: {
-            type: String,
-            default: 'Equipment'
-        },
-        assigned: {
-            type: Number,
-            default: null
-        },
-        parent: {
-            type: [Number, null],
-            default: 0
-        },
-        search: {
-            type: Boolean,
-            default: true
-        },
-        create: {
-            type: Boolean,
-            default: false
-        },
-        footer: {
-            type: Boolean,
-            default: true
-        }
+    assigned: {
+        type: Number,
+        default: null
     },
-    data: function() {
-        return {
-            loading: {
-                list: true
-            },
-            paging: {
-                filter: '',
-                limit: 10,
-                page: 0
-            },
-            list: {
-                total: 0,
-                items: []
-            }
-        }
+    parent: {
+        type: [Number, null],
+        default: 0
     },
-    watch: {
-        'paging.page': async function() {
-            await this.fetch();
-        },
-        'paging.filter': async function() {
-            await this.fetch();
-        }
+    search: {
+        type: Boolean,
+        default: true
     },
-    mounted: async function() {
-        await this.fetch();
+    create: {
+        type: Boolean,
+        default: false
     },
-    methods: {
-        fetch: async function() {
-            this.loading.list = true;
-            const url = window.stdurl('/api/equipment');
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('filter', this.paging.filter);
-
-            if (typeof this.assigned === 'number') url.searchParams.append('assigned', this.assigned);
-            if (typeof this.parent === 'number') url.searchParams.append('parent', this.parent);
-            this.list = await window.std(url);
-            this.loading.list = false;
-        }
+    footer: {
+        type: Boolean,
+        default: true
     }
+})
+
+const loading = reactive({
+    list: true
+})
+const paging = reactive({
+    filter: '',
+    limit: 10,
+    page: 0
+})
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+const fetch = async () => {
+    loading.list = true;
+    const url = window.stdurl('/api/equipment');
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('filter', paging.filter);
+
+    if (typeof props.assigned === 'number') url.searchParams.append('assigned', props.assigned);
+    if (typeof props.parent === 'number') url.searchParams.append('parent', props.parent);
+    const result = await window.std(url);
+    list.total = result.total;
+    list.items = result.items;
+    loading.list = false;
 }
+
+watch(() => paging.page, async () => {
+    await fetch();
+})
+
+watch(() => paging.filter, async () => {
+    await fetch();
+})
+
+onMounted(async () => {
+    await fetch();
+})
 </script>
