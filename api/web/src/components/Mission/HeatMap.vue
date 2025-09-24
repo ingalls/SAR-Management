@@ -1,7 +1,9 @@
 <template>
     <div class='card col-12'>
         <div class='card-header'>
-            <h3 class='card-title'>Heat Map</h3>
+            <h3 class='card-title'>
+                Heat Map
+            </h3>
 
             <div class='ms-auto btn-list'>
                 <TablerIconButton
@@ -51,6 +53,11 @@ let map = null;
 
 export default {
     name: 'HeatMapCard',
+    components: {
+        TablerIconButton,
+        IconArrowsMaximize,
+        IconArrowsMinimize
+    },
     props: {
         missions: {
             type: Object,
@@ -101,11 +108,6 @@ export default {
         this.$nextTick(() => {
             this.mountMap();
         });
-    },
-    components: {
-        TablerIconButton,
-        IconArrowsMaximize,
-        IconArrowsMinimize
     },
     methods: {
         mountMap: function() {

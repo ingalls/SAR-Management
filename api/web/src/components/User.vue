@@ -117,7 +117,7 @@
                                                     </div>
                                                     <div
                                                         class='datagrid-content'
-                                                        v-text='user.bday ? user.bday.match(/\d{4}\-\d{2}\-\d{2}/)[0]  : "UNKNOWN"'
+                                                        v-text='user.bday ? user.bday.match(/\d{4}\-\d{2}\-\d{2}/)[0] : "UNKNOWN"'
                                                     />
                                                 </div>
                                                 <div class='datagrid-item'>

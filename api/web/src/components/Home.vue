@@ -6,20 +6,19 @@
             >
                 <div
                     ref='gridstack'
-                    class='d-flex'
+                    class='d-flex grid-stack'
                 >
-                    <template
+                    <div
                         v-for='card in cards'
-                        :key="card.id"
+                        :key='card.id'
+                        class='grid-stack-item'
+                        :gs-x='card.x'
+                        :gs-y='card.y'
+                        :gs-w='card.w'
+                        :gs-h='card.h'
+                        :gs-id='card.id'
                     >
-                        <div
-                            :class='`col-${card.w} mx-2 my-2`'
-                            :gs-x="card.x"
-                            :gs-y="card.y"
-                            :gs-w="card.w"
-                            :gs-h="card.h"
-                            :gs-id="card.id"
-                        >
+                        <div class='grid-stack-item-content'>
                             <template v-if='card.name === "Issues"'>
                                 <IssuesCard
                                     :limit='5'
@@ -54,7 +53,7 @@
                                 />
                             </template>
                         </div>
-                    </template>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,8 +68,6 @@ import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
 import { GridStack } from 'gridstack';
-
-import Draggable from 'vuedraggable';
 import moment from 'moment';
 
 const props = defineProps({

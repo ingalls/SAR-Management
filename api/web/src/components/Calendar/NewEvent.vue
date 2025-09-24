@@ -60,24 +60,24 @@
                 </div>
                 <div class='col-12'>
                     <TablerInput
-                        label='Title'
                         v-model='params.title'
+                        label='Title'
                         :required='true'
                     />
                 </div>
                 <div class='col-12 col-md-6'>
                     <TablerInput
+                        v-model='params.start'
                         label='Event Start'
                         type='datetime-local'
-                        v-model='params.start'
                         :required='true'
                     />
                 </div>
                 <div class='col-12 col-md-6'>
                     <TablerInput
+                        v-model='params.end'
                         label='Event End'
                         type='datetime-local'
-                        v-model='params.end'
                         :required='true'
                     />
                 </div>

@@ -51,7 +51,7 @@
                                         <img
                                             v-else-if='is_img'
                                             :src='preview'
-                                        />
+                                        >
                                         <embed
                                             v-else-if='is_pdf'
                                             :src='preview'
