@@ -161,9 +161,11 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import NoAccess from './util/NoAccess.vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 import {
     TablerLoading,
     TablerBreadCrumb
@@ -176,56 +178,49 @@ import EquipmentMeta from './util/EquipmentMeta.vue';
 import EquipmentProfile from './Equipment/Profile.vue';
 import Avatar from './util/Avatar.vue';
 
-export default {
-    name: 'Equipment',
-    components: {
-        NoAccess,
-        Avatar,
-        IconSettings,
-        CardEquipment,
-        TablerLoading,
-        EquipmentMeta,
-        EquipmentProfile,
-        TablerBreadCrumb
-    },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                equipment: true
-            },
-            type: {},
-            parent: {},
-            equipment: {},
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Equipment:View")) await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.equipment = true;
-            this.equipment = await window.std(`/api/equipment/${this.$route.params.equipid}`);
+const route = useRoute();
 
-            if (this.equipment.type_id) {
-                this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
-            }
-            if (this.equipment.parent) {
-                this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
-            }
-
-            this.loading.equipment = false;
-        },
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = reactive({
+    equipment: true
+})
+
+const type = reactive({})
+const parent = reactive({})
+const equipment = reactive({})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function fetch() {
+    loading.equipment = true;
+    const equipResult = await window.std(`/api/equipment/${route.params.equipid}`);
+    Object.assign(equipment, equipResult);
+
+    if (equipment.type_id) {
+        const typeResult = await window.std(`/api/equipment-type/${equipment.type_id}`);
+        Object.assign(type, typeResult);
+    }
+    if (equipment.parent) {
+        const parentResult = await window.std(`/api/equipment/${equipment.parent}`);
+        Object.assign(parent, parentResult);
+    }
+
+    loading.equipment = false;
+}
+
+onMounted(async () => {
+    if (is_iam("Equipment:View")) await fetch();
+})
 </script>

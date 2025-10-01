@@ -43,8 +43,10 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { reactive, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardMissions from './cards/Missions.vue';
 import TableHeader from './util/TableHeader.vue';
@@ -57,98 +59,90 @@ import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'Missions',
-    components: {
-        TablerNone,
-        NoAccess,
-        TablerEpochRange,
-        TableHeader,
-        HeatMap,
-        CardMissions,
-        TeamBadge,
-        TablerBreadCrumb
-    },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                initial: true,
-                list: true
-            },
-            header: [],
-            paging: {
-                filter: '',
-                assigned: null,
-                limit: 100,
-                sort: 'start_ts',
-                order: 'desc',
-                page: 0
-            },
-            list: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    watch: {
-        paging: {
-            deep: true,
-            handler: async function() {
-                this.$route.query = this.paging;
-                await this.listMissions();
-            },
-        }
-    },
-    mounted: async function() {
-        Object.assign(this.paging, this.$route.query);
+const route = useRoute();
 
-        await this.listMissionsSchema();
-        if (this.is_iam('Mission:View')) await this.listMissions();
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        listMissions: async function() {
-            this.loading.list = true;
-            const url = window.stdurl('/api/mission');
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('filter', this.paging.filter);
-            url.searchParams.append('order', this.paging.order);
-            url.searchParams.append('sort', this.paging.sort);
-            if (this.paging.assigned) url.searchParams.append('assigned', this.paging.assigned);
-            this.list = await window.std(url)
-            this.loading.list = false;
-            this.loading.initial = false;
-        },
-        listMissionsSchema: async function() {
-            const schema = await window.std('/api/schema?method=GET&url=/mission');
-            this.header = ['title', 'externalid', 'location', 'date'].map((h) => {
-                return { name: h, display: true };
-            });
-
-            this.header.push(...schema.query.properties.sort.enum.map((h) => {
-                return {
-                    name: h,
-                    display: false
-                }
-            }).filter((h) => {
-                for (const hknown of this.header) {
-                    if (hknown.name === h.name) return false;
-                }
-                return true;
-            }));
-        },
-
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = reactive({
+    initial: true,
+    list: true
+})
+
+const header = reactive([])
+
+const paging = reactive({
+    filter: '',
+    assigned: null,
+    limit: 100,
+    sort: 'start_ts',
+    order: 'desc',
+    page: 0
+})
+
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function listMissions() {
+    loading.list = true;
+    const url = window.stdurl('/api/mission');
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('order', paging.order);
+    url.searchParams.append('sort', paging.sort);
+    if (paging.assigned) url.searchParams.append('assigned', paging.assigned);
+    const result = await window.std(url)
+    list.total = result.total;
+    list.items = result.items;
+    loading.list = false;
+    loading.initial = false;
+}
+
+async function listMissionsSchema() {
+    const schema = await window.std('/api/schema?method=GET&url=/mission');
+    const baseHeaders = ['title', 'externalid', 'location', 'date'].map((h) => {
+        return { name: h, display: true };
+    });
+    
+    header.splice(0, header.length, ...baseHeaders);
+
+    header.push(...schema.query.properties.sort.enum.map((h) => {
+        return {
+            name: h,
+            display: false
+        }
+    }).filter((h) => {
+        for (const hknown of header) {
+            if (hknown.name === h.name) return false;
+        }
+        return true;
+    }));
+}
+
+watch(paging, async () => {
+    route.query = paging;
+    await listMissions();
+}, { deep: true })
+
+onMounted(async () => {
+    Object.assign(paging, route.query);
+
+    await listMissionsSchema();
+    if (is_iam('Mission:View')) await listMissions();
+})
 </script>
