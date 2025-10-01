@@ -67,105 +67,108 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
     TablerBreadCrumb,
     TablerLoading,
     TablerInput
 } from '@tak-ps/vue-tabler'
 import NoAccess from './util/NoAccess.vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 
-export default {
-    name: 'EquipmentTypeEdit',
-    components: {
-        NoAccess,
-        TablerBreadCrumb,
-        TablerInput,
-        TablerLoading
+const route = useRoute();
+const router = useRouter();
+
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                type: false,
-            },
-            errors: {
-                type: '',
-                schema: ''
-            },
-            type: {
-                type: '',
-                schema: ''
+    auth: {
+        type: Object,
+        required: true
+    }
+})
+
+const loading = reactive({
+    type: false,
+})
+
+const errors = reactive({
+    type: '',
+    schema: ''
+})
+
+const type = reactive({
+    type: '',
+    schema: ''
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
+}
+
+async function fetch() {
+    loading.type = true;
+    const result = await window.std(`/api/equipment-type/${route.params.typeid}`);
+    result.schema = JSON.stringify(result.schema, null, 4);
+    Object.assign(type, result);
+    loading.type = false;
+}
+
+async function save() {
+    for (const field of ['type', 'schema']) {
+        if (!type[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = false;
+    }
+
+    try {
+        JSON.parse(type.schema);
+        errors.schema = '';
+    } catch (err) {
+        errors.schema = `Invalid JSON: ${err.message}`;
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    loading.type = true;
+
+    if (route.params.typeid) {
+        await window.std(`/api/equipment-type/${route.params.typeid}`, {
+            method: 'PATCH',
+            body: {
+                type: type.type,
+                schema: JSON.parse(type.schema)
             }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Equipment:Manage") && this.$route.params.typeid) {
-            await this.fetch();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.type = true;
-            const type = await window.std(`/api/equipment-type/${this.$route.params.typeid}`);
-            type.schema = JSON.stringify(type.schema, null, 4);
-            this.type = type;
-            this.loading.type = false;
-        },
-        save: async function() {
-            for (const field of ['type', 'schema']) {
-                if (!this.type[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
+        })
+
+        loading.type = false;
+        router.push(`/equipment/type/${route.params.typeid}`);
+    } else {
+        const result = await window.std('/api/equipment-type', {
+            method: 'POST',
+            body: {
+                type: type.type,
+                schema: JSON.parse(type.schema)
             }
+        })
 
-            try {
-                JSON.parse(this.type.schema);
-                this.errors.schema = '';
-            } catch (err) {
-                this.errors.schema = `Invalid JSON: ${err.message}`;
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            this.loading.type = true;
-
-            if (this.$route.params.typeid) {
-                await window.std(`/api/equipment-type/${this.$route.params.typeid}`, {
-                    method: 'PATCH',
-                    body: {
-                        type: this.type.type,
-                        schema: JSON.parse(this.type.schema)
-                    }
-                })
-
-                this.loading.type = false;
-                this.$router.push(`/equipment/type/${this.$route.params.typeid}`);
-            } else {
-                const type = await window.std('/api/equipment-type', {
-                    method: 'POST',
-                    body: {
-                        type: this.type.type,
-                        schema: JSON.parse(this.type.schema)
-                    }
-                })
-
-                this.loading.type = false;
-                this.$router.push(`/equipment/type/${type.id}`);
-            }
-        }
+        loading.type = false;
+        router.push(`/equipment/type/${result.id}`);
     }
 }
+
+onMounted(async () => {
+    if (is_iam("Equipment:Manage") && route.params.typeid) {
+        await fetch();
+    }
+})
+
+defineExpose({
+    save
+})
 </script>
