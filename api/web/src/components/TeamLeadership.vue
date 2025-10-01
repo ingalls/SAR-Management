@@ -163,8 +163,9 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { reactive, onMounted } from 'vue';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import TableFooter from './util/TableFooter.vue';
 import UserDropdown from './util/UserDropdown.vue';
@@ -182,100 +183,89 @@ import {
     TablerInput
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'TeamLeadership',
-    components: {
-        TablerNone,
-        Avatar,
-        IconPlus,
-        IconTrash,
-        IconPencil,
-        IconCheck,
-        TablerLoading,
-        TablerInput,
-        UserDropdown,
-        TableFooter,
-        TablerBreadCrumb,
-        NoAccess
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                list: true
-            },
-            paging: {
-                limit: 25,
-                page: 0
-            },
-            list: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Team:Admin")) await this.listLeaders();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        push: function() {
-            this.list.items.splice(0, 0, {
-                _edit: true,
-                _loading: false,
-                uid: null,
-                name: '',
-                position: ''
-            });
-            this.list.total++;
-        },
-        selected: function(leader, user) {
-            leader.name = user.fname + ' ' + user.lname;
-            leader.uid = user.id;
-        },
-        removeLeader: async function(leader, it) {
-            leader._loading = true;
-            await window.std(`/api/leadership/${leader.id}`, {
-                method: 'DELETE',
-            });
-            leader._loading = false;
-
-            this.list.items.splice(it, 1);
-            this.list.total--;
-        },
-        saveLeader: async function(leader) {
-            leader._loading = true;
-
-            if (leader.id) {
-                await window.std(`/api/leadership/${leader.id}`, {
-                    method: 'PATCH',
-                    body: leader
-                });
-            } else {
-                await window.std('/api/leadership', {
-                    method: 'POST',
-                    body: leader
-                });
-            }
-
-            leader._loading = false;
-
-            leader._edit = false;
-        },
-        listLeaders: async function() {
-            this.loading.list = true;
-            this.list = await window.std('/api/leadership');
-            this.loading.list = false;
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = reactive({
+    list: true
+});
+const paging = reactive({
+    limit: 25,
+    page: 0
+});
+const list = reactive({
+    total: 0,
+    items: []
+});
+
+onMounted(async () => {
+    if (is_iam("Team:Admin")) await listLeaders();
+});
+
+function is_iam(permission) {
+    return iamHelper(props.iam, props.auth, permission);
+}
+
+function push() {
+    list.items.splice(0, 0, {
+        _edit: true,
+        _loading: false,
+        uid: null,
+        name: '',
+        position: ''
+    });
+    list.total++;
+}
+
+function selected(leader, user) {
+    leader.name = user.fname + ' ' + user.lname;
+    leader.uid = user.id;
+}
+
+async function removeLeader(leader, it) {
+    leader._loading = true;
+    await window.std(`/api/leadership/${leader.id}`, {
+        method: 'DELETE',
+    });
+    leader._loading = false;
+
+    list.items.splice(it, 1);
+    list.total--;
+}
+
+async function saveLeader(leader) {
+    leader._loading = true;
+
+    if (leader.id) {
+        await window.std(`/api/leadership/${leader.id}`, {
+            method: 'PATCH',
+            body: leader
+        });
+    } else {
+        await window.std('/api/leadership', {
+            method: 'POST',
+            body: leader
+        });
+    }
+
+    leader._loading = false;
+
+    leader._edit = false;
+}
+
+async function listLeaders() {
+    loading.list = true;
+    const result = await window.std('/api/leadership');
+    list.total = result.total;
+    list.items = result.items;
+    loading.list = false;
 }
 </script>

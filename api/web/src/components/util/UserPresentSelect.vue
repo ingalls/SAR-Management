@@ -117,7 +117,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue';
 import {
     IconPlus,
     IconTrash,
@@ -133,116 +134,105 @@ import {
 import Avatar from './Avatar.vue';
 import Draggable from 'vuedraggable';
 
-export default {
-    name: 'UserPresenceSelect',
-    components: {
-        TablerNone,
-        Avatar,
-        IconPlus,
-        IconTrash,
-        IconCheck,
-        TablerInput,
-        TablerSelect,
-        TablerLoading,
-        TablerDropdown,
-        Draggable,
+const props = defineProps({
+    modelValue: {
+        type: Array,
+        required: true
     },
-    props: {
-        modelValue: {
-            type: Array,
-            required: true
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-        label: {
-            type: String,
-            default: 'Mission Roster'
-        },
-        confirmed: {
-            type: Boolean,
-            default: false
-        },
-        loading: {
-            type: Boolean
-        },
-        limit: {
-            type: Number,
-            default: 10
-        },
+    disabled: {
+        type: Boolean,
+        default: false
     },
-    emits: [
-        'patch',
-        'delete',
-        'push',
-        'update:modelValue'
-    ],
-    data: function() {
-        return {
-            filter: '',
-            list: {
-                total: 0,
-                items: []
-            },
-            assigned: [],
-            roles: []
-        }
+    label: {
+        type: String,
+        default: 'Mission Roster'
     },
-    watch: {
-        modelValue: function() {
-            this.assigned = this.modelValue;
-        },
-        filter: async function() {
-            await this.listUsers();
-        },
-        assigned: function() {
-            this.$emit('update:modelValue', this.assigned);
-        }
+    confirmed: {
+        type: Boolean,
+        default: false
     },
-    mounted: async function() {
-        this.assigned = this.modelValue;
-        await this.listUsers();
-        await this.listRoles();
+    loading: {
+        type: Boolean
     },
-    methods: {
-        push_assigned: async function(user) {
-            if (this.confirmed) user.confirmed = true;
-            user.role = 'Present';
-            this.assigned.push(user);
-            this.$emit('push', user);
-            this.filter = '';
-        },
-        delete_assigned: async function(user) {
-            this.assigned.splice(this.assigned.indexOf(user), 1);
-            this.$emit('delete', user);
-            await this.listUsers();
-        },
-        confirm_assigned: async function(user) {
-            user.confirmed = true;
-            this.$emit('patch', user);
-        },
-        saveRole: async function(role) {
-            this.$emit('patch', role);
-        },
-        listRoles: async function() {
-            const url = window.stdurl('/api/mission-role');
-            const list = await window.std(url);
-            this.roles = list.items.map((role) => {
-                return role.name;
-            });
-        },
-        listUsers: async function() {
-            const url = window.stdurl('/api/user');
-            url.searchParams.append('filter', this.filter);
-            url.searchParams.append('limit', this.limit + this.assigned.length);
-            const list = await window.std(url);
+    limit: {
+        type: Number,
+        default: 10
+    },
+})
 
-            const ids = this.assigned.map((a) => a.uid);
-            this.list.items = list.items.filter((user) => {
-                return !ids.includes(user.id);
-            }).splice(0, this.limit);
-        }
-    }
+const emit = defineEmits([
+    'patch',
+    'delete',
+    'push',
+    'update:modelValue'
+]);
+
+const filter = ref('');
+const list = reactive({
+    total: 0,
+    items: []
+});
+const assigned = ref([]);
+const roles = ref([]);
+
+watch(() => props.modelValue, () => {
+    assigned.value = props.modelValue;
+});
+
+watch(filter, async () => {
+    await listUsers();
+});
+
+watch(assigned, () => {
+    emit('update:modelValue', assigned.value);
+}, { deep: true });
+
+onMounted(async () => {
+    assigned.value = props.modelValue;
+    await listUsers();
+    await listRoles();
+});
+
+async function push_assigned(user) {
+    if (props.confirmed) user.confirmed = true;
+    user.role = 'Present';
+    assigned.value.push(user);
+    emit('push', user);
+    filter.value = '';
+}
+
+async function delete_assigned(user) {
+    assigned.value.splice(assigned.value.indexOf(user), 1);
+    emit('delete', user);
+    await listUsers();
+}
+
+async function confirm_assigned(user) {
+    user.confirmed = true;
+    emit('patch', user);
+}
+
+async function saveRole(role) {
+    emit('patch', role);
+}
+
+async function listRoles() {
+    const url = window.stdurl('/api/mission-role');
+    const result = await window.std(url);
+    roles.value = result.items.map((role) => {
+        return role.name;
+    });
+}
+
+async function listUsers() {
+    const url = window.stdurl('/api/user');
+    url.searchParams.append('filter', filter.value);
+    url.searchParams.append('limit', props.limit + assigned.value.length);
+    const result = await window.std(url);
+
+    const ids = assigned.value.map((a) => a.uid);
+    list.items = result.items.filter((user) => {
+        return !ids.includes(user.id);
+    }).splice(0, props.limit);
 }
 </script>

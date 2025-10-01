@@ -70,7 +70,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import {
     TablerMarkdown,
     TablerLoading
@@ -101,40 +102,28 @@ moment.updateLocale('en', {
     }
 });
 
-export default {
-    name: 'Comment',
-    components: {
-        Avatar,
-        MdEditor,
-        TablerMarkdown,
-        TablerLoading
+const props = defineProps({
+    canEdit: {
+        type: Boolean,
+        default: false
     },
-    props: {
-        canEdit: {
-            type: Boolean,
-            default: false
-        },
-        comment: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: false,
-            edit: false
-        }
-    },
-    computed: {
-        fromNow: function() {
-            return moment(this.comment.created).fromNow();
-        }
-    },
-    methods: {
-        updateComment: function() {
-            this.loading = true;
-            this.$emit('update', this.comment);
-        }
+    comment: {
+        type: Object,
+        required: true
     }
+})
+
+const emit = defineEmits(['delete', 'update']);
+
+const loading = ref(false);
+const edit = ref(false);
+
+const fromNow = computed(() => {
+    return moment(props.comment.created).fromNow();
+});
+
+function updateComment() {
+    loading.value = true;
+    emit('update', props.comment);
 }
 </script>
