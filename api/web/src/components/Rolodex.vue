@@ -28,27 +28,20 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import CardRolodex from './cards/Rolodex.vue';
 import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'Rolodex',
-    components: {
-        CardRolodex,
-        TablerBreadCrumb
+defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
+    auth: {
+        type: Object,
+        required: true
     }
-}
+})
 </script>

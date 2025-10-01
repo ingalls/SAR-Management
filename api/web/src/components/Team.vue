@@ -82,57 +82,56 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import NoAccess from './util/NoAccess.vue';
 import TeamBadge from './util/TeamBadge.vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 import CardUsers from './cards/Users.vue';
 import {
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'Team',
-    components: {
-        NoAccess,
-        TeamBadge,
-        TablerBreadCrumb,
-        TablerLoading,
-        CardUsers
+const route = useRoute();
+
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                team: true
-            },
-            team: {
-                id: null,
-                name: '',
-                body: ''
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Team:View")) await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.team = true;
-            this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
-            this.loading.team = false;
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = reactive({
+    team: true
+})
+
+const team = reactive({
+    id: null,
+    name: '',
+    body: ''
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function fetch() {
+    loading.team = true;
+    const result = await window.std(`/api/team/${route.params.teamid}`);
+    team.id = result.id;
+    team.name = result.name;
+    team.body = result.body;
+    team.fieldable = result.fieldable;
+    loading.team = false;
+}
+
+onMounted(async () => {
+    if (is_iam("Team:View")) await fetch();
+})
 </script>

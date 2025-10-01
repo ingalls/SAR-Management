@@ -54,9 +54,11 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import NoAccess from './util/NoAccess.vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 import {
     TablerBreadCrumb,
     TablerLoading
@@ -65,42 +67,37 @@ import {
     IconSettings
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'Equipment',
-    components: {
-        NoAccess,
-        TablerBreadCrumb,
-        TablerLoading,
-        IconSettings
+const route = useRoute();
+
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                type: true
-            },
-            type: {},
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Equipment:View")) await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.type = true;
-            this.type = await window.std(`/api/equipment-type/${this.$route.params.typeid}`);
-            this.loading.type = false;
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = reactive({
+    type: true
+})
+
+const type = reactive({})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function fetch() {
+    loading.type = true;
+    const result = await window.std(`/api/equipment-type/${route.params.typeid}`);
+    Object.assign(type, result);
+    loading.type = false;
+}
+
+onMounted(async () => {
+    if (is_iam("Equipment:View")) await fetch();
+})
 </script>

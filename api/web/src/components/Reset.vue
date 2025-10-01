@@ -98,7 +98,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -107,46 +109,35 @@ import {
     IconAlertCircle
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'Reset',
-    components: {
-        IconCheck,
-        TablerLoading,
-        IconAlertCircle
-    },
-    data: function() {
-        return {
-            err: false,
-            loading: false,
-            success: false,
-            token: this.$route.query.token,
-            password: ''
-        }
-    },
-    methods: {
-        reset: async function() {
-            if (!this.token.length) return;
-            if (!this.password.length) return;
+const route = useRoute();
 
-            this.loading = true;
+const err = ref(false);
+const loading = ref(false);
+const success = ref(false);
+const token = ref(route.query.token);
+const password = ref('');
 
-            try {
-                await window.std('/api/login/reset', {
-                    method: 'POST',
-                    body: {
-                        token: this.token,
-                        password: this.password
-                    }
-                }, false);
+async function reset() {
+    if (!token.value.length) return;
+    if (!password.value.length) return;
 
-                this.success = true;
-            } catch (err) {
-                console.error('HERE');
-                this.err = err;
+    loading.value = true;
+
+    try {
+        await window.std('/api/login/reset', {
+            method: 'POST',
+            body: {
+                token: token.value,
+                password: password.value
             }
+        }, false);
 
-            this.loading = false
-        }
+        success.value = true;
+    } catch (error) {
+        console.error('HERE');
+        err.value = error;
     }
+
+    loading.value = false
 }
 </script>
