@@ -32,7 +32,7 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import CardRoles from './Admin/Roles.vue';
 import CardTags from './Admin/Tags.vue';
 import ServerConfig from './Admin/ServerConfig.vue';
@@ -40,23 +40,14 @@ import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'Admin',
-    components: {
-        CardRoles,
-        CardTags,
-        TablerBreadCrumb,
-        ServerConfig,
+defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
+    auth: {
+        type: Object,
+        required: true
     }
-}
+})
 </script>

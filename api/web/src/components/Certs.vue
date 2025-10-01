@@ -33,38 +33,32 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import iamHelper from '../iam.js';
 import CardCerts from './cards/Certs.vue';
 import NoAccess from './util/NoAccess.vue';
 import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler'
 
-export default {
-    name: 'User',
-    components: {
-        CardCerts,
-        TablerBreadCrumb,
-        NoAccess
+const route = useRoute();
+
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            userid: this.$route.name === 'profile' ? this.auth.id : parseInt(this.$route.params.userid),
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const userid = ref(route.name === 'profile' ? props.auth.id : parseInt(route.params.userid))
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
 </script>

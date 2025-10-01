@@ -43,33 +43,26 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import CardUsers from './cards/Users.vue';
 import NoAccess from './util/NoAccess.vue';
 import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 
-export default {
-    name: 'Users',
-    components: {
-        CardUsers,
-        NoAccess,
-        TablerBreadCrumb
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
 </script>

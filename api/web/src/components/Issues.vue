@@ -31,27 +31,20 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import CardIssues from './cards/Issues.vue';
 import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'Issues',
-    components: {
-        TablerBreadCrumb,
-        CardIssues,
+defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
+    auth: {
+        type: Object,
+        required: true
     }
-}
+})
 </script>
