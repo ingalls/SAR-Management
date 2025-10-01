@@ -19,7 +19,6 @@
                         :gs-id='card.id'
                     >
                         <div class='grid-stack-item-content'>
-                            HERE
                             <template v-if='card.name === "Issues"'>
                                 <IssuesCard
                                     :limit='5'
