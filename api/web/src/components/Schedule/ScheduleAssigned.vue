@@ -88,101 +88,82 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Avatar from '../util/Avatar.vue';
 import {
     IconSettings,
 } from '@tabler/icons-vue'
-import UserDropdownIcon from '../util/UserDropdownIcon.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
-    TablerEpoch,
     TablerLoading,
     TablerDelete
 } from '@tak-ps/vue-tabler'
-import UserProfile from '../User/Profile.vue';
 
-export default {
-    name: 'CardScheduleAssigned',
-    components: {
-        IconSettings,
-        TablerNone,
-        TablerEpoch,
-        Avatar,
-        UserDropdownIcon,
-        UserProfile,
-        TablerLoading,
-        TableFooter,
-        TableHeader,
-        TablerDelete
-    },
-    data: function() {
+const route = useRoute();
+
+const edit = ref(false);
+const loading = reactive({
+    list: true,
+});
+const header = ref([]);
+const paging = reactive({
+    filter: '',
+    sort: 'id',
+    order: 'asc',
+    limit: 10,
+    page: 0
+});
+const list = reactive({
+    total: 0,
+    items: []
+});
+
+watch(paging, async () => {
+    await listAssigned();
+}, { deep: true });
+
+const listAssignedSchema = async () => {
+    const schema = await window.std('/api/schema?method=GET&url=/schedule/:scheduleid/assigned');
+    header.value = ['name'].map((h) => {
+        return { name: h, display: true };
+    });
+
+    header.value.push(...schema.query.properties.sort.enum.map((h) => {
         return {
-            edit: false,
-            loading: {
-                list: true,
-            },
-            header: [],
-            paging: {
-                filter: '',
-                sort: 'id',
-                order: 'asc',
-                limit: 10,
-                page: 0
-            },
-            list: {
-                total: 0,
-                items: []
-            },
+            name: h,
+            display: false
         }
-    },
-    watch: {
-        paging: {
-            deep: true,
-            handler: async function() {
-                await this.listUsers();
-            }
+    }).filter((h) => {
+        for (const hknown of header.value) {
+            if (hknown.name === h.name) return false;
         }
-    },
-    mounted: async function() {
-        await this.listAssignedSchema();
-        await this.listAssigned();
-    },
-    methods: {
-        listAssignedSchema: async function() {
-            const schema = await window.std('/api/schema?method=GET&url=/schedule/:scheduleid/assigned');
-            this.header = ['name'].map((h) => {
-                return { name: h, display: true };
-            });
+        return true;
+    }));
+};
 
-            this.header.push(...schema.query.properties.sort.enum.map((h) => {
-                return {
-                    name: h,
-                    display: false
-                }
-            }).filter((h) => {
-                for (const hknown of this.header) {
-                    if (hknown.name === h.name) return false;
-                }
-                return true;
-            }));
-        },
-        listAssigned: async function() {
-            this.loading.list = true;
-            const url = window.stdurl(`/api/schedule/${this.$route.params.scheduleid}/assigned`);
-            url.searchParams.append('limit', this.paging.limit);
-            url.searchParams.append('page', this.paging.page);
-            url.searchParams.append('filter', this.paging.filter);
+const listAssigned = async () => {
+    loading.list = true;
+    const url = window.stdurl(`/api/schedule/${route.params.scheduleid}/assigned`);
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('filter', paging.filter);
 
-            if (this.paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
-            else url.searchParams.append('sort', this.paging.sort.toLowerCase().replace(' ', '_'));
-            url.searchParams.append('order', this.paging.order);
+    if (paging.sort.toLowerCase() === 'name') url.searchParams.append('sort', 'fname');
+    else url.searchParams.append('sort', paging.sort.toLowerCase().replace(' ', '_'));
+    url.searchParams.append('order', paging.order);
 
-            this.list = await window.std(url);
-            this.loading.list = false;
-        },
-    }
-}
+    const result = await window.std(url);
+    list.total = result.total;
+    list.items = result.items;
+    loading.list = false;
+};
+
+onMounted(async () => {
+    await listAssignedSchema();
+    await listAssigned();
+});
 </script>

@@ -43,37 +43,28 @@
     </div>
 </template>
 
-<script>
-import {
-    TablerInput
-} from '@tak-ps/vue-tabler'
+<script setup>
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
-export default {
-    name: 'CreateComment',
-    components: {
-        MdEditor,
-        TablerInput
-    },
-    data: function() {
-        return {
-            body: '',
-        }
-    },
-    methods: {
-        create: async function(close) {
-            await window.std(`/api/issue/${this.$route.params.issueid}/comment`, {
-                method: 'POST',
-                body: {
-                    body: this.body
-                }
-            });
+const route = useRoute();
 
-            this.body = '';
-            this.$emit('comment');
-            if (close) this.$emit('close');
+const emit = defineEmits(['comment', 'close']);
+
+const body = ref('');
+
+const create = async (close) => {
+    await window.std(`/api/issue/${route.params.issueid}/comment`, {
+        method: 'POST',
+        body: {
+            body: body.value
         }
-    }
-}
+    });
+
+    body.value = '';
+    emit('comment');
+    if (close) emit('close');
+};
 </script>

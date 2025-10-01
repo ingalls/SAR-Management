@@ -71,119 +71,110 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import {
     TablerDelete,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
     IconEyeOff,
-    IconArrowBadgeLeft,
-    IconArrowBadgeRight,
     IconDownload
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'File',
-    components: {
-        TablerDelete,
-        IconEyeOff,
-        IconArrowBadgeLeft,
-        IconArrowBadgeRight,
-        IconDownload,
-        TablerLoading
+const props = defineProps({
+    prefix: {
+        type: String,
+        required: true
     },
-    props: {
-        prefix: {
-            type: String,
-            required: true
-        },
-        manage: {
-            type: Boolean,
-            default: false
-        },
-        file: {
-            type: String,
-            required: true
-        }
+    manage: {
+        type: Boolean,
+        default: false
     },
-    data: function() {
-        return {
-            loading: {
-                main: false,
-                generate: false,
-                preview: true
-            },
-            preview: null,
-        }
-    },
-    computed: {
-        is_img: function() {
-            for (const format of ['.jpg', '.jpeg', 'png', '.webp']) {
-                if (this.file.endsWith(format)) return true;
-            }
-            return false;
-        },
-        is_pdf: function() {
-            return this.file.endsWith('.pdf')
-        }
-    },
-    mounted: async function() {
-        await this.loadPreview();
-    },
-    methods: {
-        loadPreview: async function() {
-            this.loading.preview = true;
-            const url = window.stdurl('/api/doc');
-            url.searchParams.append('prefix', this.prefix + this.file + '/');
-            const res = await window.std(url)
+    file: {
+        type: String,
+        required: true
+    }
+});
 
-            for (const doc of res.items) {
-                if (doc.key === 'preview.pdf') {
-                    const url = window.stdurl('/api/doc/download');
-                    url.searchParams.append('prefix', this.prefix + this.file);
-                    url.searchParams.append('file', 'preview.pdf');
-                    url.searchParams.append('download', 'false');
-                    url.searchParams.append('token', localStorage.token);
-                    this.preview = String(url);
-                    break;
-                }
-            }
+const emit = defineEmits(['delete']);
 
-            this.loading.preview = false;
-        },
-        url: function(download = true) {
+const loading = ref({
+    main: false,
+    generate: false,
+    preview: true
+});
+const preview = ref(null);
+
+const is_img = computed(() => {
+    for (const format of ['.jpg', '.jpeg', 'png', '.webp']) {
+        if (props.file.endsWith(format)) return true;
+    }
+    return false;
+});
+
+const is_pdf = computed(() => {
+    return props.file.endsWith('.pdf')
+});
+
+const loadPreview = async () => {
+    loading.value.preview = true;
+    const url = window.stdurl('/api/doc');
+    url.searchParams.append('prefix', props.prefix + props.file + '/');
+    const res = await window.std(url)
+
+    for (const doc of res.items) {
+        if (doc.key === 'preview.pdf') {
             const url = window.stdurl('/api/doc/download');
-            url.searchParams.append('prefix', this.prefix);
-            url.searchParams.append('file', this.file);
-            url.searchParams.append('download', download);
+            url.searchParams.append('prefix', props.prefix + props.file);
+            url.searchParams.append('file', 'preview.pdf');
+            url.searchParams.append('download', 'false');
             url.searchParams.append('token', localStorage.token);
-            return String(url);
-        },
-        download: function() {
-            window.open(this.url(true), '_blank');
-        },
-        generate: async function() {
-            this.loading.generate = true;
-            const url = window.stdurl('/api/doc/convert');
-            url.searchParams.append('prefix', this.prefix);
-            url.searchParams.append('file', this.file);
-            await window.std(url);
-            this.loading.generate = false;
-
-            await this.loadPreview();
-        },
-        deleteFile: async function() {
-            this.loading.main = true;
-            const url = window.stdurl('/api/doc');
-            url.searchParams.append('file', this.prefix + this.file);
-            await window.std(url, {
-                method: 'DELETE'
-            });
-
-            this.loading.main = false;
-            this.$emit('delete');
+            preview.value = String(url);
+            break;
         }
     }
-}
+
+    loading.value.preview = false;
+};
+
+const url = (download = true) => {
+    const url = window.stdurl('/api/doc/download');
+    url.searchParams.append('prefix', props.prefix);
+    url.searchParams.append('file', props.file);
+    url.searchParams.append('download', download);
+    url.searchParams.append('token', localStorage.token);
+    return String(url);
+};
+
+const download = () => {
+    window.open(url(true), '_blank');
+};
+
+const generate = async () => {
+    loading.value.generate = true;
+    const url = window.stdurl('/api/doc/convert');
+    url.searchParams.append('prefix', props.prefix);
+    url.searchParams.append('file', props.file);
+    await window.std(url);
+    loading.value.generate = false;
+
+    await loadPreview();
+};
+
+const deleteFile = async () => {
+    loading.value.main = true;
+    const url = window.stdurl('/api/doc');
+    url.searchParams.append('file', props.prefix + props.file);
+    await window.std(url, {
+        method: 'DELETE'
+    });
+
+    loading.value.main = false;
+    emit('delete');
+};
+
+onMounted(async () => {
+    await loadPreview();
+});
 </script>
