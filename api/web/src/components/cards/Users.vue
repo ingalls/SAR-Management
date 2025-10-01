@@ -23,9 +23,14 @@
                             </button>
 
                             <template #dropdown>
-                                <div @click.stop='' class='card'>
+                                <div
+                                    class='card'
+                                    @click.stop=''
+                                >
                                     <div class='card-header'>
-                                        <div class='card-title'>Filter Options</div>
+                                        <div class='card-title'>
+                                            Filter Options
+                                        </div>
                                     </div>
                                     <div class='card-body row g-2'>
                                         <div class='col-12'>
@@ -36,9 +41,9 @@
                                         </div>
                                         <div class='col-12'>
                                             <TeamSelect
+                                                v-model='paging.teams'
                                                 label='Teams'
                                                 :autoclose='false'
-                                                v-model='paging.teams'
                                             />
                                         </div>
                                     </div>

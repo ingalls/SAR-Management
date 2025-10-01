@@ -34,7 +34,7 @@
                                         label='Users'
                                         :create='false'
                                     />
-                                    <template v-else >
+                                    <template v-else>
                                         <div
                                             v-for='user in list.items'
                                             :key='user.id'

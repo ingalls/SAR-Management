@@ -24,14 +24,23 @@
                         <div class='col-lg-12'>
                             <div class='card'>
                                 <div class='card-header'>
-                                    <h3 v-if='$route.name === "rolodex-new"' class='card-title'>New Rolodex Item</h3>
-                                    <h3 v-else class='card-title' v-text='rolodex.name'/>
+                                    <h3
+                                        v-if='$route.name === "rolodex-new"'
+                                        class='card-title'
+                                    >
+                                        New Rolodex Item
+                                    </h3>
+                                    <h3
+                                        v-else
+                                        class='card-title'
+                                        v-text='rolodex.name'
+                                    />
 
                                     <div class='ms-auto btn-list'>
                                         <TablerIconButton
                                             v-if='$route.params.rolodexid && is_iam("Rolodex:Manage")'
                                             :icon='IconPencil'
-                                            :title="'Edit ' + rolodex.name"
+                                            :title='&apos;Edit &apos; + rolodex.name'
                                             @click='$router.push(`/rolodex/${rolodex.id}/edit`)'
                                         >
                                             <IconPencil
@@ -41,7 +50,10 @@
                                         </TablerIconButton>
                                     </div>
                                 </div>
-                                <div v-if='$route.name === "rolodex-edit" || $route.name === "rolodex-new"' class='card-body'>
+                                <div
+                                    v-if='$route.name === "rolodex-edit" || $route.name === "rolodex-new"'
+                                    class='card-body'
+                                >
                                     <div class='row row-cards'>
                                         <div class='col-md-12'>
                                             <TablerInput
@@ -79,7 +91,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else class='card-body'>
+                                <div
+                                    v-else
+                                    class='card-body'
+                                >
                                     <div class='datagrid'>
                                         <div class='datagrid-item'>
                                             <div class='datagrid-title'>
@@ -121,7 +136,10 @@
                                     </div>
                                 </div>
 
-                                <div v-if='$route.name === "rolodex-edit" || $route.name === "rolodex-new"' class='col-12 py-1 pb-4 px-4'>
+                                <div
+                                    v-if='$route.name === "rolodex-edit" || $route.name === "rolodex-new"'
+                                    class='col-12 py-1 pb-4 px-4'
+                                >
                                     <div class='d-flex'>
                                         <a
                                             v-if='$route.params.scheduleid && is_iam("Rolodex:Admin")'
