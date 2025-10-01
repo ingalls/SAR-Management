@@ -70,7 +70,8 @@
     </TablerModal>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import {
     IconAlphabetLatin,
     IconDecimal,
@@ -83,27 +84,14 @@ import {
     TablerToggle
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'BuilderEdit',
-    components: {
-        IconAlphabetLatin,
-        IconDecimal,
-        IconSort09,
-        IconBinary,
-        TablerModal,
-        TablerInput,
-        TablerToggle
-    },
-    props: {
-        prop: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            edit: JSON.parse(JSON.stringify(this.prop))
-        }
+const props = defineProps({
+    prop: {
+        type: Object,
+        required: true
     }
-}
+});
+
+const emit = defineEmits(['close', 'done']);
+
+const edit = ref(JSON.parse(JSON.stringify(props.prop)));
 </script>
