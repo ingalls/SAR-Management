@@ -88,7 +88,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import {
     IconPlus,
     IconPencil,
@@ -102,68 +103,56 @@ import {
     TablerNone
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'AdminRoleCard',
-    components: {
-        TablerNone,
-        IconPlus,
-        IconPencil,
-        IconCheck,
-        IconTrash,
-        TablerEpoch,
-        TablerLoading,
-        TablerInput
-    },
-    data: function() {
-        return {
-            loading: true,
-            list: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    mounted: async function() {
-        await this.fetch();
-    },
-    methods: {
-        fetch: async function() {
-            this.loading = true;
-            this.list = await window.std('/api/mission-role');
-            this.loading = false;
-        },
-        saveRole: async function(role, roleit) {
-            if (role.id) {
-                const newrole = await window.std(`/api/mission-role/${role.id}`, {
-                    method: 'PATCH',
-                    body: role
-                });
-                this.list.items.splice(roleit, 1, newrole);
-            } else {
-                const newrole = await window.std('/api/mission-role', {
-                    method: 'POST',
-                    body: role
-                });
-                this.list.items.splice(roleit, 1, newrole);
-            }
-        },
-        deleteRole: async function(role, roleit) {
-            if (role.id) {
-                const newrole = await window.std(`/api/mission-role/${role.id}`, {
-                    method: 'DELETE',
-                });
-            }
+const loading = ref(true);
+const list = reactive({
+    total: 0,
+    items: []
+});
 
-            this.list.items.splice(roleit, 1);
-        },
-        push: function() {
-            this.list.items.splice(0, 0, {
-                _edit: true,
-                name: '',
-                updated: +new Date(),
-                created: +new Date()
-            });
-        }
+const fetch = async () => {
+    loading.value = true;
+    const result = await window.std('/api/mission-role');
+    list.total = result.total;
+    list.items = result.items;
+    loading.value = false;
+};
+
+const saveRole = async (role, roleit) => {
+    if (role.id) {
+        const newrole = await window.std(`/api/mission-role/${role.id}`, {
+            method: 'PATCH',
+            body: role
+        });
+        list.items.splice(roleit, 1, newrole);
+    } else {
+        const newrole = await window.std('/api/mission-role', {
+            method: 'POST',
+            body: role
+        });
+        list.items.splice(roleit, 1, newrole);
     }
-}
+};
+
+const deleteRole = async (role, roleit) => {
+    if (role.id) {
+        await window.std(`/api/mission-role/${role.id}`, {
+            method: 'DELETE',
+        });
+    }
+
+    list.items.splice(roleit, 1);
+};
+
+const push = () => {
+    list.items.splice(0, 0, {
+        _edit: true,
+        name: '',
+        updated: +new Date(),
+        created: +new Date()
+    });
+};
+
+onMounted(async () => {
+    await fetch();
+});
 </script>

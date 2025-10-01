@@ -88,7 +88,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import {
     IconPlus,
     IconPencil,
@@ -102,68 +103,56 @@ import {
     TablerNone
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'AdminRoleCard',
-    components: {
-        TablerNone,
-        IconPlus,
-        IconPencil,
-        IconCheck,
-        IconTrash,
-        TablerEpoch,
-        TablerLoading,
-        TablerInput
-    },
-    data: function() {
-        return {
-            loading: true,
-            list: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    mounted: async function() {
-        await this.fetch();
-    },
-    methods: {
-        fetch: async function() {
-            this.loading = true;
-            this.list = await window.std('/api/mission-tag');
-            this.loading = false;
-        },
-        saveTag: async function(tag, tagit) {
-            if (tag.id) {
-                const newtag = await window.std(`/api/mission-tag/${tag.id}`, {
-                    method: 'PATCH',
-                    body: tag 
-                });
-                this.list.items.splice(tagit, 1, newtag);
-            } else {
-                const newtag = await window.std('/api/mission-tag', {
-                    method: 'POST',
-                    body: tag
-                });
-                this.list.items.splice(tagit, 1, newtag);
-            }
-        },
-        deleteTag: async function(tag, tagit) {
-            if (tag.id) {
-                const newtag = await window.std(`/api/mission-tag/${tag.id}`, {
-                    method: 'DELETE',
-                });
-            }
+const loading = ref(true);
+const list = reactive({
+    total: 0,
+    items: []
+});
 
-            this.list.items.splice(tagit, 1);
-        },
-        push: function() {
-            this.list.items.splice(0, 0, {
-                _edit: true,
-                name: '',
-                updated: +new Date(),
-                created: +new Date()
-            });
-        }
+const fetch = async () => {
+    loading.value = true;
+    const result = await window.std('/api/mission-tag');
+    list.total = result.total;
+    list.items = result.items;
+    loading.value = false;
+};
+
+const saveTag = async (tag, tagit) => {
+    if (tag.id) {
+        const newtag = await window.std(`/api/mission-tag/${tag.id}`, {
+            method: 'PATCH',
+            body: tag 
+        });
+        list.items.splice(tagit, 1, newtag);
+    } else {
+        const newtag = await window.std('/api/mission-tag', {
+            method: 'POST',
+            body: tag
+        });
+        list.items.splice(tagit, 1, newtag);
     }
-}
+};
+
+const deleteTag = async (tag, tagit) => {
+    if (tag.id) {
+        await window.std(`/api/mission-tag/${tag.id}`, {
+            method: 'DELETE',
+        });
+    }
+
+    list.items.splice(tagit, 1);
+};
+
+const push = () => {
+    list.items.splice(0, 0, {
+        _edit: true,
+        name: '',
+        updated: +new Date(),
+        created: +new Date()
+    });
+};
+
+onMounted(async () => {
+    await fetch();
+});
 </script>

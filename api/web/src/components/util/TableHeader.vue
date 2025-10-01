@@ -107,7 +107,8 @@
     </thead>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue';
 import {
     IconChevronUp,
     IconChevronDown,
@@ -117,64 +118,54 @@ import {
     TablerModal
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'TableHeader',
-    components: {
-        TablerModal,
-        IconSettings,
-        IconChevronUp,
-        IconChevronDown
+const props = defineProps({
+    header: {
+        type: Array,
+        required: true,
+        description: 'Array of object headers - [{ name: "example", "displayed: true }]'
     },
-    props: {
-        header: {
-            type: Array,
-            required: true,
-            description: 'Array of object headers - [{ name: "example", "displayed: true }]'
-        },
-        order: {
-            type: String,
-            required: false,
-            default: 'desc',
-            description: 'Order to sort by asc or desc'
-        },
-        sort: {
-            type: String,
-            required: false,
-            description: 'Field to sort by'
-        },
-        export: {
-            type: Boolean,
-            required: false,
-            description: 'Export Events',
-            default: false,
-        },
+    order: {
+        type: String,
+        required: false,
+        default: 'desc',
+        description: 'Order to sort by asc or desc'
     },
-    data: function() {
-        return {
-            modal: false
-        }
+    sort: {
+        type: String,
+        required: false,
+        description: 'Field to sort by'
     },
-    computed: {
-        shown: function() {
-           return this.header.filter((h) => {
-                return h.display;
-           });
-        }
+    export: {
+        type: Boolean,
+        required: false,
+        description: 'Export Events',
+        default: false,
     },
-    watch: {
-        sort: function() {
-            this.$emit('update:sort', this.sort);
-        },
-        order: function() {
-            this.$emit('update:order', this.order);
-        }
-    },
-    methods: {
-        displayHeader: function(h_it, $event) {
-            const header = JSON.parse(JSON.stringify(this.header));
-            header[h_it].display = $event.target.checked;
-            this.$emit('update:header', header);
-        }
-    }
-}
+});
+
+const emit = defineEmits(['update:sort', 'update:order', 'update:header', 'export']);
+
+const modal = ref(false);
+const sort = ref(props.sort);
+const order = ref(props.order);
+
+const shown = computed(() => {
+   return props.header.filter((h) => {
+        return h.display;
+   });
+});
+
+watch(sort, () => {
+    emit('update:sort', sort.value);
+});
+
+watch(order, () => {
+    emit('update:order', order.value);
+});
+
+const displayHeader = (h_it, $event) => {
+    const header = JSON.parse(JSON.stringify(props.header));
+    header[h_it].display = $event.target.checked;
+    emit('update:header', header);
+};
 </script>

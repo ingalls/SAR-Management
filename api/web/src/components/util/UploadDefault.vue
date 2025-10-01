@@ -47,97 +47,88 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import {
     TablerLoading,
     TablerProgress
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'UploadFile',
-    components: {
-        TablerLoading,
-        TablerProgress
+const props = defineProps({
+    url: {
+        type: [String, URL],
+        required: true
     },
-    props: {
-        url: {
-            type: [String, URL],
-            required: true
-        },
-        cancel: {
-            type: Boolean,
-            default: true
-        },
-        headers: {
-            type: Object,
-            default: function() {
-                return {};
-            }
-        },
-        label: {
-            type: String,
-            default: 'Select a file to upload'
-        },
-        mimetype: {
-            type: String,
-            default: '*'
-        }
+    cancel: {
+        type: Boolean,
+        default: true
     },
-    emits: [
-        'cancel',
-        'done'
-    ],
-    data: function() {
-        return {
-            name: '',
-            progress: 0,
-        }
+    headers: {
+        type: Object,
+        default: () => ({})
     },
-    methods: {
-        refresh: function() {
-            this.name = '';
-            this.progress = 0;
-            const input = this.$refs.fileInput;
-            input.type = 'text';
-            input.type = 'file';
-        },
-        upload: function(event) {
-            return new Promise((resolve, reject) => {
-                const file = event.target.files[0];
-                this.name = file.name;
-
-                const xhr = new XMLHttpRequest()
-                const formData = new FormData()
-
-                xhr.open('POST', this.url, true)
-                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-                for (const header of Object.keys(this.headers)) {
-                    xhr.setRequestHeader(header, this.headers[header]);
-                }
-
-                xhr.upload.addEventListener('progress', (e) => {
-                    this.progress = (e.loaded * 100.0 / e.total) || 100
-                });
-
-                xhr.addEventListener('readystatechange', () => {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        this.progress = 100;
-                    } else if (xhr.readyState == 4 && xhr.status != 200) {
-                        return reject(new Error('Failed to upload file'));
-                    }
-
-                    this.progress = 101;
-
-                    if (!xhr.response) return;
-                    this.$emit('done', JSON.parse(xhr.response));
-                });
-
-                formData.append('file', file)
-                xhr.send(formData)
-            });
-        }
+    label: {
+        type: String,
+        default: 'Select a file to upload'
+    },
+    mimetype: {
+        type: String,
+        default: '*'
     }
-}
+});
 
+const emit = defineEmits(['cancel', 'done']);
+
+const name = ref('');
+const progress = ref(0);
+const fileInput = ref(null);
+
+const refresh = () => {
+    name.value = '';
+    progress.value = 0;
+    const input = fileInput.value;
+    input.type = 'text';
+    input.type = 'file';
+};
+
+const upload = (event) => {
+    return new Promise((resolve, reject) => {
+        const file = event.target.files[0];
+        name.value = file.name;
+
+        const xhr = new XMLHttpRequest()
+        const formData = new FormData()
+
+        xhr.open('POST', props.url, true)
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+        for (const header of Object.keys(props.headers)) {
+            xhr.setRequestHeader(header, props.headers[header]);
+        }
+
+        xhr.upload.addEventListener('progress', (e) => {
+            progress.value = (e.loaded * 100.0 / e.total) || 100
+        });
+
+        xhr.addEventListener('readystatechange', () => {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                progress.value = 100;
+            } else if (xhr.readyState == 4 && xhr.status != 200) {
+                return reject(new Error('Failed to upload file'));
+            }
+
+            progress.value = 101;
+
+            if (!xhr.response) return;
+            emit('done', JSON.parse(xhr.response));
+        });
+
+        formData.append('file', file)
+        xhr.send(formData)
+    });
+};
+
+defineExpose({
+    refresh
+});
 </script>

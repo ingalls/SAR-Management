@@ -18,32 +18,27 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'EquipmentProfile',
-    props: {
-        equipmentid: Number,
-        cache: {
-            type: Number,
-            default: +new Date()
-        }, //for forcing refresh
-        bgstyle: {
-            type: String,
-            default: 'contain' // or cover
-        }
+<script setup>
+import { ref, watch, nextTick } from 'vue';
+
+const props = defineProps({
+    equipmentid: Number,
+    cache: {
+        type: Number,
+        default: +new Date()
     },
-    data: function() {
-        return {
-            none: false,
-            token: localStorage.token,
-            base: window.stdurl('/').origin,
-        }
-    },
-    watch: {
-        cache: function() {
-            this.none = true;
-            this.$nextTick(() => { this.none = false; });
-        }
-    },
-}
+    bgstyle: {
+        type: String,
+        default: 'contain'
+    }
+});
+
+const none = ref(false);
+const token = ref(localStorage.token);
+const base = ref(window.stdurl('/').origin);
+
+watch(() => props.cache, () => {
+    none.value = true;
+    nextTick(() => { none.value = false; });
+});
 </script>

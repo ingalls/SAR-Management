@@ -47,80 +47,66 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import {
     TablerLoading,
     TablerTimeZone,
     TablerInput,
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'AdminServerConfig',
-    components: {
-        TablerTimeZone,
-        TablerLoading,
-        TablerInput
-    },
-    props: {
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        const res = {
-            loading: true,
-            keys: {}
-        };
-        for (const key of [
-            'name',
-            'frontend',
-            'timezone'
-        ]) {
-            res.keys[key] = {
+const props = defineProps({
+    auth: {
+        type: Object,
+        required: true
+    }
+});
+
+const loading = ref(true);
+const keys = reactive({});
+
+for (const key of ['name', 'frontend', 'timezone']) {
+    keys[key] = {
+        key: '',
+        value: '',
+        public: false
+    }
+}
+
+const fetch = async (key) => {
+    try {
+        keys[key] = await window.std(`/api/server/${key}`);
+    } catch (err) {
+        if (err.message === 'server not found') {
+            keys[key] = {
                 key: '',
                 value: '',
                 public: false
             }
-        }
-
-        return res;
-    },
-    mounted: async function() {
-        this.loading = true;
-        await Promise.all(Object.keys(this.keys).map((key) => this.fetch(key)));
-        this.loading = false;
-    },
-    methods: {
-        fetch: async function(key) {
-            try {
-                this.keys[key] = await window.std(`/api/server/${key}`);
-            } catch (err) {
-                if (err.message === 'server not found') {
-                    this.keys[key] = {
-                        key: '',
-                        value: '',
-                        public: false
-                    }
-                } else {
-                    throw err;
-                }
-            }
-        },
-        save: async function() {
-            this.loading = true;
-            for (const key in this.keys) {
-                await window.std(`/api/server`, {
-                    method: 'PUT',
-                    body: {
-                        key,
-                        public: this.keys[key].public,
-                        value: this.keys[key].value,
-                    }
-                });
-            }
-            this.loading = false;
+        } else {
+            throw err;
         }
     }
-}
+};
+
+const save = async () => {
+    loading.value = true;
+    for (const key in keys) {
+        await window.std(`/api/server`, {
+            method: 'PUT',
+            body: {
+                key,
+                public: keys[key].public,
+                value: keys[key].value,
+            }
+        });
+    }
+    loading.value = false;
+};
+
+onMounted(async () => {
+    loading.value = true;
+    await Promise.all(Object.keys(keys).map((key) => fetch(key)));
+    loading.value = false;
+});
 </script>

@@ -100,7 +100,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardTeams from './cards/Teams.vue';
@@ -110,73 +112,64 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'UserNew',
-    components: {
-        NoAccess,
-        TablerBreadCrumb,
-        CardTeams,
-        TablerInput,
-        TablerLoading
-    },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            errors: {
-                username: false,
-                email: false,
-                fname: false,
-                lname: false,
-                phone: false
-            },
-            loading: false,
-            user: {
-                username: '',
-                email: '',
-                fname: '',
-                lname: '',
-                phone: '',
-                teams: []
-            }
-        }
-    },
-    watch: {
-        'user.fname': function() {
-             this.user.username = `${this.user.fname.toLowerCase()}.${this.user.lname.toLowerCase()}`;
-        },
-        'user.lname': function() {
-             this.user.username = `${this.user.fname.toLowerCase()}.${this.user.lname.toLowerCase()}`;
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        create: async function() {
-            for (const field of ['username', 'email', 'fname', 'lname', 'phone']) {
-                if (!this.user[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
-            }
+const router = useRouter();
 
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            this.loading = true;
-            const create = await window.std('/api/user', {
-                method: 'POST', body: this.user
-            });
-            this.loading = false;
-
-            this.$router.push(`/user/${create.id}`);
-        }
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
     }
-}
+});
+
+const errors = reactive({
+    username: false,
+    email: false,
+    fname: false,
+    lname: false,
+    phone: false
+});
+
+const loading = ref(false);
+
+const user = reactive({
+    username: '',
+    email: '',
+    fname: '',
+    lname: '',
+    phone: '',
+    teams: []
+});
+
+watch(() => user.fname, () => {
+    user.username = `${user.fname.toLowerCase()}.${user.lname.toLowerCase()}`;
+});
+
+watch(() => user.lname, () => {
+    user.username = `${user.fname.toLowerCase()}.${user.lname.toLowerCase()}`;
+});
+
+const is_iam = (permission) => iam(props.iam, props.auth, permission);
+
+const create = async () => {
+    for (const field of ['username', 'email', 'fname', 'lname', 'phone']) {
+        if (!user[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = false;
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    loading.value = true;
+    const createResult = await window.std('/api/user', {
+        method: 'POST', body: user
+    });
+    loading.value = false;
+
+    router.push(`/user/${createResult.id}`);
+};
 </script>

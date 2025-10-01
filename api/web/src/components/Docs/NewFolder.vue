@@ -33,46 +33,39 @@
     </TablerModal>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import {
     TablerInput,
     TablerModal
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'NewFolder',
-    components: {
-        TablerInput,
-        TablerModal
-    },
-    props: {
-        prefix: {
-            type: String,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            name: ''
-        };
-    },
-    methods: {
-        close: function() {
-            this.$emit('close');
-        },
-        createFolder: async function() {
-            if (this.name.includes('.')) throw new Error('Name cannot contain "."');
-            if (this.name.includes('/')) throw new Error('Name cannot contain "/"');
-
-            const url = window.stdurl('/api/doc/folder');
-            url.searchParams.append('prefix', this.prefix + this.name + '/');
-
-            await window.std(url, {
-                method: 'POST'
-            });
-
-            this.$emit('done');
-        }
+const props = defineProps({
+    prefix: {
+        type: String,
+        required: true
     }
-}
+});
+
+const emit = defineEmits(['close', 'done']);
+
+const name = ref('');
+
+const close = () => {
+    emit('close');
+};
+
+const createFolder = async () => {
+    if (name.value.includes('.')) throw new Error('Name cannot contain "."');
+    if (name.value.includes('/')) throw new Error('Name cannot contain "/"');
+
+    const url = window.stdurl('/api/doc/folder');
+    url.searchParams.append('prefix', props.prefix + name.value + '/');
+
+    await window.std(url, {
+        method: 'POST'
+    });
+
+    emit('done');
+};
 </script>
