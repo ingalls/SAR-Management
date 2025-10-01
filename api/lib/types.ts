@@ -44,6 +44,11 @@ export const MissionAssignedResponse = AugmentedMissionAssigned;
 export const TrainingAssignedResponse = AugmentedTrainingAssigned;
 export const ScheduleAssignedResponse = AugmentedScheduleAssigned;
 
+export const UserDashboardResponse = createSelectSchema(schemas.UserDashboard, {
+    id: Type.Integer(),
+    uid: Type.Integer()
+});
+
 export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
     id: Type.Integer(),
     team: Type.Integer()
