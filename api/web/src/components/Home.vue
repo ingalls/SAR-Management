@@ -22,8 +22,8 @@
                             <template v-if='card.name === "Issues"'>
                                 <IssuesCard
                                     :limit='5'
-                                    :iam='iam'
-                                    :auth='auth'
+                                    :iam='props.iam'
+                                    :auth='props.auth'
                                     :drag-handle='true'
                                     :create='false'
                                     :footer='false'
@@ -31,8 +31,8 @@
                             </template>
                             <template v-else-if='card.name === "Trainings"'>
                                 <TrainingsCard
-                                    :iam='iam'
-                                    :auth='auth'
+                                    :iam='props.iam'
+                                    :auth='props.auth'
                                     :limit='5'
                                     order='asc'
                                     :attendance='false'
@@ -45,7 +45,6 @@
                             </template>
                             <template v-else-if='card.name === "Calendar"'>
                                 <CalendarCard
-                                    v-if='is_iam("Training:View")'
                                     :limit='5'
                                     :iam='iam'
                                     :auth='auth'
@@ -112,8 +111,4 @@ onMounted(() => {
         }
     }, gridstack.value);
 });
-
-function is_iam(permission) {
-    return iam(props.iam, props.auth, permission)
-}
 </script>
