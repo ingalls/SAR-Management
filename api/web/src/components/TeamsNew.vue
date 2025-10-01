@@ -87,63 +87,63 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import {
     TablerBreadCrumb,
     TablerToggle,
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'TeamNew',
-    components: {
-        NoAccess,
-        TablerToggle,
-        TablerBreadCrumb
-    },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            errors: {
-                name: false,
-                body: false
-            },
-            team: {
-                name: '',
-                fieldable: true,
-                body: ''
-            }
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        create: async function() {
-            for (const field of ['name', 'body']) {
-                if (!this.team[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
-            }
+const router = useRouter();
 
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            const create = await window.std('/api/team', {
-                method: 'POST',
-                body: this.team
-            });
-
-            this.$router.push(`/team/${create.id}`);
-        }
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const errors = reactive({
+    name: false,
+    body: false
+})
+
+const team = reactive({
+    name: '',
+    fieldable: true,
+    body: ''
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function create() {
+    for (const field of ['name', 'body']) {
+        if (!team[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = false;
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    const result = await window.std('/api/team', {
+        method: 'POST',
+        body: team
+    });
+
+    router.push(`/team/${result.id}`);
+}
+
+defineExpose({
+    create
+})
 </script>
