@@ -72,8 +72,10 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import UserSelect from './util/UserSelect.vue';
 import { MdEditor } from 'md-editor-v3';
@@ -84,72 +86,72 @@ import {
     TablerInput,
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'IssuesEdit',
-    components: {
-        NoAccess,
-        TablerLoading,
-        TablerInput,
-        MdEditor,
-        TablerBreadCrumb,
-        UserSelect,
-    },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: true,
-            errors: {
-                title: '',
-                body: ''
-            },
-            issue: {
-                title: '',
-                body: '',
-                assigned: []
-            }
-        }
-    },
-    mounted: async function() {
-        await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading = true;
-            this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`);
-            this.loading = false;
-        },
-        update: async function() {
-            for (const field of ['title', 'body']) {
-                if (!this.issue[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
-            }
+const route = useRoute();
+const router = useRouter();
 
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            const body = {
-                title: this.issue.title,
-                body: this.issue.body,
-            }
-
-            await window.std(`/api/issue/${this.issue.id}`, {
-                method: 'PATCH',
-                body
-            });
-
-            this.$router.push(`/issue/${this.issue.id}`);
-        }
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = ref(true)
+
+const errors = reactive({
+    title: '',
+    body: ''
+})
+
+const issue = reactive({
+    title: '',
+    body: '',
+    assigned: []
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function fetch() {
+    loading.value = true;
+    const result = await window.std(`/api/issue/${route.params.issueid}`);
+    Object.assign(issue, result);
+    loading.value = false;
+}
+
+async function update() {
+    for (const field of ['title', 'body']) {
+        if (!issue[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = false;
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    const body = {
+        title: issue.title,
+        body: issue.body,
+    }
+
+    await window.std(`/api/issue/${issue.id}`, {
+        method: 'PATCH',
+        body
+    });
+
+    router.push(`/issue/${issue.id}`);
+}
+
+onMounted(async () => {
+    await fetch();
+})
+
+defineExpose({
+    update
+})
 </script>

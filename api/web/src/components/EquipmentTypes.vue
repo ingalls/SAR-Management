@@ -92,60 +92,53 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import NoAccess from './util/NoAccess.vue';
 import {
     TablerNone,
     TablerEpoch,
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 import {
     IconPlus,
     IconSearch
 } from '@tabler/icons-vue'
 
-export default {
-    name: 'EquipmentTypes',
-    components: {
-        TablerNone,
-        TablerEpoch,
-        TablerBreadCrumb,
-        IconPlus,
-        NoAccess,
-        IconSearch
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            query: {
-                filter: ''
-            },
-            list: {
-                total: 0,
-                types: []
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Equipment:View")) await this.listTypes();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        listTypes: async function() {
-            const url = window.stdurl('/api/equipment-type');
-            if (this.query.filter) url.searchParams.append('filter', this.query.filter);
-            this.list = await window.std(url)
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const query = reactive({
+    filter: ''
+})
+
+const list = reactive({
+    total: 0,
+    types: []
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function listTypes() {
+    const url = window.stdurl('/api/equipment-type');
+    if (query.filter) url.searchParams.append('filter', query.filter);
+    const result = await window.std(url)
+    list.total = result.total
+    list.types = result.types
+}
+
+onMounted(async () => {
+    if (is_iam("Equipment:View")) await listTypes();
+})
 </script>

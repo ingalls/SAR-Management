@@ -66,7 +66,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import {
     TablerSchema,
     TablerLoading
@@ -75,47 +76,43 @@ import {
     IconCheck
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'PublicApplication',
-    components: {
-        IconCheck,
-        TablerSchema,
-        TablerLoading
-    },
-    data: function() {
-        return {
-            success: false,
-            loading: {
-                schema: true,
-                submit: false
-            },
-            schema: {},
-            data: {}
-        }
-    },
-    mounted: async function() {
-        await this.getSchema();
-    },
-    methods: {
-        getSchema: async function() {
-            this.loading.schema = true;
-            this.schema = JSON.parse((await window.std('/api/server/application')).value);
-            this.loading.schema = false;
-        },
-        submit: async function() {
-            this.loading.submit = true;
-            try {
-                await window.std('/api/application', {
-                    method: 'POST',
-                    body: this.data
-                });
-            } catch (err) {
-                this.loading.submit = false;
-                throw err;
-            }
-            this.loading.submit = false;
-            this.success = true;
-        }
-    }
+const success = ref(false)
+
+const loading = reactive({
+    schema: true,
+    submit: false
+})
+
+const schema = reactive({})
+const data = reactive({})
+
+async function getSchema() {
+    loading.schema = true;
+    const result = JSON.parse((await window.std('/api/server/application')).value);
+    Object.assign(schema, result);
+    loading.schema = false;
 }
+
+async function submit() {
+    loading.submit = true;
+    try {
+        await window.std('/api/application', {
+            method: 'POST',
+            body: data
+        });
+    } catch (err) {
+        loading.submit = false;
+        throw err;
+    }
+    loading.submit = false;
+    success.value = true;
+}
+
+onMounted(async () => {
+    await getSchema();
+})
+
+defineExpose({
+    submit
+})
 </script>

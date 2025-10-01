@@ -82,9 +82,9 @@
     </div>
 </template>
 
-ading
-<script>
-import iam from '../iam.js';
+<script setup>
+import { reactive, onMounted } from 'vue';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import TableHeader from './util/TableHeader.vue';
 import TableFooter from './util/TableFooter.vue';
@@ -97,80 +97,76 @@ import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'OnCall',
-    components: {
-        TablerNone,
-        IconPlus,
-        TablerLoading,
-        TablerBreadCrumb,
-        TableHeader,
-        TableFooter,
-        NoAccess,
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                schema: true,
-                list: true
-            },
-            paging: {
-                filter: '',
-                sort: 'Name',
-                order: 'asc',
-                limit: 10,
-                page: 0
-            },
-            header: [],
-            list: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    mounted: async function() {
-        if (!this.is_iam("Oncall:View")) return;
+    auth: {
+        type: Object,
+        required: true
+    }
+})
 
-        await this.listSchedulesSchema();
-        await this.listSchedules();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        listSchedules: async function() {
-            this.loading.list = true;
-            this.list = await window.std('/api/schedule');
-            this.loading.list = false;
-        },
-        listSchedulesSchema: async function() {
-            this.loading.schema = true;
-            const schema = await window.std('/api/schema?method=GET&url=/schedule');
-            this.header = ['name', ].map((h) => {
-                return { name: h, display: true };
-            });
+const loading = reactive({
+    schema: true,
+    list: true
+})
 
-            this.header.push(...schema.query.properties.sort.enum.map((h) => {
-                return {
-                    name: h,
-                    display: false
-                }
-            }).filter((h) => {
-                for (const hknown of this.header) {
-                    if (hknown.name === h.name) return false;
-                }
-                return true;
-            }));
-            this.loading.schema = false;
-        },
-    },
+const paging = reactive({
+    filter: '',
+    sort: 'Name',
+    order: 'asc',
+    limit: 10,
+    page: 0
+})
+
+const header = reactive([])
+
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function listSchedules() {
+    loading.list = true;
+    const result = await window.std('/api/schedule');
+    list.total = result.total;
+    list.items = result.items;
+    loading.list = false;
+}
+
+async function listSchedulesSchema() {
+    loading.schema = true;
+    const schema = await window.std('/api/schema?method=GET&url=/schedule');
+    const baseHeaders = ['name', ].map((h) => {
+        return { name: h, display: true };
+    });
+    
+    header.splice(0, header.length, ...baseHeaders);
+
+    header.push(...schema.query.properties.sort.enum.map((h) => {
+        return {
+            name: h,
+            display: false
+        }
+    }).filter((h) => {
+        for (const hknown of header) {
+            if (hknown.name === h.name) return false;
+        }
+        return true;
+    }));
+    loading.schema = false;
+}
+
+onMounted(async () => {
+    if (!is_iam("Oncall:View")) return;
+
+    await listSchedulesSchema();
+    await listSchedules();
+})
 </script>

@@ -64,8 +64,10 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { reactive, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardScheduleAssigned from './Schedule/ScheduleAssigned.vue';
 import CardScheduleCalendar from './Schedule/ScheduleCalendar.vue';
@@ -78,55 +80,55 @@ import {
     IconSettings
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'Schedule',
-    components: {
-        CardScheduleAssigned,
-        CardScheduleCalendar,
-        UserPresentSelect,
-        TablerLoading,
-        TablerBreadCrumb,
-        IconSettings,
-        NoAccess
+const route = useRoute();
+
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                schedule: true,
-                assigned: true,
-            },
-            schedule: {},
-            assigned: {
-                total: 0,
-                assigned: []
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam('Oncall:View')) await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.schedule = true;
-            this.schedule = await window.std(`/api/schedule/${this.$route.params.scheduleid}`);
-            this.loading.schedule = false;
-        },
-        fetchAssigned: async function() {
-            this.loading.assigned = true;
-            this.assigned = await window.std(`/api/schedule/${this.$route.params.scheduleid}/assigned`);
-            this.loading.assigned = false;
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const loading = reactive({
+    schedule: true,
+    assigned: true,
+})
+
+const schedule = reactive({})
+
+const assigned = reactive({
+    total: 0,
+    assigned: []
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function fetch() {
+    loading.schedule = true;
+    const result = await window.std(`/api/schedule/${route.params.scheduleid}`);
+    Object.assign(schedule, result);
+    loading.schedule = false;
+}
+
+async function fetchAssigned() {
+    loading.assigned = true;
+    const result = await window.std(`/api/schedule/${route.params.scheduleid}/assigned`);
+    assigned.total = result.total;
+    assigned.assigned = result.assigned;
+    loading.assigned = false;
+}
+
+onMounted(async () => {
+    if (is_iam('Oncall:View')) await fetch();
+})
+
+defineExpose({
+    fetchAssigned
+})
 </script>

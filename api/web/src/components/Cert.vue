@@ -81,8 +81,10 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import DocFile from './Docs/File.vue';
 import {
@@ -96,85 +98,89 @@ import {
 } from '@tak-ps/vue-tabler'
 import Avatar from './util/Avatar.vue';
 
-export default {
-    name: 'Certificate',
-    components: {
-        Avatar,
-        NoAccess,
-        DocFile,
-        IconEyeOff,
-        IconDownload,
-        TablerDelete,
-        TablerLoading,
-        TablerBreadCrumb,
-    },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            cert: {
-                id: '',
-            },
-            asset: null,
-            loading: {
-                cert: true,
-            },
-        }
-    },
-    computed: {
-        is_img: function() {
-            return this.asset.name.toLowerCase().endsWith('.jpg')
-                || this.asset.name.toLowerCase().endsWith('.jpeg')
-                || this.asset.name.toLowerCase().endsWith('.png')
-        },
-        is_pdf: function() {
-            return this.asset.name.endsWith('.pdf')
-        },
-        preview: function() {
-            const url = window.stdurl(`/api/asset/${this.cert.asset}/raw`);
-            url.searchParams.append('token', localStorage.token);
-            return url;
-        },
-    },
-    mounted: async function() {
-        if (this.is_iam("User:View")) {
-            await this.fetch();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        deleteCert: async function() {
-            this.loading.cert = true;
+const route = useRoute();
+const router = useRouter();
 
-            await window.std(`/api/user/${this.$route.params.userid}/cert/${this.$route.params.certid}`, {
-                method: 'DELETE'
-            });
-
-            this.$router.push(`/user/${this.$route.params.userid}/cert/`);
-        },
-        url: function(download = true) {
-            const url = window.stdurl(`/api/asset/${this.cert.asset}/raw`);
-            url.searchParams.append('download', download);
-            url.searchParams.append('token', localStorage.token);
-            return String(url);
-        },
-        download: function() {
-            window.open(this.url(true), '_blank');
-        },
-        fetch: async function() {
-            this.loading.cert = true;
-            this.cert = await window.std(`/api/user/${this.$route.params.userid}/cert/${this.$route.params.certid}`);
-            this.asset = await window.std(`/api/asset/${this.cert.asset}`);
-            this.loading.cert = false;
-        },
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+const cert = reactive({
+    id: '',
+})
+
+const asset = ref(null)
+
+const loading = reactive({
+    cert: true,
+})
+
+const is_img = computed(() => {
+    if (!asset.value) return false;
+    return asset.value.name.toLowerCase().endsWith('.jpg')
+        || asset.value.name.toLowerCase().endsWith('.jpeg')
+        || asset.value.name.toLowerCase().endsWith('.png')
+})
+
+const is_pdf = computed(() => {
+    if (!asset.value) return false;
+    return asset.value.name.endsWith('.pdf')
+})
+
+const preview = computed(() => {
+    const url = window.stdurl(`/api/asset/${cert.asset}/raw`);
+    url.searchParams.append('token', localStorage.token);
+    return url;
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
+
+async function deleteCert() {
+    loading.cert = true;
+
+    await window.std(`/api/user/${route.params.userid}/cert/${route.params.certid}`, {
+        method: 'DELETE'
+    });
+
+    router.push(`/user/${route.params.userid}/cert/`);
+}
+
+function url(download = true) {
+    const url = window.stdurl(`/api/asset/${cert.asset}/raw`);
+    url.searchParams.append('download', download);
+    url.searchParams.append('token', localStorage.token);
+    return String(url);
+}
+
+function download() {
+    window.open(url(true), '_blank');
+}
+
+async function fetch() {
+    loading.cert = true;
+    const certResult = await window.std(`/api/user/${route.params.userid}/cert/${route.params.certid}`);
+    Object.assign(cert, certResult);
+    asset.value = await window.std(`/api/asset/${cert.asset}`);
+    loading.cert = false;
+}
+
+onMounted(async () => {
+    if (is_iam("User:View")) {
+        await fetch();
+    }
+})
+
+defineExpose({
+    deleteCert,
+    download
+})
 </script>

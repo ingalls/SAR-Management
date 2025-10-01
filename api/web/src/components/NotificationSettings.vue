@@ -65,56 +65,54 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive, watch, onMounted } from 'vue';
 import {
     TablerBreadCrumb,
     TablerToggle,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'NotificationsSettings',
-    components: {
-        TablerLoading,
-        TablerToggle,
-        TablerBreadCrumb
-    },
-    data: function() {
-        return {
-            loading: {
-                list: true
-            },
-            list: {
-                disabled: false,
-                settings: []
-            }
-        }
-    },
-    watch: {
-        'list.disabled': function() {
-            if (!this.list.disabled) return;
-            this.list.settings.forEach((s) => s.value = false);
-        }
-    },
-    mounted: async function() {
-        await this.fetch();
-    },
-    methods: {
-        fetch: async function() {
-            this.loading.list = true;
-            this.list = await window.std('/api/notification/settings');
-            this.loading.list = false;
-        },
-        postNotify: async function() {
-            this.loading.list = true;
-            const body = JSON.parse(JSON.stringify(this.list));
-            
-            this.list = await window.std('/api/notification/settings', {
-                method: 'PATCH',
-                body
-            });
-            this.loading.list = false;
-        },
-    }
+const loading = reactive({
+    list: true
+})
+
+const list = reactive({
+    disabled: false,
+    settings: []
+})
+
+watch(() => list.disabled, () => {
+    if (!list.disabled) return;
+    list.settings.forEach((s) => s.value = false);
+})
+
+async function fetch() {
+    loading.list = true;
+    const result = await window.std('/api/notification/settings');
+    list.disabled = result.disabled;
+    list.settings = result.settings;
+    loading.list = false;
 }
+
+async function postNotify() {
+    loading.list = true;
+    const body = JSON.parse(JSON.stringify(list));
+    
+    const result = await window.std('/api/notification/settings', {
+        method: 'PATCH',
+        body
+    });
+    list.disabled = result.disabled;
+    list.settings = result.settings;
+    loading.list = false;
+}
+
+onMounted(async () => {
+    await fetch();
+})
+
+defineExpose({
+    postNotify
+})
 </script>

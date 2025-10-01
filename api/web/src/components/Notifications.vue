@@ -88,7 +88,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { reactive, onMounted } from 'vue';
 import {
     TablerNone,
     TablerBreadCrumb,
@@ -100,53 +101,48 @@ import {
     IconTrash
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'Notifications',
-    components: {
-        TablerNone,
-        IconTrash,
-        IconSettings,
-        IconCircleDot,
-        TablerLoading,
-        TablerBreadCrumb
-    },
-    data: function() {
-        return {
-            loading: {
-                list: true
-            },
-            list: {
-                total: 0,
-                items: []
-            }
-        }
-    },
-    mounted: async function() {
-        await this.listNotifications();
-    },
-    methods: {
-        listNotifications: async function() {
-            this.loading.list = true;
-            this.list = await window.std('/api/notification');
+const emit = defineEmits(['notifications'])
 
-            this.$emit('notifications', this.list.total > 0);
-            this.loading.list = false;
-        },
-        clearNotifications: async function(notify=null) {
-            this.loading.list = true;
+const loading = reactive({
+    list: true
+})
 
-            if (notify && notify.id) {
-                await window.std(`/api/notification/${notify.id}`, {
-                    method: 'DELETE'
-                });
-            } else {
-                await window.std('/api/notification', {
-                    method: 'DELETE'
-                });
-            }
-            await this.listNotifications();
-            this.loading.list = false;
-        }
-    }
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+async function listNotifications() {
+    loading.list = true;
+    const result = await window.std('/api/notification');
+    list.total = result.total;
+    list.items = result.items;
+
+    emit('notifications', list.total > 0);
+    loading.list = false;
 }
+
+async function clearNotifications(notify=null) {
+    loading.list = true;
+
+    if (notify && notify.id) {
+        await window.std(`/api/notification/${notify.id}`, {
+            method: 'DELETE'
+        });
+    } else {
+        await window.std('/api/notification', {
+            method: 'DELETE'
+        });
+    }
+    await listNotifications();
+    loading.list = false;
+}
+
+onMounted(async () => {
+    await listNotifications();
+})
+
+defineExpose({
+    clearNotifications
+})
 </script>

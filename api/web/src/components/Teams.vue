@@ -52,7 +52,7 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import CardLeadership from './cards/Leadership.vue';
 import CardUsers from './cards/Users.vue';
 import CardTeams from './cards/Teams.vue';
@@ -60,29 +60,20 @@ import {
     TablerBreadCrumb 
 } from '@tak-ps/vue-tabler';
 import NoAccess from './util/NoAccess.vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 
-export default {
-    name: 'Team',
-    components: {
-        CardLeadership,
-        CardUsers,
-        CardTeams,
-        TablerBreadCrumb,
-        NoAccess
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) }
+    auth: {
+        type: Object,
+        required: true
     }
+})
+
+function is_iam(permission) { 
+    return iamHelper(props.iam, props.auth, permission) 
 }
 </script>
