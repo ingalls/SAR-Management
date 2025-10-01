@@ -50,6 +50,16 @@ export const User = pgTable('users', {
     last_login: timestamp('last_login', { withTimezone: true, mode: 'string' })
 });
 
+export const UserDashboard = pgTable('user_dashboard', {
+    id: serial('id').primaryKey(),
+    uid: integer('uid').notNull().references(() => User.id),
+    name: text('name').notNull(),
+    x: integer('x').notNull(),
+    y: integer('y').notNull(),
+    w: integer('w').notNull(),
+    h: integer('h').notNull(),
+});
+
 export const UserSetting = pgTable('user_settings', {
     id: serial('id').primaryKey(),
     uid: integer('uid').notNull().references(() => User.id),
