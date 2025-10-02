@@ -61,7 +61,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import {
     TablerLoading,
     TablerProgress
@@ -70,65 +71,54 @@ import {
     IconCheck,
 } from '@tabler/icons-vue';
 
-export default {
-    name: 'Poll',
-    components: {
-        IconCheck,
-        TablerProgress,
-        TablerLoading
-    },
-    props: {
-        issue: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                poll: true,
-            },
-            total: 0,
-            votes: {},
-            selected: null,
-            poll: {},
-        }
-    },
-    mounted: async function() {
-        await this.fetchPoll();
-
-    },
-    methods: {
-        fetchPoll: async function() {
-            this.loading.poll = true;
-            this.poll = await window.std(`/api/issue/${this.issue.id}/poll`);
-
-            if (this.poll.votes) {
-                for (const vote of this.poll.votes) {
-                    this.total += vote.votes;
-                }
-                for (const vote of this.poll.votes) {
-                    this.votes[vote.question_id] = vote.votes / this.total;
-                }
-            }
-
-            if (this.poll.vote) {
-                this.selected = this.poll.vote;
-            }
-
-            this.loading.poll = false;
-        },
-        vote: async function() {
-            this.loading.poll = true;
-            await window.std(`/api/issue/${this.issue.id}/poll`, {
-                method: 'POST',
-                body: {
-                    question: this.selected
-                }
-            });
-
-            await this.fetchPoll();
-        },
+const props = defineProps({
+    issue: {
+        type: Object,
+        required: true
     }
-}
+});
+
+const loading = ref({
+    poll: true,
+});
+const total = ref(0);
+const votes = ref({});
+const selected = ref(null);
+const poll = ref({});
+
+const fetchPoll = async () => {
+    loading.value.poll = true;
+    poll.value = await window.std(`/api/issue/${props.issue.id}/poll`);
+
+    if (poll.value.votes) {
+        for (const vote of poll.value.votes) {
+            total.value += vote.votes;
+        }
+        for (const vote of poll.value.votes) {
+            votes.value[vote.question_id] = vote.votes / total.value;
+        }
+    }
+
+    if (poll.value.vote) {
+        selected.value = poll.value.vote;
+    }
+
+    loading.value.poll = false;
+};
+
+const vote = async () => {
+    loading.value.poll = true;
+    await window.std(`/api/issue/${props.issue.id}/poll`, {
+        method: 'POST',
+        body: {
+            question: selected.value
+        }
+    });
+
+    await fetchPoll();
+};
+
+onMounted(async () => {
+    await fetchPoll();
+});
 </script>

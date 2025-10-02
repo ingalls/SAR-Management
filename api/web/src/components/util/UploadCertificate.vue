@@ -81,7 +81,8 @@
     </TablerModal>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import {
     TablerModal,
     TablerInput,
@@ -94,81 +95,69 @@ import {
 } from '@tabler/icons-vue';
 import UploadDefault from './UploadDefault.vue';
 
-export default {
-    name: 'UploadCertificateModal',
-    components: {
-        IconCheck,
-        TablerModal,
-        TablerInput,
-        TablerLoading,
-        TablerToggle,
-        TablerEnum,
-        UploadDefault
+const props = defineProps({
+    uid: {
+        type: Number
     },
-    props: {
-        uid: {
-            type: Number
-        },
-        prefix: {
-            type: String,
-            default: ''
-        }
-    },
-    data: function() {
-        return {
-            loading: true,
-            custom: '',
-            noExpiry: false,
-            url: window.stdurl('api/asset'),
-            headers: {
-                Authorization: `Bearer ${localStorage.token}`
-            },
-            asset: null,
-            cert: {
-                name: '',
-                custom: '',
-                expiry: '',
-            },
-            knownMap: new Map(),
-            knownNames: []
-        }
-    },
-    mounted: async function() {
-        await this.getKnown();
-    },
-    methods: {
-        getKnown: async function() {
-            this.loading = true;
-
-            const url = await window.stdurl('/api/certs');
-            url.searchParams.append('limit', String(100));
-            const known = await window.std(url);
-            this.knownNames = known.items.map((k) => k.name).concat(['Other']);
-            for (const cert of known.items) {
-                this.knownMap.set(cert.name, cert);
-            }
-
-            this.loading = false;
-        },
-        saveCert: async function() {
-            const body = this.cert;
-            if (this.noExpiry) delete body.expiry;
-            body.asset = this.asset.id;
-
-            if (body.name === "Other") {
-                body.name = body.custom;
-            } else {
-                body.known
-            }
-            delete body.custom;
-
-            await window.std(`/api/user/${this.uid}/cert`, {
-                method: 'POST',
-                body
-            });
-
-            this.$emit('close');
-        },
+    prefix: {
+        type: String,
+        default: ''
     }
-}
+});
+
+const emit = defineEmits(['close', 'cancel']);
+
+const loading = ref(true);
+const custom = ref('');
+const noExpiry = ref(false);
+const url = ref(window.stdurl('api/asset'));
+const headers = ref({
+    Authorization: `Bearer ${localStorage.token}`
+});
+const asset = ref(null);
+const cert = ref({
+    name: '',
+    custom: '',
+    expiry: '',
+});
+const knownMap = ref(new Map());
+const knownNames = ref([]);
+
+const getKnown = async () => {
+    loading.value = true;
+
+    const url = await window.stdurl('/api/certs');
+    url.searchParams.append('limit', String(100));
+    const known = await window.std(url);
+    knownNames.value = known.items.map((k) => k.name).concat(['Other']);
+    for (const c of known.items) {
+        knownMap.value.set(c.name, c);
+    }
+
+    loading.value = false;
+};
+
+const saveCert = async () => {
+    const body = cert.value;
+    if (noExpiry.value) delete body.expiry;
+    body.asset = asset.value.id;
+
+    if (body.name === "Other") {
+        body.name = body.custom;
+    } else {
+        body.known
+    }
+    delete body.custom;
+
+    await window.std(`/api/user/${props.uid}/cert`, {
+        method: 'POST',
+        body
+    });
+
+    emit('close');
+};
+
+onMounted(async () => {
+    await getKnown();
+});
 </script>

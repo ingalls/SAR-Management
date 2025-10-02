@@ -80,7 +80,8 @@ schedules_assigned.json<template>
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -93,124 +94,113 @@ import {
     TablerLoading,
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'Calendar',
-    components: {
-        TablerModal,
-        TablerInput,
-        TablerDelete,
-        UserDropdown,
-        TablerLoading,
-    },
-    props: {
-        schedule: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            calendar: null,
-            modal: {
-                loading: false,
-                shown: false,
-                user: null,
-                start: '',
-                end: ''
-            }
-        }
-    },
-    mounted: async function() {
-        this.calendar = new Calendar(document.getElementById('calendar'), {
-            plugins: [dayGridPlugin, interactionPlugin, listPlugin],
-            selectable: true,
-            unselectAuto: true,
-            eventClick: async (event) => {
-
-                this.modal = {
-                    id: event.event.id,
-                    uid: event.event.extendedProps.uid,
-                    title: event.event.title,
-                    start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth() + 1).padStart(2, '0')}-${String(event.event.start.getDate()).padStart(2, '0')} ${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
-                    end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth() + 1).padStart(2, '0')}-${String(event.event.end.getDate()).padStart(2, '0')} ${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
-                    shown: true
-                }
-            },
-            eventSources: async (fetchInfo, resolve, reject) => {
-                try {
-                    let events = [];
-                    const url = window.stdurl(`/api/schedule/${this.schedule.id}/events`)
-                    url.searchParams.append('start', fetchInfo.startStr);
-                    url.searchParams.append('end', fetchInfo.endStr);
-                    events = events.concat(await window.std(url));
-
-                    return resolve(events.map((event) => {
-                        event.start = (new Date(event.start)).toISOString()
-                            .replace('T', ' ')
-                            .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-                        event.end = (new Date(event.end)).toISOString()
-                            .replace('T', ' ')
-                            .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-
-                        return event;
-                    }));
-                } catch (err) {
-                    return reject(err);
-                }
-            }
-        });
-
-        this.calendar.render();
-
-        this.calendar.on('select', (event) => {
-            this.modal.start = `${event.startStr}T${this.schedule.handoff}`;
-            this.modal.end = `${event.endStr}T${this.schedule.handoff}`;
-            this.modal.shown = true;
-        });
-    },
-    methods: {
-        deleteAssignment: async function() {
-            this.modal.loading = true;
-
-            await window.std(`/api/schedule/${this.schedule.id}/events/${this.modal.id}`, {
-                method: 'DELETE',
-            });
-
-            this.calendar.refetchEvents();
-
-            this.modal = { shown: false }
-        },
-        submitAssignment: async function() {
-            this.modal.loading = true;
-
-            if (this.modal.id) {
-                await window.std(`/api/schedule/${this.schedule.id}/events/${this.modal.id}`, {
-                    method: 'PATCH',
-                    body: {
-                        uid:  this.modal.user,
-                        start_ts: this.modal.start,
-                        end_ts: this.modal.end
-                    }
-                });
-            } else {
-                await window.std(`/api/schedule/${this.schedule.id}/events`, {
-                    method: 'POST',
-                    body: {
-                        uid:  this.modal.user,
-                        start_ts: this.modal.start,
-                        end_ts: this.modal.end
-                    }
-                });
-            }
-
-            this.calendar.refetchEvents();
-
-            this.modal = { shown: false }
-        }
+const props = defineProps({
+    schedule: {
+        type: Object,
+        required: true
     }
-}
+});
+
+const calendar = ref(null);
+const modal = reactive({
+    loading: false,
+    shown: false,
+    user: null,
+    title: '',
+    start: '',
+    end: ''
+});
+
+const deleteAssignment = async () => {
+    modal.loading = true;
+
+    await window.std(`/api/schedule/${props.schedule.id}/events/${modal.id}`, {
+        method: 'DELETE',
+    });
+
+    calendar.value.refetchEvents();
+
+    Object.assign(modal, { shown: false });
+};
+
+const submitAssignment = async () => {
+    modal.loading = true;
+
+    if (modal.id) {
+        await window.std(`/api/schedule/${props.schedule.id}/events/${modal.id}`, {
+            method: 'PATCH',
+            body: {
+                uid:  modal.user,
+                start_ts: modal.start,
+                end_ts: modal.end
+            }
+        });
+    } else {
+        await window.std(`/api/schedule/${props.schedule.id}/events`, {
+            method: 'POST',
+            body: {
+                uid:  modal.user,
+                start_ts: modal.start,
+                end_ts: modal.end
+            }
+        });
+    }
+
+    calendar.value.refetchEvents();
+
+    Object.assign(modal, { shown: false });
+};
+
+onMounted(async () => {
+    calendar.value = new Calendar(document.getElementById('calendar'), {
+        plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        selectable: true,
+        unselectAuto: true,
+        eventClick: async (event) => {
+
+            Object.assign(modal, {
+                id: event.event.id,
+                uid: event.event.extendedProps.uid,
+                title: event.event.title,
+                start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth() + 1).padStart(2, '0')}-${String(event.event.start.getDate()).padStart(2, '0')} ${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
+                end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth() + 1).padStart(2, '0')}-${String(event.event.end.getDate()).padStart(2, '0')} ${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
+                shown: true
+            });
+        },
+        eventSources: async (fetchInfo, resolve, reject) => {
+            try {
+                let events = [];
+                const url = window.stdurl(`/api/schedule/${props.schedule.id}/events`)
+                url.searchParams.append('start', fetchInfo.startStr);
+                url.searchParams.append('end', fetchInfo.endStr);
+                events = events.concat(await window.std(url));
+
+                return resolve(events.map((event) => {
+                    event.start = (new Date(event.start)).toISOString()
+                        .replace('T', ' ')
+                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
+
+                    event.end = (new Date(event.end)).toISOString()
+                        .replace('T', ' ')
+                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
+
+
+                    return event;
+                }));
+            } catch (err) {
+                return reject(err);
+            }
+        }
+    });
+
+    calendar.value.render();
+
+    calendar.value.on('select', (event) => {
+        modal.start = `${event.startStr}T${props.schedule.handoff}`;
+        modal.end = `${event.endStr}T${props.schedule.handoff}`;
+        modal.shown = true;
+    });
+});
 </script>
 
 <style lang="scss">
