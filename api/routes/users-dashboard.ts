@@ -34,7 +34,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.VIEW);
 
-            res.json(await config.models.Cert.list({
+            res.json(await config.models.UserDashboard.list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,
