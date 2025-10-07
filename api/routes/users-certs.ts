@@ -125,7 +125,7 @@ export default async function router(schema: Schema, config: Config) {
             const user = await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.User, PermissionsLevel.MANAGE);
 
             const cert = await config.models.Cert.generate({
-                uid: user.id,
+                uid: req.params.userid,
                 ...req.body
             });
 

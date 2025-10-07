@@ -54,7 +54,15 @@
                                 v-text='cert.name'
                             />
                         </td>
-                        <td v-text='cert.expiry || "None"' />
+                        <td>
+                            <TablerEpoch
+                                v-if='cert.expiry'
+                                :date='cert.expiry'
+                            />
+                            <span v-else>
+                                Never
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -80,7 +88,8 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import iam from '../../iam.js';
 import {
-    TablerNone ,
+    TablerNone,
+    TablerEpoch,
     TablerIconButton
 } from '@tak-ps/vue-tabler';
 import NoAccess from '../util/NoAccess.vue';
