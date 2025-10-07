@@ -3,7 +3,7 @@
         v-if='!is_iam("User:View")'
         title='Certificates'
     />
-    <div class='card'>
+    <div v-else class='card'>
         <div class='card-header'>
             <div class='col'>
                 <div class='d-flex'>

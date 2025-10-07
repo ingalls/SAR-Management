@@ -64,7 +64,6 @@
 
         <NoAccess
             v-if='!is_iam("Mission:View")'
-            title='Missions'
         />
         <TablerLoading
             v-else-if='loading'

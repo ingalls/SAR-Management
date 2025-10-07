@@ -238,8 +238,8 @@
                             :create='false'
                             :footer='false'
                             :assigned='userid'
-                            :iam='iam'
-                            :auth='auth'
+                            :iam='props.iam'
+                            :auth='props.auth'
                         />
                     </div>
                     <div class='col-lg-6'>
@@ -250,8 +250,8 @@
                             :search='false'
                             :footer='false'
                             :attendance='false'
-                            :iam='iam'
-                            :auth='auth'
+                            :iam='props.iam'
+                            :auth='props.auth'
                         />
                     </div>
                     <div class='col-lg-6'>
@@ -267,14 +267,14 @@
                             :search='false'
                             :footer='false'
                             :attendance='false'
-                            :iam='iam'
-                            :auth='auth'
+                            :iam='props.iam'
+                            :auth='props.auth'
                         />
                     </div>
                     <div class='col-lg-12'>
                         <CardCerts
-                            :iam='iam'
-                            :auth='auth'
+                            :iam='props.iam'
+                            :auth='props.auth'
                             :assigned='userid'
                         />
                     </div>
