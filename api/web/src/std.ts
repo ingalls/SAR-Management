@@ -63,4 +63,14 @@ function std() {
     }
 }
 
+export function stdclick($router: Router, event: MouseEvent | KeyboardEvent, path: string) {    
+    if (event.ctrlKey === true) {    
+        const routeData = $router.resolve(path);    
+        window.open(routeData.href, '_blank');    
+    } else {    
+        $router.push(path);    
+    }    
+}
+
+
 export default std;

@@ -9,7 +9,7 @@
             <h3 class='card-title'>
                 <a
                     class='cursor-pointer'
-                    @click='$router.push("/application")'
+                    @click='router.push("/application")'
                     v-text='label'
                 />
             </h3>
@@ -21,7 +21,7 @@
                     class='cursor-pointer'
                     size='32'
                     stroke='1'
-                    @click='$router.push(`/application/new`)'
+                    @click='router.push(`/application/new`)'
                 />
                 <IconSettings
                     v-if='create && is_iam("Application:Manage")'
@@ -29,7 +29,7 @@
                     class='cursor-pointer'
                     size='32'
                     stroke='1'
-                    @click='$router.push(`/application/edit`)'
+                    @click='router.push(`/application/edit`)'
                 />
             </div>
         </div>
@@ -76,7 +76,7 @@
                         v-for='application in list.items'
                         :key='application.id'
                         class='cursor-pointer'
-                        @click='$router.push(`/application/${application.id}`)'
+                        @click='stdclick(router, $event, `/application/${application.id}`)'
                     >
                         <template v-for='h in header'>
                             <template v-if='h.display'>
@@ -119,6 +119,8 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
+import { stdclick } from '../../std.ts';
 import phoneFormat from 'phone';
 import NoAccess from '../util/NoAccess.vue';
 import iam from '../../iam.js';
@@ -137,6 +139,8 @@ import {
     IconPlus,
     IconSettings
 } from '@tabler/icons-vue';
+
+const router = useRouter();
 
 const props = defineProps({
     label: {
