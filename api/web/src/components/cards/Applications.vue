@@ -194,7 +194,7 @@ const paging = reactive({
     order: props.order,
     limit: props.limit,
     start: props.start,
-    status: 'all',
+    status: 'active',
     end: props.end,
     page: 0
 })
