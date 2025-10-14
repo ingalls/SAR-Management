@@ -16,18 +16,18 @@
             </h3>
 
             <div class='btn-list ms-auto'>
-                <IconPlus
+                <TablerIconButton
                     v-if='create && is_iam("Mission:Manage")'
-                    class='cursor-pointer'
-                    size='32'
-                    stroke='1'
+                    title='Create Mission'
                     @click='$router.push(`/mission/new`)'
-                />
-                <IconRefresh
+                >
+                    <IconPlus
+                        size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
+                <TablerRefreshButton
                     v-if='is_iam("Mission:View")'
-                    class='cursor-pointer'
-                    :size='32'
-                    :stroke='1'
                     @click='fetch'
                 />
             </div>
@@ -169,6 +169,7 @@ import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
     TablerEpoch,
+    TablerRefreshButton,
     TablerEpochRange,
     TablerIconButton,
     TablerDropdown,
