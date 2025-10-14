@@ -44,24 +44,30 @@
                                             v-if='is_iam("Doc:Manage")'
                                             class='btn-list'
                                         >
-                                            <IconFolderPlus
-                                                class='cursor-pointer my-1'
-                                                :size='32'
-                                                :stroke='1'
+                                            <TablerIconButton
+                                                title='New Folder'
                                                 @click='folder = true'
-                                            />
+                                            >
+                                                <IconFolderPlus
+                                                    :size='32'
+                                                    :stroke='1'
+                                                />
+                                            </TablerIconButton>
                                             <TablerDelete
                                                 v-if='paging.prefix'
                                                 displaytype='icon'
                                                 class='my-1'
                                                 @delete='deleteFolder'
                                             />
-                                            <IconPlus
-                                                class='cursor-pointer my-1'
-                                                :size='32'
-                                                :stroke='1'
+                                            <TablerIconButton
+                                                title='Upload File'
                                                 @click='upload = true'
-                                            />
+                                            >
+                                                <IconPlus
+                                                    :size='32'
+                                                    :stroke='1'
+                                                />
+                                            </TablerIconButton>
                                         </div>
                                     </div>
                                 </div>
@@ -166,8 +172,9 @@ import {
     TablerNone,
     TablerInput,
     TablerDelete,
+    TablerLoading,
+    TablerIconButton,
     TablerBreadCrumb,
-    TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
     IconPlus,
