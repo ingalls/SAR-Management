@@ -150,7 +150,6 @@ import {
 
 import {
     IconGripVertical,
-    IconRefresh,
     IconUserCheck,
     IconUserOff,
     IconPlus

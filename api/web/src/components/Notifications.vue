@@ -25,19 +25,25 @@
                                             Notifications
                                         </h1>
                                         <div class='ms-auto btn-list'>
-                                            <IconTrash
+                                            <TablerIconButton
                                                 v-if='list.total'
-                                                class='cursor-pointer'
-                                                :size='32'
-                                                :stroke='1'
+                                                title='Clear All'
                                                 @click='clearNotifications'
-                                            />
-                                            <IconSettings
-                                                class='cursor-pointer'
-                                                :size='32'
-                                                :stroke='1'
+                                            >
+                                                <IconTrash
+                                                    :size='32'
+                                                    :stroke='1'
+                                                />
+                                            </TablerIconButton>
+                                            <TablerIconButton
+                                                title='Settings'
                                                 @click='$router.push("/notification/settings")'
-                                            />
+                                            >
+                                                <IconSettings
+                                                    :size='32'
+                                                    :stroke='1'
+                                                />
+                                            </TablerIconButton>
                                         </div>
                                     </div>
                                 </div>
@@ -92,6 +98,7 @@
 import { reactive, onMounted } from 'vue';
 import {
     TablerNone,
+    TablerIconButton,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';

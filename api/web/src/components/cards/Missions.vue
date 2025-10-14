@@ -181,7 +181,6 @@ import {
     IconFilter,
     IconGripVertical,
     IconPlus,
-    IconRefresh,
     IconUserCheck,
     IconUserOff
 } from '@tabler/icons-vue';
