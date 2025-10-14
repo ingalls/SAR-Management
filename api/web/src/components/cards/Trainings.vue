@@ -16,18 +16,19 @@
             </h3>
 
             <div class='btn-list ms-auto'>
-                <IconPlus
+                <TablerIconButton
                     v-if='create && is_iam("Training:Manage")'
-                    class='cursor-pointer'
-                    :size='32'
-                    :stroke='1'
+                    title='Create Training'
                     @click='$router.push(`/training/new`)'
-                />
-                <IconRefresh
+                >
+                    <IconPlus
+                        :size='32'
+                        :stroke='1'
+                    />
+                </TablerIconButton>
+                <TablerRefreshButton
                     v-if='is_iam("Training:View")'
-                    class='cursor-pointer'
-                    :size='32'
-                    :stroke='1'
+                    :loading='loading'
                     @click='fetch'
                 />
             </div>
@@ -141,6 +142,8 @@ import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
     TablerEpoch,
+    TablerIconButton,
+    TablerRefreshButton,
     TablerEpochRange,
     TablerLoading
 } from '@tak-ps/vue-tabler'

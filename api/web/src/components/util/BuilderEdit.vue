@@ -74,9 +74,6 @@
 import { ref } from 'vue';
 import {
     IconAlphabetLatin,
-    IconDecimal,
-    IconSort09,
-    IconBinary,
 } from '@tabler/icons-vue';
 import {
     TablerModal,

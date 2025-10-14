@@ -40,7 +40,7 @@
                                         <TablerIconButton
                                             v-if='$route.params.rolodexid && is_iam("Rolodex:Manage")'
                                             :icon='IconPencil'
-                                            :title='&apos;Edit &apos; + rolodex.name'
+                                            :title='"Edit " + rolodex.name'
                                             @click='$router.push(`/rolodex/${rolodex.id}/edit`)'
                                         >
                                             <IconPencil

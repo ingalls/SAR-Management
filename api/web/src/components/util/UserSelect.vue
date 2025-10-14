@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import Avatar from './Avatar.vue'
 import {
     IconPlus,
