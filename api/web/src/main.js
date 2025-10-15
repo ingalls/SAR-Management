@@ -9,6 +9,20 @@ import App from './App.vue'
 import std from './std.ts';
 std();
 
+// @ts-expect-error Virtual Module
+import { registerSW } from 'virtual:pwa-register'
+
+registerSW({
+    immediate: true,
+    onNeedRefresh() {
+        console.error('App needs refresh');
+    },
+    onOfflineReady() {
+        console.log('App ready to work offline!')
+    }
+})
+
+
 const router = new VueRouter.createRouter({
     history: VueRouter.createWebHistory(),
     routes: [
