@@ -37,7 +37,7 @@
         "typescript-eslint": "^8.46.0",
         "vite-plugin-pwa": "^1.0.3",
         "vue": "^3.2.31",
-        "vue-router": "^4.6.1",
+        "vue-router": "^4.6.2",
         "vuedraggable": "^4.1.0"
     },
     "devDependencies": {
