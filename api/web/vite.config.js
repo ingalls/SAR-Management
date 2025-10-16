@@ -24,7 +24,6 @@ export default defineConfig(({ mode }) => {
                 },
                 workbox: {
                     maximumFileSizeToCacheInBytes: 3000000,
-                    updateViaCache: 'none',
                     clientsClaim: true,
                     skipWaiting: true
                 }
@@ -38,11 +37,6 @@ export default defineConfig(({ mode }) => {
                 input: {
                     main: path.resolve(__dirname, 'index.html'),
                 },
-                output: {
-                    entryFileNames: `assets/[name].js`,
-                    chunkFileNames: `assets/[name].js`,
-                    assetFileNames: `assets/[name].[ext]`
-                }
             },
         },
         server: {
