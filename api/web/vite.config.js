@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => {
                 },
                 workbox: {
                     maximumFileSizeToCacheInBytes: 3000000,
+                    updateViaCache: 'none',
                     clientsClaim: true,
                     skipWaiting: true
                 }
