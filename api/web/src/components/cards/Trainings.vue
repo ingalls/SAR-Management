@@ -45,6 +45,39 @@
             />
         </template>
         <template v-else>
+            <div
+                v-if='!props.start && !props.end'
+                class='btn-group mx-2 my-2'
+                role='group'
+            >
+                <input
+                    type='radio'
+                    class='btn-check'
+                    name='btn-radio-toolbar'
+                    :checked='range === "past"'
+                    value='past'
+                >
+                <label
+                    class='btn btn-icon px-2'
+                    @click='range = "past"'
+                >
+                    <span class='ms-2'>Past Trainings</span>
+                </label>
+
+                <input
+                    type='radio'
+                    class='btn-check'
+                    name='btn-radio-toolbar'
+                    :checked='range === "future"'
+                    value='future'
+                >
+                <label
+                    class='btn btn-icon px-2'
+                    @click='range = "future"'
+                >
+                    <span class='ms-2'>Upcoming Trainings</span>
+                </label>
+            </div>
             <div class='overflow-auto'>
                 <table class='table card-table table-hover table-vcenter'>
                     <TableHeader
@@ -155,6 +188,8 @@ import {
     IconPlus
 } from '@tabler/icons-vue';
 
+const range = ref('future');
+
 const props = defineProps({
     label: {
         type: String,
@@ -209,7 +244,7 @@ const header = ref([])
 const paging = reactive({
     filter: '',
     sort: 'start_ts',
-    order: props.order,
+    order: props.order || 'asc',
     limit: props.limit,
     start: props.start,
     end: props.end,
@@ -218,6 +253,24 @@ const paging = reactive({
 const list = reactive({
     total: 0,
     items: []
+})
+
+watch(range, async (newRange) => {
+    if (!props.start && !props.end) {
+        const now = new Date();
+        if (newRange === 'past') {
+            paging.page = 0;
+            paging.end = now.toISOString();
+            paging.start = '';
+            paging.order = 'desc';
+        } else if (newRange === 'future') {
+            paging.page = 0;
+            paging.start = now.toISOString();
+            paging.end = '';
+            paging.order = 'asc';
+        }
+        await fetch();
+    }
 })
 
 const is_iam = (permission) => iam(props.iam, props.auth, permission)
