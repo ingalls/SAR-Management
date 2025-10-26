@@ -6,12 +6,15 @@
             </h3>
 
             <div class='ms-auto btn-list'>
-                <IconPlus
-                    class='cursor-pointer'
-                    size='32'
-                    :stroke='1'
+                <TablerIconButton
+                    title='Add Tag'
                     @click='push()'
-                />
+                >
+                    <IconPlus
+                        size='32'
+                        :stroke='1'
+                    />
+                </TablerIconButton>
             </div>
         </div>
 
@@ -56,29 +59,38 @@
                                 v-if='tag._edit'
                                 class='ms-auto btn-list'
                             >
-                                <IconCheck
-                                    class='cursor-pointer'
-                                    size='32'
-                                    :stroke='1'
+                                <TablerIconButton
+                                    title='Save Tag'
                                     @click='saveTag(tag, tagit)'
-                                />
-                                <IconTrash
-                                    class='cursor-pointer'
-                                    size='32'
-                                    :stroke='1'
+                                >
+                                    <IconCheck
+                                        size='32'
+                                        :stroke='1'
+                                    />
+                                </TablerIconButton>
+                                <TablerIconButton
+                                    title='Delete Tag'
                                     @click='deleteTag(tag, tagit)'
-                                />
+                                >
+                                    <IconTrash
+                                        size='32'
+                                        :stroke='1'
+                                    />
+                                </TablerIconButton>
                             </div>
                             <div
                                 v-else
                                 class='ms-auto btn-list'
                             >
-                                <IconPencil
-                                    class='cursor-pointer'
-                                    size='32'
-                                    :stroke='1'
+                                <TablerIconButton
+                                    title='Edit Tag'
                                     @click='tag._edit = true'
-                                />
+                                >
+                                    <IconPencil
+                                        size='32'
+                                        :stroke='1'
+                                    />
+                                </TablerIconButton>
                             </div>
                         </div>
                     </td>
@@ -97,6 +109,7 @@ import {
     IconTrash
 } from '@tabler/icons-vue';
 import {
+    TablerIconButton,
     TablerEpoch,
     TablerLoading,
     TablerInput,

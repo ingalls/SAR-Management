@@ -57,7 +57,29 @@
                             stroke='1'
                         />
                     </TablerIconButton>
-                    <template #dropdown />
+                    <template #dropdown>
+                        <div
+                            class='card'
+                            style='min-width: 500px;'
+                        >
+                            <div class='card-body row g-2'>
+                                <div class='col-md-6'>
+                                    <TablerInput
+                                        v-model='paging.start'
+                                        type='date'
+                                        label='Start Date'
+                                    />
+                                </div>
+                                <div class='col-md-6'>
+                                    <TablerInput
+                                        v-model='paging.end'
+                                        type='date'
+                                        label='End Date'
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </TablerDropdown>
             </div>
         </div>
