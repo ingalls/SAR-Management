@@ -135,27 +135,50 @@ watch(() => props.missions, () => {
 const renderChart = async () => {
     const stats = await window.std('/api/mission/stats');
 
-    const series = [];
-    const categories = [];
+    const years = {};
 
-    const keys = Object.keys(stats.month).sort();
-    for (const key of keys) {
-        categories.push(key);
-        series.push(stats.month[key]);
+    for (const key of Object.keys(stats.month)) {
+        const year = key.split('-')[0];
+        const month = parseInt(key.split('-')[1]) - 1;
+
+        if (!years[year]) years[year] = new Array(12).fill(0);
+        years[year][month] = stats.month[key];
+    }
+
+    const series = [];
+    for (const year of Object.keys(years).sort()) {
+        series.push({
+            name: year,
+            data: years[year]
+        });
     }
 
     const options = {
-        series: [{
-            name: "Missions",
-            data: series
-        }],
+        series: series,
         chart: {
             height: 350,
             type: 'bar',
         },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
         xaxis: {
-            categories: categories
-        }
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        },
+        fill: {
+            opacity: 1
+        },
     };
 
     if (chart) {
