@@ -105,6 +105,14 @@ watch(large, () => {
     });
 });
 
+watch(mode, () => {
+    if (mode.value === 'map') {
+        nextTick(() => {
+            map.resize();
+        });
+    }
+});
+
 watch(() => props.missions, () => {
     fc.features = props.missions.items.filter((mission) => {
         return !!mission.location_geom;
