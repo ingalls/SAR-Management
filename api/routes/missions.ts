@@ -50,27 +50,6 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
-    await schema.get('/mission/:missionid', {
-        name: 'Get Mission',
-        group: 'Mission',
-        description: 'Get a single mission',
-        params: Type.Object({
-            missionid: Type.Integer(),
-        }),
-        res: MissionResponse
-    }, async (req, res) => {
-        try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
-
-            const mission = await config.models.Mission.augmented_from(req.params.missionid);
-            if (!mission.users) mission.users = [];
-
-            res.json(mission);
-        } catch (err) {
-             Err.respond(err, res);
-        }
-    });
-
     await schema.post('/mission', {
         name: 'Create Mission',
         group: 'Mission',
@@ -223,6 +202,70 @@ export default async function router(schema: Schema, config: Config) {
                 status: 200,
                 message: 'Mission Deleted'
             });
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.get('/mission/stats', {
+        name: 'Mission Stats',
+        group: 'Mission',
+        description: 'Get mission statistics',
+        res: Type.Object({
+            year: Type.Record(Type.String(), Type.Integer()),
+            month: Type.Record(Type.String(), Type.Integer())
+        })
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
+
+            const stats = await config.models.Mission.pool.execute(sql`
+                SELECT
+                    EXTRACT(YEAR FROM start_ts) as year,
+                    TO_CHAR(start_ts, 'YYYY-MM') as month,
+                    COUNT(*) as count
+                FROM missions
+                GROUP BY 1, 2
+            `);
+
+            const response = {
+                year: {} as Record<string, number>,
+                month: {} as Record<string, number>
+            };
+
+            for (const row of stats) {
+                const year = String(row.year);
+                const month = String(row.month);
+                const count = parseInt(String(row.count));
+
+                if (!response.year[year]) response.year[year] = 0;
+                response.year[year] += count;
+
+                response.month[month] = count;
+            }
+
+            res.json(response);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.get('/mission/:missionid', {
+        name: 'Get Mission',
+        group: 'Mission',
+        description: 'Get a single mission',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
+        res: MissionResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
+
+            const mission = await config.models.Mission.augmented_from(req.params.missionid);
+            if (!mission.users) mission.users = [];
+
+            res.json(mission);
         } catch (err) {
              Err.respond(err, res);
         }

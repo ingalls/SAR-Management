@@ -130,27 +130,18 @@ watch(() => props.missions, () => {
     if (fc.features.length) {
         map.fitBounds(bbox(fc))
     }
-
-    renderChart();
 });
 
-const renderChart = () => {
-    if (!props.missions.items.length) return;
+const renderChart = async () => {
+    const stats = await window.std('/api/mission/stats');
 
     const series = [];
     const categories = [];
 
-    const stats = {};
-    for (const mission of props.missions.items) {
-        const date = moment(mission.start_ts).format('YYYY-MM');
-        if (!stats[date]) stats[date] = 0;
-        stats[date]++;
-    }
-
-    const keys = Object.keys(stats).sort();
+    const keys = Object.keys(stats.month).sort();
     for (const key of keys) {
         categories.push(key);
-        series.push(stats[key]);
+        series.push(stats.month[key]);
     }
 
     const options = {
