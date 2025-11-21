@@ -41,15 +41,17 @@
                         v-text='position'
                     />
                     <div class='datagrid-content'>
-                        <div
-                            v-for='leader in leaders[position]'
-                            :key='leader.id'
-                            class='d-flex align-items-center py-1'
-                        >
-                            <Avatar
-                                :user='leader'
-                                :link='true'
-                            />
+                        <div class='row g-2'>
+                            <div
+                                v-for='leader in leaders[position]'
+                                :key='leader.id'
+                                class='col-12 col-md-6 d-flex align-items-center'
+                            >
+                                <Avatar
+                                    :user='leader'
+                                    :link='true'
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
