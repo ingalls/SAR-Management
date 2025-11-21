@@ -2,10 +2,28 @@
     <div class='card col-12'>
         <div class='card-header'>
             <h3 class='card-title'>
-                Heat Map
+                {{ mode === 'map' ? 'Mission Heat Map' : 'Mission Timeline' }}
             </h3>
 
-            <div class='ms-auto btn-list'>
+            <div class='ms-auto btn-list align-items-center'>
+                <div class='btn-group'>
+                    <button
+                        type='button'
+                        class='btn'
+                        :class='{ "active": mode === "map" }'
+                        @click='mode = "map"'
+                    >
+                        Map
+                    </button>
+                    <button
+                        type='button'
+                        class='btn'
+                        :class='{ "active": mode === "chart" }'
+                        @click='mode = "chart"'
+                    >
+                        Chart
+                    </button>
+                </div>
                 <TablerIconButton
                     :title='large ? "Minimize" : "Maximize"'
                     @click='large = !large'
@@ -24,6 +42,7 @@
             </div>
         </div>
         <div 
+            v-show='mode === "map"'
             :style='{
                 "height": large ? 600 + "px" : 350 + "px"
             }'
@@ -33,6 +52,12 @@
                 class='h-full w-full'
             />
         </div>
+        <div
+            v-show='mode === "chart"'
+            class='card-body'
+        >
+            <div id='chart' />
+        </div>
     </div>
 </template>
 
@@ -41,6 +66,8 @@ import { ref, reactive, watch, onMounted, nextTick } from 'vue';
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import bbox from '@turf/bbox';
+import ApexCharts from 'apexcharts';
+import moment from 'moment';
 
 import {
     TablerIconButton
@@ -58,6 +85,8 @@ const props = defineProps({
 });
 
 let map = null;
+let chart = null;
+const mode = ref('map');
 const large = ref(false);
 const fc = reactive({
     type: 'FeatureCollection',
@@ -93,7 +122,50 @@ watch(() => props.missions, () => {
     if (fc.features.length) {
         map.fitBounds(bbox(fc))
     }
+
+    renderChart();
 });
+
+const renderChart = () => {
+    if (!props.missions.items.length) return;
+
+    const series = [];
+    const categories = [];
+
+    const stats = {};
+    for (const mission of props.missions.items) {
+        const date = moment(mission.start_ts).format('YYYY-MM');
+        if (!stats[date]) stats[date] = 0;
+        stats[date]++;
+    }
+
+    const keys = Object.keys(stats).sort();
+    for (const key of keys) {
+        categories.push(key);
+        series.push(stats[key]);
+    }
+
+    const options = {
+        series: [{
+            name: "Missions",
+            data: series
+        }],
+        chart: {
+            height: 350,
+            type: 'bar',
+        },
+        xaxis: {
+            categories: categories
+        }
+    };
+
+    if (chart) {
+        chart.updateOptions(options);
+    } else {
+        chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    }
+}
 
 const mountMap = () => {
     const opts = {
@@ -248,6 +320,7 @@ const mountMap = () => {
 onMounted(async () => {
     nextTick(() => {
         mountMap();
+        renderChart();
     });
 });
 </script>
