@@ -87,6 +87,9 @@ export default class Config {
             if (!process.env.SigningSecret) throw new Error('SigningSecret env must be set');
             if (!process.env.MailGun) throw new Error('MailGun env must be set');
 
+            if (!process.env.SPACES_BUCKET) throw new Error('SPACES_BUCKET env must be set');
+            if (!process.env.SPACES_BUCKET_PUBLIC) throw new Error('SPACES_BUCKET_PUBLIC env must be set');
+
             const BASE_URL = (await models.Server.from('frontend')).value;
 
             const APIURL = new URL(((await models.Server.from('frontend')).value));
