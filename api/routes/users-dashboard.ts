@@ -4,14 +4,11 @@ import { sql } from 'drizzle-orm';
 import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import Spaces from '../lib/aws/spaces.js';
 import { Type } from '@sinclair/typebox';
-import { StandardResponse, UserDashboardResponse } from '../lib/types.js';
+import { UserDashboardResponse } from '../lib/types.js';
 import { UserDashboard } from '../lib/schema.js';
 
 export default async function router(schema: Schema, config: Config) {
-    const spaces = new Spaces();
-
     await schema.get('/user/:userid/dashboard', {
         name: 'Get Dashboard',
         group: 'Dashboard',

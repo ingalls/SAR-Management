@@ -122,7 +122,7 @@ export default async function router(schema: Schema, config: Config) {
         res: CertResponse
     }, async (req, res) => {
         try {
-            const user = await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.User, PermissionsLevel.MANAGE);
+            await Auth.is_own_or_iam(config, req, req.params.userid, IamGroup.User, PermissionsLevel.MANAGE);
 
             const cert = await config.models.Cert.generate({
                 uid: req.params.userid,

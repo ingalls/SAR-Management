@@ -2,9 +2,8 @@ import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import Spaces from '../lib/aws/spaces.js';
 import Schema from '@openaddresses/batch-schema';
-import Config from '../lib/config.js';
 
-export default async function router(schema: Schema, config: Config) {
+export default async function router(schema: Schema) {
     const spaces = new Spaces();
 
     await schema.get('/public/photos', {
