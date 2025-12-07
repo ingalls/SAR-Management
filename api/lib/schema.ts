@@ -69,7 +69,7 @@ export const UserSetting = pgTable('user_settings', {
 
 export const UserReset = pgTable('users_reset', {
     uid: integer('uid').notNull().references(() => User.id),
-    expires: timestamp('expires', { mode: 'string' }).notNull(),
+    expires: timestamp('expires', { withTimezone: true, mode: 'string' }).notNull(),
     token: text('token').notNull(),
     action: text('action').notNull()
 });
@@ -138,7 +138,7 @@ export const Cert = pgTable('certs', {
     uid: integer('uid').notNull().references(() => User.id),
     known: integer('known').references(() => CertKnown.id),
     name: text('name').notNull(),
-    expiry: timestamp('expiry', { mode: 'string' }),
+    expiry: timestamp('expiry', { withTimezone: true, mode: 'string' }),
     asset: integer('asset').notNull().references(() => Asset.id)
 });
 
@@ -187,8 +187,8 @@ export const Issue = pgTable('issues', {
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     status: text('status').notNull().default('open'),
-    start_ts: timestamp('start_ts', { mode: 'string' }),
-    end_ts: timestamp('end_ts', { mode: 'string' }),
+    start_ts: timestamp('start_ts', { withTimezone: true, mode: 'string' }),
+    end_ts: timestamp('end_ts', { withTimezone: true, mode: 'string' }),
     title: text('title').notNull(),
     body: text('body').notNull(),
     author: integer('author').notNull().references(() => User.id),
@@ -236,8 +236,8 @@ export const Mission = pgTable('missions', {
     id: serial('id').primaryKey(),
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
-    start_ts: timestamp('start_ts', { mode: 'string' }).notNull(),
-    end_ts: timestamp('end_ts', { mode: 'string' }).notNull(),
+    start_ts: timestamp('start_ts', { withTimezone: true, mode: 'string' }).notNull(),
+    end_ts: timestamp('end_ts', { withTimezone: true, mode: 'string' }).notNull(),
     status: text('status').notNull().default('open'),
     title: text('title').notNull(),
     body: text('body').notNull(),
@@ -308,8 +308,8 @@ export const ScheduleAssigned = pgTable('schedules_assigned', {
 export const ScheduleEvent = pgTable('schedules_event', {
     id: serial('id').primaryKey(),
     schedule_id: integer('schedule_id').notNull().references(() => Schedule.id),
-    start_ts: timestamp('start_ts', { mode: 'string' }).notNull(),
-    end_ts: timestamp('end_ts', { mode: 'string' }).notNull(),
+    start_ts: timestamp('start_ts', { withTimezone: true, mode: 'string' }).notNull(),
+    end_ts: timestamp('end_ts', { withTimezone: true, mode: 'string' }).notNull(),
     uid: integer('uid').notNull().references(() => User.id),
 });
 
@@ -324,8 +324,8 @@ export const Training = pgTable('training', {
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp('updated', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     author: integer('author').notNull().references(() => User.id),
-    start_ts: timestamp('start_ts', { mode: 'string' }).notNull(),
-    end_ts: timestamp('end_ts', { mode: 'string' }).notNull(),
+    start_ts: timestamp('start_ts', { withTimezone: true, mode: 'string' }).notNull(),
+    end_ts: timestamp('end_ts', { withTimezone: true, mode: 'string' }).notNull(),
     title: text('title').notNull(),
     body: text('body').notNull(),
     location: text('location').notNull().default(''),
