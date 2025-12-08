@@ -216,6 +216,10 @@ onMounted(async () => {
             const start = new Date(info.start);
             const end = new Date(info.end);
 
+            if (info.allDay) {
+                end.setDate(end.getDate() - 1);
+            }
+
             if (
                 start.getFullYear() === end.getFullYear()
                 && start.getMonth() === end.getMonth()
