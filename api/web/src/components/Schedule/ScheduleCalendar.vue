@@ -82,6 +82,7 @@ schedules_assigned.json<template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import moment from 'moment';
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -131,8 +132,8 @@ const submitAssignment = async () => {
             method: 'PATCH',
             body: {
                 uid:  modal.user,
-                start_ts: modal.start,
-                end_ts: modal.end
+                start_ts: moment(modal.start).toISOString(),
+                end_ts: moment(modal.end).toISOString()
             }
         });
     } else {
@@ -140,8 +141,8 @@ const submitAssignment = async () => {
             method: 'POST',
             body: {
                 uid:  modal.user,
-                start_ts: modal.start,
-                end_ts: modal.end
+                start_ts: moment(modal.start).toISOString(),
+                end_ts: moment(modal.end).toISOString()
             }
         });
     }
@@ -163,8 +164,8 @@ onMounted(async () => {
                 id: event.event.id,
                 uid: event.event.extendedProps.uid,
                 title: event.event.title,
-                start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth() + 1).padStart(2, '0')}-${String(event.event.start.getDate()).padStart(2, '0')}T${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
-                end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth() + 1).padStart(2, '0')}-${String(event.event.end.getDate()).padStart(2, '0')}T${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
+                start: moment(event.event.start).format('YYYY-MM-DDTHH:mm'),
+                end: moment(event.event.end).format('YYYY-MM-DDTHH:mm'),
                 shown: true
             });
         },
@@ -186,8 +187,8 @@ onMounted(async () => {
     calendar.value.render();
 
     calendar.value.on('select', (event) => {
-        modal.start = `${event.startStr}T${props.schedule.handoff}`;
-        modal.end = `${event.endStr}T${props.schedule.handoff}`;
+        modal.start = moment(`${event.startStr}T${props.schedule.handoff}`).format('YYYY-MM-DDTHH:mm');
+        modal.end = moment(`${event.endStr}T${props.schedule.handoff}`).format('YYYY-MM-DDTHH:mm');
         modal.shown = true;
     });
 });

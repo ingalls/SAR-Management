@@ -136,6 +136,7 @@
 
 <script>
 import iam from '../iam.js';
+import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import Location from './Mission/Location.vue';
@@ -208,11 +209,11 @@ export default {
             }
 
             if (url.searchParams.has('start')) {
-                this.training.start_ts = url.searchParams.get('start')
+                this.training.start_ts = moment(url.searchParams.get('start')).format('YYYY-MM-DDTHH:mm');
             }
 
             if (url.searchParams.has('end')) {
-                this.training.end_ts = url.searchParams.get('end')
+                this.training.end_ts = moment(url.searchParams.get('end')).format('YYYY-MM-DDTHH:mm');
             }
 
             this.loading.training = false;
@@ -224,8 +225,8 @@ export default {
             this.loading.training = true;
             const training = await window.std(`/api/training/${this.$route.params.trainingid}`);
 
-            training.start_ts = (new Date(training.start_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
-            training.end_ts = (new Date(training.end_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
+            training.start_ts = moment(training.start_ts).format('YYYY-MM-DDTHH:mm');
+            training.end_ts = moment(training.end_ts).format('YYYY-MM-DDTHH:mm');
 
             this.training = training;
             this.loading.training = false;
@@ -233,6 +234,8 @@ export default {
         create: async function() {
             const body = JSON.parse(JSON.stringify(this.training));
             body.teams = body.teams.map((team) => { return team.id });
+            body.start_ts = moment(body.start_ts).toISOString();
+            body.end_ts = moment(body.end_ts).toISOString();
 
             const create = await window.std('/api/training', {
                 method: 'POST', body
@@ -249,6 +252,8 @@ export default {
         update: async function() {
             const body = JSON.parse(JSON.stringify(this.training));
             body.teams = body.teams.map((team) => { return team.id });
+            body.start_ts = moment(body.start_ts).toISOString();
+            body.end_ts = moment(body.end_ts).toISOString();
 
             const create = await window.std(`/api/training/${this.training.id}`, {
                 method: 'PATCH', body
