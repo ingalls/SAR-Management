@@ -162,6 +162,7 @@
 
 <script>
 import iam from '../iam.js';
+import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import Location from './Mission/Location.vue';
@@ -245,11 +246,11 @@ export default {
             }
 
             if (url.searchParams.has('start')) {
-                this.mission.start_ts = url.searchParams.get('start')
+                this.mission.start_ts = moment(url.searchParams.get('start')).format('YYYY-MM-DDTHH:mm');
             }
 
             if (url.searchParams.has('end')) {
-                this.mission.end_ts = url.searchParams.get('end')
+                this.mission.end_ts = moment(url.searchParams.get('end')).format('YYYY-MM-DDTHH:mm');
             }
 
             this.loading.mission = false;
@@ -302,6 +303,8 @@ export default {
                 method: 'PATCH',
                 body: {
                     ...this.mission,
+                    start_ts: moment(this.mission.start_ts).toISOString(),
+                    end_ts: moment(this.mission.end_ts).toISOString(),
                     teams: this.mission.teams.map((team) => { return team.id }),
                     tags: this.mission.tags.map((tag) => { return tag.id }),
                 }
@@ -319,6 +322,8 @@ export default {
                 method: 'POST',
                 body: {
                     ...this.mission,
+                    start_ts: moment(this.mission.start_ts).toISOString(),
+                    end_ts: moment(this.mission.end_ts).toISOString(),
                     teams: this.mission.teams.map((team) => { return team.id }),
                     tags: this.mission.tags.map((tag) => { return tag.id }),
                     assigned: this.assigned.map((a) => {
@@ -338,8 +343,8 @@ export default {
             this.loading.mission = true;
             const mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
 
-            mission.start_ts = (new Date(mission.start_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
-            mission.end_ts = (new Date(mission.end_ts)).toISOString().replace(/:\d+\.\d+[A-Z]/, '');
+            mission.start_ts = moment(mission.start_ts).format('YYYY-MM-DDTHH:mm');
+            mission.end_ts = moment(mission.end_ts).format('YYYY-MM-DDTHH:mm');
 
             this.mission = mission;
             this.loading.mission = false;
