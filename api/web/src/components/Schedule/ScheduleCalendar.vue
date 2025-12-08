@@ -154,6 +154,7 @@ const submitAssignment = async () => {
 onMounted(async () => {
     calendar.value = new Calendar(document.getElementById('calendar'), {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        timeZone: 'local',
         selectable: true,
         unselectAuto: true,
         eventClick: async (event) => {
@@ -162,8 +163,8 @@ onMounted(async () => {
                 id: event.event.id,
                 uid: event.event.extendedProps.uid,
                 title: event.event.title,
-                start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth() + 1).padStart(2, '0')}-${String(event.event.start.getDate()).padStart(2, '0')} ${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
-                end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth() + 1).padStart(2, '0')}-${String(event.event.end.getDate()).padStart(2, '0')} ${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
+                start: `${event.event.start.getFullYear()}-${String(event.event.start.getMonth() + 1).padStart(2, '0')}-${String(event.event.start.getDate()).padStart(2, '0')}T${String(event.event.start.getHours()).padStart(2, '0')}:${String(event.event.start.getMinutes()).padStart(2, '0')}`,
+                end: `${event.event.end.getFullYear()}-${String(event.event.end.getMonth() + 1).padStart(2, '0')}-${String(event.event.end.getDate()).padStart(2, '0')}T${String(event.event.end.getHours()).padStart(2, '0')}:${String(event.event.end.getMinutes()).padStart(2, '0')}`,
                 shown: true
             });
         },
@@ -175,18 +176,7 @@ onMounted(async () => {
                 url.searchParams.append('end', fetchInfo.endStr);
                 events = events.concat(await window.std(url));
 
-                return resolve(events.map((event) => {
-                    event.start = (new Date(event.start)).toISOString()
-                        .replace('T', ' ')
-                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-                    event.end = (new Date(event.end)).toISOString()
-                        .replace('T', ' ')
-                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-
-                    return event;
-                }));
+                return resolve(events);
             } catch (err) {
                 return reject(err);
             }

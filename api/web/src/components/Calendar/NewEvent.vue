@@ -124,8 +124,8 @@ const props = defineProps({
 const params = ref({
     type: 'training',
     title: '',
-    start: (new Date(props.start)).toISOString().replace(/:\d+\.\d+[A-Z]/, ''),
-    end: (new Date(props.end)).toISOString().replace(/:\d+\.\d+[A-Z]/, '')
+    start: new Date(new Date(props.start).getTime() - (new Date(props.start).getTimezoneOffset() * 60000)).toISOString().slice(0, 16),
+    end: new Date(new Date(props.end).getTime() - (new Date(props.end).getTimezoneOffset() * 60000)).toISOString().slice(0, 16)
 })
 
 function newEvent() {

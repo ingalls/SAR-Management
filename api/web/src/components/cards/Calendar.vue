@@ -189,6 +189,7 @@ onMounted(async () => {
 
     calendar.value = new Calendar(document.getElementById('calendar'), {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        timeZone: 'local',
         selectable: true,
         unselectAuto: true,
         eventClick: async (event) => {
@@ -206,18 +207,7 @@ onMounted(async () => {
                     events = events.concat(await window.std(url));
                 }
 
-                return resolve(events.map((event) => {
-                    event.start = (new Date(event.start)).toISOString()
-                        .replace('T', ' ')
-                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-                    event.end = (new Date(event.end)).toISOString()
-                        .replace('T', ' ')
-                        .replace(/:[0-9]+\.[0-9]+[A-Z]/, '');
-
-
-                    return event;
-                }));
+                return resolve(events);
             } catch (err) {
                 return reject(err);
             }
