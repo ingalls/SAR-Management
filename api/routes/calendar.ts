@@ -99,14 +99,6 @@ export default async function router(schema: Schema, config: Config) {
                 await Auth.is_scope(config, req, user.scopes, { token: true });
             }
 
-            let timezone = 'America/Denver';
-            try {
-                timezone = (await config.models.Server.from('timezone')).value;
-            } catch (err) {
-                console.error(err);
-                timezone = 'America/Denver';
-            }
-
             const calendar = ical({ name: 'MesaSAR Training Calendar' });
             if (req.params.calendar === 'training') {
                 (await config.models.Training.stream({
@@ -116,8 +108,8 @@ export default async function router(schema: Schema, config: Config) {
                     `
                 })).on('data', (training) => {
                     calendar.createEvent({
-                        start: moment(training.start_ts).tz(timezone, true),
-                        end: moment(training.end_ts).tz(timezone, true),
+                        start: moment(training.start_ts),
+                        end: moment(training.end_ts),
                         description: training.body,
                         summary: training.title,
                         location: training.location,
