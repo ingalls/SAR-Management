@@ -368,3 +368,9 @@ function open(doc) {
     }
 }
 </script>
+
+<style scoped>
+.tile-hover:hover {
+    background-color: rgba(0, 0, 0, 0.025);
+}
+</style>
