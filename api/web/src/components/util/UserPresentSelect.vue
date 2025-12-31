@@ -31,7 +31,7 @@
 
                                     <TablerNone
                                         v-if='list.items.length === 0'
-                                        label='Users'
+                                        label='No Users'
                                         :create='false'
                                     />
                                     <template v-else>
@@ -54,7 +54,7 @@
             <TablerLoading v-if='loading' />
             <TablerNone
                 v-else-if='!assigned.length'
-                label='Users Assigned'
+                label='No Users Assigned'
                 :create='false'
             />
             <template v-else>

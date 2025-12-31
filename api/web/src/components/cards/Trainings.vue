@@ -84,7 +84,7 @@
                         v-model:sort='paging.sort'
                         v-model:order='paging.order'
                         v-model:header='header'
-                        :export='false'
+                        :allow-export='false'
                     />
                     <tbody>
                         <tr
@@ -93,7 +93,7 @@
                             class='cursor-pointer'
                             @click='$router.push(`/training/${training.id}`)'
                         >
-                            <template v-for='(h, h_it) in header'>
+                            <template v-for='h in header'>
                                 <template v-if='h.display'>
                                     <td v-if='["updated", "created"].includes(h.name)'>
                                         <TablerEpoch
@@ -131,7 +131,10 @@
 
                                             <span v-text='training.title' />
                                             <div class='ms-auto btn-list h-25'>
-                                                <template v-for='team in training.teams'>
+                                                <template
+                                                    v-for='team in training.teams'
+                                                    :key='team.id'
+                                                >
                                                     <TeamBadge
                                                         :team='team'
                                                         class='ms-auto'
@@ -168,8 +171,8 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TeamBadge from '../util/TeamBadge.vue'
+import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
-import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
@@ -272,8 +275,7 @@ watch(range, async (newRange) => {
         await fetch();
     }
 })
-
-const is_iam = (permission) => iam(props.iam, props.auth, permission)
+const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
 const goto = () => {
     if (props.assigned) router.push(`/training?assigned=${props.assigned}`);

@@ -28,13 +28,12 @@
 </template>
 
 <script setup>
-import is_iam from '../iam.js';
 import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import CardCalendar from './cards/Calendar.vue';
 
-const props = defineProps({
+defineProps({
     iam: {
         type: Object,
         required: true

@@ -66,12 +66,12 @@
                         v-model:sort='paging.sort'
                         v-model:order='paging.order'
                         v-model:header='header'
-                        :export='true'
+                        :allow-export='true'
                         @export='exportIssues("csv")'
                     />
                     <tbody>
                         <tr
-                            v-for='(issue, issue_it) in list.items'
+                            v-for='issue in list.items'
                             :key='issue.id'
                             class='cursor-pointer'
                             @click='$router.push(`/issue/${issue.id}`)'
@@ -118,8 +118,8 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
+import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
-import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
@@ -187,8 +187,7 @@ const list = reactive({
     total: 0,
     items: []
 })
-
-const is_iam = (permission) => iam(props.iam, props.auth, permission)
+const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
 const listSchema = async () => {
     const schema = await window.std('/api/schema?method=GET&url=/issue');

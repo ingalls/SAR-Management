@@ -67,7 +67,6 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import bbox from '@turf/bbox';
 import ApexCharts from 'apexcharts';
-import moment from 'moment';
 
 import {
     TablerIconButton

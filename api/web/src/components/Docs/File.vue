@@ -119,18 +119,25 @@ const is_pdf = computed(() => {
 
 const loadPreview = async () => {
     loading.value.preview = true;
-    const url = window.stdurl('/api/doc');
-    url.searchParams.append('prefix', props.prefix + props.file + '/');
-    const res = await window.std(url)
+
+    if (is_pdf.value) {
+        preview.value = url(false);
+        loading.value.preview = false;
+        return;
+    }
+
+    const req_url = window.stdurl('/api/doc');
+    req_url.searchParams.append('prefix', props.prefix + props.file + '/');
+    const res = await window.std(req_url)
 
     for (const doc of res.items) {
         if (doc.key === 'preview.pdf') {
-            const url = window.stdurl('/api/doc/download');
-            url.searchParams.append('prefix', props.prefix + props.file);
-            url.searchParams.append('file', 'preview.pdf');
-            url.searchParams.append('download', 'false');
-            url.searchParams.append('token', localStorage.token);
-            preview.value = String(url);
+            const dl_url = window.stdurl('/api/doc/download');
+            dl_url.searchParams.append('prefix', props.prefix + props.file);
+            dl_url.searchParams.append('file', 'preview.pdf');
+            dl_url.searchParams.append('download', 'false');
+            dl_url.searchParams.append('token', localStorage.token);
+            preview.value = String(dl_url);
             break;
         }
     }

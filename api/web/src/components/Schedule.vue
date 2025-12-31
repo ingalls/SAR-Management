@@ -71,7 +71,6 @@ import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardScheduleAssigned from './Schedule/ScheduleAssigned.vue';
 import CardScheduleCalendar from './Schedule/ScheduleCalendar.vue';
-import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
     TablerBreadCrumb,
     TablerLoading

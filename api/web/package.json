@@ -17,7 +17,7 @@
         "@mapbox/mapbox-gl-geocoder": "^5.0.1",
         "@tabler/core": "^1.0.0",
         "@tabler/icons-vue": "^3.6.0",
-        "@tak-ps/vue-tabler": "^3.85.0",
+        "@tak-ps/vue-tabler": "^4.0.0",
         "@turf/bbox": "^7.1.0",
         "apexcharts": "^5.3.5",
         "autosize": "^6.0.1",

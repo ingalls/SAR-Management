@@ -86,7 +86,6 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import DocFile from './Docs/File.vue';
 import {
     IconEyeOff,
     IconDownload
@@ -96,7 +95,6 @@ import {
     TablerDelete,
     TablerLoading,
 } from '@tak-ps/vue-tabler'
-import Avatar from './util/Avatar.vue';
 
 const route = useRoute();
 const router = useRouter();

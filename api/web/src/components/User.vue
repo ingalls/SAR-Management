@@ -287,7 +287,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 import UserProfile from './User/Profile.vue';
 import CardIssues from './cards/Issues.vue';
 import CardEquipment from './cards/Equipment.vue';
@@ -323,13 +323,9 @@ const loading = reactive({
     teams: true
 })
 const user = ref({})
-const teams = reactive({
-    total: 0,
-    teams: []
-})
 
 const is_iam = (permission) => {
-    return iam(props.iam, props.auth, permission)
+    return iamHelper(props.iam, props.auth, permission)
 }
 
 const googleMaps = () => {

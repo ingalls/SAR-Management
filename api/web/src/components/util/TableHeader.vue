@@ -36,7 +36,7 @@
 
                 <div class='pt-4'>
                     <div
-                        v-if='export'
+                        v-if='allowExport'
                         class='px-2 py-1'
                     >
                         <div
@@ -135,7 +135,7 @@ const props = defineProps({
         required: false,
         description: 'Field to sort by'
     },
-    export: {
+    allowExport: {
         type: Boolean,
         required: false,
         description: 'Export Events',

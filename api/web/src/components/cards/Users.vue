@@ -126,7 +126,7 @@
                         v-model:sort='paging.sort'
                         v-model:order='paging.order'
                         v-model:header='header'
-                        :export='true'
+                        :allow-export='true'
                         @export='exportUsers("csv")'
                     />
                     <tbody>

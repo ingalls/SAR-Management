@@ -36,7 +36,7 @@
                             </template>
                             <template v-else-if='!list.items.length'>
                                 <TablerNone
-                                    label='Schedules'
+                                    label='No Schedules'
                                     :create='false'
                                 />
                             </template>
@@ -85,7 +85,6 @@
 <script setup>
 import { reactive, onMounted } from 'vue';
 import iamHelper from '../iam.js';
-import NoAccess from './util/NoAccess.vue';
 import TableHeader from './util/TableHeader.vue';
 import TableFooter from './util/TableFooter.vue';
 import {

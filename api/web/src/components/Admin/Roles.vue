@@ -18,7 +18,7 @@
         <TablerNone
             v-if='!list.items.length'
             :create='false'
-            label='Roles'
+            label='No Roles'
         />
         <TablerLoading v-else-if='loading' />
         <table

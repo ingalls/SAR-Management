@@ -55,7 +55,7 @@ import {
     TablerInput,
 } from '@tak-ps/vue-tabler';
 
-const props = defineProps({
+defineProps({
     auth: {
         type: Object,
         required: true

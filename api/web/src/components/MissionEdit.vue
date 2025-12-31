@@ -282,7 +282,7 @@ export default {
                 try {
                     new Date(this.mission[field]);
                     this.errors[field] = '';
-                } catch (err) {
+                } catch {
                     this.errors[field] = 'Invalid Date';
                 }
             }

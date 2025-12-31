@@ -62,7 +62,6 @@
 <script setup>
 import { ref, onMounted, useTemplateRef } from 'vue';
 import 'gridstack/dist/gridstack.min.css';
-import iam from '../iam.js';
 import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
@@ -99,7 +98,7 @@ const cards = ref([{
 }]);
 
 onMounted(() => {
-    const grid = GridStack.init({
+    GridStack.init({
         column: 12,
         minRow: 1,
         margin: '10px',

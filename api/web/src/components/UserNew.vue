@@ -103,7 +103,7 @@
 <script setup>
 import { ref, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardTeams from './cards/Teams.vue';
 import {
@@ -151,8 +151,7 @@ watch(() => user.fname, () => {
 watch(() => user.lname, () => {
     user.username = `${user.fname.toLowerCase()}.${user.lname.toLowerCase()}`;
 });
-
-const is_iam = (permission) => iam(props.iam, props.auth, permission);
+const is_iam = (permission) => iamHelper(props.iam, props.auth, permission);
 
 const create = async () => {
     for (const field of ['username', 'email', 'fname', 'lname', 'phone']) {

@@ -40,9 +40,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import {
-    TablerInput
-} from '@tak-ps/vue-tabler'
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 

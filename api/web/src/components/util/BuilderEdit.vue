@@ -88,7 +88,5 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close', 'done']);
-
 const edit = ref(JSON.parse(JSON.stringify(props.prop)));
 </script>

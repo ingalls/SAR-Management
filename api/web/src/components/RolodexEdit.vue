@@ -178,7 +178,6 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
     IconPencil
 } from '@tabler/icons-vue';
@@ -193,7 +192,6 @@ export default {
     name: 'RolodexEdit',
     components: {
         TablerInput,
-        UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,
         IconPencil,
@@ -256,18 +254,6 @@ export default {
             }
 
             return true;
-        },
-        update: async function() {
-            if (!this.validate()) return;
-
-            this.loading = true;
-            const update = await window.std(`/api/rolodex/${this.$route.params.rolodexid}`, {
-                method: 'PATCH',
-                body: this.rolodex
-            });
-
-            this.loading = false;
-            this.$router.push(`/rolodex/${this.rolodex.id}`);
         },
         create: async function() {
             if (!this.validate()) return;

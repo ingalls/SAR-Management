@@ -102,7 +102,7 @@
                     v-model:sort='paging.sort'
                     v-model:order='paging.order'
                     v-model:header='header'
-                    :export='false'
+                    :allow-export='false'
                 />
                 <tbody>
                     <tr
@@ -148,7 +148,10 @@
                                         </span>
                                         <span v-text='mission.title' />
                                         <div class='ms-auto btn-list h-25'>
-                                            <template v-for='team in mission.teams'>
+                                            <template
+                                                v-for='team in mission.teams'
+                                                :key='team.id'
+                                            >
                                                 <TeamBadge
                                                     :team='team'
                                                     class='ms-auto'
@@ -184,8 +187,8 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TeamBadge from '../util/TeamBadge.vue'
+import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
-import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
@@ -275,8 +278,7 @@ const list = reactive({
     total: 0,
     items: []
 })
-
-const is_iam = (permission) => iam(props.iam, props.auth, permission)
+const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
 const goto = () => {
     if (props.assigned) router.push(`/mission?assigned=${props.assigned}`);

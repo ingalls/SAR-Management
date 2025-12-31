@@ -141,7 +141,6 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import phoneFormat from 'phone';
-import Avatar from './util/Avatar.vue';
 import CreateComment from './Application/CreateComment.vue';
 import Comment from './util/Comment.vue';
 import {
@@ -158,7 +157,6 @@ import {
 export default {
     name: 'Application',
     components: {
-        Avatar,
         TablerEpoch,
         CreateComment,
         IconSettings,
@@ -209,12 +207,6 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         fetchComments: async function() {
             this.comments = await window.std(`/api/application/${this.$route.params.applicationid}/comment`);
-        },
-        deleteComment: async function(comment) {
-            await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {
-                method: 'DELETE'
-            })
-            await this.fetchComments();
         },
         deleteComment: async function(comment) {
             await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {

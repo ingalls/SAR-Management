@@ -84,7 +84,10 @@
                                             v-if='training.teams.length'
                                             class='mt-2'
                                         >
-                                            <template v-for='team in training.teams'>
+                                            <template
+                                                v-for='team in training.teams'
+                                                :key='team.id'
+                                            >
                                                 <TeamBadge
                                                     class='mx-1'
                                                     :team='team'

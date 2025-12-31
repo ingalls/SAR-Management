@@ -36,7 +36,7 @@
 
             <template v-if='!tags.length'>
                 <TablerNone
-                    label='Tags Assigned'
+                    label='No Tags Assigned'
                     :create='false'
                     :compact='true'
                 />

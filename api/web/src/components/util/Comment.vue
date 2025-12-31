@@ -39,7 +39,7 @@
         <TablerLoading v-if='loading' />
         <template v-else-if='edit'>
             <MdEditor
-                v-model='comment.body'
+                v-model='body'
                 :preview='false'
                 no-upload-img
                 no-mermaid
@@ -117,6 +117,7 @@ const emit = defineEmits(['delete', 'update']);
 
 const loading = ref(false);
 const edit = ref(false);
+const body = ref(props.comment.body);
 
 const fromNow = computed(() => {
     return moment(props.comment.created).fromNow();
@@ -124,6 +125,8 @@ const fromNow = computed(() => {
 
 function updateComment() {
     loading.value = true;
-    emit('update', props.comment);
+    const c = JSON.parse(JSON.stringify(props.comment));
+    c.body = body.value;
+    emit('update', c);
 }
 </script>

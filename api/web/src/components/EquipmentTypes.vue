@@ -80,7 +80,7 @@
                             </table>
                             <template v-if='!list.total'>
                                 <TablerNone
-                                    label='Equipment Types'
+                                    label='No Equipment Types'
                                     :create='false'
                                 />
                             </template>
@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
 import NoAccess from './util/NoAccess.vue';
 import {
     TablerNone,

@@ -83,7 +83,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import NoAccess from './util/NoAccess.vue';
 import TeamBadge from './util/TeamBadge.vue';

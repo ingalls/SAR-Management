@@ -49,13 +49,9 @@ import { useRoute } from 'vue-router';
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardMissions from './cards/Missions.vue';
-import TableHeader from './util/TableHeader.vue';
 import HeatMap from './Mission/HeatMap.vue';
-import TeamBadge from './util/TeamBadge.vue';
 
 import {
-    TablerNone,
-    TablerEpochRange,
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler';
 

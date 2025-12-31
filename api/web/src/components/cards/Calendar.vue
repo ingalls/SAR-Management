@@ -157,7 +157,6 @@ const props = defineProps({
 
 const router = useRouter();
 const calendar = ref();
-const showExport = ref('');
 const exportURL = ref('');
 const selected = ref({
     shown: false,

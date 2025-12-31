@@ -3,7 +3,10 @@
         v-if='!is_iam("User:View")'
         title='Certificates'
     />
-    <div v-else class='card'>
+    <div
+        v-else
+        class='card'
+    >
         <div class='card-header'>
             <div class='col'>
                 <div class='d-flex'>
@@ -86,7 +89,7 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
-import iam from '../../iam.js';
+import iamHelper from '../../iam.js';
 import {
     TablerNone,
     TablerEpoch,
@@ -124,8 +127,7 @@ const list = reactive({
     total: 0,
     items: []
 })
-
-const is_iam = (permission) => iam(props.iam, props.auth, permission)
+const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
 const fetch = async () => {
     const url = window.stdurl(`/api/user/${props.assigned}/cert`);

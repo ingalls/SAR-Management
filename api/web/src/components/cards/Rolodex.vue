@@ -55,7 +55,7 @@
                     v-model:sort='paging.sort'
                     v-model:order='paging.order'
                     v-model:header='header'
-                    :export='false'
+                    :allow-export='false'
                 />
                 <tbody>
                     <tr
@@ -106,13 +106,12 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
 import phoneFormat from 'phone';
+import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
-import iam from '../../iam.js';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
-    TablerEnum,
     TablerInput,
     TablerEpoch,
     TablerLoading
@@ -120,8 +119,7 @@ import {
 
 import {
     IconGripVertical,
-    IconPlus,
-    IconSettings
+    IconPlus
 } from '@tabler/icons-vue';
 
 const props = defineProps({
@@ -175,8 +173,7 @@ const list = reactive({
     total: 0,
     items: []
 })
-
-const is_iam = (permission) => iam(props.iam, props.auth, permission)
+const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
 const listSchema = async () => {
     const schema = await window.std('/api/schema?method=GET&url=/rolodex');

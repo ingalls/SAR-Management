@@ -2,7 +2,7 @@ function std() {
     window.stdurl = function(url) {
         try {
             url = new URL(url);
-        } catch (err) {
+        } catch {
             url = new URL(url, window.location.origin);
         }
 
@@ -40,7 +40,7 @@ function std() {
             if ((res.status < 200 || res.status >= 400) && ![401].includes(res.status)) {
                 try {
                     bdy = await res.json();
-                } catch (err) {
+                } catch {
                     throw new Error(`Status Code: ${res.status}`);
                 }
 

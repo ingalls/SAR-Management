@@ -21,7 +21,7 @@
         <TablerNone
             v-if='!list.items.length'
             :create='false'
-            label='Tags'
+            label='No Tags'
         />
         <TablerLoading v-else-if='loading' />
         <table

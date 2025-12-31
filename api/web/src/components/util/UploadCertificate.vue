@@ -108,7 +108,6 @@ const props = defineProps({
 const emit = defineEmits(['close', 'cancel']);
 
 const loading = ref(true);
-const custom = ref('');
 const noExpiry = ref(false);
 const url = ref(window.stdurl('api/asset'));
 const headers = ref({
@@ -144,8 +143,6 @@ const saveCert = async () => {
 
     if (body.name === "Other") {
         body.name = body.custom;
-    } else {
-        body.known
     }
     delete body.custom;
 

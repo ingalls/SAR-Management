@@ -133,7 +133,7 @@
                                                     </div>
                                                     <template v-if='!user.emergency.length'>
                                                         <TablerNone
-                                                            label='Emergency Contacts'
+                                                            label='No Emergency Contacts'
                                                             :create='false'
                                                         />
                                                     </template>

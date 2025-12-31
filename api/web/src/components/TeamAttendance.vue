@@ -152,7 +152,6 @@
 import NoAccess from './util/NoAccess.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import iam from '../iam.js';
-import CardUsers from './cards/Users.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -170,8 +169,7 @@ export default {
         TeamBadge,
         TablerInput,
         TablerBreadCrumb,
-        TablerLoading,
-        CardUsers
+        TablerLoading
     },
     props: {
         iam: {

@@ -179,18 +179,6 @@ export default {
 
             return true;
         },
-        update: async function() {
-            if (!this.validate()) return;
-
-            this.loading = true;
-            const update = await window.std(`/api/schedule/${this.$route.params.scheduleid}`, {
-                method: 'PATCH',
-                body: this.schedule
-            });
-
-            this.loading = false;
-            this.$router.push(`/schedule/${this.schedule.id}`);
-        },
         create: async function() {
             if (!this.validate()) return;
 
