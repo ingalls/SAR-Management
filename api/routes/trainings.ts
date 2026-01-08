@@ -91,7 +91,8 @@ export default async function router(schema: Schema, config: Config) {
                 confirmed: Type.Boolean(),
                 uid: Type.Integer()
             }))),
-            teams: Type.Optional(Type.Array(Type.Integer()))
+            teams: Type.Optional(Type.Array(Type.Integer())),
+            assets: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: TrainingResponse
     }, async (req, res) => {
@@ -102,6 +103,8 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.assigned;
             const teams = req.body.teams;
             delete req.body.teams;
+            const assets = req.body.assets;
+            delete req.body.assets;
 
             const training = await config.models.Training.generate({
                 ...req.body,
@@ -128,6 +131,15 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
+            if (assets) {
+                for (const a of assets) {
+                    await config.models.TrainingAsset.generate({
+                        training_id: training.id,
+                        asset_id: a
+                    });
+                }
+            }
+
             res.json(await config.models.Training.augmented_from(training.id));
         } catch (err) {
              Err.respond(err, res);
@@ -149,7 +161,8 @@ export default async function router(schema: Schema, config: Config) {
             end_ts: Type.Optional(Type.String()),
             location: Type.Optional(Type.String()),
             location_geom: Type.Optional(Type.Any()),
-            teams: Type.Optional(Type.Array(Type.Integer()))
+            teams: Type.Optional(Type.Array(Type.Integer())),
+            assets: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: TrainingResponse
     }, async (req, res) => {
@@ -158,6 +171,8 @@ export default async function router(schema: Schema, config: Config) {
 
             const teams = req.body.teams;
             delete req.body.teams;
+            const assets = req.body.assets;
+            delete req.body.assets;
 
             await config.models.Training.commit(req.params.trainingid, req.body);
 
@@ -168,6 +183,17 @@ export default async function router(schema: Schema, config: Config) {
                     await config.models.TrainingTeam.generate({
                         training_id: req.params.trainingid,
                         team_id: a
+                    });
+                }
+            }
+
+            if (assets) {
+                await config.models.TrainingAsset.delete(sql`training_id = ${req.params.trainingid}`)
+
+                for (const a of assets) {
+                    await config.models.TrainingAsset.generate({
+                        training_id: req.params.trainingid,
+                        asset_id: a
                     });
                 }
             }
@@ -195,6 +221,10 @@ export default async function router(schema: Schema, config: Config) {
             `);
 
             await config.models.TrainingAssigned.delete(sql`
+                training_id = ${req.params.trainingid}
+            `);
+
+            await config.models.TrainingAsset.delete(sql`
                 training_id = ${req.params.trainingid}
             `);
 

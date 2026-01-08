@@ -353,6 +353,12 @@ export const TrainingTeam = pgTable('trainings_team', {
     team_id: integer('team_id').notNull().references(() => Team.id),
 });
 
+export const TrainingAsset = pgTable('trainings_assets', {
+    id: serial('id').primaryKey(),
+    training_id: integer('training_id').notNull().references(() => Training.id),
+    asset_id: integer('asset_id').notNull().references(() => Asset.id),
+});
+
 export const Rolodex = pgTable('rolodex', {
     id: serial('id').primaryKey(),
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),

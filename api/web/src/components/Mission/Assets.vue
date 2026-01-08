@@ -10,7 +10,10 @@
                     style='width: 32px; height: 32px; min-height: 32px; min-width: 32px; padding: 0;'
                     @click='showUpload = true'
                 >
-                    <IconPlus size='32' />
+                    <IconPlus
+                        size='32'
+                        stroke='1'
+                    />
                 </TablerIconButton>
             </div>
         </div>
