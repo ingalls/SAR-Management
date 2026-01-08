@@ -84,12 +84,13 @@ export const CertKnownResponse = createSelectSchema(schemas.CertKnown, {
 
 export const RolodexResponse = createSelectSchema(schemas.Rolodex, {
     id: Type.Integer(),
+    location_geom: Type.Union([Type.Any(), Type.Null()]),
 });
 
 export const CertResponse = createSelectSchema(schemas.Cert, {
     id: Type.Integer(),
     uid: Type.Integer(),
-    known: Type.Integer(),
+    known: Type.Union([Type.Integer(), Type.Null()]),
     asset: Type.Integer()
 });
 
