@@ -68,7 +68,8 @@ export default async function router(schema: Schema, config: Config) {
                 uid: Type.Integer()
             }))),
             teams: Type.Optional(Type.Array(Type.Integer())),
-            tags: Type.Optional(Type.Array(Type.Integer()))
+            tags: Type.Optional(Type.Array(Type.Integer())),
+            assets: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: MissionResponse
     }, async (req, res) => {
@@ -81,6 +82,8 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.teams;
             const tags = req.body.tags;
             delete req.body.tags;
+            const assets = req.body.assets;
+            delete req.body.assets;
 
             const mission = await config.models.Mission.generate({
                 ...req.body,
@@ -116,6 +119,15 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
+            if (assets) {
+                for (const a of assets) {
+                    await config.models.MissionAsset.generate({
+                        mission_id: mission.id,
+                        asset_id: a
+                    });
+                }
+            }
+
             res.json(await config.models.Mission.augmented_from(mission.id));
         } catch (err) {
              Err.respond(err, res);
@@ -135,7 +147,8 @@ export default async function router(schema: Schema, config: Config) {
             location: Type.Optional(Type.String()),
             location_geom: Type.Optional(Type.Any()),
             teams: Type.Optional(Type.Array(Type.Integer())),
-            tags: Type.Optional(Type.Array(Type.Integer()))
+            tags: Type.Optional(Type.Array(Type.Integer())),
+            assets: Type.Optional(Type.Array(Type.Integer()))
         }),
         params: Type.Object({
             missionid: Type.Integer(),
@@ -149,6 +162,8 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.teams;
             const tags = req.body.tags;
             delete req.body.tags;
+            const assets = req.body.assets;
+            delete req.body.assets;
 
             const mission = await config.models.Mission.commit(req.params.missionid, req.body);
 
@@ -174,6 +189,17 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
+            if (assets) {
+                await config.models.MissionAsset.delete(sql`mission_id = ${mission.id}`)
+
+                for (const a of assets) {
+                    await config.models.MissionAsset.generate({
+                        mission_id: mission.id,
+                        asset_id: a
+                    });
+                }
+            }
+
             res.json(await config.models.Mission.augmented_from(req.params.missionid));
         } catch (err) {
              Err.respond(err, res);
@@ -194,7 +220,8 @@ export default async function router(schema: Schema, config: Config) {
 
             await config.models.MissionAssigned.delete(sql`mission_id = ${req.params.missionid}`);
             await config.models.MissionTeam.delete(sql`mission_id = ${req.params.missionid}`);
-            await config.models.MissionTag.delete(sql`mission_id = ${req.params.missionid}`);
+            await config.models.MissionTagAssigned.delete(sql`mission_id = ${req.params.missionid}`);
+            await config.models.MissionAsset.delete(sql`mission_id = ${req.params.missionid}`);
 
             await config.models.Mission.delete(req.params.missionid);
 

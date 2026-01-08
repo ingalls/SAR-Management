@@ -2,7 +2,7 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Mission, MissionTeam, MissionAssigned, MissionTag, MissionTagAssigned, Team } from '../schema.js';
+import { Mission, MissionTeam, MissionAssigned, MissionTag, MissionTagAssigned, Team, Asset, MissionAsset } from '../schema.js';
 import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
@@ -14,6 +14,14 @@ export const PartialTeam = Type.Object({
     colour_bg: Type.String(),
     colour_txt: Type.String(),
     fieldable: Type.Boolean()
+});
+
+export const PartialAsset = Type.Object({
+    id: Type.Integer(),
+    name: Type.String(),
+    created: Type.String(),
+    updated: Type.String(),
+    storage: Type.Boolean()
 });
 
 export const PartialTag = Type.Object({
@@ -40,7 +48,9 @@ export const AugmentedMission = Type.Object({
     teams: Type.Array(PartialTeam),
     teams_id: Type.Array(Type.Integer()),
     tags: Type.Array(PartialTag),
-    tags_id: Type.Array(Type.Integer())
+    tags_id: Type.Array(Type.Integer()),
+    assets: Type.Array(PartialAsset),
+    assets_id: Type.Array(Type.Integer())
 });
 
 export default class MissionModel extends Modeler<typeof Mission> {
@@ -90,6 +100,23 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .groupBy(MissionTagAssigned.mission_id)
             .as("root_tags");
 
+        const RootAssets = this.pool
+            .select({
+                assets_mission_id: max(MissionAsset.mission_id).as('assets_mission_id'),
+                assets_id: sql<Array<number>>`coalesce(array_agg(assets.id), '{}'::INT[])`.as('assets_id'),
+                assets: sql<Array<Static<typeof PartialAsset>>>`coalesce(json_agg(json_build_object(
+                    'id', assets.id,
+                    'name', assets.name,
+                    'created', assets.created,
+                    'updated', assets.updated,
+                    'storage', assets.storage
+                )), '[]'::JSON)`.as('assets'),
+            })
+            .from(Asset)
+            .leftJoin(MissionAsset, eq(Asset.id, MissionAsset.asset_id))
+            .groupBy(MissionAsset.mission_id)
+            .as("root_assets");
+
         const RootUsers = this.pool
             .select({
                 users_mission_id: max(MissionAssigned.mission_id).as('users_mission_id'),
@@ -117,12 +144,15 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 teams_id: RootTeams.teams_id,
                 tags: RootTags.tags,
                 tags_id: RootTags.tags_id,
+                assets: RootAssets.assets,
+                assets_id: RootAssets.assets_id,
                 users: RootUsers.users
             })
             .from(Mission)
             .leftJoin(RootTeams, eq(Mission.id, RootTeams.teams_mission_id))
             .leftJoin(RootUsers, eq(Mission.id, RootUsers.users_mission_id))
             .leftJoin(RootTags, eq(Mission.id, RootTags.tags_mission_id))
+            .leftJoin(RootAssets, eq(Mission.id, RootAssets.assets_mission_id))
             .orderBy(orderBy)
             .as('root')
 
@@ -144,6 +174,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
             teams_id: Root.teams_id,
             tags: Root.tags,
             tags_id: Root.tags_id,
+            assets: Root.assets,
+            assets_id: Root.assets_id,
             users: Root.users
         })
             .from(Root)
@@ -162,6 +194,9 @@ export default class MissionModel extends Modeler<typeof Mission> {
 
                     if (!t.tags_id) t.tags_id = [];
                     if (!t.tags) t.tags = [];
+
+                    if (!t.assets_id) t.assets_id = [];
+                    if (!t.assets) t.assets = [];
 
                     if (!t.users) t.users = [];
 
@@ -208,6 +243,23 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .groupBy(MissionTagAssigned.mission_id)
             .as("root_tags");
 
+        const RootAssets = this.pool
+            .select({
+                assets_mission_id: max(MissionAsset.mission_id).as('assets_mission_id'),
+                assets_id: sql<Array<number>>`coalesce(array_agg(assets.id), '{}'::INT[])`.as('assets_id'),
+                assets: sql<Array<Static<typeof PartialAsset>>>`coalesce(json_agg(json_build_object(
+                    'id', assets.id,
+                    'name', assets.name,
+                    'created', assets.created,
+                    'updated', assets.updated,
+                    'storage', assets.storage
+                )), '[]'::JSON)`.as('assets'),
+            })
+            .from(Asset)
+            .leftJoin(MissionAsset, eq(Asset.id, MissionAsset.asset_id))
+            .groupBy(MissionAsset.mission_id)
+            .as("root_assets");
+
         const RootUsers = this.pool
             .select({
                 users_mission_id: max(MissionAssigned.mission_id).as('users_mission_id'),
@@ -235,12 +287,15 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 teams_id: RootTeams.teams_id,
                 tags: RootTags.tags,
                 tags_id: RootTags.tags_id,
+                assets: RootAssets.assets,
+                assets_id: RootAssets.assets_id,
                 users: RootUsers.users
             })
             .from(Mission)
             .leftJoin(RootTeams, eq(Mission.id, RootTeams.teams_mission_id))
             .leftJoin(RootUsers, eq(Mission.id, RootUsers.users_mission_id))
             .leftJoin(RootTags, eq(Mission.id, RootTags.tags_mission_id))
+            .leftJoin(RootAssets, eq(Mission.id, RootAssets.assets_mission_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
             .limit(1)
 
@@ -250,6 +305,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
         if (!pgres[0].teams) pgres[0].teams = [];
         if (!pgres[0].tags_id) pgres[0].tags_id = [];
         if (!pgres[0].tags) pgres[0].tags = [];
+        if (!pgres[0].assets_id) pgres[0].assets_id = [];
+        if (!pgres[0].assets) pgres[0].assets = [];
         if (!pgres[0].users) pgres[0].users = [];
 
         return pgres[0] as Static<typeof AugmentedMission>;

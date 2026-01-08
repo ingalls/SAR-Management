@@ -267,6 +267,12 @@ export const MissionTeam = pgTable('missions_team', {
     team_id: integer('team_id').notNull().references(() => Team.id),
 });
 
+export const MissionAsset = pgTable('missions_assets', {
+    id: serial('id').primaryKey(),
+    mission_id: integer('mission_id').notNull().references(() => Mission.id),
+    asset_id: integer('asset_id').notNull().references(() => Asset.id),
+});
+
 export const Notification = pgTable('notifications', {
     id: serial('id').primaryKey(),
     created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),

@@ -142,6 +142,18 @@
                             v-if='!loading.mission'
                             class='col-lg-12'
                         >
+                            <Assets
+                                :mission='mission'
+                                :iam='iam'
+                                :auth='auth'
+                                @refresh='fetch'
+                            />
+                        </div>
+
+                        <div
+                            v-if='!loading.mission'
+                            class='col-lg-12'
+                        >
                             <UserPresentSelect
                                 v-model='assigned'
                                 :loading='loading.assigned'
@@ -161,6 +173,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
+import Assets from './Mission/Assets.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
@@ -170,7 +183,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    IconSettings
+    IconSettings,
 } from '@tabler/icons-vue';
 
 export default {
@@ -184,7 +197,8 @@ export default {
         TablerLoading,
         TablerMarkdown,
         TeamBadge,
-        NoAccess
+        NoAccess,
+        Assets
     },
     props: {
         iam: {
@@ -207,7 +221,9 @@ export default {
                 body: '',
                 start_ts: '',
                 end_ts: '',
-                teams: []
+                teams: [],
+                assets: [],
+                assets_id: []
             },
             assigned: []
         }

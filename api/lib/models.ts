@@ -31,6 +31,7 @@ export default class Models {
     Fieldability: Modeler<typeof pgtypes.Fieldability>;
     MissionTag: Modeler<typeof pgtypes.MissionTag>;
     MissionTagAssigned: Modeler<typeof pgtypes.MissionTagAssigned>;
+    MissionAsset: Modeler<typeof pgtypes.MissionAsset>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
@@ -90,6 +91,7 @@ export default class Models {
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
         this.MissionTag = new Modeler(pg, pgtypes.MissionTag);
         this.MissionTagAssigned = new Modeler(pg, pgtypes.MissionTagAssigned);
+        this.MissionAsset = new Modeler(pg, pgtypes.MissionAsset);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);
         this.PollQuestion = new Modeler(pg, pgtypes.PollQuestion);
