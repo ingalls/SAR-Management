@@ -140,7 +140,7 @@
 
                         <div
                             v-if='!loading.mission'
-                            class='col-lg-12'
+                            class='col-lg-6'
                         >
                             <Assets
                                 :mission='mission'
@@ -152,7 +152,7 @@
 
                         <div
                             v-if='!loading.mission'
-                            class='col-lg-12'
+                            class='col-lg-6'
                         >
                             <UserPresentSelect
                                 v-model='assigned'

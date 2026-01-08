@@ -142,7 +142,7 @@
 
                         <div
                             v-if='!loading.training'
-                            class='col-lg-12'
+                            class='col-lg-6'
                         >
                             <TrainingAssets
                                 :training='training'
@@ -154,7 +154,7 @@
 
                         <div
                             v-if='!loading.training'
-                            class='col-lg-12'
+                            class='col-lg-6'
                         >
                             <UserPresentSelect
                                 v-model='assigned'
