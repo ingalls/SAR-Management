@@ -4,7 +4,7 @@
             <h3 class='card-title'>Assets</h3>
             <div class='card-actions btn-actions'>
                 <TablerIconButton
-                    v-if='mode === "edit" || is_iam("Mission:Manage")'
+                    v-if='mode === "edit" || is_iam("Training:Manage")'
                     title='Add Asset'
                     class='btn-primary'
                     style='width: 32px; height: 32px; min-height: 32px; min-width: 32px; padding: 0;'
@@ -19,7 +19,7 @@
         </div>
         <div class='table-responsive'>
             <table
-                v-if='mission.assets && mission.assets.length'
+                v-if='training.assets && training.assets.length'
                 class='table table-vcenter card-table'
             >
                 <thead>
@@ -30,7 +30,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for='asset in mission.assets' :key='asset.id'>
+                    <tr v-for='asset in training.assets' :key='asset.id'>
                         <td>
                             <a :href='`/api/asset/${asset.id}/raw`' target='_blank' v-text='asset.name'></a>
                         </td>
@@ -38,7 +38,7 @@
                         <td>
                             <div class='btn-list flex-nowrap'>
                                 <TablerIconButton
-                                    v-if='is_iam("Mission:Manage")'
+                                    v-if='is_iam("Training:Manage")'
                                     color='red'
                                     title='Delete Asset'
                                     @click='deleteAsset(asset.id)'
@@ -52,7 +52,7 @@
             </table>
             <TablerNone
                 v-else
-                label='Mission Assets'
+                label='Training Assets'
                 :create='false'
             />
         </div>
@@ -79,7 +79,7 @@ import {
 } from '@tabler/icons-vue';
 
 export default {
-    name: 'MissionAssets',
+    name: 'TrainingAssets',
     components: {
         Upload,
         TablerNone,
@@ -88,7 +88,7 @@ export default {
         IconTrash
     },
     props: {
-        mission: {
+        training: {
             type: Object,
             required: true
         },
@@ -115,18 +115,16 @@ export default {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         postAsset: async function(asset) {
             this.showUpload = false;
-            if (!asset || !asset.id) return;
-
-            if (!this.mission.assets_id) this.mission.assets_id = [];
-            this.mission.assets_id.push(asset.id);
-            await this.patchMission({ assets: this.mission.assets_id });
+            if (!this.training.assets_id) this.training.assets_id = [];
+            this.training.assets_id.push(asset.id);
+            await this.patchTraining({ assets: this.training.assets_id });
         },
         deleteAsset: async function(assetId) {
-            this.mission.assets_id = this.mission.assets_id.filter((a) => a !== assetId);
-            await this.patchMission({ assets: this.mission.assets_id });
+            this.training.assets_id = this.training.assets_id.filter((a) => a !== assetId);
+            await this.patchTraining({ assets: this.training.assets_id });
         },
-        patchMission: async function(body) {
-            await window.std(`/api/mission/${this.$route.params.missionid}`, {
+        patchTraining: async function(body) {
+            await window.std(`/api/training/${this.$route.params.trainingid}`, {
                 method: 'PATCH',
                 body
             });

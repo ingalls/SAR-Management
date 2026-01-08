@@ -193,6 +193,7 @@ export default async function router(schema: Schema, config: Config) {
                 await config.models.MissionAsset.delete(sql`mission_id = ${mission.id}`)
 
                 for (const a of assets) {
+                    if (!a) continue;
                     await config.models.MissionAsset.generate({
                         mission_id: mission.id,
                         asset_id: a

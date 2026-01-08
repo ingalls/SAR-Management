@@ -144,6 +144,18 @@
                             v-if='!loading.training'
                             class='col-lg-12'
                         >
+                            <TrainingAssets
+                                :training='training'
+                                :iam='iam'
+                                :auth='auth'
+                                @refresh='fetch'
+                            />
+                        </div>
+
+                        <div
+                            v-if='!loading.training'
+                            class='col-lg-12'
+                        >
                             <UserPresentSelect
                                 v-model='assigned'
                                 label='Training Roster'
@@ -165,6 +177,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
+import TrainingAssets from './Training/Assets.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
@@ -183,6 +196,7 @@ export default {
         TablerEpochRange,
         TeamBadge,
         Location,
+        TrainingAssets,
         IconSettings,
         UserPresentSelect,
         TablerLoading,

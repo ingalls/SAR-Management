@@ -134,26 +134,28 @@ export default async function router(schema: Schema, config: Config) {
 
         const assets: Array<Promise<unknown>> = [];
         let asset: Static<typeof AssetResponse>;
-        bb.on('file', async (fieldname, file, blob) => {
-            const a = await config.models.Asset.generate({
-                uid: user.id,
-                name: blob.filename
-            });
+        bb.on('file', (fieldname, file, blob) => {
+            assets.push((async () => {
+                const a = await config.models.Asset.generate({
+                    uid: user.id,
+                    name: blob.filename
+                });
 
-            asset = {
-                ...a,
-                asset_url: `/asset/${a.id}${path.parse(a.name).ext}`,
-            };
+                asset = {
+                    ...a,
+                    asset_url: `/asset/${a.id}${path.parse(a.name).ext}`,
+                };
 
-            assets.push(spaces.upload({
-                Key: `assets/${a.id}-${a.name}`,
-                Body: file
-            }));
+                await spaces.upload({
+                    Key: `assets/${a.id}-${a.name}`,
+                    Body: file
+                });
+            })());
         }).on('finish', async () => {
             try {
                 if (!assets.length) throw new Err(400, null, 'No Asset Provided');
 
-                await assets[0];
+                await Promise.all(assets);
                 await config.models.Asset.commit(asset.id, { storage: true });
 
                 res.json(asset);
