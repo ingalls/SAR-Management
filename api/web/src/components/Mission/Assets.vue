@@ -60,6 +60,7 @@
         <Upload
             v-if='showUpload'
             url='/api/asset'
+            :headers='{ Authorization: `Bearer ${token}` }'
             @close='showUpload = false'
             @done='postAsset($event)'
         />
@@ -108,6 +109,7 @@ export default {
     emits: ['refresh'],
     data: function() {
         return {
+            token: localStorage.token,
             showUpload: false
         }
     },
