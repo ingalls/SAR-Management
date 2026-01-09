@@ -32,7 +32,7 @@
                 <tbody>
                     <tr v-for='asset in training.assets' :key='asset.id'>
                         <td>
-                            <a :href='`/api/asset/${asset.id}/raw`' target='_blank' v-text='asset.name'></a>
+                            <a :href='`/api/asset/${asset.id}/raw?token=${token}`' target='_blank' v-text='asset.name'></a>
                         </td>
                         <td v-text='asset.created' />
                         <td>
