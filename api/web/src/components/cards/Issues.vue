@@ -150,11 +150,14 @@ import {
     TablerNone,
     TablerEpoch,
     TablerInput,
-    TablerLoading
+    TablerLoading,
+    TablerDropdown
 } from '@tak-ps/vue-tabler'
 import {
     IconGripVertical,
-    IconPlus
+    IconPlus,
+    IconDotsVertical,
+    IconTrash
 } from '@tabler/icons-vue';
 
 const props = defineProps({

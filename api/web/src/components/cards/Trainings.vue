@@ -203,14 +203,17 @@ import {
     TablerIconButton,
     TablerRefreshButton,
     TablerEpochRange,
-    TablerLoading
+    TablerLoading,
+    TablerDropdown
 } from '@tak-ps/vue-tabler'
 
 import {
     IconGripVertical,
     IconUserCheck,
     IconUserOff,
-    IconPlus
+    IconPlus,
+    IconDotsVertical,
+    IconTrash
 } from '@tabler/icons-vue';
 
 const range = ref('future');

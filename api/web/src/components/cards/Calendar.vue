@@ -1,5 +1,5 @@
 <template>
-    <div class='card'>
+    <div class='card h-100 w-100'>
         <div class='card-header'>
             <IconGripVertical
                 v-if='dragHandle'
@@ -115,7 +115,7 @@
         </div>
         <div
             v-if='is_iam(props.iam, props.auth, "Calendar:View")'
-            class='card-body'
+            class='card-body p-0'
         >
             <pre
                 v-if='exportURL'
@@ -123,8 +123,9 @@
             />
 
             <div
-                id='calendar'
-                style='width: 100%; height: 500px;'
+                ref='calendarEl'
+                class='calendar-container'
+                style='width: 100%; height: 100%;'
             />
         </div>
         <NoAccess v-else />
@@ -139,7 +140,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import is_iam from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
@@ -152,6 +153,8 @@ import {
     IconAmbulance,
     IconCalendarTime,
     IconTruck,
+    IconDotsVertical,
+    IconTrash
 } from '@tabler/icons-vue';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -183,8 +186,10 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const calendarEl = ref();
 const calendar = ref();
 const exportURL = ref('');
+let resizeObserver = null;
 const selected = ref({
     shown: false,
     start: '',
@@ -213,8 +218,9 @@ watch(layers, async () => {
 onMounted(async () => {
     if (!is_iam(props.iam, props.auth, "Calendar:View")) return;
 
-    calendar.value = new Calendar(document.getElementById('calendar'), {
+    calendar.value = new Calendar(calendarEl.value, {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        height: '100%',
         timeZone: 'local',
         selectable: true,
         unselectAuto: true,
@@ -273,6 +279,17 @@ onMounted(async () => {
     calendar.value.render();
 
     layers.value = await window.std('/api/calendar');
+
+    resizeObserver = new ResizeObserver(() => {
+        calendar.value.updateSize();
+    });
+    resizeObserver.observe(calendarEl.value);
+});
+
+onUnmounted(() => {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+    }
 });
 
 async function createExport() {
@@ -287,7 +304,7 @@ async function createExport() {
 </script>
 
 <style lang="scss">
-#calendar {
+.calendar-container {
     table {
         margin: 0px;
     }
