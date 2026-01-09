@@ -7,6 +7,7 @@ import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, MissionResponse } from '../lib/types.js';
+import { PartialAsset } from '../lib/models/Mission.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission', {
@@ -273,6 +274,27 @@ export default async function router(schema: Schema, config: Config) {
             }
 
             res.json(response);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.get('/mission/:missionid/assets', {
+        name: 'Get Mission Assets',
+        group: 'Mission',
+        description: 'Get a single missions assets',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
+        res: Type.Object({
+            assets: Type.Array(PartialAsset)
+        })
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
+            res.json({
+                assets: await config.models.Mission.assets(req.params.missionid)
+            });
         } catch (err) {
              Err.respond(err, res);
         }

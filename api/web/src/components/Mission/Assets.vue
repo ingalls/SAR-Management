@@ -37,14 +37,12 @@
                         <td v-text='asset.created' />
                         <td>
                             <div class='btn-list flex-nowrap'>
-                                <TablerIconButton
+                                <TablerDelete
                                     v-if='is_iam("Mission:Manage")'
-                                    color='red'
+                                    displaytype='icon'
                                     title='Delete Asset'
-                                    @click='deleteAsset(asset.id)'
-                                >
-                                    <IconTrash size='20' />
-                                </TablerIconButton>
+                                    @delete='deleteAsset(asset.id)'
+                                />
                             </div>
                         </td>
                     </tr>
@@ -72,11 +70,11 @@ import iam from '../../iam.js';
 import Upload from '../util/Upload.vue';
 import {
     TablerNone,
-    TablerIconButton
+    TablerIconButton,
+    TablerDelete
 } from '@tak-ps/vue-tabler';
 import {
-    IconPlus,
-    IconTrash
+    IconPlus
 } from '@tabler/icons-vue';
 
 export default {
@@ -85,8 +83,8 @@ export default {
         Upload,
         TablerNone,
         TablerIconButton,
-        IconPlus,
-        IconTrash
+        TablerDelete,
+        IconPlus
     },
     props: {
         mission: {
@@ -132,7 +130,8 @@ export default {
                 method: 'PATCH',
                 body
             });
-            this.$emit('refresh');
+            const res = await window.std(`/api/mission/${this.$route.params.missionid}/assets`);
+            this.mission.assets = res.assets;
         }
     }
 }

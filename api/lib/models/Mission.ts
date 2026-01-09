@@ -60,6 +60,22 @@ export default class MissionModel extends Modeler<typeof Mission> {
         super(pool, Mission);
     }
 
+    async assets(id: number): Promise<Array<Static<typeof PartialAsset>>> {
+        const assets = await this.pool
+            .select({
+                id: Asset.id,
+                name: Asset.name,
+                created: Asset.created,
+                updated: Asset.updated,
+                storage: Asset.storage
+            })
+            .from(Asset)
+            .innerJoin(MissionAsset, eq(Asset.id, MissionAsset.asset_id))
+            .where(eq(MissionAsset.mission_id, id));
+
+        return assets as Array<Static<typeof PartialAsset>>;
+    }
+
     async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedMission>>> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());

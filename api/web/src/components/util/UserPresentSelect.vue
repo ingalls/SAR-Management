@@ -100,12 +100,11 @@
                                         />
                                     </template>
 
-                                    <IconTrash
+                                    <TablerDelete
+                                        displaytype='icon'
                                         v-tooltip='"Remove User"'
                                         class='cursor-pointer my-2'
-                                        :size='20'
-                                        :stroke='1'
-                                        @click='delete_assigned(element)'
+                                        @delete='delete_assigned(element)'
                                     />
                                 </div>
                             </div>
@@ -121,7 +120,6 @@
 import { ref, reactive, watch, onMounted } from 'vue';
 import {
     IconPlus,
-    IconTrash,
     IconCheck
 } from '@tabler/icons-vue';
 import {
@@ -129,7 +127,8 @@ import {
     TablerInput,
     TablerLoading,
     TablerDropdown,
-    TablerSelect
+    TablerSelect,
+    TablerDelete
 } from '@tak-ps/vue-tabler'
 import Avatar from './Avatar.vue';
 import Draggable from 'vuedraggable';
