@@ -103,6 +103,7 @@
 
                                     <TablerDelete
                                         displaytype='icon'
+                                        :size='24'
                                         v-tooltip='"Remove User"'
                                         class='cursor-pointer my-2'
                                         @delete='delete_assigned(element)'
