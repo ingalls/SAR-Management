@@ -9,29 +9,12 @@
                     <p class='lead text-muted mb-5'>Select a widget below to add it to your personal dashboard view.</p>
 
                     <div class='row justify-content-center'>
-                        <div class='col-md-3 mb-4'>
-                            <div class='card h-100 widget-preview' @click='addCard("Issues")'>
-                                <div class='card-body'>
-                                    <h3 class='card-title'>Issues</h3>
-                                    <p>Track active missions and tasks.</p>
-                                    <button class='btn btn-primary w-100'>Add Widget</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class='col-md-3 mb-4'>
-                            <div class='card h-100 widget-preview' @click='addCard("Trainings")'>
-                                <div class='card-body'>
-                                    <h3 class='card-title'>Trainings</h3>
-                                    <p>View upcoming training events.</p>
-                                    <button class='btn btn-primary w-100'>Add Widget</button>
-                                </div>
-                            </div>
-                        </div>
-                         <div class='col-md-3 mb-4'>
-                            <div class='card h-100 widget-preview' @click='addCard("Calendar")'>
-                                <div class='card-body'>
-                                    <h3 class='card-title'>Calendar</h3>
-                                    <p>View upcoming events on a calendar.</p>
+                        <div v-for="widget in availableWidgets" :key="widget.name" class='col-md-3 mb-4'>
+                            <div class='card h-100 widget-preview' @click='addCard(widget.name)'>
+                                <div class='card-body text-center'>
+                                    <component :is="widget.icon" :size="48" stroke="1.5" class="mb-3 text-muted" />
+                                    <h3 class='card-title'>{{ widget.label }}</h3>
+                                    <p>{{ widget.description }}</p>
                                     <button class='btn btn-primary w-100'>Add Widget</button>
                                 </div>
                             </div>
@@ -46,7 +29,10 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li v-for="widget in missingWidgets" :key="widget.name">
-                                <a class="dropdown-item" href="#" @click.prevent="addCard(widget.name)">{{ widget.label }}</a>
+                                <a class="dropdown-item d-flex align-items-center" href="#" @click.prevent="addCard(widget.name)">
+                                     <component :is="widget.icon" :size="20" stroke="1.5" class="me-2" />
+                                    {{ widget.label }}
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -121,6 +107,11 @@ import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
 import { GridStack } from 'gridstack';
 import moment from 'moment';
+import { 
+    IconChecklist,
+    IconSchool,
+    IconCalendar
+} from '@tabler/icons-vue';
 
 const props = defineProps({
     iam: {
@@ -139,15 +130,30 @@ const loading = ref(true);
 const cards = ref([]);
 let grid = null;
 
-const allWidgets = [
-    { name: 'Issues', label: 'Issues' },
-    { name: 'Trainings', label: 'Trainings' },
-    { name: 'Calendar', label: 'Calendar' }
+const availableWidgets = [
+    { 
+        name: 'Issues', 
+        label: 'Issues', 
+        icon: IconChecklist,
+        description: 'Track active missions and tasks.'
+    },
+    { 
+        name: 'Trainings', 
+        label: 'Trainings', 
+        icon: IconSchool,
+        description: 'View upcoming training events.'
+    },
+    { 
+        name: 'Calendar', 
+        label: 'Calendar', 
+        icon: IconCalendar,
+        description: 'View upcoming events on a calendar.'
+    }
 ];
 
 const missingWidgets = computed(() => {
     const currentNames = cards.value.map(c => c.name);
-    return allWidgets.filter(w => !currentNames.includes(w.name));
+    return availableWidgets.filter(w => !currentNames.includes(w.name));
 });
 
 const addCard = async (name) => {
