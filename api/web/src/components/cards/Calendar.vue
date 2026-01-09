@@ -1,5 +1,9 @@
 <template>
-    <div class='card h-100 w-100'>
+    <div
+        class='card w-100'
+        :class='{ "h-100": dragHandle }'
+        :style='{ height: dragHandle ? "100%" : "calc(100vh - 12rem)" }'
+    >
         <div class='card-header'>
             <IconGripVertical
                 v-if='dragHandle'
@@ -115,7 +119,7 @@
         </div>
         <div
             v-if='is_iam(props.iam, props.auth, "Calendar:View")'
-            class='card-body p-0'
+            class='card-body d-flex flex-column'
         >
             <pre
                 v-if='exportURL'
@@ -124,8 +128,8 @@
 
             <div
                 ref='calendarEl'
-                class='calendar-container'
-                style='width: 100%; height: 100%;'
+                class='calendar-container flex-grow-1'
+                style='width: 100%;'
             />
         </div>
         <NoAccess v-else />
@@ -280,10 +284,12 @@ onMounted(async () => {
 
     layers.value = await window.std('/api/calendar');
 
-    resizeObserver = new ResizeObserver(() => {
-        calendar.value.updateSize();
-    });
-    resizeObserver.observe(calendarEl.value);
+    if (props.dragHandle) {
+        resizeObserver = new ResizeObserver(() => {
+            calendar.value.updateSize();
+        });
+        resizeObserver.observe(calendarEl.value);
+    }
 });
 
 onUnmounted(() => {
