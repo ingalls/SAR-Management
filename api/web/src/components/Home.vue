@@ -157,12 +157,30 @@ const missingWidgets = computed(() => {
 });
 
 const addCard = async (name) => {
+    let x = 0;
+    let y = 0;
+
+    if (grid) {
+        let found = false;
+        for (let checkY = 0; checkY < 100; checkY++) {
+            for (let checkX = 0; checkX <= 6; checkX++) {
+                if (grid.isAreaEmpty(checkX, checkY, 6, 4)) {
+                    x = checkX;
+                    y = checkY;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+    }
+
     await window.std(`/api/user/${props.auth.id}/dashboard`, {
         method: 'POST',
         body: {
             name: name,
-            x: 0,
-            y: 0,
+            x: x,
+            y: y,
             w: 6,
             h: 4
         }
@@ -187,6 +205,7 @@ const loadCards = async () => {
 
     if (grid) {
         grid.destroy(false);
+        grid = null;
     }
 
     if (cards.value.length) {
