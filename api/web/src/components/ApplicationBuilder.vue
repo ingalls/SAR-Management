@@ -20,7 +20,7 @@
                             v-if='loading'
                             desc='Loading Schema'
                         />
-                        <TablerSchemaBuilder
+                        <Builder
                             v-else
                             v-model='schema'
                             title='Application Builder'
@@ -34,10 +34,10 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
+import Builder from './util/Builder.vue';
 import {
     TablerLoading,
     TablerBreadCrumb,
-    TablerSchemaBuilder
 } from '@tak-ps/vue-tabler';
 
 defineProps({

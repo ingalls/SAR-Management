@@ -9,16 +9,29 @@
                     <p class='lead text-muted mb-5'>Select a widget below to add it to your personal dashboard view.</p>
 
                     <div class='row justify-content-center'>
-                        <div
-                            v-for="widget in allWidgets"
-                            :key="widget.name"
-                            class='col-md-3 mb-4'
-                        >
-                            <div class='card h-100 widget-preview' @click='addCard(widget.name)'>
-                                <div class='card-body text-center'>
-                                    <component :is="widget.icon" size="48" stroke="1" class="mb-3" />
-                                    <h3 class='card-title'>{{ widget.label }}</h3>
-                                    <p>{{ widget.desc }}</p>
+                        <div class='col-md-3 mb-4'>
+                            <div class='card h-100 widget-preview' @click='addCard("Issues")'>
+                                <div class='card-body'>
+                                    <h3 class='card-title'>Issues</h3>
+                                    <p>Track active missions and tasks.</p>
+                                    <button class='btn btn-primary w-100'>Add Widget</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-md-3 mb-4'>
+                            <div class='card h-100 widget-preview' @click='addCard("Trainings")'>
+                                <div class='card-body'>
+                                    <h3 class='card-title'>Trainings</h3>
+                                    <p>View upcoming training events.</p>
+                                    <button class='btn btn-primary w-100'>Add Widget</button>
+                                </div>
+                            </div>
+                        </div>
+                         <div class='col-md-3 mb-4'>
+                            <div class='card h-100 widget-preview' @click='addCard("Calendar")'>
+                                <div class='card-body'>
+                                    <h3 class='card-title'>Calendar</h3>
+                                    <p>View upcoming events on a calendar.</p>
                                     <button class='btn btn-primary w-100'>Add Widget</button>
                                 </div>
                             </div>
@@ -29,13 +42,11 @@
                 <div v-if="!loading && cards.length > 0 && missingWidgets.length > 0" class="d-flex justify-content-end mb-3">
                     <div class="dropdown">
                         <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                           <IconPlus class="me-2" />Add Widget
+                           <i class="fa-solid fa-plus me-2"></i>Add Widget
                         </button>
                         <ul class="dropdown-menu">
                             <li v-for="widget in missingWidgets" :key="widget.name">
-                                <a class="dropdown-item" href="#" @click.prevent="addCard(widget.name)">
-                                     <component :is="widget.icon" size="20" stroke="1" class="me-2" />{{ widget.label }}
-                                </a>
+                                <a class="dropdown-item" href="#" @click.prevent="addCard(widget.name)">{{ widget.label }}</a>
                             </li>
                         </ul>
                     </div>
@@ -43,7 +54,7 @@
 
                 <div
                     ref='gridstack'
-                    class='grid-stack'
+                    class='d-flex grid-stack'
                 >
                     <div
                         v-for='card in cards'
@@ -110,12 +121,6 @@ import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
 import { GridStack } from 'gridstack';
 import moment from 'moment';
-import {
-    IconAlertCircle,
-    IconSchool,
-    IconCalendar,
-    IconPlus
-} from '@tabler/icons-vue';
 
 const props = defineProps({
     iam: {
@@ -135,9 +140,9 @@ const cards = ref([]);
 let grid = null;
 
 const allWidgets = [
-    { name: 'Issues', label: 'Issues', icon: IconAlertCircle, desc: 'Track active missions and tasks.' },
-    { name: 'Trainings', label: 'Trainings', icon: IconSchool, desc: 'View upcoming training events.' },
-    { name: 'Calendar', label: 'Calendar', icon: IconCalendar, desc: 'View upcoming events on a calendar.' }
+    { name: 'Issues', label: 'Issues' },
+    { name: 'Trainings', label: 'Trainings' },
+    { name: 'Calendar', label: 'Calendar' }
 ];
 
 const missingWidgets = computed(() => {
@@ -145,33 +150,13 @@ const missingWidgets = computed(() => {
     return allWidgets.filter(w => !currentNames.includes(w.name));
 });
 
-const getPos = () => {
-    let y = 0;
-    while(true) {
-        for (let x = 0; x <= 6; x++) {
-             let hit = false;
-             for (const card of cards.value) {
-                 if (x < card.x + card.w && x + 6 > card.x && 
-                     y < card.y + card.h && y + 4 > card.y) {
-                     hit = true;
-                     break;
-                 }
-             }
-             if (!hit) return { x, y };
-        }
-        y++;
-    }
-}
-
 const addCard = async (name) => {
-    const pos = getPos();
-
     await window.std(`/api/user/${props.auth.id}/dashboard`, {
         method: 'POST',
         body: {
             name: name,
-            x: pos.x,
-            y: pos.y,
+            x: 0,
+            y: 0,
             w: 6,
             h: 4
         }
@@ -189,20 +174,18 @@ const removeCard = async (id) => {
 }
 
 const loadCards = async () => {
-    if (grid) {
-        grid.destroy(false);
-    }
-
     const res = await window.std(`/api/user/${props.auth.id}/dashboard`);
     cards.value = res.items;
 
     await nextTick();
 
-    if (cards.value.length) {
-        const isMobile = window.innerWidth < 768;
+    if (grid) {
+        grid.destroy(false);
+    }
 
+    if (cards.value.length) {
         grid = GridStack.init({
-            column: isMobile ? 1 : 12,
+            column: 12,
             minRow: 1,
             margin: '10px',
             float: true,
@@ -214,8 +197,6 @@ const loadCards = async () => {
         }, gridstack.value);
 
         grid.on('change', async (event, items) => {
-            if (window.innerWidth < 768) return;
-
             for (const item of items) {
                 await window.std(`/api/user/${props.auth.id}/dashboard/${item.id}`, {
                     method: 'PATCH',

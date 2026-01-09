@@ -1,5 +1,5 @@
 <template>
-    <div class='card h-100'>
+    <div class='card'>
         <div class='card-header'>
             <IconGripVertical
                 v-if='dragHandle'
@@ -115,7 +115,7 @@
         </div>
         <div
             v-if='is_iam(props.iam, props.auth, "Calendar:View")'
-            class='card-body d-flex flex-column'
+            class='card-body'
         >
             <pre
                 v-if='exportURL'
@@ -124,6 +124,7 @@
 
             <div
                 id='calendar'
+                style='width: 100%; height: 500px;'
             />
         </div>
         <NoAccess v-else />
@@ -150,8 +151,6 @@ import {
     IconBalloon,
     IconAmbulance,
     IconCalendarTime,
-    IconDotsVertical,
-    IconTrash,
     IconTruck,
 } from '@tabler/icons-vue';
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -215,7 +214,6 @@ onMounted(async () => {
     if (!is_iam(props.iam, props.auth, "Calendar:View")) return;
 
     calendar.value = new Calendar(document.getElementById('calendar'), {
-        height: '100%',
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
         timeZone: 'local',
         selectable: true,
@@ -290,8 +288,6 @@ async function createExport() {
 
 <style lang="scss">
 #calendar {
-    flex-grow: 1;
-
     table {
         margin: 0px;
     }
