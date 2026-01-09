@@ -135,7 +135,7 @@ async function listTypes() {
     if (query.filter) url.searchParams.append('filter', query.filter);
     const result = await window.std(url)
     list.total = result.total
-    list.types = result.types
+    list.types = result.items
 }
 
 onMounted(async () => {
