@@ -1,5 +1,5 @@
 <template>
-    <div class='card'>
+    <div class='card h-100'>
         <div class='card-header'>
             <IconGripVertical
                 v-if='dragHandle'
@@ -88,11 +88,34 @@
                         </div>
                     </template>
                 </TablerDropdown>
+
+                <TablerDropdown
+                    v-if='menu'
+                >
+                    <IconDotsVertical
+                        class='cursor-pointer'
+                        :size='32'
+                        :stroke='1'
+                    />
+                    <template #dropdown>
+                        <button
+                            class='dropdown-item text-danger'
+                            @click='$emit("remove")'
+                        >
+                            <IconTrash
+                                class='me-1'
+                                :size='20'
+                                :stroke='1'
+                            />
+                            Remove Widget
+                        </button>
+                    </template>
+                </TablerDropdown>
             </div>
         </div>
         <div
             v-if='is_iam(props.iam, props.auth, "Calendar:View")'
-            class='card-body'
+            class='card-body d-flex flex-column'
         >
             <pre
                 v-if='exportURL'
@@ -101,7 +124,6 @@
 
             <div
                 id='calendar'
-                style='width: 100%; height: 500px;'
             />
         </div>
         <NoAccess v-else />
@@ -128,6 +150,8 @@ import {
     IconBalloon,
     IconAmbulance,
     IconCalendarTime,
+    IconDotsVertical,
+    IconTrash,
     IconTruck,
 } from '@tabler/icons-vue';
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -153,6 +177,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    menu: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const router = useRouter();
@@ -187,6 +215,7 @@ onMounted(async () => {
     if (!is_iam(props.iam, props.auth, "Calendar:View")) return;
 
     calendar.value = new Calendar(document.getElementById('calendar'), {
+        height: '100%',
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
         timeZone: 'local',
         selectable: true,
@@ -261,6 +290,8 @@ async function createExport() {
 
 <style lang="scss">
 #calendar {
+    flex-grow: 1;
+
     table {
         margin: 0px;
     }

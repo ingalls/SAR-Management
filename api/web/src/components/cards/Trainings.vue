@@ -31,6 +31,28 @@
                     :loading='loading'
                     @click='fetch'
                 />
+                <TablerDropdown
+                    v-if='menu'
+                >
+                    <IconDotsVertical
+                        class='cursor-pointer'
+                        :size='32'
+                        :stroke='1'
+                    />
+                    <template #dropdown>
+                        <button
+                            class='dropdown-item text-danger'
+                            @click='$emit("remove")'
+                        >
+                            <IconTrash
+                                class='me-1'
+                                :size='20'
+                                :stroke='1'
+                            />
+                            Remove Widget
+                        </button>
+                    </template>
+                </TablerDropdown>
             </div>
         </div>
 
@@ -181,13 +203,16 @@ import {
     TablerIconButton,
     TablerRefreshButton,
     TablerEpochRange,
-    TablerLoading
+    TablerLoading,
+    TablerDropdown
 } from '@tak-ps/vue-tabler'
 
 import {
     IconGripVertical,
     IconUserCheck,
     IconUserOff,
+    IconDotsVertical,
+    IconTrash,
     IconPlus
 } from '@tabler/icons-vue';
 
@@ -227,6 +252,10 @@ const props = defineProps({
     create: {
         type: Boolean,
         default: true
+    },
+    menu: {
+        type: Boolean,
+        default: false
     },
     limit: {
         type: Number,

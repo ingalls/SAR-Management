@@ -95,8 +95,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_own_or_iam(config, req, parseInt(String(req.params.userid)), IamGroup.User, PermissionsLevel.MANAGE);
 
-            const dash = await config.models.UserDashboard.commit({
-                id: req.params.id,
+            const dash = await config.models.UserDashboard.commit(req.params.id, {
                 uid: req.params.userid,
                 ...req.body
             });

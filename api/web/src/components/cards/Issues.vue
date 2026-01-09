@@ -24,6 +24,29 @@
                     :stroke='1'
                     @click='$router.push(`/issue/new`)'
                 />
+                
+                <TablerDropdown
+                    v-if='menu'
+                >
+                    <IconDotsVertical
+                        class='cursor-pointer'
+                        :size='32'
+                        :stroke='1'
+                    />
+                    <template #dropdown>
+                        <button
+                            class='dropdown-item text-danger'
+                            @click='$emit("remove")'
+                        >
+                            <IconTrash
+                                class='me-1'
+                                :size='20'
+                                :stroke='1'
+                            />
+                            Remove Widget
+                        </button>
+                    </template>
+                </TablerDropdown>
             </div>
         </div>
 
@@ -127,11 +150,14 @@ import {
     TablerNone,
     TablerEpoch,
     TablerInput,
-    TablerLoading
+    TablerLoading,
+    TablerDropdown
 } from '@tak-ps/vue-tabler'
 import {
     IconGripVertical,
-    IconPlus
+    IconPlus,
+    IconDotsVertical,
+    IconTrash
 } from '@tabler/icons-vue';
 
 const props = defineProps({
@@ -150,6 +176,10 @@ const props = defineProps({
     create: {
         type: Boolean,
         default: true,
+    },
+    menu: {
+        type: Boolean,
+        default: false,
     },
     limit: {
         type: Number,
