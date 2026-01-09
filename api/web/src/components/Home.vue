@@ -199,8 +199,10 @@ const loadCards = async () => {
     await nextTick();
 
     if (cards.value.length) {
+        const isMobile = window.innerWidth < 768;
+
         grid = GridStack.init({
-            column: 12,
+            column: isMobile ? 1 : 12,
             minRow: 1,
             margin: '10px',
             float: true,
@@ -212,6 +214,8 @@ const loadCards = async () => {
         }, gridstack.value);
 
         grid.on('change', async (event, items) => {
+            if (window.innerWidth < 768) return;
+
             for (const item of items) {
                 await window.std(`/api/user/${props.auth.id}/dashboard/${item.id}`, {
                     method: 'PATCH',
