@@ -1,24 +1,24 @@
 <template>
     <div class='card'>
-        <div class='card-body'>
-            <div class='d-flex align-items-center mb-3'>
-                <div
-                    class='subheader'
-                    v-text='label'
-                />
-
+        <div class='card-header'>
+            <h3 class='card-title' v-text='label' />
+            <div class='card-actions btn-actions'>
                 <div
                     v-if='!disabled'
-                    class='ms-auto'
                 >
                     <TablerDropdown>
                         <template #default>
-                            <IconPlus
-                                v-tooltip='"Add User"'
-                                class='cursor-pointer dropdown-toggle'
-                                :size='16'
-                                :stroke='1'
-                            />
+                            <TablerIconButton
+                                class='btn-primary'
+                                style='width: 32px; height: 32px; min-height: 32px; min-width: 32px; padding: 0;'
+                            >
+                                <IconPlus
+                                    v-tooltip='"Add User"'
+                                    class='cursor-pointer dropdown-toggle'
+                                    size='32'
+                                    stroke='1'
+                                />
+                            </TablerIconButton>
                         </template>
                         <template #dropdown>
                             <div class='card'>
@@ -50,7 +50,8 @@
                     </TablerDropdown>
                 </div>
             </div>
-
+        </div>
+        <div class='card-body'>
             <TablerLoading v-if='loading' />
             <TablerNone
                 v-else-if='!assigned.length'
@@ -128,7 +129,8 @@ import {
     TablerLoading,
     TablerDropdown,
     TablerSelect,
-    TablerDelete
+    TablerDelete,
+    TablerIconButton
 } from '@tak-ps/vue-tabler'
 import Avatar from './Avatar.vue';
 import Draggable from 'vuedraggable';
