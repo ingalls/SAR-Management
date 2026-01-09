@@ -18,7 +18,7 @@ export default async function router(schema: Schema, config: Config) {
         }),
         query: Type.Object({
             limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'id', enum: Object.keys(UserDashboard)})),
             filter: Type.Optional(Type.String({ default: '' }))
@@ -29,7 +29,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.VIEW);
+            await Auth.is_own_or_iam(config, req, parseInt(String(req.params.userid)), IamGroup.User, PermissionsLevel.VIEW);
 
             res.json(await config.models.UserDashboard.list({
                 limit: req.query.limit,
@@ -40,6 +40,95 @@ export default async function router(schema: Schema, config: Config) {
                     uid = ${req.params.userid}
                 `
             }));
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.post('/user/:userid/dashboard', {
+        name: 'Create Dashboard',
+        group: 'Dashboard',
+        description: 'Create a new Dashboard Card',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
+        body: Type.Object({
+            name: Type.String(),
+            x: Type.Integer(),
+            y: Type.Integer(),
+            w: Type.Integer(),
+            h: Type.Integer()
+        }),
+        res: UserDashboardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_own_or_iam(config, req, parseInt(String(req.params.userid)), IamGroup.User, PermissionsLevel.MANAGE);
+
+            const dash = await config.models.UserDashboard.generate({
+                uid: req.params.userid,
+                ...req.body
+            });
+
+            res.json(dash);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.patch('/user/:userid/dashboard/:id', {
+        name: 'Update Dashboard',
+        group: 'Dashboard',
+        description: 'Update a Dashboard Card',
+        params: Type.Object({
+            userid: Type.Integer(),
+            id: Type.Integer()
+        }),
+        body: Type.Object({
+            name: Type.Optional(Type.String()),
+            x: Type.Optional(Type.Integer()),
+            y: Type.Optional(Type.Integer()),
+            w: Type.Optional(Type.Integer()),
+            h: Type.Optional(Type.Integer())
+        }),
+        res: UserDashboardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_own_or_iam(config, req, parseInt(String(req.params.userid)), IamGroup.User, PermissionsLevel.MANAGE);
+
+            const dash = await config.models.UserDashboard.commit({
+                id: req.params.id,
+                uid: req.params.userid,
+                ...req.body
+            });
+
+            res.json(dash);
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.delete('/user/:userid/dashboard/:id', {
+        name: 'Delete Dashboard',
+        group: 'Dashboard',
+        description: 'Delete a Dashboard Card',
+        params: Type.Object({
+            userid: Type.Integer(),
+            id: Type.Integer()
+        }),
+        res: Type.Object({
+            status: Type.Integer(),
+            message: Type.String()
+        })
+    }, async (req, res) => {
+        try {
+            await Auth.is_own_or_iam(config, req, parseInt(String(req.params.userid)), IamGroup.User, PermissionsLevel.MANAGE);
+
+            await config.models.UserDashboard.delete(req.params.id);
+
+            res.json({
+                status: 200,
+                message: 'Dashboard Card Deleted'
+            });
         } catch (err) {
              Err.respond(err, res);
         }
