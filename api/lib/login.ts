@@ -8,6 +8,7 @@ import { InferSelectModel } from 'drizzle-orm';
 import Config from './config.js';
 import { promisify } from 'util';
 import crypto from 'crypto';
+import { generateSecret } from 'otplib';
 
 const randomBytes = promisify(crypto.randomBytes)
 
@@ -103,7 +104,8 @@ export default class Login {
         username: string;
         access: string;
         email: string;
-        token: string;
+        token?: string;
+        secret?: string;
     }> {
         if (!body.username) throw new Err(400, null, 'username required');
         if (!body.password) throw new Err(400, null, 'password required');
@@ -130,18 +132,34 @@ export default class Login {
             throw new Err(403, null, 'Account Disabled - Please Contact Us');
         }
 
-        const token = jwt.sign({
-            u: user.id
-        }, secret, {
-            expiresIn: '12h'
-        });
+        if (!user.mfa_secret) {
+            const secret = generateSecret();
+            await config.models.User.commit(user.id, {
+                mfa_secret: secret
+            });
+            user.mfa_secret = secret;
 
-        return {
-            id: user.id,
-            username: user.username,
-            access: user.access,
-            email: user.email,
-            token
-        };
+            return {
+                id: user.id,
+                username: user.username,
+                access: user.access,
+                email: user.email,
+                secret
+            };
+        } else {
+            const token = jwt.sign({
+                u: user.id
+            }, secret, {
+                expiresIn: '12h'
+            });
+            
+            return {
+                id: user.id,
+                username: user.username,
+                access: user.access,
+                email: user.email,
+                token
+            };
+        }
     }
 }
