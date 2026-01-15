@@ -134,7 +134,8 @@ export const LoginResponse = Type.Object({
     access: Type.String(),
     iam: Type.Any(),
     validated: Type.Optional(Type.Boolean()),
-    token: Type.Optional(Type.String())
+    token: Type.Optional(Type.String()),
+    secret: Type.Optional(Type.String())
 });
 
 export const UserResponse = AugmentedUser;
