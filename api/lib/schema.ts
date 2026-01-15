@@ -40,6 +40,7 @@ export const User = pgTable('users', {
     lname: text('lname').notNull(),
     phone: text('phone').notNull(),
     bday: date('bday'),
+    mfa_secret: text(),
     validated: boolean('validated').notNull().default(false),
     start_year: integer('start_year'),
     emergency: json('emergency').notNull().default([]),
@@ -48,6 +49,14 @@ export const User = pgTable('users', {
     address_state: text('address_state').notNull().default(''),
     address_zip: text('address_zip').notNull().default(''),
     last_login: timestamp('last_login', { withTimezone: true, mode: 'string' })
+});
+
+export const UserSession = pgTable('users_sessions', {
+    sid: text('sid').primaryKey(),
+    uid: integer('uid').notNull().references(() => User.id),
+    created: timestamp('created', { withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    ip: text('ip').notNull(),
+    ua: text('ua').notNull(),
 });
 
 export const UserDashboard = pgTable('user_dashboard', {
