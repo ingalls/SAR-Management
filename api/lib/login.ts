@@ -168,6 +168,7 @@ export default class Login {
             await config.models.User.commit(user.id, {
                 mfa_secret: secret
             });
+
             user.mfa_secret = secret;
         }
 
