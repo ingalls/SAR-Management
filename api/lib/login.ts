@@ -8,7 +8,8 @@ import { InferSelectModel } from 'drizzle-orm';
 import Config from './config.js';
 import { promisify } from 'util';
 import crypto from 'crypto';
-import { generateSecret } from 'otplib';
+import { generateSecret, verify } from 'otplib';
+import QRCode from 'qrcode';
 
 const randomBytes = promisify(crypto.randomBytes)
 
@@ -16,6 +17,34 @@ const randomBytes = promisify(crypto.randomBytes)
  * @class
  */
 export default class Login {
+    static async verify_mfa(config: Config, user_id: number, token: string, secret: string): Promise<{
+        token: string;
+    }> {
+        const user = await config.models.User.from(user_id);
+
+        if (!user.mfa_secret) throw new Err(403, null, 'MFA Not Setup');
+
+        const isValid = await verify({ token, secret: user.mfa_secret });
+
+        if (!isValid) throw new Err(403, null, 'Invalid MFA Token');
+
+        // Enable MFA if not already
+        if (!user.mfa_enabled) {
+            await config.models.User.commit(user.id, {
+                mfa_enabled: true
+            });
+        }
+
+        const jwt_token = jwt.sign({
+            u: user.id
+        }, secret, {
+            expiresIn: '12h'
+        });
+
+        return {
+            token: jwt_token
+        };
+    }
     /**
      * Verify a password reset token
      *
@@ -104,8 +133,10 @@ export default class Login {
         username: string;
         access: string;
         email: string;
-        token?: string;
+        token: string;
+        mfa?: boolean;
         secret?: string;
+        qr?: string;
     }> {
         if (!body.username) throw new Err(400, null, 'username required');
         if (!body.password) throw new Err(400, null, 'password required');
@@ -138,26 +169,32 @@ export default class Login {
                 mfa_secret: secret
             });
             user.mfa_secret = secret;
+        }
 
+        const token = jwt.sign({
+            u: user.id,
+            incomplete: true
+        }, secret, {
+            expiresIn: '15m'
+        });
+
+        if (!user.mfa_enabled) {
             return {
                 id: user.id,
                 username: user.username,
                 access: user.access,
                 email: user.email,
-                secret
+                secret: user.mfa_secret,
+                qr: await QRCode.toDataURL(`otpauth://totp/${encodeURIComponent('SAR Management')}:${encodeURIComponent(user.username)}?secret=${user.mfa_secret}&issuer=${encodeURIComponent('SAR Management')}`),
+                token
             };
         } else {
-            const token = jwt.sign({
-                u: user.id
-            }, secret, {
-                expiresIn: '12h'
-            });
-            
             return {
                 id: user.id,
                 username: user.username,
                 access: user.access,
                 email: user.email,
+                mfa: true,
                 token
             };
         }

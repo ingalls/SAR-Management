@@ -16,5 +16,11 @@
     "bugs": {
         "url": "https://github.com/ingalls/SAR-Management/issues"
     },
-    "homepage": "https://github.com/ingalls/SAR-Management#readme"
+    "homepage": "https://github.com/ingalls/SAR-Management#readme",
+    "devDependencies": {
+        "@types/qrcode": "^1.5.6"
+    },
+    "dependencies": {
+        "qrcode": "^1.5.4"
+    }
 }

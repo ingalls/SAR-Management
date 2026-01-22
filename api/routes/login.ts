@@ -66,10 +66,40 @@ export default async function router(schema: Schema, config: Config) {
                 email: auth.email,
                 access: auth.access,
                 token: auth.token,
+                secret: auth.secret,
+                mfa: auth.mfa,
+                qr: auth.qr,
                 iam: await AuthAugment.iam(config.pool, auth.id)
             });
         } catch (err) {
              Err.respond(err, res);
+        }
+    });
+
+    await schema.post('/login/mfa', {
+        name: 'MFA Verification',
+        group: 'Login',
+        description: 'Verify MFA Token and Complete Login',
+        body: Type.Object({
+            token: Type.String({ description: 'MFA TOTP Token' })
+        }),
+        res: LoginResponse
+    }, async (req, res) => {
+        try {
+            const user = await Auth.is_auth(config, req, { incomplete: true });
+
+            const auth = await Login.verify_mfa(config, user.id, req.body.token, config.SigningSecret);
+
+            res.json({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                access: user.access,
+                token: auth.token,
+                iam: user.iam
+            });
+        } catch (err) {
+            Err.respond(err, res);
         }
     });
 

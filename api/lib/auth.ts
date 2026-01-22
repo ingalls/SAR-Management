@@ -31,6 +31,7 @@ export type AuthUser = {
     username: string;
     email: string;
     validated: boolean;
+    incomplete?: boolean;
 };
 
 const Permissions = {
@@ -125,8 +126,10 @@ export default class Auth {
      */
     static async is_auth(config: Config, req: Request<any, any, any, any>, opts: {
         token?: boolean;
+        incomplete?: boolean;
     } = {}): Promise<AuthUser> {
         if (!opts.token) opts.token = false;
+        if (!opts.incomplete) opts.incomplete = false;
 
         const auth = await this.#parse(config, req, { token: opts.token });
 
@@ -136,6 +139,10 @@ export default class Auth {
 
         if (auth.disabled) {
             throw new Err(403, null, 'Account Disabled - Please Contact Us');
+        }
+
+        if (auth.incomplete && !opts.incomplete) {
+            throw new Err(403, null, 'MFA Verification Required');
         }
 
         return auth;
@@ -239,6 +246,7 @@ export default class Auth {
                         lname: user.lname,
                         type: AuthUserType.SESSION,
                         scopes: decoded.scopes || [],
+                        incomplete: decoded.incomplete || false,
                         iam: await AuthAugment.iam(config.pool, user.id)
                     };
                 } catch (err) {
@@ -260,6 +268,7 @@ export default class Auth {
                     lname: user.lname,
                     type: AuthUserType.TOKEN,
                     scopes: decoded.scopes || [],
+                    incomplete: decoded.incomplete || false,
                     iam: await AuthAugment.iam(config.pool, user.id)
                 };
             } catch (err) {

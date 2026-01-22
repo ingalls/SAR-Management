@@ -135,7 +135,9 @@ export const LoginResponse = Type.Object({
     iam: Type.Any(),
     validated: Type.Optional(Type.Boolean()),
     token: Type.Optional(Type.String()),
-    secret: Type.Optional(Type.String())
+    mfa: Type.Optional(Type.Boolean()),
+    secret: Type.Optional(Type.String()),
+    qr: Type.Optional(Type.String())
 });
 
 export const UserResponse = AugmentedUser;
