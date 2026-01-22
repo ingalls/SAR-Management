@@ -3,7 +3,7 @@ import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { User, UserTeam, Team } from '../schema.js';
-import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
+import { sql, eq, is, asc, desc, max, SQL, InferSelectModel } from 'drizzle-orm';
 
 export const User_EmergencyContact = Type.Object({
     name: Type.String(),
@@ -41,7 +41,8 @@ export const AugmentedUser = Type.Object({
     address_street: Type.String(),
     address_city: Type.String(),
     address_state: Type.String(),
-    address_zip: Type.String()
+    address_zip: Type.String(),
+    mfa: Type.Boolean()
 })
 
 export default class UserModel extends Modeler<typeof User> {
@@ -95,10 +96,10 @@ export default class UserModel extends Modeler<typeof User> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    const generic = t.generic as Static<typeof AugmentedUser>
+                    const generic = t.generic as InferSelectModel<typeof User> & { teams: Array<Static<typeof PartialTeam>>; mfa: boolean };
                     if (!generic.teams) generic.teams = [];
-
-                    return generic
+                    generic.mfa = generic.mfa_enabled;
+                    return generic;
                 })
             };
         }
@@ -138,9 +139,12 @@ export default class UserModel extends Modeler<typeof User> {
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
 
+        const generic = pgres[0].generic as InferSelectModel<typeof User> & { mfa: boolean };
+        generic.mfa = generic.mfa_enabled;
+
         return {
             teams: pgres[0].teams || [],
-            ...pgres[0].generic
+            ...generic
         } as Static<typeof AugmentedUser>;
     }
 }

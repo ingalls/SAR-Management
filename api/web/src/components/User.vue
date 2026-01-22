@@ -54,7 +54,16 @@
                                                 class='badge bg-gray text-white'
                                                 style='height: 20px;'
                                             >Read</span>
-
+                                            <span
+                                                v-if='user.mfa'
+                                                class='badge bg-green text-white'
+                                                style='height: 20px;'
+                                            >MFA</span>
+                                            <span
+                                                v-else
+                                                class='badge bg-yellow text-white'
+                                                style='height: 20px;'
+                                            >No MFA</span>
                                             <button
                                                 data-bs-toggle='dropdown'
                                                 type='button'
