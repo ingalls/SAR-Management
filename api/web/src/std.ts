@@ -44,6 +44,11 @@ function std() {
                     throw new Error(`Status Code: ${res.status}`);
                 }
 
+                if (res.status === 403 && bdy.message === 'MFA Verification Required') {
+                    delete localStorage.token;
+                    return window.location.reload();
+                }
+
                 const err = new Error(bdy.message || `Status Code: ${res.status}`);
                 err.body = JSON.stringify(bdy);
                 throw err;
