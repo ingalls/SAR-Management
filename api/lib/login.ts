@@ -24,9 +24,9 @@ export default class Login {
 
         if (!user.mfa_secret) throw new Err(403, null, 'MFA Not Setup');
 
-        const isValid = await verify({ token, secret: user.mfa_secret });
+        const verification = await verify({ token, secret: user.mfa_secret });
 
-        if (!isValid) throw new Err(403, null, 'Invalid MFA Token');
+        if (!verification || !verification.valid) throw new Err(403, null, 'Invalid MFA Token');
 
         // Enable MFA if not already
         if (!user.mfa_enabled) {
