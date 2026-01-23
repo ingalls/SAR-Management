@@ -42,7 +42,7 @@ export const AugmentedUser = Type.Object({
     address_city: Type.String(),
     address_state: Type.String(),
     address_zip: Type.String(),
-    mfa: Type.Boolean()
+    mfa_enabled: Type.Boolean()
 })
 
 export default class UserModel extends Modeler<typeof User> {
@@ -96,9 +96,9 @@ export default class UserModel extends Modeler<typeof User> {
             return {
                 total: parseInt(pgres[0].count),
                 items: pgres.map((t) => {
-                    const generic = t.generic as InferSelectModel<typeof User> & { teams: Array<Static<typeof PartialTeam>>; mfa: boolean };
+                    const generic = t.generic as InferSelectModel<typeof User> & { teams: Array<Static<typeof PartialTeam>> };
                     if (!generic.teams) generic.teams = [];
-                    generic.mfa = generic.mfa_enabled;
+                    if (generic.bday === null) delete generic.bday;
                     return generic;
                 })
             };
@@ -139,8 +139,9 @@ export default class UserModel extends Modeler<typeof User> {
 
         if (pgres.length !== 1) throw new Err(404, null, `Item Not Found`);
 
-        const generic = pgres[0].generic as InferSelectModel<typeof User> & { mfa: boolean };
-        generic.mfa = generic.mfa_enabled;
+        const generic = pgres[0].generic as InferSelectModel<typeof User>;
+
+        if (generic.bday === null) delete generic.bday;
 
         return {
             teams: pgres[0].teams || [],

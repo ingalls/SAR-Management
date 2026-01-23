@@ -40,7 +40,6 @@ export const User = pgTable('users', {
     lname: text().notNull(),
     phone: text().notNull(),
     bday: date(),
-    mfa_enabled: boolean().notNull().default(false),
     mfa_secret: text(),
     mfa_enabled: boolean().notNull().default(false),
     validated: boolean().notNull().default(false),

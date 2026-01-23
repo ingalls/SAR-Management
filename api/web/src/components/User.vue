@@ -55,7 +55,7 @@
                                                 style='height: 20px;'
                                             >Read</span>
                                             <span
-                                                v-if='user.mfa'
+                                                v-if='user.mfa_enabled'
                                                 class='badge bg-green text-white'
                                                 style='height: 20px;'
                                             >MFA</span>
