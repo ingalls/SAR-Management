@@ -98,8 +98,8 @@ export default class UserModel extends Modeler<typeof User> {
                 items: pgres.map((t) => {
                     const generic = t.generic as InferSelectModel<typeof User> & { teams: Array<Static<typeof PartialTeam>> };
                     if (!generic.teams) generic.teams = [];
-                    if (generic.bday === null) delete generic.bday;
-                    return generic;
+                    if (generic.bday === null) delete (generic as any).bday;
+                    return generic as unknown as Static<typeof AugmentedUser>;
                 })
             };
         }
@@ -141,11 +141,11 @@ export default class UserModel extends Modeler<typeof User> {
 
         const generic = pgres[0].generic as InferSelectModel<typeof User>;
 
-        if (generic.bday === null) delete generic.bday;
+        if (generic.bday === null) delete (generic as any).bday;
 
         return {
             teams: pgres[0].teams || [],
             ...generic
-        } as Static<typeof AugmentedUser>;
+        } as unknown as Static<typeof AugmentedUser>;
     }
 }
