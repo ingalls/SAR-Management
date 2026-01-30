@@ -31,8 +31,9 @@
             <thead>
                 <tr>
                     <th>Role</th>
-                    <th>Created</th>
-                    <th>Updated</th>
+                    <th class='text-right'>
+                        Updated
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -40,25 +41,17 @@
                     v-for='(role, roleit) in list.items'
                     :key='role.id'
                 >
-                    <td>
-                        <template v-if='role._edit'>
+                    <td
+                        v-if='role._edit'
+                        colspan='2'
+                    >
+                        <div class='d-flex align-items-center'>
                             <TablerInput
                                 v-model='role.name'
+                                placeholder='Role'
                                 @keyup.enter='saveRole(role, roleit)'
                             />
-                        </template>
-                        <template v-else>
-                            <span v-text='role.name' />
-                        </template>
-                    </td>
-                    <td><TablerEpoch :date='role.created' /></td>
-                    <td>
-                        <div class='d-flex align-items-center'>
-                            <TablerEpoch :date='role.updated' />
-                            <div
-                                v-if='role._edit'
-                                class='ms-auto btn-list'
-                            >
+                            <div class='ms-auto btn-list'>
                                 <TablerIconButton
                                     title='Save Role'
                                     @click='saveRole(role, roleit)'
@@ -78,30 +71,36 @@
                                     />
                                 </TablerIconButton>
                             </div>
-                            <div
-                                v-else
-                                class='ms-auto btn-list'
-                            >
-                                <TablerIconButton
-                                    title='Edit Role'
-                                    @click='role._edit = true'
-                                >
-                                    <IconPencil
-                                        size='32'
-                                        :stroke='1'
-                                    />
-                                </TablerIconButton>
-                            </div>
                         </div>
                     </td>
+                    <template v-else>
+                        <td>
+                            <span v-text='role.name' />
+                        </td>
+                        <td>
+                            <div class='d-flex align-items-center'>
+                                <TablerEpoch :date='role.updated' />
+                                <div class='ms-auto btn-list'>
+                                    <TablerIconButton
+                                        title='Edit Role'
+                                        @click='role._edit = true'
+                                    >
+                                        <IconPencil
+                                            size='32'
+                                            :stroke='1'
+                                        />
+                                    </TablerIconButton>
+                                </div>
+                            </div>
+                        </td>
+                    </template>
                 </tr>
             </tbody>
         </table>
     </div>
 </template>
 
-<script seIconButton,
-    Tablertup>
+<script setup>
 import { ref, reactive, onMounted } from 'vue';
 import {
     IconPlus,
@@ -110,6 +109,7 @@ import {
     IconTrash
 } from '@tabler/icons-vue';
 import {
+    TablerIconButton,
     TablerEpoch,
     TablerLoading,
     TablerInput,

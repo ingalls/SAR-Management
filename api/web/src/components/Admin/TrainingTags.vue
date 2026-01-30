@@ -31,8 +31,9 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Created</th>
-                    <th>Updated</th>
+                    <th class='text-right'>
+                        Updated
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -40,25 +41,17 @@
                     v-for='(tag, tagit) in list.items'
                     :key='tag.id'
                 >
-                    <td>
-                        <template v-if='tag._edit'>
+                    <td
+                        v-if='tag._edit'
+                        colspan='2'
+                    >
+                        <div class='d-flex align-items-center'>
                             <TablerInput
                                 v-model='tag.name'
+                                placeholder='Name'
                                 @keyup.enter='saveTag(tag, tagit)'
                             />
-                        </template>
-                        <template v-else>
-                            <span v-text='tag.name' />
-                        </template>
-                    </td>
-                    <td><TablerEpoch :date='tag.created' /></td>
-                    <td>
-                        <div class='d-flex align-items-center'>
-                            <TablerEpoch :date='tag.updated' />
-                            <div
-                                v-if='tag._edit'
-                                class='ms-auto btn-list'
-                            >
+                            <div class='ms-auto btn-list'>
                                 <TablerIconButton
                                     title='Save Tag'
                                     @click='saveTag(tag, tagit)'
@@ -78,22 +71,29 @@
                                     />
                                 </TablerIconButton>
                             </div>
-                            <div
-                                v-else
-                                class='ms-auto btn-list'
-                            >
-                                <TablerIconButton
-                                    title='Edit Tag'
-                                    @click='tag._edit = true'
-                                >
-                                    <IconPencil
-                                        size='32'
-                                        :stroke='1'
-                                    />
-                                </TablerIconButton>
-                            </div>
                         </div>
                     </td>
+                    <template v-else>
+                        <td>
+                            <span v-text='tag.name' />
+                        </td>
+                        <td>
+                            <div class='d-flex align-items-center'>
+                                <TablerEpoch :date='tag.updated' />
+                                <div class='ms-auto btn-list'>
+                                    <TablerIconButton
+                                        title='Edit Tag'
+                                        @click='tag._edit = true'
+                                    >
+                                        <IconPencil
+                                            size='32'
+                                            :stroke='1'
+                                        />
+                                    </TablerIconButton>
+                                </div>
+                            </div>
+                        </td>
+                    </template>
                 </tr>
             </tbody>
         </table>
