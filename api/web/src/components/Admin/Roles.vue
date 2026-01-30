@@ -6,12 +6,15 @@
             </h3>
 
             <div class='ms-auto btn-list'>
-                <IconPlus
-                    class='cursor-pointer'
-                    size='32'
-                    :stroke='1'
+                <TablerIconButton
+                    title='Add Role'
                     @click='push()'
-                />
+                >
+                    <IconPlus
+                        size='32'
+                        :stroke='1'
+                    />
+                </TablerIconButton>
             </div>
         </div>
 
@@ -56,29 +59,38 @@
                                 v-if='role._edit'
                                 class='ms-auto btn-list'
                             >
-                                <IconCheck
-                                    class='cursor-pointer'
-                                    size='32'
-                                    :stroke='1'
+                                <TablerIconButton
+                                    title='Save Role'
                                     @click='saveRole(role, roleit)'
-                                />
-                                <IconTrash
-                                    class='cursor-pointer'
-                                    size='32'
-                                    :stroke='1'
+                                >
+                                    <IconCheck
+                                        size='32'
+                                        :stroke='1'
+                                    />
+                                </TablerIconButton>
+                                <TablerIconButton
+                                    title='Delete Role'
                                     @click='deleteRole(role, roleit)'
-                                />
+                                >
+                                    <IconTrash
+                                        size='32'
+                                        :stroke='1'
+                                    />
+                                </TablerIconButton>
                             </div>
                             <div
                                 v-else
                                 class='ms-auto btn-list'
                             >
-                                <IconPencil
-                                    class='cursor-pointer'
-                                    size='32'
-                                    :stroke='1'
+                                <TablerIconButton
+                                    title='Edit Role'
                                     @click='role._edit = true'
-                                />
+                                >
+                                    <IconPencil
+                                        size='32'
+                                        :stroke='1'
+                                    />
+                                </TablerIconButton>
                             </div>
                         </div>
                     </td>
@@ -88,7 +100,8 @@
     </div>
 </template>
 
-<script setup>
+<script seIconButton,
+    Tablertup>
 import { ref, reactive, onMounted } from 'vue';
 import {
     IconPlus,
