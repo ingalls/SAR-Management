@@ -114,6 +114,10 @@ export const MissionTagResponse = createSelectSchema(schemas.MissionTag, {
     id: Type.Integer()
 });
 
+export const TrainingTagResponse = createSelectSchema(schemas.TrainingTag, {
+    id: Type.Integer()
+});
+
 export const NotificationResponse = createSelectSchema(schemas.Notification, {
     id: Type.Integer(),
     uid: Type.Integer()

@@ -38,6 +38,8 @@ export default class Models {
     PollVote: Modeler<typeof pgtypes.PollVote>;
     Schedule: Modeler<typeof pgtypes.Schedule>;
     Server: Modeler<typeof pgtypes.Server>;
+    TrainingTag: Modeler<typeof pgtypes.TrainingTag>;
+    TrainingTagAssigned: Modeler<typeof pgtypes.TrainingTagAssigned>;
     TrainingAsset: Modeler<typeof pgtypes.TrainingAsset>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
     Rolodex: Modeler<typeof pgtypes.Rolodex>;
@@ -99,6 +101,8 @@ export default class Models {
         this.PollVote = new Modeler(pg, pgtypes.PollVote);
         this.Schedule = new Modeler(pg, pgtypes.Schedule);
         this.Server = new Modeler(pg, pgtypes.Server);
+        this.TrainingTag = new Modeler(pg, pgtypes.TrainingTag);
+        this.TrainingTagAssigned = new Modeler(pg, pgtypes.TrainingTagAssigned);
         this.TrainingAsset = new Modeler(pg, pgtypes.TrainingAsset);
         this.TrainingTeam = new Modeler(pg, pgtypes.TrainingTeam);
     }

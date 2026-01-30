@@ -335,6 +335,13 @@ export const Server = pgTable('server', {
     public: boolean().notNull().default(false)
 });
 
+export const TrainingTag = pgTable('training_tag', {
+    id: serial().primaryKey(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    name: text().notNull()
+});
+
 export const Training = pgTable('training', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
@@ -355,6 +362,12 @@ export const TrainingAssigned = pgTable('training_assigned', {
     confirmed: boolean().notNull().default(false),
     role: text().notNull(),
     uid: integer().notNull().references(() => User.id),
+});
+
+export const TrainingTagAssigned = pgTable('trainings_tag', {
+    id: serial().primaryKey(),
+    training_id: integer().notNull().references(() => Training.id),
+    tag_id: integer().notNull().references(() => TrainingTag.id),
 });
 
 export const TrainingTeam = pgTable('trainings_team', {
