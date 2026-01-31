@@ -1,7 +1,10 @@
 <template>
     <div class='card'>
         <div class='card-header'>
-            <h3 class='card-title' v-text='label' />
+            <h3
+                class='card-title'
+                v-text='label'
+            />
             <div class='card-actions btn-actions'>
                 <div
                     v-if='!disabled'
@@ -102,9 +105,9 @@
                                     </template>
 
                                     <TablerDelete
+                                        v-tooltip='"Remove User"'
                                         displaytype='icon'
                                         :size='24'
-                                        v-tooltip='"Remove User"'
                                         class='cursor-pointer my-2'
                                         @delete='delete_assigned(element)'
                                     />

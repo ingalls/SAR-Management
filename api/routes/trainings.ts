@@ -92,6 +92,7 @@ export default async function router(schema: Schema, config: Config) {
                 uid: Type.Integer()
             }))),
             teams: Type.Optional(Type.Array(Type.Integer())),
+            tags: Type.Optional(Type.Array(Type.Integer())),
             assets: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: TrainingResponse
@@ -103,6 +104,8 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.assigned;
             const teams = req.body.teams;
             delete req.body.teams;
+            const tags = req.body.tags;
+            delete req.body.tags;
             const assets = req.body.assets;
             delete req.body.assets;
 
@@ -130,6 +133,16 @@ export default async function router(schema: Schema, config: Config) {
                     });
                 }
             }
+
+            if (tags) {
+                for (const a of tags) {
+                    await config.models.TrainingTagAssigned.generate({
+                        training_id: training.id,
+                        tag_id: a
+                    });
+                }
+            }
+
 
             if (assets) {
                 for (const a of assets) {
@@ -162,6 +175,7 @@ export default async function router(schema: Schema, config: Config) {
             location: Type.Optional(Type.String()),
             location_geom: Type.Optional(Type.Any()),
             teams: Type.Optional(Type.Array(Type.Integer())),
+            tags: Type.Optional(Type.Array(Type.Integer())),
             assets: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: TrainingResponse
@@ -171,6 +185,8 @@ export default async function router(schema: Schema, config: Config) {
 
             const teams = req.body.teams;
             delete req.body.teams;
+            const tags = req.body.tags;
+            delete req.body.tags;
             const assets = req.body.assets;
             delete req.body.assets;
 
@@ -186,6 +202,18 @@ export default async function router(schema: Schema, config: Config) {
                     });
                 }
             }
+
+            if (tags) {
+                await config.models.TrainingTagAssigned.delete(sql`training_id = ${req.params.trainingid}`)
+
+                for (const a of tags) {
+                    await config.models.TrainingTagAssigned.generate({
+                        training_id: req.params.trainingid,
+                        tag_id: a
+                    });
+                }
+            }
+
 
             if (assets) {
                 await config.models.TrainingAsset.delete(sql`training_id = ${req.params.trainingid}`)

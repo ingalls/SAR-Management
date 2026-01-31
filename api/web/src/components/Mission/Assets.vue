@@ -1,7 +1,9 @@
 <template>
     <div class='card'>
         <div class='card-header'>
-            <h3 class='card-title'>Assets</h3>
+            <h3 class='card-title'>
+                Assets
+            </h3>
             <div class='card-actions btn-actions'>
                 <TablerIconButton
                     v-if='mode === "edit" || is_iam("Mission:Manage")'
@@ -26,13 +28,20 @@
                     <tr>
                         <th>Name</th>
                         <th>Created</th>
-                        <th class='w-1'></th>
+                        <th class='w-1' />
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for='asset in mission.assets' :key='asset.id'>
+                    <tr
+                        v-for='asset in mission.assets'
+                        :key='asset.id'
+                    >
                         <td>
-                            <a :href='`/api/asset/${asset.id}/raw?token=${token}`' target='_blank' v-text='asset.name'></a>
+                            <a
+                                :href='`/api/asset/${asset.id}/raw?token=${token}`'
+                                target='_blank'
+                                v-text='asset.name'
+                            />
                         </td>
                         <td v-text='asset.created' />
                         <td>
@@ -117,21 +126,20 @@ export default {
             this.showUpload = false;
             if (!asset || !asset.id) return;
 
-            if (!this.mission.assets_id) this.mission.assets_id = [];
-            this.mission.assets_id.push(asset.id);
-            await this.patchMission({ assets: this.mission.assets_id });
+            const assets = this.mission.assets_id ? [...this.mission.assets_id] : [];
+            assets.push(asset.id);
+            await this.patchMission({ assets: assets });
         },
         deleteAsset: async function(assetId) {
-            this.mission.assets_id = this.mission.assets_id.filter((a) => a !== assetId);
-            await this.patchMission({ assets: this.mission.assets_id });
+            const assets = this.mission.assets_id ? this.mission.assets_id.filter((a) => a !== assetId) : [];
+            await this.patchMission({ assets: assets });
         },
         patchMission: async function(body) {
             await window.std(`/api/mission/${this.$route.params.missionid}`, {
                 method: 'PATCH',
                 body
             });
-            const res = await window.std(`/api/mission/${this.$route.params.missionid}/assets`);
-            this.mission.assets = res.assets;
+            this.$emit('refresh');
         }
     }
 }

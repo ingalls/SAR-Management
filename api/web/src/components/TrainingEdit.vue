@@ -67,6 +67,10 @@
                                                 v-model='training.teams'
                                                 label='Assigned'
                                             />
+                                            <TrainingTagSelect
+                                                v-model='training.tags'
+                                                label='Tags'
+                                            />
                                         </div>
                                         <div class='col-md-12'>
                                             <MdEditor
@@ -139,6 +143,7 @@ import iam from '../iam.js';
 import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import TeamSelect from './util/TeamSelect.vue';
+import TrainingTagSelect from './util/TrainingTagSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import { MdEditor } from 'md-editor-v3';
@@ -159,6 +164,7 @@ export default {
         TablerToggle,
         TablerLoading,
         TeamSelect,
+        TrainingTagSelect,
         LocationDropdown,
         NoAccess,
         TablerBreadCrumb,
@@ -183,6 +189,7 @@ export default {
                 title: '',
                 required: false,
                 body: '',
+                tags: [],
                 location: '',
                 location_geom: null,
                 start_ts: '',
@@ -234,6 +241,7 @@ export default {
         create: async function() {
             const body = JSON.parse(JSON.stringify(this.training));
             body.teams = body.teams.map((team) => { return team.id });
+            body.tags = body.tags.map((tag) => { return tag.id });
             body.start_ts = moment(body.start_ts).toISOString();
             body.end_ts = moment(body.end_ts).toISOString();
 
@@ -252,6 +260,7 @@ export default {
         update: async function() {
             const body = JSON.parse(JSON.stringify(this.training));
             body.teams = body.teams.map((team) => { return team.id });
+            body.tags = body.tags.map((tag) => { return tag.id });
             body.start_ts = moment(body.start_ts).toISOString();
             body.end_ts = moment(body.end_ts).toISOString();
 

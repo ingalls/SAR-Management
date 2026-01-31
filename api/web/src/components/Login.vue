@@ -33,18 +33,25 @@
                                         </div>
                                     </div>
 
-                                    <div v-if='mfa.secret' class='card mb-3'>
+                                    <div
+                                        v-if='mfa.secret'
+                                        class='card mb-3'
+                                    >
                                         <div class='card-body'>
                                             <div class='text-center mb-3'>
-                                                <div class='fw-bold mb-2'>Scan QR Code</div>
+                                                <div class='fw-bold mb-2'>
+                                                    Scan QR Code
+                                                </div>
                                                 <img 
                                                     :src='mfa.qr' 
                                                     alt='MFA QR Code'
                                                     style='width: 200px; height: 200px; border-radius: 4px; border: 1px solid #e6e7e9;'
-                                                />
+                                                >
                                             </div>
                                             
-                                            <div class='hr-text'>or enter manual code</div>
+                                            <div class='hr-text'>
+                                                or enter manual code
+                                            </div>
                                             
                                             <div class='input-group input-group-flat'>
                                                 <input 
@@ -52,7 +59,7 @@
                                                     class='form-control text-center font-monospace' 
                                                     :value='mfa.secret' 
                                                     readonly
-                                                />
+                                                >
                                                 <span class='input-group-text'>
                                                     <a 
                                                         href='#' 
@@ -60,7 +67,10 @@
                                                         title='Copy secret' 
                                                         @click.prevent='copySecret'
                                                     >
-                                                        <IconCheck v-if='copied' class='text-primary' />
+                                                        <IconCheck
+                                                            v-if='copied'
+                                                            class='text-primary'
+                                                        />
                                                         <IconCopy v-else />
                                                     </a>
                                                 </span>
@@ -80,8 +90,8 @@
                                             autocomplete='one-time-code'
                                             inputmode='numeric'
                                             pattern='[0-9]*'
-                                            @keyup.enter='submitMFA'
                                             class='text-center letter-spacing-2'
+                                            @keyup.enter='submitMFA'
                                         />
                                     </div>
 
@@ -89,15 +99,19 @@
                                         <button
                                             type='submit'
                                             class='btn btn-primary w-100'
-                                            @click='submitMFA'
                                             :disabled='!mfa.token || mfa.token.length < 6'
+                                            @click='submitMFA'
                                         >
                                             Verify & Login
                                         </button>
                                     </div>
                                     
                                     <div class='text-center mt-3'>
-                                        <a href='#' class='text-muted' @click.prevent='stage = "login"; mfa.token = ""'>
+                                        <a
+                                            href='#'
+                                            class='text-muted'
+                                            @click.prevent='stage = "login"; mfa.token = ""'
+                                        >
                                             Back to Login
                                         </a>
                                     </div>
@@ -165,7 +179,6 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    IconInfoCircle,
     IconCopy,
     IconCheck
 } from '@tabler/icons-vue';

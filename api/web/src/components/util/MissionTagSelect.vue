@@ -85,7 +85,7 @@ const props = defineProps({
     },
     limit: {
         type: Number,
-        default: 10
+        default: 100
     }
 })
 

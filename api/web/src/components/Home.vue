@@ -4,33 +4,76 @@
             <div
                 class='container-xl'
             >
-                <div v-if='!loading && !cards.length' class='empty-state py-5 text-center'>
-                    <h1 class='mb-3'>Welcome to your Dashboard</h1>
-                    <p class='lead text-muted mb-5'>Select a widget below to add it to your personal dashboard view.</p>
+                <div
+                    v-if='!loading && !cards.length'
+                    class='empty-state py-5 text-center'
+                >
+                    <h1 class='mb-3'>
+                        Welcome to your Dashboard
+                    </h1>
+                    <p class='lead text-muted mb-5'>
+                        Select a widget below to add it to your personal dashboard view.
+                    </p>
 
                     <div class='row justify-content-center'>
-                        <div v-for="widget in availableWidgets" :key="widget.name" class='col-md-3 mb-4'>
-                            <div class='card h-100 widget-preview' @click='addCard(widget.name)'>
+                        <div
+                            v-for='widget in availableWidgets'
+                            :key='widget.name'
+                            class='col-md-3 mb-4'
+                        >
+                            <div
+                                class='card h-100 widget-preview'
+                                @click='addCard(widget.name)'
+                            >
                                 <div class='card-body text-center'>
-                                    <component :is="widget.icon" :size="48" stroke="1.5" class="mb-3 text-muted" />
-                                    <h3 class='card-title'>{{ widget.label }}</h3>
+                                    <component
+                                        :is='widget.icon'
+                                        :size='48'
+                                        stroke='1.5'
+                                        class='mb-3 text-muted'
+                                    />
+                                    <h3 class='card-title'>
+                                        {{ widget.label }}
+                                    </h3>
                                     <p>{{ widget.description }}</p>
-                                    <button class='btn btn-primary w-100'>Add Widget</button>
+                                    <button class='btn btn-primary w-100'>
+                                        Add Widget
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div v-if="!loading && cards.length > 0 && missingWidgets.length > 0" class="d-flex justify-content-end mb-3">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                           <i class="fa-solid fa-plus me-2"></i>Add Widget
+                <div
+                    v-if='!loading && cards.length > 0 && missingWidgets.length > 0'
+                    class='d-flex justify-content-end mb-3'
+                >
+                    <div class='dropdown'>
+                        <button
+                            class='btn btn-outline-primary dropdown-toggle'
+                            type='button'
+                            data-bs-toggle='dropdown'
+                            aria-expanded='false'
+                        >
+                            <i class='fa-solid fa-plus me-2' />Add Widget
                         </button>
-                        <ul class="dropdown-menu">
-                            <li v-for="widget in missingWidgets" :key="widget.name">
-                                <a class="dropdown-item d-flex align-items-center" href="#" @click.prevent="addCard(widget.name)">
-                                     <component :is="widget.icon" :size="20" stroke="1.5" class="me-2" />
+                        <ul class='dropdown-menu'>
+                            <li
+                                v-for='widget in missingWidgets'
+                                :key='widget.name'
+                            >
+                                <a
+                                    class='dropdown-item d-flex align-items-center'
+                                    href='#'
+                                    @click.prevent='addCard(widget.name)'
+                                >
+                                    <component
+                                        :is='widget.icon'
+                                        :size='20'
+                                        stroke='1.5'
+                                        class='me-2'
+                                    />
                                     {{ widget.label }}
                                 </a>
                             </li>
