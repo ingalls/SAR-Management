@@ -232,14 +232,16 @@ export const MissionRole = pgTable('mission_role', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
-    name: text().notNull()
+    name: text().notNull(),
+    icon: text().notNull().default('')
 });
 
 export const MissionTag = pgTable('mission_tag', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
-    name: text().notNull()
+    name: text().notNull(),
+    icon: text().notNull().default('')
 });
 
 export const Mission = pgTable('missions', {
@@ -339,7 +341,8 @@ export const TrainingTag = pgTable('training_tag', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
-    name: text().notNull()
+    name: text().notNull(),
+    icon: text().notNull().default('')
 });
 
 export const Training = pgTable('training', {
