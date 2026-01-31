@@ -49,6 +49,20 @@ export const UserDashboardResponse = createSelectSchema(schemas.UserDashboard, {
     uid: Type.Integer()
 });
 
+export const UserIncidentResponse = createSelectSchema(schemas.UserIncident, {
+    id: Type.Integer(),
+    uid: Type.Integer(),
+    mission_id: Type.Union([Type.Integer(), Type.Null()]),
+    training_id: Type.Union([Type.Integer(), Type.Null()])
+});
+
+export const EquipmentIncidentResponse = createSelectSchema(schemas.EquipmentIncident, {
+    id: Type.Integer(),
+    equipment_id: Type.Integer(),
+    mission_id: Type.Union([Type.Integer(), Type.Null()]),
+    training_id: Type.Union([Type.Integer(), Type.Null()])
+});
+
 export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
     id: Type.Integer(),
     team: Type.Integer()

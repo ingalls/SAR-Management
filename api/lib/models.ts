@@ -43,6 +43,8 @@ export default class Models {
     TrainingAsset: Modeler<typeof pgtypes.TrainingAsset>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
     Rolodex: Modeler<typeof pgtypes.Rolodex>;
+    UserIncident: Modeler<typeof pgtypes.UserIncident>;
+    EquipmentIncident: Modeler<typeof pgtypes.EquipmentIncident>;
 
     Poll: PollModel;
     Team: TeamModel;
@@ -103,6 +105,8 @@ export default class Models {
         this.Server = new Modeler(pg, pgtypes.Server);
         this.TrainingTag = new Modeler(pg, pgtypes.TrainingTag);
         this.TrainingTagAssigned = new Modeler(pg, pgtypes.TrainingTagAssigned);
+        this.UserIncident = new Modeler(pg, pgtypes.UserIncident);
+        this.EquipmentIncident = new Modeler(pg, pgtypes.EquipmentIncident);
         this.TrainingAsset = new Modeler(pg, pgtypes.TrainingAsset);
         this.TrainingTeam = new Modeler(pg, pgtypes.TrainingTeam);
     }

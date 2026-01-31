@@ -77,6 +77,10 @@ export default async function router(schema: Schema, config: Config) {
         try {
             const user = await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
 
+            if (new Date(req.body.start_ts) >= new Date(req.body.end_ts)) {
+                throw new Err(400, null, 'Start Date must be before End Date');
+            }
+
             const assigned = req.body.assigned;
             delete req.body.assigned;
             const teams = req.body.teams;
@@ -158,6 +162,14 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
+
+            if (req.body.start_ts || req.body.end_ts) {
+                const mission = await config.models.Mission.from(req.params.missionid);
+                const start = req.body.start_ts ? new Date(req.body.start_ts) : new Date(mission.start_ts);
+                const end = req.body.end_ts ? new Date(req.body.end_ts) : new Date(mission.end_ts);
+
+                if (start >= end) throw new Err(400, null, 'Start Date must be before End Date');
+            }
 
             const teams = req.body.teams;
             delete req.body.teams;
