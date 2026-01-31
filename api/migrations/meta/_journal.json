@@ -141,6 +141,13 @@
       "when": 1769790483493,
       "tag": "0019_tense_nomad",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1769872103502,
+      "tag": "0020_green_norrin_radd",
+      "breakpoints": true
     }
   ]
 }

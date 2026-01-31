@@ -396,3 +396,29 @@ export const Rolodex = pgTable('rolodex', {
     location_geom: geometry({ type: GeometryType.Point, srid: 4326 }),
     remarks: text().notNull().default('')
 });
+
+export const UserIncident = pgTable('users_incidents', {
+    id: serial().primaryKey(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    date: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+    title: text().notNull(),
+    body: text().notNull().default(''),
+    uid: integer().notNull().references(() => User.id),
+    mission_id: integer().references(() => Mission.id),
+    training_id: integer().references(() => Training.id)
+});
+
+export const EquipmentIncident = pgTable('equipment_incidents', {
+    id: serial().primaryKey(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    date: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+    title: text().notNull(),
+    body: text().notNull().default(''),
+    equipment_id: integer().notNull().references(() => Equipment.id),
+    mission_id: integer().references(() => Mission.id),
+    training_id: integer().references(() => Training.id)
+});
+
+
