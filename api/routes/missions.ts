@@ -8,6 +8,7 @@ import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, MissionResponse } from '../lib/types.js';
 import { PartialAsset } from '../lib/models/Mission.js';
+import Report from '../lib/report.js';
 import API2PDF from 'api2pdf';
 
 export default async function router(schema: Schema, config: Config) {
@@ -333,53 +334,12 @@ export default async function router(schema: Schema, config: Config) {
                  if (!process.env.API2PDF) throw new Err(424, null, 'PDF Conversion not configured');
                  const convert = new API2PDF(process.env.API2PDF);
 
-                 const html = `
-                    <html>
-                    <head>
-                        <style>
-                            body { font-family: sans-serif; padding: 40px; }
-                            h1 { border-bottom: 3px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-                            .meta { color: #666; margin-bottom: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-                            .section { margin-top: 30px; }
-                            .label { font-weight: bold; color: #333; }
-                            ul { padding-left: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>${mission.title}</h1>
-                        <div class="meta">
-                            <div><span class="label">Start:</span> ${mission.start_ts}</div>
-                            <div><span class="label">End:</span> ${mission.end_ts}</div>
-                            <div><span class="label">Location:</span> ${mission.location || 'N/A'}</div>
-                            <div><span class="label">ID:</span> ${mission.id}</div>
-                        </div>
+                 const users = await config.models.MissionAssigned.augmented_list({
+                    limit: 1000,
+                    where: sql`mission_id = ${req.params.missionid}`
+                 });
 
-                        <div class="section">
-                            <h3>Description</h3>
-                            <div>${mission.body || 'No description provided.'}</div>
-                        </div>
-
-                        ${mission.users && mission.users.length ? `
-                        <div class="section">
-                            <h3>Assigned Personnel</h3>
-                            <ul>
-                                ${mission.users.map((u: any) => `<li>${u.username} ${u.role ? `(${u.role})` : ''}</li>`).join('')}
-                            </ul>
-                        </div>
-                        ` : ''}
-                        
-                         ${mission.teams && mission.teams.length ? `
-                        <div class="section">
-                            <h3>Assigned Teams</h3>
-                            <ul>
-                                ${mission.teams.map((t: any) => `<li>${t.name}</li>`).join('')}
-                            </ul>
-                        </div>
-                        ` : ''}
-                    </body>
-                    </html>
-                 `;
-
+                 const html = Report.mission(mission, users.items);
                  const pdf = await convert.chromeHtmlToPdf(html);
                  return res.redirect(pdf.FileUrl);
             }
