@@ -321,11 +321,12 @@ export default async function router(schema: Schema, config: Config) {
             missionid: Type.Integer(),
         }),
         query: Type.Object({
-            format: Type.String({ enum: ['pdf'] })
+            format: Type.String({ enum: ['pdf'] }),
+            token: Type.Optional(Type.String())
         })
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW, { token: true });
             const mission = await config.models.Mission.augmented_from(req.params.missionid);
 
             if (req.query.format === 'pdf') {

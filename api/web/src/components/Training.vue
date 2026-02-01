@@ -71,13 +71,16 @@
                                                     :start='training.start_ts'
                                                     :end='training.end_ts'
                                                 />
-                                                <IconSettings
+                                                <TablerIconButton
                                                     v-if='is_iam("Training:Manage")'
-                                                    :size='24'
-                                                    :stroke='1'
-                                                    class='cursor-pointer'
+                                                    title='Edit Training'
                                                     @click='$router.push(`/training/${$route.params.trainingid}/edit`)'
-                                                />
+                                                >
+                                                    <IconPencil
+                                                        :size='24'
+                                                        :stroke='1'
+                                                    />
+                                                </TablerIconButton>
                                             </div>
                                         </div>
                                         <div
@@ -181,13 +184,14 @@ import TrainingAssets from './Training/Assets.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
-    IconSettings
+    IconPencil
 } from '@tabler/icons-vue';
 import {
     TablerEpochRange,
     TablerBreadCrumb,
     TablerMarkdown,
-    TablerLoading
+    TablerLoading,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 
 export default {
@@ -197,7 +201,8 @@ export default {
         TeamBadge,
         Location,
         TrainingAssets,
-        IconSettings,
+        IconPencil,
+        TablerIconButton,
         UserPresentSelect,
         TablerLoading,
         TablerBreadCrumb,

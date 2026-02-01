@@ -80,13 +80,16 @@
                                                         stroke='1'
                                                     />
                                                 </TablerIconButton>
-                                                <IconSettings
+                                                <TablerIconButton
                                                     v-if='is_iam("Mission:Manage")'
-                                                    size='24'
-                                                    stroke='1'
-                                                    class='cursor-pointer'
+                                                    title='Edit Mission'
                                                     @click='$router.push(`/mission/${$route.params.missionid}/edit`)'
-                                                />
+                                                >
+                                                    <IconPencil
+                                                        size='24'
+                                                        stroke='1'
+                                                    />
+                                                </TablerIconButton>
                                             </div>
                                         </div>
                                         <div
@@ -194,7 +197,7 @@ import {
     TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
-    IconSettings,
+    IconPencil,
     IconFileTypePdf
 } from '@tabler/icons-vue';
 
@@ -202,7 +205,7 @@ export default {
     name: 'Mission',
     components: {
         TablerEpochRange,
-        IconSettings,
+        IconPencil,
         IconFileTypePdf,
         Location,
         UserPresentSelect,
@@ -263,7 +266,7 @@ export default {
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         download: function() {
-            window.open(`/api/mission/${this.$route.params.missionid}/export?format=pdf`, "_blank");
+            window.open(`/api/mission/${this.$route.params.missionid}/export?format=pdf&token=${localStorage.token}`, "_blank");
         },
         fetch: async function() {
             this.loading.mission = true;
