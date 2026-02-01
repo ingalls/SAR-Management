@@ -3,14 +3,23 @@ import { AugmentedMissionAssigned } from './models/MissionAssigned.js';
 import { Static } from '@sinclair/typebox';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'url';
 
 export default class Report {
     static logo(): string {
         try {
-            const p = path.resolve(process.cwd(), 'web/public/logo.png');
-            if (fs.existsSync(p)) {
-                 const img = fs.readFileSync(p);
-                 return 'data:image/png;base64,' + img.toString('base64');
+            const __filename = fileURLToPath(import.meta.url);
+            const __dirname = path.dirname(__filename);
+
+            for (const p of [
+                path.resolve(process.cwd(), 'web/public/logo.png'),
+                path.resolve(__dirname, '../web/public/logo.png'),
+                path.resolve(__dirname, '../../web/public/logo.png')
+            ]) {
+                if (fs.existsSync(p)) {
+                    const img = fs.readFileSync(p);
+                    return 'data:image/png;base64,' + img.toString('base64');
+                }
             }
         } catch (err) {
             console.error(err);
@@ -105,7 +114,7 @@ export default class Report {
                 </style>
             </head>
             <body>
-                ${logo ? `<img src="${logo}" style="max-height: 80px; display: block; margin-bottom: 30px; filter: grayscale(100%);" />` : ''}
+                ${logo ? `<img src="${logo}" style="max-height: 80px; display: block; margin: 0 auto 30px auto;" />` : ''}
                 
                 <h1>Mission Report: ${mission.title}</h1>
                 
@@ -137,6 +146,26 @@ export default class Report {
                     <div class="description">${mission.body || 'No description provided.'}</div>
                 </div>
 
+                ${mission.teams && mission.teams.length ? `
+                <div class="section">
+                    <h3>Assigned Teams</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mission.teams.map((t) => `
+                            <tr>
+                                <td>${t.name}</td>
+                            </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ` : ''}
+
                 ${users.length ? `
                 <div class="section">
                     <h3>Assigned Personnel</h3>
@@ -156,17 +185,6 @@ export default class Report {
                             `).join('')}
                         </tbody>
                     </table>
-                </div>
-                ` : ''}
-                
-                ${mission.teams && mission.teams.length ? `
-                <div class="section">
-                    <h3>Assigned Teams</h3>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        ${mission.teams.map((t) => `
-                            <div style="background: #ffffff; border: 1px solid #000000; padding: 5px 10px; color: #000000;">${t.name}</div>
-                        `).join('')}
-                    </div>
                 </div>
                 ` : ''}
             </body>
