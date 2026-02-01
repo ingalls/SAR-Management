@@ -70,6 +70,16 @@
                                                     :start='mission.start_ts'
                                                     :end='mission.end_ts'
                                                 />
+                                                <TablerIconButton
+                                                    title='Download PDF'
+                                                    class='mx-2'
+                                                    @click='download'
+                                                >
+                                                    <IconFileTypePdf
+                                                        size='24'
+                                                        stroke='1'
+                                                    />
+                                                </TablerIconButton>
                                                 <IconSettings
                                                     v-if='is_iam("Mission:Manage")'
                                                     size='24'
@@ -180,10 +190,12 @@ import {
     TablerEpochRange,
     TablerBreadCrumb,
     TablerMarkdown,
-    TablerLoading
+    TablerLoading,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
     IconSettings,
+    IconFileTypePdf
 } from '@tabler/icons-vue';
 
 export default {
@@ -191,11 +203,13 @@ export default {
     components: {
         TablerEpochRange,
         IconSettings,
+        IconFileTypePdf,
         Location,
         UserPresentSelect,
         TablerBreadCrumb,
         TablerLoading,
         TablerMarkdown,
+        TablerIconButton,
         TeamBadge,
         NoAccess,
         Assets
@@ -248,6 +262,9 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        download: function() {
+            window.open(`/api/mission/${this.$route.params.missionid}/export?format=pdf`, "_blank");
+        },
         fetch: async function() {
             this.loading.mission = true;
             this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);

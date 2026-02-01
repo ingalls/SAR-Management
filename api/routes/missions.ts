@@ -8,6 +8,7 @@ import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, MissionResponse } from '../lib/types.js';
 import { PartialAsset } from '../lib/models/Mission.js';
+import API2PDF from 'api2pdf';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission', {
@@ -309,6 +310,82 @@ export default async function router(schema: Schema, config: Config) {
             });
         } catch (err) {
              Err.respond(err, res);
+        }
+    });
+
+    await schema.get('/mission/:missionid/export', {
+        name: 'Export Mission',
+        group: 'Mission',
+        description: 'Export a mission to a different format',
+        params: Type.Object({
+            missionid: Type.Integer(),
+        }),
+        query: Type.Object({
+            format: Type.String({ enum: ['pdf'] })
+        })
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
+            const mission = await config.models.Mission.augmented_from(req.params.missionid);
+
+            if (req.query.format === 'pdf') {
+                 if (!process.env.API2PDF) throw new Err(424, null, 'PDF Conversion not configured');
+                 const convert = new API2PDF(process.env.API2PDF);
+
+                 const html = `
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: sans-serif; padding: 40px; }
+                            h1 { border-bottom: 3px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+                            .meta { color: #666; margin-bottom: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+                            .section { margin-top: 30px; }
+                            .label { font-weight: bold; color: #333; }
+                            ul { padding-left: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>${mission.title}</h1>
+                        <div class="meta">
+                            <div><span class="label">Start:</span> ${mission.start_ts}</div>
+                            <div><span class="label">End:</span> ${mission.end_ts}</div>
+                            <div><span class="label">Location:</span> ${mission.location || 'N/A'}</div>
+                            <div><span class="label">ID:</span> ${mission.id}</div>
+                        </div>
+
+                        <div class="section">
+                            <h3>Description</h3>
+                            <div>${mission.body || 'No description provided.'}</div>
+                        </div>
+
+                        ${mission.users && mission.users.length ? `
+                        <div class="section">
+                            <h3>Assigned Personnel</h3>
+                            <ul>
+                                ${mission.users.map((u: any) => `<li>${u.username} ${u.role ? `(${u.role})` : ''}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        
+                         ${mission.teams && mission.teams.length ? `
+                        <div class="section">
+                            <h3>Assigned Teams</h3>
+                            <ul>
+                                ${mission.teams.map((t: any) => `<li>${t.name}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                    </body>
+                    </html>
+                 `;
+
+                 const pdf = await convert.chromeHtmlToPdf(html);
+                 return res.redirect(pdf.FileUrl);
+            }
+
+            throw new Err(400, null, 'Unsupported Format');
+        } catch (err) {
+            Err.respond(err, res);
         }
     });
 
