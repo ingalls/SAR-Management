@@ -151,7 +151,12 @@
                             </div>
                         </div>
 
-                        <IncidentsCard :incidents='mission.incidents' />
+                        <IncidentsCard
+                            :incidents='mission.incidents'
+                            :mission_id='mission.id'
+                            :iam='iam'
+                            :auth='auth'
+                        />
 
                         <div
                             v-if='!loading.mission'

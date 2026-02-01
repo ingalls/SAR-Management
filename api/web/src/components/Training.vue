@@ -146,6 +146,9 @@
                         <IncidentsCard
                             v-if='!loading.training'
                             :incidents='training.incidents'
+                            :training_id='training.id'
+                            :iam='iam'
+                            :auth='auth'
                         />
 
                         <div

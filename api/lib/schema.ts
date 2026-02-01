@@ -419,6 +419,7 @@ export const UserIncident = pgTable('users_incidents', {
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     date: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     title: text().notNull(),
+    severity: text().notNull().default('minor'),
     body: text().notNull().default(''),
     uid: integer().notNull().references(() => User.id),
     mission_id: integer().references(() => Mission.id),

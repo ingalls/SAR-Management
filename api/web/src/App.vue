@@ -273,6 +273,19 @@
                                     </template>
                                     <template #dropdown>
                                         <a
+                                            v-if='is_iam("Incident:View")'
+                                            class='nav-link cursor-pointer'
+                                            @click='$router.push("/incident")'
+                                        >
+                                            <span class='nav-link-icon'>
+                                                <IconMedicalCross
+                                                    size='32'
+                                                    stroke='2'
+                                                />
+                                            </span>
+                                            <span class='nav-link-title'>Incidents</span>
+                                        </a>
+                                        <a
                                             class='nav-link cursor-pointer'
                                             @click='$router.push("/schedule")'
                                         >
@@ -373,6 +386,7 @@ import {
     TablerDropdown,
     TablerLoading
 } from '@tak-ps/vue-tabler'
+import checkIAM from './iam.js';
 
 import {
     IconBug,
@@ -389,6 +403,7 @@ import {
     IconCalendarTime,
     IconTruck,
     IconAmbulance,
+    IconMedicalCross,
     IconAdjustments,
     IconCaretDown,
 } from '@tabler/icons-vue';
@@ -402,6 +417,8 @@ const name = ref('Search & Rescue')
 const iam = reactive({})
 const user = ref(null)
 const err = ref(false)
+
+const is_iam = (permission) => { return checkIAM(iam, user.value, permission) };
 
 const enableNav = computed(() => {
     if (!route || !route.name) return false;
