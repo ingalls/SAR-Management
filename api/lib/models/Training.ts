@@ -2,7 +2,7 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Training, TrainingTeam, TrainingAssigned, TrainingTag, TrainingTagAssigned, Team, Asset, TrainingAsset } from '../schema.js';
+import { Training, TrainingTeam, TrainingAssigned, TrainingTag, TrainingTagAssigned, Team, Asset, TrainingAsset, UserIncident } from '../schema.js';
 import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const PartialAsset = Type.Object({
@@ -31,6 +31,16 @@ export const PartialTag = Type.Object({
     updated: Type.String()
 });
 
+export const PartialIncident = Type.Object({
+    id: Type.Integer(),
+    created: Type.String(),
+    updated: Type.String(),
+    date: Type.String(),
+    title: Type.String(),
+    body: Type.String(),
+    uid: Type.Integer(),
+});
+
 export const AugmentedTraining = Type.Object({
     id: Type.Integer(),
     created: Type.String(),
@@ -49,7 +59,8 @@ export const AugmentedTraining = Type.Object({
     tags_id: Type.Array(Type.Integer()),
     assets: Type.Array(PartialAsset),
     assets_id: Type.Array(Type.Integer()),
-    users: Type.Array(Type.Integer())
+    users: Type.Array(Type.Integer()),
+    incidents: Type.Array(PartialIncident)
 });
 
 export default class TrainingModel extends Modeler<typeof Training> {
@@ -62,6 +73,23 @@ export default class TrainingModel extends Modeler<typeof Training> {
     async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedTraining>>> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
+
+        const RootIncidents = this.pool
+            .select({
+                incidents_training_id: max(UserIncident.training_id).as('incidents_training_id'),
+                incidents: sql<Array<Static<typeof PartialIncident>>>`coalesce(json_agg(json_build_object(
+                    'id', users_incidents.id,
+                    'created', users_incidents.created,
+                    'updated', users_incidents.updated,
+                    'date', users_incidents.date,
+                    'title', users_incidents.title,
+                    'body', users_incidents.body,
+                    'uid', users_incidents.uid
+                )), '[]'::JSON)`.as('incidents'),
+            })
+            .from(UserIncident)
+            .groupBy(UserIncident.training_id)
+            .as("root_incidents");
 
         const RootTeams = this.pool
             .select({
@@ -144,13 +172,15 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 tags_id: RootTags.tags_id,
                 users: RootUsers.users,
                 assets: RootAssets.assets,
-                assets_id: RootAssets.assets_id
+                assets_id: RootAssets.assets_id,
+                incidents: RootIncidents.incidents
             })
             .from(Training)
             .leftJoin(RootTeams, eq(Training.id, RootTeams.teams_training_id))
             .leftJoin(RootUsers, eq(Training.id, RootUsers.users_training_id))
             .leftJoin(RootTags, eq(Training.id, RootTags.tags_training_id))
             .leftJoin(RootAssets, eq(Training.id, RootAssets.assets_training_id))
+            .leftJoin(RootIncidents, eq(Training.id, RootIncidents.incidents_training_id))
             .orderBy(orderBy)
             .as('root')
 
@@ -173,7 +203,8 @@ export default class TrainingModel extends Modeler<typeof Training> {
             tags_id: Root.tags_id,
             users: Root.users,
             assets: Root.assets,
-            assets_id: Root.assets_id
+            assets_id: Root.assets_id,
+            incidents: Root.incidents
         })
             .from(Root)
             .where(query.where)
@@ -193,6 +224,7 @@ export default class TrainingModel extends Modeler<typeof Training> {
                     if (!t.users) t.users = [];
                     if (!t.assets_id) t.assets_id = [];
                     if (!t.assets) t.assets = [];
+                    if (!t.incidents) t.incidents = [];
 
                     return t as Static<typeof AugmentedTraining>
                 })
@@ -201,6 +233,23 @@ export default class TrainingModel extends Modeler<typeof Training> {
     }
 
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedTraining>> {
+        const RootIncidents = this.pool
+            .select({
+                incidents_training_id: max(UserIncident.training_id).as('incidents_training_id'),
+                incidents: sql<Array<Static<typeof PartialIncident>>>`coalesce(json_agg(json_build_object(
+                    'id', users_incidents.id,
+                    'created', users_incidents.created,
+                    'updated', users_incidents.updated,
+                    'date', users_incidents.date,
+                    'title', users_incidents.title,
+                    'body', users_incidents.body,
+                    'uid', users_incidents.uid
+                )), '[]'::JSON)`.as('incidents'),
+            })
+            .from(UserIncident)
+            .groupBy(UserIncident.training_id)
+            .as("root_incidents");
+
         const RootTeams = this.pool
             .select({
                 teams_training_id: max(TrainingTeam.training_id).as('teams_training_id'),
@@ -282,13 +331,15 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 tags_id: RootTags.tags_id,
                 users: RootUsers.users,
                 assets: RootAssets.assets,
-                assets_id: RootAssets.assets_id
+                assets_id: RootAssets.assets_id,
+                incidents: RootIncidents.incidents
             })
             .from(Training)
             .leftJoin(RootTeams, eq(Training.id, RootTeams.teams_training_id))
             .leftJoin(RootUsers, eq(Training.id, RootUsers.users_training_id))
             .leftJoin(RootTags, eq(Training.id, RootTags.tags_training_id))
             .leftJoin(RootAssets, eq(Training.id, RootAssets.assets_training_id))
+            .leftJoin(RootIncidents, eq(Training.id, RootIncidents.incidents_training_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
             .limit(1)
 
@@ -301,6 +352,7 @@ export default class TrainingModel extends Modeler<typeof Training> {
         if (!pgres[0].users) pgres[0].users = [];
         if (!pgres[0].assets_id) pgres[0].assets_id = [];
         if (!pgres[0].assets) pgres[0].assets = [];
+        if (!pgres[0].incidents) pgres[0].incidents = [];
 
         return pgres[0] as Static<typeof AugmentedTraining>;
     }

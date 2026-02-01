@@ -143,6 +143,11 @@
                             </div>
                         </div>
 
+                        <IncidentsCard
+                            v-if='!loading.training'
+                            :incidents='training.incidents'
+                        />
+
                         <div
                             v-if='!loading.training'
                             class='col-lg-6'
@@ -180,6 +185,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
+import IncidentsCard from './util/IncidentsCard.vue';
 import TrainingAssets from './Training/Assets.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
@@ -200,6 +206,7 @@ export default {
         TablerEpochRange,
         TeamBadge,
         Location,
+        IncidentsCard,
         TrainingAssets,
         IconPencil,
         TablerIconButton,
@@ -231,7 +238,8 @@ export default {
                 title: '',
                 body: '',
                 start_ts: '',
-                end_ts: ''
+                end_ts: '',
+                incidents: []
             }
         }
     },

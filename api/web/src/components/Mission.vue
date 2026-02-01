@@ -151,6 +151,8 @@
                             </div>
                         </div>
 
+                        <IncidentsCard :incidents='mission.incidents' />
+
                         <div
                             v-if='!loading.mission'
                             class='col-lg-6'
@@ -187,6 +189,7 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import Assets from './Mission/Assets.vue';
+import IncidentsCard from './util/IncidentsCard.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
@@ -208,6 +211,7 @@ export default {
         IconPencil,
         IconFileTypePdf,
         Location,
+        IncidentsCard,
         UserPresentSelect,
         TablerBreadCrumb,
         TablerLoading,
@@ -240,7 +244,8 @@ export default {
                 end_ts: '',
                 teams: [],
                 assets: [],
-                assets_id: []
+                assets_id: [],
+                incidents: []
             },
             assigned: []
         }
