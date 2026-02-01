@@ -14,6 +14,7 @@ import {
     text,
     date
 } from 'drizzle-orm/pg-core';
+import { double } from 'drizzle-orm/mysql-core/index.js';
 
 /** Internal Tables for Postgis for use with drizzle-kit push:pg */
 export const SpatialRefSys = pgTable('spatial_ref_sys', {
@@ -265,6 +266,18 @@ export const MissionAssigned = pgTable('missions_assigned', {
     confirmed: boolean().notNull().default(false),
     role: text().notNull(),
     uid: integer().notNull().references(() => User.id),
+});
+
+export const MissionPatient = pgTable('missions_patients', {
+    id: serial().primaryKey(),
+    mission_id: integer().notNull().references(() => Mission.id),
+    name: text().notNull(),
+    age: integer(),
+    dob: text(),
+    address_street: text(),
+    address_state: text(),
+    address_postcode: text(),
+    address_country: text(),
 });
 
 export const MissionTagAssigned = pgTable('missions_tag', {
