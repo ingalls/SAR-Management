@@ -27,8 +27,8 @@ export default class Report {
                 <style>
                     body { 
                         font-family: 'Courier New', Courier, monospace; 
-                        background-color: #1a1a1a; 
-                        color: #e0e0e0; 
+                        background-color: #ffffff; 
+                        color: #111111; 
                         padding: 40px; 
                         line-height: 1.4;
                     }
@@ -36,17 +36,17 @@ export default class Report {
                         font-size: 24px; 
                         text-transform: uppercase; 
                         letter-spacing: 3px; 
-                        border-bottom: 2px solid #58a6ff; 
+                        border-bottom: 2px solid #000000; 
                         padding-bottom: 15px; 
                         margin-bottom: 30px; 
-                        color: #fff;
+                        color: #000000;
                     }
                     h3 {
                         font-size: 16px;
                         text-transform: uppercase;
                         letter-spacing: 2px;
-                        color: #8b949e;
-                        border-bottom: 1px solid #30363d;
+                        color: #555555;
+                        border-bottom: 1px solid #cccccc;
                         padding-bottom: 5px;
                         margin-top: 40px;
                         margin-bottom: 15px;
@@ -55,28 +55,28 @@ export default class Report {
                         display: grid; 
                         grid-template-columns: repeat(2, 1fr); 
                         gap: 20px; 
-                        background: #0d1117; 
-                        border: 1px solid #30363d; 
+                        background: #f9f9f9; 
+                        border: 1px solid #eaeaea; 
                         padding: 20px;
                     }
                     .label { 
                         display: block; 
                         font-size: 10px; 
                         text-transform: uppercase; 
-                        color: #8b949e; 
+                        color: #666666; 
                         margin-bottom: 5px; 
                         letter-spacing: 1px;
                     }
                     .value {
-                        color: #58a6ff;
+                        color: #000000;
                         font-weight: bold;
                     }
                     .section { margin-top: 30px; }
                     .description {
-                        background: #0d1117;
-                        border-left: 3px solid #58a6ff;
+                        background: #f9f9f9;
+                        border-left: 3px solid #000000;
                         padding: 15px;
-                        color: #c9d1d9;
+                        color: #333333;
                         white-space: pre-wrap;
                         font-size: 14px;
                     }
@@ -88,24 +88,24 @@ export default class Report {
                     th { 
                         text-align: left; 
                         padding: 10px; 
-                        border-bottom: 1px solid #30363d; 
-                        color: #8b949e; 
+                        border-bottom: 1px solid #000000; 
+                        color: #333333; 
                         text-transform: uppercase; 
                         font-size: 12px; 
                         letter-spacing: 1px; 
                     }
                     td { 
                         padding: 10px; 
-                        border-bottom: 1px solid #21262d; 
-                        color: #c9d1d9; 
+                        border-bottom: 1px solid #eeeeee; 
+                        color: #333333; 
                     }
                     tr:last-child td { border-bottom: none; }
-                    ul { padding-left: 20px; color: #c9d1d9; }
+                    ul { padding-left: 20px; color: #333333; }
                     li { margin-bottom: 5px; }
                 </style>
             </head>
             <body>
-                ${logo ? `<img src="${logo}" style="max-height: 80px; display: block; margin-bottom: 30px; filter: brightness(0) invert(1);" />` : ''}
+                ${logo ? `<img src="${logo}" style="max-height: 80px; display: block; margin-bottom: 30px; filter: grayscale(100%);" />` : ''}
                 
                 <h1>Mission Report: ${mission.title}</h1>
                 
@@ -151,7 +151,7 @@ export default class Report {
                             ${users.map((u) => `
                             <tr>
                                 <td>${u.fname} ${u.lname}</td>
-                                <td><span style="background: #1f6feb; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; text-transform: uppercase;">${u.role || 'Unspecified'}</span></td>
+                                <td><span style="background: #eeeeee; color: #000000; border: 1px solid #000000; padding: 2px 6px; border-radius: 4px; font-size: 10px; text-transform: uppercase;">${u.role || 'Unspecified'}</span></td>
                             </tr>
                             `).join('')}
                         </tbody>
@@ -164,7 +164,7 @@ export default class Report {
                     <h3>Assigned Teams</h3>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         ${mission.teams.map((t) => `
-                            <div style="background: #21262d; border: 1px solid #30363d; padding: 5px 10px; color: #58a6ff;">${t.name}</div>
+                            <div style="background: #ffffff; border: 1px solid #000000; padding: 5px 10px; color: #000000;">${t.name}</div>
                         `).join('')}
                     </div>
                 </div>
