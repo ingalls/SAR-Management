@@ -62,7 +62,7 @@
                                             />
                                         </div>
                                         <div class='col-12 col-md-6 col-lg-3'>
-                                            <TablerSelect
+                                            <TablerEnum
                                                 v-model='incident.severity'
                                                 label='Severity'
                                                 :options='["minor", "moderate", "severe", "critical"]'
@@ -275,7 +275,7 @@ import {
     TablerBreadCrumb,
     TablerLoading,
     TablerInput,
-    TablerSelect,
+    TablerEnum,
     TablerDelete,
     TablerDropdown,
     TablerNone
@@ -289,7 +289,7 @@ export default {
         TablerBreadCrumb,
         TablerLoading,
         TablerInput,
-        TablerSelect,
+        TablerEnum,
         TablerDelete,
         TablerDropdown,
         TablerNone,

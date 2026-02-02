@@ -74,6 +74,7 @@ export default async function router(schema: Schema, config: Config) {
         body: Type.Object({
             date: Type.String(),
             title: Type.String(),
+            severity: Type.Optional(Type.String()),
             body: Type.Optional(Type.String()),
             uid: Type.Integer(),
             mission_id: Type.Optional(Type.Integer()),
@@ -102,6 +103,7 @@ export default async function router(schema: Schema, config: Config) {
         body: Type.Object({
             date: Type.Optional(Type.String()),
             title: Type.Optional(Type.String()),
+            severity: Type.Optional(Type.String()),
             body: Type.Optional(Type.String()),
             uid: Type.Optional(Type.Integer()),
             mission_id: Type.Optional(Type.Union([Type.Integer(), Type.Null()])),
