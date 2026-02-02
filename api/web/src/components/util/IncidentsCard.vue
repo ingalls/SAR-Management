@@ -13,7 +13,7 @@
                         @click='create'
                     >
                         <IconPlus
-                            :size='24'
+                            :size='32'
                             :stroke='1'
                         />
                     </TablerIconButton>
