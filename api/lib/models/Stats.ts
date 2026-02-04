@@ -43,7 +43,7 @@ export default class StatsModel {
 
         return {
             count: stats[0].count,
-            longest_mission: longest.length ? longest[0] : null,
+            longest_mission: longest.length ? longest[0] : undefined,
             average: stats[0].average || 0,
             hours: hours[0].hours || 0
         }
