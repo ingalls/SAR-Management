@@ -20,7 +20,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, IamGroup.Statistics, PermissionsLevel.VIEW);
-            
+
             res.json(await config.models.Stats.mission(req.query.start, req.query.end));
         } catch (err) {
             return Err.respond(err, res);
@@ -42,7 +42,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, IamGroup.Statistics, PermissionsLevel.VIEW);
-            
+
             res.json(await config.models.Stats.training(req.query.start, req.query.end));
         } catch (err) {
             return Err.respond(err, res);
