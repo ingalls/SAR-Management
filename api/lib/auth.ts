@@ -47,7 +47,8 @@ const Permissions = {
     Training: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
     User: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
     OnCall: [PermissionsLevel.ADMIN, PermissionsLevel.VIEW, PermissionsLevel.NONE],
-    Incident: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE]
+    Incident: [PermissionsLevel.ADMIN, PermissionsLevel.MANAGE, PermissionsLevel.VIEW, PermissionsLevel.NONE],
+    Statistics: [PermissionsLevel.VIEW, PermissionsLevel.NONE]
 }
 
 export enum IamGroup {
@@ -63,7 +64,8 @@ export enum IamGroup {
     Training = 'Training',
     User = 'User',
     OnCall = 'OnCall',
-    Incident = 'Incident'
+    Incident = 'Incident',
+    Statistics = 'Statistics'
 }
 
 export const Iam = Type.Object({
@@ -79,6 +81,7 @@ export const Iam = Type.Object({
     Training: Type.Optional(Type.Enum(PermissionsLevel)),
     User: Type.Optional(Type.Enum(PermissionsLevel)),
     OnCall: Type.Optional(Type.Enum(PermissionsLevel)),
+    Statistics: Type.Optional(Type.Enum(PermissionsLevel)),
     Incident: Type.Optional(Type.Enum(PermissionsLevel)),
 });
 

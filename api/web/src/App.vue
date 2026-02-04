@@ -286,6 +286,19 @@
                                             <span class='nav-link-title'>Incidents</span>
                                         </a>
                                         <a
+                                            v-if='is_iam("Statistics:View")'
+                                            class='nav-link cursor-pointer'
+                                            @click='$router.push("/stats")'
+                                        >
+                                            <span class='nav-link-icon'>
+                                                <IconChartBar
+                                                    size='32'
+                                                    stroke='2'
+                                                />
+                                            </span>
+                                            <span class='nav-link-title'>Statistics</span>
+                                        </a>
+                                        <a
                                             class='nav-link cursor-pointer'
                                             @click='$router.push("/schedule")'
                                         >
@@ -390,6 +403,7 @@ import checkIAM from './iam.js';
 
 import {
     IconBug,
+    IconChartBar,
     IconHome,
     IconUserPlus,
     IconMenu,

@@ -16,6 +16,7 @@ import TrainingModel from './models/Training.js'
 import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
 import TeamModel from './models/Team.js'
+import StatsModel from './models/Stats.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
@@ -48,6 +49,7 @@ export default class Models {
 
     Poll: PollModel;
     Team: TeamModel;
+    Stats: StatsModel;
     User: UserModel;
     Issue: IssueModel;
     Equipment: EquipmentModel;
@@ -81,6 +83,7 @@ export default class Models {
         this.TrainingAssigned = new TrainingAssignedModel(pg);
         this.MissionAssigned = new MissionAssignedModel(pg);
         this.ScheduleAssigned = new ScheduleAssignedModel(pg);
+        this.Stats = new StatsModel(pg);
         this.Team = new TeamModel(pg);
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
