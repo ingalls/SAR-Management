@@ -15,7 +15,13 @@ export default async function router(schema: Schema, config: Config) {
         }),
         res: Type.Object({
             count: Type.Integer(),
-            hours: Type.Integer()
+            hours: Type.Integer(),
+            longest_mission: Type.Optional(Type.Object({
+                id: Type.Integer(),
+                name: Type.String(),
+                hours: Type.Integer()
+            })),
+            average: Type.Integer()
         })
     }, async (req, res) => {
         try {
