@@ -29,6 +29,36 @@
                         :disabled='auth.access !== "admin"'
                     />
                 </div>
+                <div class='col-12 pb-3'>
+                    <label class='form-label'>Slack Integration</label>
+                    <div class='card'>
+                        <div class='card-body'>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='keys.slack_app_id.value'
+                                    label='App ID'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='keys.slack_token.value'
+                                    label='Access Token'
+                                    type='password'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='keys.slack_refresh.value'
+                                    label='Refresh Token'
+                                    type='password'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div
                     v-if='auth.access === "admin"'
                     class='col-12 pb-3 d-flex'
@@ -65,7 +95,7 @@ defineProps({
 const loading = ref(true);
 const keys = reactive({});
 
-for (const key of ['name', 'frontend', 'timezone']) {
+for (const key of ['name', 'frontend', 'timezone', 'slack_app_id', 'slack_token', 'slack_refresh']) {
     keys[key] = {
         key: '',
         value: '',
