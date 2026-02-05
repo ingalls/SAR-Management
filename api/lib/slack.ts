@@ -40,6 +40,8 @@ export default class Slack {
         } catch (err: any) {
             if (err.code === 'slack_webapi_platform_error' && err.data?.error === 'missing_scope') {
                 console.error(`Slack Error: The provided token is missing required scopes. Needed: ${err.data.needed}, Provided: ${err.data.provided}`);
+            } else if (err.code === 'slack_webapi_platform_error' && err.data?.error === 'not_in_channel') {
+                console.error(`Slack Error: The bot is not in the channel '${channel}'. Please invite the bot to the channel.`);
             } else {
                 throw err;
             }
