@@ -68,23 +68,18 @@ export default class Heartbeat {
                 return;
             }
 
-            let timezone = 'UTC';
-            try {
-                timezone = (await this.config.models.Server.from('timezone')).value;
-            } catch (err) {
-                // ignore
-            }
-
             for (const training of trainings.items) {
-                const start = moment(training.start_ts).tz(timezone).format('MMM D, YYYY HH:mm');
-                const end = moment(training.end_ts).tz(timezone).format('HH:mm z');
+                const start = moment(training.start_ts).format('MMM D, YYYY HH:mm');
+                const end = moment(training.end_ts).format('HH:mm');
 
                 let location = training.location;
                 if (training.location_geom && training.location_geom.coordinates) {
                     location += ` (<https://www.google.com/maps/search/?api=1&query=${training.location_geom.coordinates[1]},${training.location_geom.coordinates[0]}|Map>)`
                 }
 
-                await slack.postMessage('general', `:runner: *Upcoming Training:* ${training.title}\n*Location:* ${location}\n*Date:* ${start} - ${end}\n*Details:* ${training.body}\n*Link:* https://team.mesacountysar.com/training/${training.id}`);
+                await slack.postMessage('general', `:runner: *Upcoming Training:* <https://team.mesacountysar.com/training/${training.id}|${training.title}>\n*Location:* ${location}\n*Date:* ${start} - ${end}\n*Details:* ${training.body}`);
+
+                return;
             }
 
         } catch (err) {
