@@ -19,6 +19,7 @@ try {
 }
 
 import Config from './lib/config.js';
+import Heartbeat from './lib/heartbeat.js';
 
 const pkg = JSON.parse(String(fs.readFileSync(new URL('./package.json', import.meta.url))));
 
@@ -47,6 +48,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 export default async function server() {
     const config = await Config.env(args);
+    new Heartbeat(config);
 
     const app = express();
 

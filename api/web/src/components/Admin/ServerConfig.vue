@@ -34,10 +34,17 @@
                     <div class='card'>
                         <div class='card-body'>
                             <div class='col-12 pb-3'>
+                                <TablerToggle
+                                    v-model='keys.slack_enabled.value'
+                                    label='Enable Slack Integration'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
                                 <TablerInput
                                     v-model='keys.slack_app_id.value'
                                     label='App ID'
-                                    :disabled='auth.access !== "admin"'
+                                    :disabled='auth.access !== "admin" || !keys.slack_enabled.value'
                                 />
                             </div>
                             <div class='col-12 pb-3'>
@@ -45,7 +52,7 @@
                                     v-model='keys.slack_token.value'
                                     label='Access Token'
                                     type='password'
-                                    :disabled='auth.access !== "admin"'
+                                    :disabled='auth.access !== "admin" || !keys.slack_enabled.value'
                                 />
                             </div>
                             <div class='col-12 pb-3'>
@@ -53,7 +60,7 @@
                                     v-model='keys.slack_refresh.value'
                                     label='Refresh Token'
                                     type='password'
-                                    :disabled='auth.access !== "admin"'
+                                    :disabled='auth.access !== "admin" || !keys.slack_enabled.value'
                                 />
                             </div>
                         </div>
@@ -83,6 +90,7 @@ import {
     TablerLoading,
     TablerTimeZone,
     TablerInput,
+    TablerToggle,
 } from '@tak-ps/vue-tabler';
 
 defineProps({
@@ -95,7 +103,7 @@ defineProps({
 const loading = ref(true);
 const keys = reactive({});
 
-for (const key of ['name', 'frontend', 'timezone', 'slack_app_id', 'slack_token', 'slack_refresh']) {
+for (const key of ['name', 'frontend', 'timezone', 'slack_enabled', 'slack_app_id', 'slack_token', 'slack_refresh']) {
     keys[key] = {
         key: '',
         value: '',
@@ -107,7 +115,7 @@ const fetch = async (key) => {
     try {
         keys[key] = await window.std(`/api/server/${key}`);
     } catch (err) {
-        if (err.message === 'server not found') {
+        if (err.message === 'server not found' || err.message === 'Item not found' || err.message === 'Item Not Found') {
             keys[key] = {
                 key: '',
                 value: '',

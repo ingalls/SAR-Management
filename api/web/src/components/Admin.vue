@@ -28,6 +28,9 @@
                         <div class='col-lg-4'>
                             <CardTrainingTags />
                         </div>
+                        <div class='col-lg-4'>
+                            <CardHeartbeat />
+                        </div>
                     </template>
                 </div>
             </div>
@@ -39,6 +42,7 @@
 import CardRoles from './Admin/Roles.vue';
 import CardTags from './Admin/Tags.vue';
 import CardTrainingTags from './Admin/TrainingTags.vue';
+import CardHeartbeat from './Admin/Heartbeat.vue';
 import ServerConfig from './Admin/ServerConfig.vue';
 import {
     TablerBreadCrumb
