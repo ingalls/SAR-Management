@@ -32,9 +32,17 @@ export default class Slack {
             return;
         }
 
-        await this.client.chat.postMessage({
-            channel: channel,
-            text: text
-        });
+        try {
+            await this.client.chat.postMessage({
+                channel: channel,
+                text: text
+            });
+        } catch (err: any) {
+            if (err.code === 'slack_webapi_platform_error' && err.data?.error === 'missing_scope') {
+                console.error(`Slack Error: The provided token is missing required scopes. Needed: ${err.data.needed}, Provided: ${err.data.provided}`);
+            } else {
+                throw err;
+            }
+        }
     }
 }

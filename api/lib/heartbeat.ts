@@ -1,6 +1,7 @@
 import Config from './config.js';
 import Slack from './slack.js';
-import { sql } from 'drizzle-orm';
+import { sql, and, gte, lt } from 'drizzle-orm';
+import { Training } from './schema.js';
 
 export default class Heartbeat {
     config: Config;
@@ -46,19 +47,25 @@ export default class Heartbeat {
             start.setHours(0, 0, 0, 0);
 
             const end = new Date(start);
-            end.setDate(end.getDate() + 1);
+            end.setDate(end.getDate() + 15);
 
             const trainings = await this.config.models.Training.list({
-                where: sql`
-                    start_ts >= ${start.toISOString()}
-                    AND start_ts < ${end.toISOString()}
-                `
+                where: and(
+                    gte(Training.start_ts, start.toISOString()),
+                    lt(Training.start_ts, end.toISOString())
+                )
             });
 
             if (!trainings.total) return;
 
             const slack = await Slack.create(this.config);
-            if (!slack) return;
+
+            console.log(`ok - Found ${trainings.total} trainings starting between ${start.toISOString()} and ${end.toISOString()}`);
+
+            if (!slack) {
+                console.error('Failed to initialize Slack client');
+                return;
+            }
 
             for (const training of trainings.items) {
                 await slack.postMessage('general', `:runner: *Training Tomorrow:* ${training.title}\n> ${training.body}`);
