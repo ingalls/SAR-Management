@@ -57,23 +57,8 @@ export default class Heartbeat {
 
             if (!trainings.total) return;
 
-            let enabled = false;
-            try {
-                enabled = (await this.config.models.Server.from('slack_enabled')).value ? true : false;
-            } catch (err) {
-                return;
-            }
-
-            if (!enabled) return;
-
-            let token;
-            try {
-                token = (await this.config.models.Server.from('slack_token')).value;
-            } catch (err) {
-                return;
-            }
-
-            const slack = new Slack(token);
+            const slack = await Slack.create(this.config);
+            if (!slack) return;
 
             for (const training of trainings.items) {
                 await slack.postMessage('general', `:runner: *Training Tomorrow:* ${training.title}\n> ${training.body}`);
