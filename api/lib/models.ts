@@ -24,6 +24,7 @@ export default class Models {
     UserReset: Modeler<typeof pgtypes.UserReset>;
     UserDashboard: Modeler<typeof pgtypes.UserDashboard>;
     UserTeam: Modeler<typeof pgtypes.UserTeam>;
+    TeamChannel: Modeler<typeof pgtypes.TeamChannel>;
     Application: Modeler<typeof pgtypes.Application>;
     Asset: Modeler<typeof pgtypes.Asset>;
     CertKnown: Modeler<typeof pgtypes.CertKnown>;
@@ -90,6 +91,7 @@ export default class Models {
         this.UserReset = new Modeler(pg, pgtypes.UserReset);
         this.UserDashboard = new Modeler(pg, pgtypes.UserDashboard);
         this.UserTeam = new Modeler(pg, pgtypes.UserTeam);
+        this.TeamChannel = new Modeler(pg, pgtypes.TeamChannel);
         this.Application = new Modeler(pg, pgtypes.Application);
         this.Asset = new Modeler(pg, pgtypes.Asset);
         this.Rolodex = new Modeler(pg, pgtypes.Rolodex);
