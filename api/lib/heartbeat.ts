@@ -1,6 +1,6 @@
 import Config from './config.js';
 import Slack from './slack.js';
-import { sql, and, gte, lt } from 'drizzle-orm';
+import { and, gte, lt } from 'drizzle-orm';
 import { Training } from './schema.js';
 import moment from 'moment-timezone';
 

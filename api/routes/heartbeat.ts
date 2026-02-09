@@ -1,4 +1,3 @@
-import { Type } from '@sinclair/typebox';
 import Err from '@openaddresses/batch-error';
 import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';

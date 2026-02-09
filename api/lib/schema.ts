@@ -14,7 +14,6 @@ import {
     text,
     date
 } from 'drizzle-orm/pg-core';
-import { double } from 'drizzle-orm/mysql-core/index.js';
 
 /** Internal Tables for Postgis for use with drizzle-kit push:pg */
 export const SpatialRefSys = pgTable('spatial_ref_sys', {

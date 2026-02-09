@@ -22,25 +22,27 @@ export default class Slack {
         try {
             const enabled = (await config.models.Server.from('slack_enabled')).value ? true : false;
             if (!enabled) return;
-        } catch (err) {
+        } catch {
             return;
         }
 
         let token;
         try {
             token = (await config.models.Server.from('slack_token')).value;
-        } catch (err) {
+        } catch {
             return;
         }
 
         let refreshToken, clientId, clientSecret, expiry;
-        try { refreshToken = (await config.models.Server.from('slack_refresh')).value; } catch (err) {}
-        try { clientId = (await config.models.Server.from('slack_client_id')).value; } catch (err) {}
+        try { refreshToken = (await config.models.Server.from('slack_refresh')).value; } catch { /* empty */ }
+        try { clientId = (await config.models.Server.from('slack_client_id')).value; } catch { /* empty */ }
         if (!clientId) {
-            try { clientId = (await config.models.Server.from('slack_app_id')).value; } catch (err) {}
+            try { clientId = (await config.models.Server.from('slack_app_id')).value; } catch { /* empty */ }
         }
-        try { clientSecret = (await config.models.Server.from('slack_client_secret')).value; } catch (err) {}
-        try { expiry = parseInt((await config.models.Server.from('slack_token_expiry')).value); } catch (err) {}
+        try { clientSecret = (await config.models.Server.from('slack_client_secret')).value; } catch { /* empty */ }
+        try { expiry = parseInt((await config.models.Server.from('slack_token_expiry')).value); } catch { /* empty */ }
+
+
 
         return new Slack(token, config, { refreshToken, clientId, clientSecret, expiry });
     }
@@ -97,8 +99,10 @@ export default class Slack {
                 channel: channel,
                 text: text
             });
-        } catch (err: any) {
-            if (err.code === 'slack_webapi_platform_error' && err.data?.error === 'token_expired') {
+        } catch (err) {
+            const error = err as { code?: string, data?: { error?: string, needed?: string, provided?: string } };
+
+            if (error.code === 'slack_webapi_platform_error' && error.data?.error === 'token_expired') {
                 try {
                     await this.refresh();
                     await this.client.chat.postMessage({
@@ -108,9 +112,9 @@ export default class Slack {
                 } catch (refreshErr) {
                      console.error('Slack Error: Failed to refresh token and retry message', refreshErr);
                 }
-            } else if (err.code === 'slack_webapi_platform_error' && err.data?.error === 'missing_scope') {
-                console.error(`Slack Error: The provided token is missing required scopes. Needed: ${err.data.needed}, Provided: ${err.data.provided}`);
-            } else if (err.code === 'slack_webapi_platform_error' && err.data?.error === 'not_in_channel') {
+            } else if (error.code === 'slack_webapi_platform_error' && error.data?.error === 'missing_scope') {
+                console.error(`Slack Error: The provided token is missing required scopes. Needed: ${error.data.needed}, Provided: ${error.data.provided}`);
+            } else if (error.code === 'slack_webapi_platform_error' && error.data?.error === 'not_in_channel') {
                 console.error(`Slack Error: The bot is not in the channel '${channel}'. Please invite the bot to the channel.`);
             } else {
                 throw err;

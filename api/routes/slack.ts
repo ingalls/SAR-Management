@@ -35,14 +35,22 @@ export default async function router(schema: Schema, config: Config) {
             if (!list.ok) throw new Err(500, null, 'Slack API Error');
 
             res.json({
-                channels: list.channels?.map((c: any) => {
-                    return {
-                        id: c.id,
-                        name: c.name,
-                        num_members: c.num_members
+                channels: list.channels?.map((c) => {
+                    if (typeof c === 'string') {
+                        return {
+                            id: c,
+                            name: 'Unknown'
+                        }
+                    } else {
+                        return {
+                            id: c.id || '',
+                            name: c.name || 'Unknown',
+                            num_members: c.num_members
+                        }
                     }
                 }) || []
             });
+
         } catch (err) {
             Err.respond(err, res);
         }
