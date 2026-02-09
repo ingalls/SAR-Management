@@ -169,6 +169,13 @@
       "when": 1770045925793,
       "tag": "0023_fancy_hedge_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1770603446100,
+      "tag": "0024_fair_swordsman",
+      "breakpoints": true
     }
   ]
 }
