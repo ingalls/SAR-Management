@@ -16,6 +16,8 @@ import { AugmentedMission } from './models/Mission.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
 
+export const TeamChannelResponse = createSelectSchema(schemas.TeamChannel);
+
 export const PollQuestionResponse = createSelectSchema(schemas.PollQuestion, {
     id: Type.Integer(),
     poll_id: Type.Integer(),

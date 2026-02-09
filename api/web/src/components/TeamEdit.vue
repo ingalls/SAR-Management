@@ -165,7 +165,7 @@
 
                     <div
                         v-if='is_iam("Team:Admin")'
-                        class='col-lg-12'
+                        class='col-lg-6'
                     >
                         <TablerLoading v-if='loading.iam || loading.team || loading.fieldability' />
                         <div
@@ -210,6 +210,13 @@
                             </div>
                         </div>
                     </div>
+
+                    <div
+                        v-if='auth.access === "admin" && team.id'
+                        class='col-lg-6'
+                    >
+                        <TeamSlack :team-id='team.id' />
+                    </div>
                 </div>
             </div>
         </div>
@@ -220,6 +227,7 @@
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import TeamBadge from './util/TeamBadge.vue';
+import TeamSlack from './cards/TeamSlack.vue';
 import {
     IconPlus
 } from '@tabler/icons-vue';
@@ -239,7 +247,8 @@ export default {
         TablerToggle,
         TablerSelect,
         TablerBreadCrumb,
-        TeamBadge
+        TeamBadge,
+        TeamSlack
     },
     props: {
         iam: {
