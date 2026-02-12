@@ -3,6 +3,11 @@ set -euo pipefail
 ssh "sar" -t "./dump.sh"
 scp "sar:~/sar-latest.dump" .
 
-npm run loaddb
+echo "DROP DATABASE sar;" | psql
+echo "CREATE DATABASE sar;" | psql
+
+psql sar < sar-latest.dump
+
+echo "UPDATE users SET email = username || '@ingalls.ca'" | psql sar
 
 npm run dev

@@ -3,6 +3,7 @@ import Slack from './slack.js';
 import { and, gte, lt } from 'drizzle-orm';
 import { Training } from './schema.js';
 import moment from 'moment-timezone';
+import cron from 'node-cron';
 
 export default class Heartbeat {
     config: Config;
@@ -14,31 +15,11 @@ export default class Heartbeat {
     }
 
     start() {
-        const now = new Date();
-        const nextHour = new Date(now);
-        nextHour.setHours(now.getHours() + 1);
-        nextHour.setMinutes(0);
-        nextHour.setSeconds(0);
-        nextHour.setMilliseconds(0);
+        console.log('Heartbeat scheduled');
 
-        const delay = nextHour.getTime() - now.getTime();
-
-        console.log(`Heartbeat scheduled for ${nextHour.toISOString()}`);
-
-        setTimeout(() => {
-            this.pulse();
-            // Then run every hour
-            setInterval(() => {
-                this.pulse();
-            }, 60 * 60 * 1000);
-        }, delay);
-    }
-
-    async pulse() {
-        console.log('Heartbeat Pulse');
-        if (new Date().getHours() === 18) {
+        cron.schedule('0 18 * * *', async () => {
             await this.pulseTrainings();
-        }
+        });
     }
 
     async pulseTrainings() {
@@ -52,10 +33,11 @@ export default class Heartbeat {
 
             const start = new Date();
             start.setDate(start.getDate() + 1);
+            // Ensure we are working with midnight in the local context
             start.setHours(0, 0, 0, 0);
 
             const end = new Date(start);
-            end.setDate(end.getDate() + 15);
+            end.setDate(end.getDate() + 3);
 
             const trainings = await this.config.models.Training.list({
                 where: and(
@@ -79,15 +61,21 @@ export default class Heartbeat {
                 const start = moment(training.start_ts).tz(tz).format('MMM D, YYYY HH:mm');
                 const end = moment(training.end_ts).tz(tz).format('HH:mm');
 
-                let location = training.location;
+                let location = training.location || '_Not Set_';
                 const geom = training.location_geom as any;
                 if (geom && geom.coordinates) {
                     location += ` (<https://www.google.com/maps/search/?api=1&query=${geom.coordinates[1]},${geom.coordinates[0]}|Map>)`
                 }
 
-                await slack.postMessage('testing', `:runner: *Upcoming Training:* <https://team.mesacountysar.com/training/${training.id}|${training.title}>\n*Location:* ${location}\n*Date:* ${start} - ${end}\n*Details:* ${training.body}`);
+                const message = [
+                    ':runner: *Upcoming Training:*',
+                    `<https://team.mesacountysar.com/training/${training.id}|${training.title}>`,
+                    `*Location:* ${location}`,
+                    `*Date:* ${start} - ${end}`,
+                    `*Details:* ${training.body}`
+                ].join('\n');
 
-                return;
+                await slack.postMessage('testing', message);
             }
 
         } catch (err) {
