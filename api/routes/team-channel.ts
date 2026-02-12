@@ -22,7 +22,11 @@ export default async function router(schema: Schema, config: Config) {
         }),
         res: Type.Object({
             total: Type.Integer(),
-            items: Type.Array(TeamChannelResponse)
+            items: Type.Array(TeamChannelResponse),
+            config: Type.Optional(Type.Object({
+                'slack::usergroup::enabled': Type.Boolean(),
+                'slack::usergroup::name': Type.String()
+            }))
         })
     }, async (req, res) => {
         try {
@@ -36,7 +40,54 @@ export default async function router(schema: Schema, config: Config) {
                 where: req.query.team_id ? sql`team_id = ${req.query.team_id}` : undefined
             });
 
-            res.json(list);
+            let settings = {};
+            if (req.query.team_id) {
+                settings = {
+                    'slack::usergroup::enabled': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::enabled', false)).value,
+                    'slack::usergroup::name': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::name', '')).value
+                };
+            }
+
+            res.json({
+                ...list,
+                config: settings
+            });
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
+
+    await schema.put('/team-channel/settings', {
+        name: 'Update Team Slack Settings',
+        group: 'TeamChannel',
+        description: 'Update Slack settings for a team',
+        query: Type.Object({
+            team_id: Type.Integer()
+        }),
+        body: Type.Object({
+            'slack::usergroup::enabled': Type.Optional(Type.Boolean()),
+            'slack::usergroup::name': Type.Optional(Type.String())
+        }),
+        res: Type.Object({
+            'slack::usergroup::enabled': Type.Boolean(),
+            'slack::usergroup::name': Type.String()
+        })
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(config, req);
+
+            if (req.body['slack::usergroup::enabled'] !== undefined) {
+                await config.models.TeamSetting.update(req.query.team_id, 'slack::usergroup::enabled', String(req.body['slack::usergroup::enabled']));
+            }
+
+            if (req.body['slack::usergroup::name'] !== undefined) {
+                await config.models.TeamSetting.update(req.query.team_id, 'slack::usergroup::name', req.body['slack::usergroup::name']);
+            }
+
+            res.json({
+                'slack::usergroup::enabled': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::enabled', false)).value,
+                'slack::usergroup::name': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::name', '')).value
+            });
         } catch (err) {
             Err.respond(err, res);
         }

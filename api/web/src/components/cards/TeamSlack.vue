@@ -23,13 +23,47 @@
             </div>
         </div>
         <TablerLoading v-if='loading' />
+        <div
+            v-if='!loading'
+            class='card-body border-bottom'
+        >
+            <div class='row'>
+                <div class='col-12'>
+                    <TablerToggle
+                        v-model='config["slack::usergroup::enabled"]'
+                        label='Enable Slack User Group'
+                    />
+                </div>
+                <div
+                    v-if='config["slack::usergroup::enabled"]'
+                    class='col-12 mt-2'
+                >
+                    <TablerInput
+                        v-model='config["slack::usergroup::name"]'
+                        label='Slack User Group Name'
+                    />
+                </div>
+                <div class='col-12 mt-2 d-flex justify-content-end'>
+                    <button
+                        class='btn btn-primary'
+                        @click='saveConfig'
+                    >
+                        <IconDeviceFloppy
+                            :size='20'
+                            class='me-2'
+                        />
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
         <TablerNone
-            v-else-if='!channels.length'
+            v-if='!loading && !channels.length'
             :create='false'
             label='No Channels Linked'
         />
         <table
-            v-else
+            v-if='!loading && channels.length'
             class='table card-table table-vcenter'
         >
             <thead>
@@ -105,8 +139,8 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { IconPlus, IconRefresh } from '@tabler/icons-vue';
-import { TablerLoading, TablerNone, TablerDelete, TablerIconButton } from '@tak-ps/vue-tabler';
+import { IconPlus, IconRefresh, IconDeviceFloppy } from '@tabler/icons-vue';
+import { TablerLoading, TablerNone, TablerDelete, TablerIconButton, TablerInput, TablerToggle } from '@tak-ps/vue-tabler';
 
 const props = defineProps({
     teamId: {
@@ -120,6 +154,10 @@ const adding = ref(false);
 const channels = ref([]);
 const newChannelId = ref(null);
 const allChannels = ref([]); // { label: string, value: string, name: string }[]
+const config = ref({
+    'slack::usergroup::enabled': false,
+    'slack::usergroup::name': ''
+});
 
 const filteredChannels = computed(() => {
     const linked = new Set(channels.value.map(c => c.channel_id));
@@ -135,11 +173,26 @@ const fetchChannels = async () => {
         ]);
 
         channels.value = linked.items;
+        if (linked.config) config.value = linked.config;
         allChannels.value = available.channels.map(c => ({
             label: `#${c.name} (${c.num_members || 0} members)`,
             value: c.id,
             name: c.name // Keep name for saving
         }));
+    } catch (err) {
+        console.error(err);
+    }
+    loading.value = false;
+};
+
+const saveConfig = async () => {
+    try {
+        loading.value = true;
+        await window.std(`/api/team-channel/settings?team_id=${props.teamId}`, {
+            method: 'PUT',
+            body: config.value
+        });
+        await fetchChannels();
     } catch (err) {
         console.error(err);
     }

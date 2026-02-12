@@ -40,4 +40,23 @@ export default class TeamSettingModel extends Modeler<typeof TeamSetting> {
             value: pgres[0].value as T
         }
     }
+
+    async update(team_id: number, key: string, value: string): Promise<void> {
+        const existing = await this.pool.select().from(TeamSetting).where(and(
+            eq(TeamSetting.team_id, team_id),
+            eq(TeamSetting.key, key)
+        )).limit(1);
+
+        if (existing.length) {
+            await this.pool.update(TeamSetting).set({
+                value
+            }).where(eq(TeamSetting.id, existing[0].id));
+        } else {
+             await this.pool.insert(TeamSetting).values({
+                 team_id,
+                 key,
+                 value
+             });
+        }
+    }
 }
