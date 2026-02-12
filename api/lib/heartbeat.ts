@@ -76,7 +76,7 @@ export default class Heartbeat {
                     `*Details:* ${training.body}`
                 ].join('\n');
 
-                await slack.postMessage('testing', message);
+                await slack.postMessage('general', message);
             }
 
         } catch (err) {
