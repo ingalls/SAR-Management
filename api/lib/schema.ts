@@ -97,8 +97,10 @@ export const Team = pgTable('teams', {
     fieldable: boolean().notNull().default(true)
 });
 
-export const Setting = pgTable('teams_settings', {                                                                                                                                                                          
-    key: text().primaryKey(),                                                                                                                                                                                         
+export const TeamSetting = pgTable('teams_settings', {
+    id: serial().primaryKey(),
+    team_id: integer().notNull().references(() => Team.id),
+    key: text().notNull(),
     value: text().notNull().default(''),                                                                                                                                                                              
 });
 
