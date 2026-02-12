@@ -43,6 +43,13 @@ export default class Heartbeat {
 
     async pulseTrainings() {
         try {
+            let tz = 'America/Denver';
+            try {
+                tz = (await this.config.models.Server.from('timezone')).value;
+            } catch (err) {
+                // Fallback to default
+            }
+
             const start = new Date();
             start.setDate(start.getDate() + 1);
             start.setHours(0, 0, 0, 0);
@@ -69,8 +76,8 @@ export default class Heartbeat {
             }
 
             for (const training of trainings.items) {
-                const start = moment(training.start_ts).format('MMM D, YYYY HH:mm');
-                const end = moment(training.end_ts).format('HH:mm');
+                const start = moment(training.start_ts).tz(tz).format('MMM D, YYYY HH:mm');
+                const end = moment(training.end_ts).tz(tz).format('HH:mm');
 
                 let location = training.location;
                 const geom = training.location_geom as any;
@@ -78,7 +85,7 @@ export default class Heartbeat {
                     location += ` (<https://www.google.com/maps/search/?api=1&query=${geom.coordinates[1]},${geom.coordinates[0]}|Map>)`
                 }
 
-                await slack.postMessage('general', `:runner: *Upcoming Training:* <https://team.mesacountysar.com/training/${training.id}|${training.title}>\n*Location:* ${location}\n*Date:* ${start} - ${end}\n*Details:* ${training.body}`);
+                await slack.postMessage('testing', `:runner: *Upcoming Training:* <https://team.mesacountysar.com/training/${training.id}|${training.title}>\n*Location:* ${location}\n*Date:* ${start} - ${end}\n*Details:* ${training.body}`);
 
                 return;
             }
