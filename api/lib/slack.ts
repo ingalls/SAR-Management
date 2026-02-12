@@ -118,8 +118,11 @@ export default class Slack {
             }
 
             return group;
-        } catch (err) {
+        } catch (err: any) {
             console.error(JSON.stringify(err, null, 2));
+            if (err.data?.error === 'permission_denied') {
+                throw new Error('Permission denied. Slack User Group management requires a User Token (xoxp-) from a Workspace Admin. Bot tokens are often restricted.');
+            }
             throw err;
         }
     }
@@ -216,8 +219,13 @@ export default class Slack {
         } catch (err: any) {
              const msg = `Slack: Failed to sync users to Group ${groupName}`;
              console.error(msg, JSON.stringify(err, null, 2));
-             if (err.data && err.data.error) {
+
+             if (err.data && err.data.error === 'permission_denied') {
+                 errors.push(`${msg} - Permission denied. Ensure your Slack Token is a User Token (xoxp-) from an Admin/Owner, as Bot tokens cannot manage User Groups.`);
+             } else if (err.data && err.data.error) {
                 errors.push(`${msg} - ${err.data.error}`);
+             } else if (err.message) {
+                errors.push(`${msg} - ${err.message}`);
              } else {
                 errors.push(msg);
              }
