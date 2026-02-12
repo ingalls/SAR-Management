@@ -163,7 +163,7 @@ export default class Slack {
         const group = await this.getUserGroup(team.name);
 
         console.error('GROUP', group)
-        return;
+        return { errors };
 
         // 4. Sync to Channels
         // Note: We can't easily "sync" (overwrite) members of a channel without removing everyone first,
