@@ -89,14 +89,12 @@ export default class Slack {
     async getUser(email: string) {
         await this.check();
 
-        console.error(email)
         const res = await this.client.users.lookupByEmail({ email });
-        console.error(res);
-
         if (!res.ok || !res.user) throw new Error(`Slack: Failed to lookup user ${email}`);
 
         return res.user;
     }
+
     async getUserGroup(name: string) {
         await this.check();
 
@@ -105,7 +103,10 @@ export default class Slack {
         handle = handle.replace(/-+$/, '');
 
         try {
-            const groups = await this.client.usergroups.list({ include_disabled: true });
+            const groups = await this.client.usergroups.list({
+                include_disabled: false
+            });
+
             let group = groups.usergroups?.find(g => g.handle === handle || g.name === name);
 
             if (!group) {
@@ -122,11 +123,16 @@ export default class Slack {
             throw err;
         }
     }
+
     async userGroupSync(team_id: number): Promise<{ errors: string[] }> {
         const errors: string[] = [];
         await this.check();
 
-        const team = await this.config.models.Team.from(team_id);
+        const enabled = (await this.config.models.TeamSetting.typed(team_id, 'slack::usergroup::enabled', false)).value;
+        if (!enabled) throw new Err(400, null, 'Slack User Group Sync is disabled for this team');
+
+        const groupName = (await this.config.models.TeamSetting.typed(team_id, 'slack::usergroup::name', '')).value;
+        if (!groupName) throw new Err(400, null, 'Slack User Group Name not configured');
 
         const mappings = await this.config.models.TeamChannel.list({
             where: sql`team_id = ${team_id}`
@@ -166,40 +172,55 @@ export default class Slack {
             return { errors };
         }
 
-        const group = await this.getUserGroup(team.name);
+        const group = await this.getUserGroup(groupName);
 
-        console.error('GROUP', group)
-        return { errors };
+        if (!group) {
+            errors.push('Failed to find or create Slack User Group');
+            return { errors };
+        }
 
-        // 4. Sync to Channels
-        // Note: We can't easily "sync" (overwrite) members of a channel without removing everyone first,
-        // which might be destructive. Instead, we'll ensure all team members are invited.
-        // For strict sync, we'd need to assume the SAR Team owns the channel.
+        try {
+            const currentMembers = await this.client.usergroups.users.list({ usergroup: group.id! });
+            if (currentMembers.ok && currentMembers.users) {
+                const currentSet = new Set(currentMembers.users);
 
-        for (const mapping of mappings.items) {
-            try {
-                // Get current members to avoid unnecessary calls
-                const currentMembers = await this.client.conversations.members({ channel: mapping.channel_id });
-                if (currentMembers.ok && currentMembers.members) {
-                    const currentSet = new Set(currentMembers.members);
-                    const toInvite = teamSlackIds.filter(id => !currentSet.has(id));
-
-                    if (toInvite.length > 0) {
-                        await this.client.conversations.invite({
-                            channel: mapping.channel_id,
-                            users: toInvite.join(',')
-                        });
-                    }
+                // Add users not in group
+                const toAdd = teamSlackIds.filter(id => !currentSet.has(id));
+                if (toAdd.length > 0) {
+                     await this.client.usergroups.users.update({
+                        usergroup: group.id!,
+                        users: teamSlackIds.join(',')
+                        // Note: update replaces the list, which acts as add+remove.
+                        // If we want to only add, this API is tricky.
+                        // But usually sync implies "make it match".
+                     });
+                } else if (currentMembers.users.length !== teamSlackIds.length && teamSlackIds.length > 0) {
+                     // If no one to add but lengths differ, it means we need to remove someone?
+                     // Verify if "update" is safe. Docs say: "The list of users to be in the user group."
+                     // So we should just send the full list of desired users.
+                     await this.client.usergroups.users.update({
+                        usergroup: group.id!,
+                        users: teamSlackIds.join(',')
+                     });
                 }
-            } catch (err: any) {
-                 const msg = `Slack: Failed to sync users to channel ${mapping.channel_name}`;
-                 console.error(msg, err);
-                 if (err.data && err.data.error) {
-                    errors.push(`${msg} - ${err.data.error}`);
-                 } else {
-                    errors.push(msg);
+            } else {
+                 // No current members or failed to list, try setting list
+                 if (teamSlackIds.length > 0) {
+                    await this.client.usergroups.users.update({
+                        usergroup: group.id!,
+                        users: teamSlackIds.join(',')
+                    });
                  }
             }
+
+        } catch (err: any) {
+             const msg = `Slack: Failed to sync users to Group ${groupName}`;
+             console.error(msg, JSON.stringify(err, null, 2));
+             if (err.data && err.data.error) {
+                errors.push(`${msg} - ${err.data.error}`);
+             } else {
+                errors.push(msg);
+             }
         }
 
         return { errors };

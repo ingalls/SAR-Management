@@ -104,9 +104,6 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_admin(config, req);
 
-            const enabled = (await config.models.TeamSetting.typed(req.params.teamid, 'slack::usergroup::enabled', false)).value;
-            if (!enabled) throw new Err(400, null, 'Slack User Group Sync is disabled for this team');
-
             const slack = await Slack.create(config);
             if (!slack) throw new Err(400, null, 'Slack is not configured');
 
