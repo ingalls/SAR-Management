@@ -16,7 +16,7 @@
             <div class='container-xl'>
                 <div class='row row-deck row-cards'>
                     <div class='col-lg-12'>
-                         <IncidentsCard
+                        <IncidentsCard
                             label='Incidents'
                             :incidents='list.items'
                             :iam='iam'
@@ -36,7 +36,7 @@ import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler';
 
-const props = defineProps({
+defineProps({
     iam: {
         type: Object,
         required: true

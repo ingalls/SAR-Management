@@ -10,7 +10,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th></th>
+                        <th />
                     </tr>
                 </thead>
                 <tbody>
@@ -42,12 +42,8 @@ import {
 } from '@tabler/icons-vue';
 
 const trigger = async (type) => {
-    try {
-        await window.std(`/api/heartbeat/${type}`, {
-            method: 'POST'
-        });
-    } catch (err) {
-        throw err;
-    }
+    await window.std(`/api/heartbeat/${type}`, {
+        method: 'POST'
+    });
 }
 </script>

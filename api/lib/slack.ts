@@ -149,6 +149,7 @@ export default class Slack {
                     const slackUser = await this.getUser(user.email);
                     return slackUser.id;
                 } catch (err) {
+                    console.error(err);
                     return null;
                 }
             });

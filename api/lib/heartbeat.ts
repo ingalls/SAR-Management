@@ -28,6 +28,7 @@ export default class Heartbeat {
             try {
                 tz = (await this.config.models.Server.from('timezone')).value;
             } catch (err) {
+                console.error(err);
                 // Fallback to default
             }
 

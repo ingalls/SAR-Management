@@ -10,8 +10,8 @@
                     @click='sync'
                 >
                     <IconRefresh
-                            :size='32'
-                            stroke='1'
+                        :size='32'
+                        stroke='1'
                     />
                 </TablerIconButton>
                 <IconPlus
@@ -22,7 +22,16 @@
                 />
             </div>
         </div>
-        <table class='table card-table table-vcenter'>
+        <TablerLoading v-if='loading' />
+        <TablerNone
+            v-else-if='!channels.length'
+            :create='false'
+            label='No Channels Linked'
+        />
+        <table
+            v-else
+            class='table card-table table-vcenter'
+        >
             <thead>
                 <tr>
                     <th>Channel</th>
@@ -30,19 +39,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-if='loading'>
-                    <td colspan='2'>
-                        <TablerLoading />
-                    </td>
-                </tr>
-                <tr v-else-if='!channels.length'>
-                    <td colspan='2'>
-                        <TablerNone
-                            :create='false'
-                            label='No Channels Linked'
-                        />
-                    </td>
-                </tr>
                 <tr
                     v-for='channel in channels'
                     :key='channel.id'
@@ -80,7 +76,7 @@
                                 Select a channel...
                             </option>
                             <option
-                                v-for='c in allChannels'
+                                v-for='c in filteredChannels'
                                 :key='c.value'
                                 :value='c.value'
                             >
@@ -108,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { IconPlus, IconRefresh } from '@tabler/icons-vue';
 import { TablerLoading, TablerNone, TablerDelete, TablerIconButton } from '@tak-ps/vue-tabler';
 
@@ -124,6 +120,11 @@ const adding = ref(false);
 const channels = ref([]);
 const newChannelId = ref(null);
 const allChannels = ref([]); // { label: string, value: string, name: string }[]
+
+const filteredChannels = computed(() => {
+    const linked = new Set(channels.value.map(c => c.channel_id));
+    return allChannels.value.filter(c => !linked.has(c.value));
+});
 
 const fetchChannels = async () => {
     loading.value = true;

@@ -430,7 +430,6 @@ export default {
             if (!this.incident.uid) return;
             if (!this.incident.date) return;
 
-            let res;
             const body = {
                 title: this.incident.title,
                 severity: this.incident.severity,
@@ -442,12 +441,12 @@ export default {
             };
 
             if (this.incident.id) {
-                res = await window.std(`/api/incident/${this.incident.id}`, {
+                await window.std(`/api/incident/${this.incident.id}`, {
                     method: 'PATCH',
                     body
                 });
             } else {
-                res = await window.std(`/api/incident`, {
+                await window.std(`/api/incident`, {
                     method: 'POST',
                     body
                 });
