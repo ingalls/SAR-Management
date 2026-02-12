@@ -104,18 +104,23 @@ export default class Slack {
         if (handle.length > 20) handle = handle.substring(0, 20);
         handle = handle.replace(/-+$/, '');
 
-        const groups = await this.client.usergroups.list({ include_disabled: true });
-        let group = groups.usergroups?.find(g => g.handle === handle || g.name === name);
+        try {
+            const groups = await this.client.usergroups.list({ include_disabled: true });
+            let group = groups.usergroups?.find(g => g.handle === handle || g.name === name);
 
-        if (!group) {
-            const res = await this.client.usergroups.create({ name, handle });
-            group = res.usergroup;
-        } else if ((group as any).date_delete) {
-            const res = await this.client.usergroups.enable({ usergroup: group.id! });
-            group = res.usergroup;
+            if (!group) {
+                const res = await this.client.usergroups.create({ name, handle });
+                group = res.usergroup;
+            } else if ((group as any).date_delete) {
+                const res = await this.client.usergroups.enable({ usergroup: group.id! });
+                group = res.usergroup;
+            }
+
+            return group;
+        } catch (err) {
+            console.error(JSON.stringify(err, null, 2));
+            throw err;
         }
-
-        return group;
     }
     async userGroupSync(team_id: number): Promise<{ errors: string[] }> {
         const errors: string[] = [];
@@ -149,7 +154,7 @@ export default class Slack {
                     const slackUser = await this.getUser(user.email);
                     return slackUser.id;
                 } catch (err) {
-                    console.error(err);
+                    console.error(JSON.stringify(err, null, 2));
                     return null;
                 }
             });
