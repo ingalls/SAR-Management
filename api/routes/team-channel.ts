@@ -9,12 +9,14 @@ import { sql } from 'drizzle-orm';
 import Slack from '../lib/slack.js';
 
 export default async function router(schema: Schema, config: Config) {
-    await schema.get('/team-channel', {
+    await schema.get('/team/:teamid/channel', {
         name: 'List Team Channels',
         group: 'TeamChannel',
         description: 'List all Team Channel mappings or filter by team',
+        params: Type.Object({
+            teamid: Type.Integer()
+        }),
         query: Type.Object({
-            team_id: Type.Optional(Type.Integer()),
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
@@ -37,16 +39,13 @@ export default async function router(schema: Schema, config: Config) {
                 page: req.query.page,
                 order: req.query.order,
                 sort: req.query.sort,
-                where: req.query.team_id ? sql`team_id = ${req.query.team_id}` : undefined
+                where: sql`team_id = ${req.params.teamid}`
             });
 
-            let settings = {};
-            if (req.query.team_id) {
-                settings = {
-                    'slack::usergroup::enabled': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::enabled', false)).value,
-                    'slack::usergroup::name': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::name', '')).value
-                };
-            }
+            const settings = {
+                'slack::usergroup::enabled': (await config.models.TeamSetting.typed(req.params.teamid, 'slack::usergroup::enabled', false)).value,
+                'slack::usergroup::name': (await config.models.TeamSetting.typed(req.params.teamid, 'slack::usergroup::name', '')).value
+            };
 
             res.json({
                 ...list,
@@ -57,12 +56,12 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
-    await schema.put('/team-channel/settings', {
+    await schema.put('/team/:teamid/channel/settings', {
         name: 'Update Team Slack Settings',
         group: 'TeamChannel',
         description: 'Update Slack settings for a team',
-        query: Type.Object({
-            team_id: Type.Integer()
+        params: Type.Object({
+            teamid: Type.Integer()
         }),
         body: Type.Object({
             'slack::usergroup::enabled': Type.Optional(Type.Boolean()),
@@ -77,28 +76,28 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_admin(config, req);
 
             if (req.body['slack::usergroup::enabled'] !== undefined) {
-                await config.models.TeamSetting.update(req.query.team_id, 'slack::usergroup::enabled', String(req.body['slack::usergroup::enabled']));
+                await config.models.TeamSetting.update(req.params.teamid, 'slack::usergroup::enabled', String(req.body['slack::usergroup::enabled']));
             }
 
             if (req.body['slack::usergroup::name'] !== undefined) {
-                await config.models.TeamSetting.update(req.query.team_id, 'slack::usergroup::name', req.body['slack::usergroup::name']);
+                await config.models.TeamSetting.update(req.params.teamid, 'slack::usergroup::name', req.body['slack::usergroup::name']);
             }
 
             res.json({
-                'slack::usergroup::enabled': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::enabled', false)).value,
-                'slack::usergroup::name': (await config.models.TeamSetting.typed(req.query.team_id, 'slack::usergroup::name', '')).value
+                'slack::usergroup::enabled': (await config.models.TeamSetting.typed(req.params.teamid, 'slack::usergroup::enabled', false)).value,
+                'slack::usergroup::name': (await config.models.TeamSetting.typed(req.params.teamid, 'slack::usergroup::name', '')).value
             });
         } catch (err) {
             Err.respond(err, res);
         }
     });
 
-    await schema.post('/team-channel/sync', {
+    await schema.post('/team/:teamid/channel/sync', {
         name: 'Sync Team Channels',
         group: 'TeamChannel',
         description: 'Sync Slack users for a given team',
-        body: Type.Object({
-            team_id: Type.Integer()
+        params: Type.Object({
+            teamid: Type.Integer()
         }),
         res: StandardResponse
     }, async (req, res) => {
@@ -108,7 +107,7 @@ export default async function router(schema: Schema, config: Config) {
             const slack = await Slack.create(config);
             if (!slack) throw new Err(400, null, 'Slack is not configured');
 
-            const sync = await slack.userGroupSync(req.body.team_id);
+            const sync = await slack.userGroupSync(req.params.teamid);
 
             if (sync.errors.length) {
                 res.status(500).json({
@@ -127,12 +126,14 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
-    await schema.post('/team-channel', {
+    await schema.post('/team/:teamid/channel', {
         name: 'Create Team Channel',
         group: 'TeamChannel',
         description: 'Create a new Team Channel mapping',
+        params: Type.Object({
+            teamid: Type.Integer()
+        }),
         body: Type.Object({
-            team_id: Type.Integer(),
             channel_id: Type.String(),
             channel_name: Type.String()
         }),
@@ -141,7 +142,10 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_admin(config, req);
 
-            const created = await config.models.TeamChannel.generate(req.body);
+            const created = await config.models.TeamChannel.generate({
+                team_id: req.params.teamid,
+                ...req.body
+            });
 
             res.json(created);
         } catch (err) {
@@ -149,11 +153,12 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
-    await schema.delete('/team-channel/:id', {
+    await schema.delete('/team/:teamid/channel/:id', {
         name: 'Delete Team Channel',
         group: 'TeamChannel',
         description: 'Delete a Team Channel mapping',
         params: Type.Object({
+            teamid: Type.Integer(),
             id: Type.Integer()
         }),
         res: StandardResponse

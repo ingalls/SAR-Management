@@ -168,7 +168,7 @@ const fetchChannels = async () => {
     loading.value = true;
     try {
         const [linked, available] = await Promise.all([
-             window.std(`/api/team-channel?team_id=${props.teamId}`),
+             window.std(`/api/team/${props.teamId}/channel`),
              window.std('/api/slack/channels')
         ]);
 
@@ -188,7 +188,7 @@ const fetchChannels = async () => {
 const saveConfig = async () => {
     try {
         loading.value = true;
-        await window.std(`/api/team-channel/settings?team_id=${props.teamId}`, {
+        await window.std(`/api/team/${props.teamId}/channel/settings`, {
             method: 'PUT',
             body: config.value
         });
@@ -204,10 +204,9 @@ const addChannel = async () => {
     try {
         loading.value = true;
         const channel = allChannels.value.find(c => c.value === newChannelId.value);
-        await window.std('/api/team-channel', {
+        await window.std(`/api/team/${props.teamId}/channel`, {
             method: 'POST',
             body: {
-                team_id: props.teamId,
                 channel_id: newChannelId.value,
                 channel_name: channel ? channel.name : 'Unknown'
             }
@@ -223,7 +222,7 @@ const addChannel = async () => {
 const deleteChannel = async (id) => {
     try {
         loading.value = true;
-        await window.std(`/api/team-channel/${id}`, {
+        await window.std(`/api/team/${props.teamId}/channel/${id}`, {
             method: 'DELETE'
         });
         await fetchChannels();
@@ -235,11 +234,9 @@ const deleteChannel = async (id) => {
 const sync = async () => {
     try {
         loading.value = true;
-        await window.std('/api/team-channel/sync', {
+        await window.std(`/api/team/${props.teamId}/channel/sync`, {
             method: 'POST',
-            body: {
-                team_id: props.teamId
-            }
+            body: {}
         });
         loading.value = false;
     } catch (err) {
