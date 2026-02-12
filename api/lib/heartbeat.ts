@@ -38,7 +38,7 @@ export default class Heartbeat {
             start.setHours(0, 0, 0, 0);
 
             const end = new Date(start);
-            end.setDate(end.getDate() + 3);
+            end.setDate(end.getDate() + 1);
 
             const trainings = await this.config.models.Training.list({
                 where: and(
