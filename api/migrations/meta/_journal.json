@@ -176,6 +176,13 @@
       "when": 1770603446100,
       "tag": "0024_fair_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1770930103860,
+      "tag": "0025_tricky_the_professor",
+      "breakpoints": true
     }
   ]
 }
