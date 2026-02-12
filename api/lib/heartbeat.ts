@@ -24,6 +24,56 @@ export default class Heartbeat {
         cron.schedule('0 19 * * *', async () => {
             await this.pulseSlack();
         });
+
+        cron.schedule('0 * * * *', async () => {
+            await this.monitorSlackUsers();
+        });
+    }
+
+    async monitorSlackUsers() {
+        try {
+            const slack = await Slack.create(this.config);
+            if (!slack) return;
+
+            const slackUsers = await slack.getUsers();
+            const activeSlackUsers = slackUsers.filter((u: any) => 
+                !u.deleted && 
+                !u.is_bot && 
+                u.id !== 'USLACKBOT' && 
+                u.profile && 
+                u.profile.email
+            );
+
+            // Fetch all DB users - optimization: select only email
+            // Assuming the list isn't massive (SAR teams usually < 500)
+            const dbUsers = await this.config.models.User.list({ limit: 5000 });
+            const dbEmails = new Set(dbUsers.items.map(u => u.email.toLowerCase()));
+
+            const unknownUsers = [];
+
+            for (const sUser of activeSlackUsers) {
+                const email = sUser.profile.email.toLowerCase();
+                if (!dbEmails.has(email)) {
+                    unknownUsers.push({
+                        id: sUser.id,
+                        username: sUser.name,
+                        real_name: sUser.real_name,
+                        email: email
+                    });
+                }
+            }
+
+            if (unknownUsers.length > 0) {
+                console.log('--- Unknown Slack Users (Not in DB) ---');
+                for (const u of unknownUsers) {
+                    console.log(`User: ${u.real_name} (@${u.username}) - ${u.email}`);
+                }
+                console.log('---------------------------------------');
+            }
+
+        } catch (err) {
+            console.error('Failed to monitor Slack users', err);
+        }
     }
 
     async pulseSlack() {

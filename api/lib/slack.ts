@@ -95,6 +95,17 @@ export default class Slack {
         return res.user;
     }
 
+    async getUsers() {
+        await this.check();
+        const users = [];
+        for await (const page of this.client.paginate('users.list', { limit: 1000 })) {
+            // Check if page (or page['members']) is iterable, depends on how client.paginate yields
+            const members = (page as any).members || []; 
+            users.push(...members);
+        }
+        return users;
+    }
+
     async getUserGroup(name: string) {
         await this.check();
 
