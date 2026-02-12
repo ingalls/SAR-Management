@@ -27,6 +27,19 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>Slack Sync Pulse</td>
+                        <td>
+                            <div class='d-flex justify-content-end'>
+                                <TablerIconButton
+                                    title='Trigger Heartbeat'
+                                    @click='trigger("slack")'
+                                >
+                                    <IconPlayerPlay />
+                                </TablerIconButton>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

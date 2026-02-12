@@ -183,6 +183,18 @@ export default class Slack {
         }
 
         try {
+            const channelIds = mappings.items.map((m: any) => m.channel_id);
+            if (channelIds.length) {
+                await this.client.usergroups.update({
+                    usergroup: group.id!,
+                    channels: channelIds.join(',')
+                });
+            }
+        } catch (err: any) {
+            errors.push(`Slack: Failed to sync default channels to group - ${err.message || err}`);
+        }
+
+        try {
             const currentMembers = await this.client.usergroups.users.list({ usergroup: group.id! });
             if (currentMembers.ok && currentMembers.users) {
                 const currentSet = new Set(currentMembers.users);

@@ -26,4 +26,25 @@ export default async function router(schema: Schema, config: Config) {
             Err.respond(err, res);
         }
     });
+
+    await schema.post('/heartbeat/slack', {
+        name: 'Pulse Slack',
+        group: 'Heartbeat',
+        description: 'Manually trigger slack notification pulse',
+        res: StandardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(config, req);
+
+            const heartbeat = new Heartbeat(config, { start: false });
+            await heartbeat.pulseSlack();
+
+            res.json({
+                status: 200,
+                message: 'Pulse Triggered'
+            });
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
 }

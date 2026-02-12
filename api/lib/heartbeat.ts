@@ -20,6 +20,30 @@ export default class Heartbeat {
         cron.schedule('0 18 * * *', async () => {
             await this.pulseTrainings();
         });
+
+        cron.schedule('0 19 * * *', async () => {
+            await this.pulseSlack();
+        });
+    }
+
+    async pulseSlack() {
+        try {
+            const slack = await Slack.create(this.config);
+            if (!slack) return;
+
+            const teams = await this.config.models.Team.list();
+            console.log(`ok - Syncing Slack Groups for ${teams.total} teams`);
+
+            for (const team of teams.items) {
+                try {
+                    await slack.userGroupSync(team.id);
+                } catch (err) {
+                    console.error(`Failed to sync team ${team.id}`, err);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     async pulseTrainings() {
