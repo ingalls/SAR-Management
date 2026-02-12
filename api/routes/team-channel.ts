@@ -1,0 +1,124 @@
+import { Type } from '@sinclair/typebox';
+import Auth from '../lib/auth.js';
+import Schema from '@openaddresses/batch-schema';
+import Config from '../lib/config.js';
+import { TeamChannelResponse, StandardResponse } from '../lib/types.js';
+import Err from '@openaddresses/batch-error';
+import { GenericListOrder } from '@openaddresses/batch-generic';
+import { sql } from 'drizzle-orm';
+import Slack from '../lib/slack.js';
+
+export default async function router(schema: Schema, config: Config) {
+    await schema.get('/team-channel', {
+        name: 'List Team Channels',
+        group: 'TeamChannel',
+        description: 'List all Team Channel mappings or filter by team',
+        query: Type.Object({
+            team_id: Type.Optional(Type.Integer()),
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String())
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(TeamChannelResponse)
+        })
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(config, req);
+
+            const list = await config.models.TeamChannel.list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: req.query.team_id ? sql`team_id = ${req.query.team_id}` : undefined
+            });
+
+            res.json(list);
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
+
+    await schema.post('/team-channel/sync', {
+        name: 'Sync Team Channels',
+        group: 'TeamChannel',
+        description: 'Sync Slack users for a given team',
+        body: Type.Object({
+            team_id: Type.Integer()
+        }),
+        res: StandardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(config, req);
+
+            const slack = await Slack.create(config);
+            if (!slack) throw new Err(400, null, 'Slack is not configured');
+
+            const sync = await slack.userGroupSync(req.body.team_id);
+
+            if (sync.errors.length) {
+                res.status(500).json({
+                    status: 500,
+                    message: sync.errors.join(', ')
+                });
+                return;
+            }
+
+            res.json({
+                status: 200,
+                message: 'Synced'
+            });
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
+
+    await schema.post('/team-channel', {
+        name: 'Create Team Channel',
+        group: 'TeamChannel',
+        description: 'Create a new Team Channel mapping',
+        body: Type.Object({
+            team_id: Type.Integer(),
+            channel_id: Type.String(),
+            channel_name: Type.String()
+        }),
+        res: TeamChannelResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(config, req);
+
+            const created = await config.models.TeamChannel.generate(req.body);
+
+            res.json(created);
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
+
+    await schema.delete('/team-channel/:id', {
+        name: 'Delete Team Channel',
+        group: 'TeamChannel',
+        description: 'Delete a Team Channel mapping',
+        params: Type.Object({
+            id: Type.Integer()
+        }),
+        res: StandardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(config, req);
+
+            await config.models.TeamChannel.delete(req.params.id);
+
+            res.json({
+                status: 200,
+                message: 'Team Channel Deleted'
+            });
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
+
+}
