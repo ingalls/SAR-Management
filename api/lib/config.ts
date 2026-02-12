@@ -5,6 +5,7 @@ import Models from './models.js';
 export type ConfigOpts = {
     email: boolean;
     silent: boolean;
+    heartbeat: boolean;
     StackName: string;
     SigningSecret: string;
     URL: string;
@@ -22,6 +23,7 @@ export type ConfigOpts = {
 export default class Config {
     silent: boolean;
     email: boolean;
+    heartbeat: boolean;
     StackName: string;
     SigningSecret: string;
     URL: string;
@@ -35,6 +37,7 @@ export default class Config {
     constructor(opts: ConfigOpts) {
         this.email = opts.email;
         this.silent = opts.silent;
+        this.heartbeat = opts.heartbeat;
         this.StackName = opts.StackName;
         this.SigningSecret = opts.SigningSecret;
         this.URL = opts.URL;
@@ -48,6 +51,7 @@ export default class Config {
     }
 
     static async env(args: {
+        heartbeat?: boolean;
         email?: boolean;
         silent?: boolean;
         postgres?: string;
@@ -73,6 +77,7 @@ export default class Config {
 
             config = new Config({
                 silent: args.silent || false,
+                heartbeat: args.heartbeat || false,
                 email: args.email || false,
                 StackName: 'test',
                 SigningSecret: 'mesa-sar-test-token',
@@ -95,6 +100,7 @@ export default class Config {
             const APIURL = new URL(((await models.Server.from('frontend')).value));
 
             config = new Config({
+                heartbeat: args.heartbeat || false,
                 silent: args.silent || false,
                 email: args.email || false,
                 StackName: process.env.StackName,

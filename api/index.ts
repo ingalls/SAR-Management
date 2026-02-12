@@ -24,7 +24,7 @@ import Heartbeat from './lib/heartbeat.js';
 const pkg = JSON.parse(String(fs.readFileSync(new URL('./package.json', import.meta.url))));
 
 const args = minimist(process.argv, {
-    boolean: ['help', 'silent'],
+    boolean: ['help', 'silent', 'heartbeat'],
     string: ['postgres']
 });
 
@@ -48,7 +48,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 export default async function server() {
     const config = await Config.env(args);
-    new Heartbeat(config);
+    if (config.heartbeat) new Heartbeat(config);
 
     const app = express();
 
