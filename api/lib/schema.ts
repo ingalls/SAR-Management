@@ -96,12 +96,19 @@ export const Team = pgTable('teams', {
     colour_txt: text().notNull().default('#000000'),
     fieldable: boolean().notNull().default(true)
 });
+
+export const Setting = pgTable('teams_settings', {                                                                                                                                                                          
+    key: text().primaryKey(),                                                                                                                                                                                         
+    value: text().notNull().default(''),                                                                                                                                                                              
+});
+
 export const TeamChannel = pgTable('teams_channels', {
     id: serial().primaryKey(),
     team_id: integer().notNull().references(() => Team.id),
     channel_id: text().notNull(),
     channel_name: text().notNull()
 });
+
 export const UserTeam = pgTable('users_to_teams', {
     uid: integer().notNull().references(() => User.id),
     tid: integer().notNull().references(() => Team.id),
