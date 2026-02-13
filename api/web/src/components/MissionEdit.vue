@@ -298,20 +298,29 @@ export default {
         update: async function() {
             if (!this.validate()) return;
 
-            this.loading.mission = true;
-            const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
-                method: 'PATCH',
-                body: {
-                    ...this.mission,
-                    start_ts: moment(this.mission.start_ts).toISOString(),
-                    end_ts: moment(this.mission.end_ts).toISOString(),
-                    teams: this.mission.teams.map((team) => { return team.id }),
-                    tags: this.mission.tags.map((tag) => { return tag.id }),
-                }
-            });
+            try {
+                this.loading.mission = true;
+                const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
+                    method: 'PATCH',
+                    body: {
+                        title: this.mission.title,
+                        externalid: this.mission.externalid,
+                        body: this.mission.body,
+                        location: this.mission.location,
+                        location_geom: this.mission.location_geom,
+                        start_ts: moment(this.mission.start_ts).toISOString(),
+                        end_ts: moment(this.mission.end_ts).toISOString(),
+                        teams: this.mission.teams.map((team) => { return team.id }),
+                        tags: this.mission.tags.map((tag) => { return tag.id }),
+                    }
+                });
 
-            this.loading.mission = false;
-            this.$router.push(`/mission/${update.id}`);
+                this.$router.push(`/mission/${update.id}`);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                this.loading.mission = false;
+            }
         },
         create: async function() {
             if (!this.validate()) return;
