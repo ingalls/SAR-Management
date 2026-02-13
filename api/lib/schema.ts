@@ -293,6 +293,19 @@ export const MissionPatient = pgTable('missions_patients', {
     address_country: text(),
 });
 
+export const MissionPerson = pgTable('mission_person', {
+    id: serial().primaryKey(),
+    mission_id: integer().notNull().references(() => Mission.id),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    name: text(),
+    address: text(),
+    role: text(),
+    phone: text(),
+    email: text(),
+    notes: text(),
+});
+
 export const MissionTagAssigned = pgTable('missions_tag', {
     id: serial().primaryKey(),
     mission_id: integer().notNull().references(() => Mission.id),
