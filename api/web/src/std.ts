@@ -1,5 +1,14 @@
+import type { Router } from 'vue-router'
+
+declare global {
+    interface Window {
+        stdurl: (url: string | URL) => URL;
+        std: (url: string | URL, opts?: Record<string, any>) => Promise<any>;
+    }
+}
+
 function std() {
-    window.stdurl = function(url) {
+    window.stdurl = function(url: string | URL): URL {
         try {
             url = new URL(url);
         } catch {
@@ -18,7 +27,7 @@ function std() {
      * @param {URL|String} url      - Full URL or API fragment to request
      * @param {Object} [opts={}]    - Options
      */
-    window.std = async function(url, opts = {}) {
+    window.std = async function(url: string | URL, opts: Record<string, any> = {}) {
         url = window.stdurl(url);
 
         try {
@@ -35,7 +44,7 @@ function std() {
 
             const res = await fetch(url, opts);
 
-            let bdy = {};
+            let bdy: any = {};
 
             if ((res.status < 200 || res.status >= 400) && ![401].includes(res.status)) {
                 try {
@@ -46,23 +55,26 @@ function std() {
 
                 if (res.status === 403 && bdy.message === 'MFA Verification Required') {
                     delete localStorage.token;
-                    return window.location.reload();
+                    window.location.reload();
+                    return;
                 }
 
                 const err = new Error(bdy.message || `Status Code: ${res.status}`);
-                err.body = JSON.stringify(bdy);
+                (err as any).body = JSON.stringify(bdy);
                 throw err;
             } else if (res.status === 401) {
                 delete localStorage.token;
-                return window.location.reload();
+                window.location.reload();
+                return;
             }
 
-            if (res.headers.get('content-type').split(';')[0] === 'application/json') {
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.split(';')[0] === 'application/json') {
                 return await res.json();
             } else {
                 return res;
             }
-        } catch (err) {
+        } catch (err: any) {
             throw new Error(err.message);
         }
     }

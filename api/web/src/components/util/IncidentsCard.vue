@@ -1,5 +1,5 @@
 <template>
-    <div class='col-lg-12'>
+    <div :class='cols'>
         <div class='card'>
             <div class='card-header'>
                 <h3
@@ -13,8 +13,8 @@
                         @click='create'
                     >
                         <IconPlus
-                            :size='32'
-                            :stroke='1'
+                            :size='24'
+                            stroke='1'
                         />
                     </TablerIconButton>
                 </div>
@@ -76,6 +76,10 @@ export default {
         NoAccess
     },
     props: {
+        cols: {
+            type: String,
+            default: 'col-lg-12'
+        },
         incidents: {
             type: Array,
             required: true

@@ -2,7 +2,7 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Mission, MissionTeam, MissionAssigned, MissionTag, MissionTagAssigned, Team, Asset, MissionAsset, UserIncident } from '../schema.js';
+import { Mission, MissionTeam, MissionAssigned, MissionTag, MissionTagAssigned, Team, Asset, MissionAsset, UserIncident, MissionPerson } from '../schema.js';
 import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
@@ -14,6 +14,16 @@ export const PartialTeam = Type.Object({
     colour_bg: Type.String(),
     colour_txt: Type.String(),
     fieldable: Type.Boolean()
+});
+
+export const PartialPerson = Type.Object({
+    id: Type.Integer(),
+    name: Type.Optional(Type.String()),
+    address: Type.Optional(Type.String()),
+    role: Type.Optional(Type.String()),
+    phone: Type.Optional(Type.String()),
+    email: Type.Optional(Type.String()),
+    notes: Type.Optional(Type.String())
 });
 
 export const PartialAsset = Type.Object({
@@ -60,6 +70,7 @@ export const AugmentedMission = Type.Object({
     tags: Type.Array(PartialTag),
     tags_id: Type.Array(Type.Integer()),
     incidents: Type.Array(PartialIncident),
+    people: Type.Array(PartialPerson),
     assets: Type.Array(PartialAsset),
     assets_id: Type.Array(Type.Integer())
 });
@@ -107,6 +118,23 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .from(UserIncident)
             .groupBy(UserIncident.mission_id)
             .as("root_incidents");
+
+        const RootPersons = this.pool
+            .select({
+                persons_mission_id: max(MissionPerson.mission_id).as('persons_mission_id'),
+                people: sql<Array<Static<typeof PartialPerson>>>`coalesce(json_agg(json_build_object(
+                    'id', mission_person.id,
+                    'name', mission_person.name,
+                    'address', mission_person.address,
+                    'role', mission_person.role,
+                    'phone', mission_person.phone,
+                    'email', mission_person.email,
+                    'notes', mission_person.notes
+                )), '[]'::JSON)`.as('people'),
+            })
+            .from(MissionPerson)
+            .groupBy(MissionPerson.mission_id)
+            .as("root_persons");
 
         const RootTeams = this.pool
             .select({
@@ -191,7 +219,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 assets: RootAssets.assets,
                 assets_id: RootAssets.assets_id,
                 users: RootUsers.users,
-                incidents: RootIncidents.incidents
+                incidents: RootIncidents.incidents,
+                people: RootPersons.people
             })
             .from(Mission)
             .leftJoin(RootTeams, eq(Mission.id, RootTeams.teams_mission_id))
@@ -199,6 +228,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .leftJoin(RootTags, eq(Mission.id, RootTags.tags_mission_id))
             .leftJoin(RootAssets, eq(Mission.id, RootAssets.assets_mission_id))
             .leftJoin(RootIncidents, eq(Mission.id, RootIncidents.incidents_mission_id))
+            .leftJoin(RootPersons, eq(Mission.id, RootPersons.persons_mission_id))
             .orderBy(orderBy)
             .as('root')
 
@@ -223,7 +253,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
             assets: Root.assets,
             assets_id: Root.assets_id,
             users: Root.users,
-            incidents: Root.incidents
+            incidents: Root.incidents,
+            people: Root.people
         })
             .from(Root)
             .where(query.where)
@@ -247,6 +278,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
 
                     if (!t.users) t.users = [];
                     if (!t.incidents) t.incidents = [];
+                    if (!t.people) t.people = [];
 
                     return t as Static<typeof AugmentedMission>
                 })
@@ -271,6 +303,23 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .from(UserIncident)
             .groupBy(UserIncident.mission_id)
             .as("root_incidents");
+
+        const RootPersons = this.pool
+            .select({
+                persons_mission_id: max(MissionPerson.mission_id).as('persons_mission_id'),
+                people: sql<Array<Static<typeof PartialPerson>>>`coalesce(json_agg(json_build_object(
+                    'id', mission_person.id,
+                    'name', mission_person.name,
+                    'address', mission_person.address,
+                    'role', mission_person.role,
+                    'phone', mission_person.phone,
+                    'email', mission_person.email,
+                    'notes', mission_person.notes
+                )), '[]'::JSON)`.as('people'),
+            })
+            .from(MissionPerson)
+            .groupBy(MissionPerson.mission_id)
+            .as("root_persons");
 
         const RootTeams = this.pool
             .select({
@@ -355,7 +404,8 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 assets: RootAssets.assets,
                 assets_id: RootAssets.assets_id,
                 users: RootUsers.users,
-                incidents: RootIncidents.incidents
+                incidents: RootIncidents.incidents,
+                people: RootPersons.people
             })
             .from(Mission)
             .leftJoin(RootTeams, eq(Mission.id, RootTeams.teams_mission_id))
@@ -363,6 +413,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             .leftJoin(RootTags, eq(Mission.id, RootTags.tags_mission_id))
             .leftJoin(RootAssets, eq(Mission.id, RootAssets.assets_mission_id))
             .leftJoin(RootIncidents, eq(Mission.id, RootIncidents.incidents_mission_id))
+            .leftJoin(RootPersons, eq(Mission.id, RootPersons.persons_mission_id))
             .where(is(id, SQL)? id as SQL<unknown> : eq(this.requiredPrimaryKey(), id))
             .limit(1)
 
@@ -376,6 +427,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
         if (!pgres[0].assets) pgres[0].assets = [];
         if (!pgres[0].users) pgres[0].users = [];
         if (!pgres[0].incidents) pgres[0].incidents = [];
+        if (!pgres[0].people) pgres[0].people = [];
 
         return pgres[0] as Static<typeof AugmentedMission>;
     }

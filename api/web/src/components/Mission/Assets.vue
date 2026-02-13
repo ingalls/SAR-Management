@@ -9,11 +9,11 @@
                     v-if='mode === "edit" || is_iam("Mission:Manage")'
                     title='Add Asset'
                     class='btn-primary'
-                    style='width: 32px; height: 32px; min-height: 32px; min-width: 32px; padding: 0;'
+                    style='width: 24px; height: 24px; min-height: 24px; min-width: 24px; padding: 0;'
                     @click='showUpload = true'
                 >
                     <IconPlus
-                        size='32'
+                        size='24'
                         stroke='1'
                     />
                 </TablerIconButton>
@@ -48,10 +48,16 @@
                             <div class='btn-list flex-nowrap'>
                                 <TablerDelete
                                     v-if='is_iam("Mission:Manage")'
+                                    style='width: 24px; height: 24px; min-height: 24px; min-width: 24px; padding: 0;'
                                     displaytype='icon'
                                     title='Delete Asset'
                                     @delete='deleteAsset(asset.id)'
-                                />
+                                >
+                                    <IconTrash
+                                        size='24'
+                                        stroke='1'
+                                    />
+                                </TablerDelete>
                             </div>
                         </td>
                     </tr>
@@ -83,7 +89,8 @@ import {
     TablerDelete
 } from '@tak-ps/vue-tabler';
 import {
-    IconPlus
+    IconPlus,
+    IconTrash
 } from '@tabler/icons-vue';
 
 export default {
@@ -93,7 +100,8 @@ export default {
         TablerNone,
         TablerIconButton,
         TablerDelete,
-        IconPlus
+        IconPlus,
+        IconTrash
     },
     props: {
         mission: {

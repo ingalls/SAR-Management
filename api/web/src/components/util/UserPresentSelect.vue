@@ -13,12 +13,12 @@
                         <template #default>
                             <TablerIconButton
                                 class='btn-primary'
-                                style='width: 32px; height: 32px; min-height: 32px; min-width: 32px; padding: 0;'
+                                style='width: 24px; height: 24px; min-height: 24px; min-width: 24px; padding: 0;'
                             >
                                 <IconPlus
                                     v-tooltip='"Add User"'
                                     class='cursor-pointer dropdown-toggle'
-                                    size='32'
+                                    size='24'
                                     stroke='1'
                                 />
                             </TablerIconButton>
@@ -85,7 +85,7 @@
                                     >
                                         <IconCheck
                                             :size='16'
-                                            :stroke='1'
+                                            stroke='1'
                                         /> Confirm
                                     </div>
 

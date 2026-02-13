@@ -37,6 +37,7 @@ export default class Models {
     MissionAsset: Modeler<typeof pgtypes.MissionAsset>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
+    MissionPerson: Modeler<typeof pgtypes.MissionPerson>;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
     PollVote: Modeler<typeof pgtypes.PollVote>;
     Schedule: Modeler<typeof pgtypes.Schedule>;
@@ -107,6 +108,7 @@ export default class Models {
         this.MissionAsset = new Modeler(pg, pgtypes.MissionAsset);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);
+        this.MissionPerson = new Modeler(pg, pgtypes.MissionPerson);
         this.PollQuestion = new Modeler(pg, pgtypes.PollQuestion);
         this.PollVote = new Modeler(pg, pgtypes.PollVote);
         this.Schedule = new Modeler(pg, pgtypes.Schedule);

@@ -151,7 +151,14 @@
                             </div>
                         </div>
 
+                        <People
+                            :mission='mission'
+                            :iam='iam'
+                            :auth='auth'
+                        />
+
                         <IncidentsCard
+                            cols='col-lg-6'
                             :incidents='mission.incidents'
                             :mission_id='mission.id'
                             :iam='iam'
@@ -194,6 +201,7 @@ import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import Assets from './Mission/Assets.vue';
+import People from './Mission/People.vue';
 import IncidentsCard from './util/IncidentsCard.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
@@ -218,6 +226,7 @@ export default {
         Location,
         IncidentsCard,
         UserPresentSelect,
+        People,
         TablerBreadCrumb,
         TablerLoading,
         TablerMarkdown,
@@ -249,6 +258,7 @@ export default {
                 end_ts: '',
                 teams: [],
                 assets: [],
+                people: [],
                 assets_id: [],
                 incidents: []
             },

@@ -169,3 +169,4 @@ export const ApplicationResponse = createSelectSchema(schemas.Application, {
     archived: Type.Boolean()
 });
 
+export const MissionPersonResponse = createSelectSchema(schemas.MissionPerson);
