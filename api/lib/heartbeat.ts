@@ -49,7 +49,7 @@ export default class Heartbeat {
             const dbUsers = await this.config.models.User.list({ limit: 5000 });
             const dbEmails = new Set(dbUsers.items.map(u => u.email.toLowerCase()));
 
-            const unknownUsers = [];
+            const unknownUsers: any[] = [];
 
             for (const sUser of activeSlackUsers) {
                 const email = sUser.profile.email.toLowerCase();

@@ -2,6 +2,7 @@ import { WebClient } from '@slack/web-api';
 import Config from './config.js';
 import { sql } from 'drizzle-orm';
 import { PromisePool } from '@supercharge/promise-pool';
+import Err from '@openaddresses/batch-error';
 
 export default class Slack {
     client: WebClient;
@@ -97,7 +98,7 @@ export default class Slack {
 
     async getUsers() {
         await this.check();
-        const users = [];
+        const users: any[] = [];
         for await (const page of this.client.paginate('users.list', { limit: 1000 })) {
             // Check if page (or page['members']) is iterable, depends on how client.paginate yields
             const members = (page as any).members || []; 
