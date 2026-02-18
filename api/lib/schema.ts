@@ -84,6 +84,12 @@ export const UserReset = pgTable('users_reset', {
     action: text().notNull()
 });
 
+export const UserExternal = pgTable('users_external', {
+    uid: integer().notNull().references(() => User.id),
+    integration: text().notNull(),
+    value: text().notNull(),
+});
+
 export const Team = pgTable('teams', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),

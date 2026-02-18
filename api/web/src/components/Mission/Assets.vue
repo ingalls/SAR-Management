@@ -4,7 +4,26 @@
             <h3 class='card-title'>
                 Assets
             </h3>
-            <div class='card-actions btn-actions'>
+            <div class='ms-auto btn-list'>
+                <div class='btn-group'>
+                    <button
+                        type='button'
+                        class='btn'
+                        :class="{ 'btn-primary': view === 'files' }"
+                        @click="view = 'files'"
+                    >
+                        Files
+                    </button>
+                    <button
+                        type='button'
+                        class='btn'
+                        :class="{ 'btn-primary': view === 'photos' }"
+                        @click="view = 'photos'"
+                    >
+                        Photos
+                    </button>
+                </div>
+
                 <TablerIconButton
                     v-if='mode === "edit" || is_iam("Mission:Manage")'
                     title='Add Asset'
@@ -19,7 +38,10 @@
                 </TablerIconButton>
             </div>
         </div>
-        <div class='table-responsive'>
+        <div
+            v-if="view === 'files'"
+            class='table-responsive'
+        >
             <table
                 v-if='mission.assets && mission.assets.length'
                 class='table table-vcenter card-table'
@@ -70,6 +92,76 @@
             />
         </div>
 
+        <div
+            v-else-if="view === 'photos'"
+            class='p-3'
+        >
+            <div
+                v-if='photos.length'
+                class='row row-cards'
+            >
+                <div
+                    v-for='asset in photos'
+                    :key='asset.id'
+                    class='col-6 col-lg-4'
+                >
+                    <div class='card card-sm'>
+                        <a
+                            :href='`/api/asset/${asset.id}/raw?token=${token}`'
+                            target='_blank'
+                            class='d-block'
+                        >
+                            <img
+                                :src='`/api/asset/${asset.id}/raw?token=${token}`'
+                                class='card-img-top'
+                                style='height: 200px; object-fit: cover;'
+                            >
+                        </a>
+                        <div class='card-body'>
+                            <div class='d-flex align-items-center'>
+                                <div
+                                    class='text-truncate'
+                                    :title='asset.name'
+                                >
+                                    {{ asset.name }}
+                                </div>
+                                <div class='ms-auto btn-list'>
+                                    <a
+                                        :href='`/api/asset/${asset.id}/raw?token=${token}`'
+                                        download
+                                        class='text-secondary'
+                                        title='Download'
+                                    >
+                                        <IconDownload
+                                            size='20'
+                                            stroke='1'
+                                        />
+                                    </a>
+                                    <TablerDelete
+                                        v-if='is_iam("Mission:Manage")'
+                                        style='width: 24px; height: 24px; min-height: 24px; min-width: 24px; padding: 0;'
+                                        displaytype='icon'
+                                        title='Delete Asset'
+                                        @delete='deleteAsset(asset.id)'
+                                    >
+                                        <IconTrash
+                                            size='20'
+                                            stroke='1'
+                                        />
+                                    </TablerDelete>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <TablerNone
+                v-else
+                label='Mission Photos'
+                :create='false'
+            />
+        </div>
+
         <Upload
             v-if='showUpload'
             url='/api/asset'
@@ -90,7 +182,8 @@ import {
 } from '@tak-ps/vue-tabler';
 import {
     IconPlus,
-    IconTrash
+    IconTrash,
+    IconDownload
 } from '@tabler/icons-vue';
 
 export default {
@@ -101,7 +194,8 @@ export default {
         TablerIconButton,
         TablerDelete,
         IconPlus,
-        IconTrash
+        IconTrash,
+        IconDownload
     },
     props: {
         mission: {
@@ -125,7 +219,18 @@ export default {
     data: function() {
         return {
             token: localStorage.token,
-            showUpload: false
+            showUpload: false,
+            view: 'files'
+        }
+    },
+    computed: {
+        photos: function() {
+            if (!this.mission.assets) return [];
+            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            return this.mission.assets.filter((asset) => {
+                const ext = asset.name.split('.').pop().toLowerCase();
+                return imageExtensions.includes(ext);
+            });
         }
     },
     methods: {

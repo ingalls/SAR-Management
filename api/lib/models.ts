@@ -23,6 +23,7 @@ import * as pgtypes from './schema.js';
 export default class Models {
     UserSetting: Modeler<typeof pgtypes.UserSetting>;
     UserReset: Modeler<typeof pgtypes.UserReset>;
+    UserExternal: Modeler<typeof pgtypes.UserExternal>;
     UserDashboard: Modeler<typeof pgtypes.UserDashboard>;
     UserTeam: Modeler<typeof pgtypes.UserTeam>;
     TeamChannel: Modeler<typeof pgtypes.TeamChannel>;
@@ -93,6 +94,7 @@ export default class Models {
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
         this.UserReset = new Modeler(pg, pgtypes.UserReset);
+        this.UserExternal = new Modeler(pg, pgtypes.UserExternal);
         this.UserDashboard = new Modeler(pg, pgtypes.UserDashboard);
         this.UserTeam = new Modeler(pg, pgtypes.UserTeam);
         this.TeamChannel = new Modeler(pg, pgtypes.TeamChannel);

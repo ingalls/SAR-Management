@@ -58,6 +58,10 @@ export const UserIncidentResponse = createSelectSchema(schemas.UserIncident, {
     training_id: Type.Union([Type.Integer(), Type.Null()])
 });
 
+export const UserExternalResponse = createSelectSchema(schemas.UserExternal, {
+    uid: Type.Integer()
+});
+
 export const EquipmentIncidentResponse = createSelectSchema(schemas.EquipmentIncident, {
     id: Type.Integer(),
     equipment_id: Type.Integer(),
