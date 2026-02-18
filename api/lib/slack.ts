@@ -1,6 +1,7 @@
 import { WebClient } from '@slack/web-api';
 import Config from './config.js';
-import { sql } from 'drizzle-orm';
+import { sql, inArray, and, eq } from 'drizzle-orm';
+import { UserExternal } from './schema.js';
 import { PromisePool } from '@supercharge/promise-pool';
 import Err from '@openaddresses/batch-error';
 
@@ -169,7 +170,7 @@ export default class Slack {
             return { errors };
         }
 
-        const users = await this.config.models.User.augmented_list({
+        const users = await this.config.models.User.listExternal('slack::userid', {
             limit: 1000,
             where: sql`
                 teams_id @> ARRAY[${team_id}::INT]
@@ -180,10 +181,16 @@ export default class Slack {
         const { results } = await PromisePool
             .withConcurrency(10)
             .for(users.items)
-            .process(async (user) => {
+            .process(async (user: any) => {
                 if (!user.email) return null;
                 try {
+                    if (user.external) return user.external;
+
                     const slackUser = await this.getUser(user.email);
+                    if (!slackUser.id) return null;
+
+                    await this.config.models.User.addExternal(user.id, 'slack::userid', slackUser.id);
+
                     return slackUser.id;
                 } catch (err) {
                     console.error(JSON.stringify(err, null, 2));

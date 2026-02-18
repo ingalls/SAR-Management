@@ -3,7 +3,7 @@ import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { User, UserTeam, Team, UserExternal } from '../schema.js';
-import { sql, eq, is, asc, desc, max, SQL, InferSelectModel, and, notExists } from 'drizzle-orm';
+import { sql, eq, is, asc, desc, max, SQL, InferSelectModel, and, notExists, ilike } from 'drizzle-orm';
 
 export const User_EmergencyContact = Type.Object({
     name: Type.String(),
@@ -72,6 +72,47 @@ export default class UserModel extends Modeler<typeof User> {
             ))
         ));
 
+    }
+
+    async listExternal(integration: string, query: GenericListInput = {}) {
+        const order = query.order && query.order === 'desc' ? desc : asc;
+
+        let orderBy;
+        if (query.sort && (User as any)[query.sort]) {
+             orderBy = order((User as any)[query.sort]);
+        } else {
+             orderBy = order(User.id);
+        }
+
+        const pgres = await this.pool
+            .select({
+                count: sql<string>`count(*) OVER()`.as('count'),
+                user: User,
+                external: UserExternal.value
+            })
+            .from(User)
+            .leftJoin(UserExternal, and(
+                eq(UserExternal.uid, User.id),
+                eq(UserExternal.integration, integration)
+            ))
+            .where(query.where)
+            .orderBy(orderBy)
+            .limit(query.limit || 10)
+            .offset((query.page || 0) * (query.limit || 10));
+
+        if (pgres.length === 0) {
+            return { total: 0, items: [] };
+        }
+
+        return {
+            total: parseInt(pgres[0].count),
+            items: pgres.map((res) => {
+                return {
+                    ...res.user,
+                    external: res.external
+                }
+            })
+        };
     }
 
     async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedUser>>> {
