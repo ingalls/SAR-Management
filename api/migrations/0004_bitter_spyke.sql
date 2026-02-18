@@ -1,1 +1,1 @@
-ALTER TABLE "applications" ADD COLUMN "archived" boolean DEFAULT false NOT NULL;
+ALTER TABLE "applications" ADD COLUMN IF NOT EXISTS "archived" boolean DEFAULT false NOT NULL;

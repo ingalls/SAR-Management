@@ -1,1 +1,1 @@
-ALTER TABLE "applications" ADD COLUMN "group" text DEFAULT 'unassigned' NOT NULL;
+ALTER TABLE "applications" ADD COLUMN IF NOT EXISTS "group" text DEFAULT 'unassigned' NOT NULL;

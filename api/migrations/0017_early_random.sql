@@ -1,4 +1,4 @@
-CREATE TABLE "users_sessions" (
+CREATE TABLE IF NOT EXISTS "users_sessions" (
 	"sid" text PRIMARY KEY NOT NULL,
 	"uid" integer NOT NULL,
 	"created" timestamp with time zone DEFAULT Now() NOT NULL,
@@ -6,5 +6,8 @@ CREATE TABLE "users_sessions" (
 	"ua" text NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "users" ADD COLUMN "mfa_secret" text;--> statement-breakpoint
-ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_uid_users_id_fk" FOREIGN KEY ("uid") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "mfa_secret" text;--> statement-breakpointDO $$ BEGIN
+ ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_uid_users_id_fk" FOREIGN KEY ("uid") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;

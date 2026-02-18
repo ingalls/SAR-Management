@@ -1,1 +1,1 @@
-ALTER TABLE "schedule" ADD COLUMN "disabled" boolean DEFAULT false NOT NULL;
+ALTER TABLE "schedule" ADD COLUMN IF NOT EXISTS "disabled" boolean DEFAULT false NOT NULL;

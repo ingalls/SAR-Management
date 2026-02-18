@@ -1,1 +1,1 @@
-ALTER TABLE "users_incidents" ADD COLUMN "severity" text DEFAULT 'minor' NOT NULL;
+ALTER TABLE "users_incidents" ADD COLUMN IF NOT EXISTS "severity" text DEFAULT 'minor' NOT NULL;
