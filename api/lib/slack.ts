@@ -172,7 +172,11 @@ export default class Slack {
         const users = await this.config.models.User.listExternal('slack::userid', {
             limit: 1000,
             where: sql`
-                teams_id @> ARRAY[${team_id}::INT]
+                EXISTS (
+                    SELECT 1 FROM users_to_teams
+                    WHERE users_to_teams.uid = users.id
+                    AND users_to_teams.tid = ${team_id}
+                )
                 AND disabled = false
             `
         });
