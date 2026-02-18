@@ -2,8 +2,8 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { User, UserTeam, Team } from '../schema.js';
-import { sql, eq, is, asc, desc, max, SQL, InferSelectModel } from 'drizzle-orm';
+import { User, UserTeam, Team, UserExternal } from '../schema.js';
+import { sql, eq, is, asc, desc, max, SQL, InferSelectModel, and, notExists } from 'drizzle-orm';
 
 export const User_EmergencyContact = Type.Object({
     name: Type.String(),
@@ -50,6 +50,28 @@ export default class UserModel extends Modeler<typeof User> {
         pool: PostgresJsDatabase<Record<string, unknown>>,
     ) {
         super(pool, User);
+    }
+
+    async from(id: string | number) {
+        return await super.from(id);
+    }
+
+    async addExternal(uid: number, integration: string, value: string) {
+        await this.pool.insert(UserExternal).values({
+            uid,
+            integration,
+            value
+        });
+    }
+
+    async listMissingExternal(integration: string) {
+        return await this.pool.select().from(User).where(notExists(
+            this.pool.select().from(UserExternal).where(and(
+                eq(UserExternal.uid, User.id),
+                eq(UserExternal.integration, integration)
+            ))
+        ));
+
     }
 
     async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedUser>>> {

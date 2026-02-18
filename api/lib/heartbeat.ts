@@ -36,23 +36,45 @@ export default class Heartbeat {
             if (!slack) return;
 
             const slackUsers = await slack.getUsers();
-            const activeSlackUsers = slackUsers.filter((u: any) => 
-                !u.deleted && 
-                !u.is_bot && 
-                u.id !== 'USLACKBOT' && 
-                u.profile && 
-                u.profile.email
-            );
+            
+            // Map slackUsers by email for easy lookup
+            const slackUsersByEmail = new Map<string, any>();
+            for (const sUser of slackUsers) {
+                if (
+                    !sUser.deleted && 
+                    !sUser.is_bot && 
+                    sUser.id !== 'USLACKBOT' && 
+                    sUser.profile && 
+                    sUser.profile.email
+                ) {
+                    slackUsersByEmail.set(sUser.profile.email.toLowerCase(), sUser);
+                }
+            }
 
-            // Fetch all DB users - optimization: select only email
-            // Assuming the list isn't massive (SAR teams usually < 500)
+            // Find DB users missing the 'slack::userid' integration
+            const missingSlack = await this.config.models.User.listMissingExternal('slack::userid');
+
+            for (const user of missingSlack) {
+                const email = user.email.toLowerCase();
+                const sUser = slackUsersByEmail.get(email);
+
+                if (sUser) {
+                    // Match found! Create the external mapping
+                    try {
+                        await this.config.models.User.addExternal(user.id, 'slack::userid', sUser.id);
+                        console.log(`Linked User ${user.email} -> Slack ID ${sUser.id}`);
+                    } catch (err) {
+                        console.error(`Failed to link User ${user.email} -> Slack ID ${sUser.id}`, err);
+                    }
+                }
+            }
+
+            // --- Report Unknown Slack Users ---
             const dbUsers = await this.config.models.User.list({ limit: 5000 });
             const dbEmails = new Set(dbUsers.items.map(u => u.email.toLowerCase()));
 
             const unknownUsers: any[] = [];
-
-            for (const sUser of activeSlackUsers) {
-                const email = sUser.profile.email.toLowerCase();
+            for (const [email, sUser] of slackUsersByEmail) {
                 if (!dbEmails.has(email)) {
                     unknownUsers.push({
                         id: sUser.id,
@@ -62,7 +84,6 @@ export default class Heartbeat {
                     });
                 }
             }
-
             if (unknownUsers.length > 0) {
                 console.log('--- Unknown Slack Users (Not in DB) ---');
                 for (const u of unknownUsers) {
