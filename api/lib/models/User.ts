@@ -52,7 +52,7 @@ export default class UserModel extends Modeler<typeof User> {
         super(pool, User);
     }
 
-    async from(id: string | number) {
+    async from(id: string | number | SQL<unknown>) {
         return await super.from(id);
     }
 

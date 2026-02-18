@@ -101,6 +101,8 @@ export default class Heartbeat {
         try {
             const slack = await Slack.create(this.config);
             if (!slack) return;
+            
+            this.monitorSlackUsers();
 
             const teams = await this.config.models.Team.list();
             console.log(`ok - Syncing Slack Groups for ${teams.total} teams`);
