@@ -8,10 +8,21 @@
                     </h3>
 
                     <div class='ms-auto'>
-                        <div
-                            v-if='select'
-                            v-text='`${selected.length} Selected`'
-                        />
+                        <div class='d-flex align-items-center'>
+                            <TablerInput
+                                v-model='paging.filter'
+                                icon='search'
+                                placeholder='Search…'
+                            />
+
+                            <div
+                                v-if='select'
+                                v-text='`${selected.length} Selected`'
+                            />
+                        </div>
+                    </div>
+
+                    <div class='ms-auto'>
                         <div
                             v-if='!select'
                             class='btn-list'
@@ -116,7 +127,8 @@ const loading = reactive({
 })
 const paging = reactive({
     limit: 10,
-    page: 0
+    page: 0,
+    filter: ''
 })
 const teams = reactive({
     total: 0,
@@ -143,6 +155,7 @@ const listTeams = async () => {
     const url = window.stdurl('/api/team')
     url.searchParams.append('limit', paging.limit)
     url.searchParams.append('page', paging.page)
+    url.searchParams.append('filter', paging.filter) 
     const result = await window.std(url)
     
     teams.total = result.total
@@ -152,6 +165,11 @@ const listTeams = async () => {
 }
 
 watch(() => paging.page, async () => {
+    await listTeams()
+})
+
+watch(() => paging.filter, async () => {
+    paging.page = 0;
     await listTeams()
 })
 

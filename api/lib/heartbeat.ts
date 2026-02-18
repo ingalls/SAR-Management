@@ -1,9 +1,14 @@
 import Config from './config.js';
-import Slack from './slack.js';
+import Slack, { SlackUser } from './slack.js';
 import { and, gte, lt } from 'drizzle-orm';
 import { Training } from './schema.js';
 import moment from 'moment-timezone';
 import cron from 'node-cron';
+
+interface PointGeometry {
+    type: 'Point';
+    coordinates: [number, number];
+}
 
 export default class Heartbeat {
     config: Config;
@@ -38,7 +43,7 @@ export default class Heartbeat {
             const slackUsers = await slack.getUsers();
             
             // Map slackUsers by email for easy lookup
-            const slackUsersByEmail = new Map<string, any>();
+            const slackUsersByEmail = new Map<string, SlackUser>();
             for (const sUser of slackUsers) {
                 if (
                     !sUser.deleted && 
@@ -73,23 +78,34 @@ export default class Heartbeat {
             const dbUsers = await this.config.models.User.list({ limit: 5000 });
             const dbEmails = new Set(dbUsers.items.map(u => u.email.toLowerCase()));
 
-            const unknownUsers: any[] = [];
+            const unknownUsers: SlackUser[] = [];
             for (const [email, sUser] of slackUsersByEmail) {
                 if (!dbEmails.has(email)) {
-                    unknownUsers.push({
-                        id: sUser.id,
-                        username: sUser.name,
-                        real_name: sUser.real_name,
-                        email: email
-                    });
+                    unknownUsers.push(sUser);
                 }
             }
             if (unknownUsers.length > 0) {
                 console.log('--- Unknown Slack Users (Not in DB) ---');
                 for (const u of unknownUsers) {
-                    console.log(`User: ${u.real_name} (@${u.username}) - ${u.email}`);
+                    console.log(`User: ${u.real_name} (@${u.name}) - ${u.profile.email}`);
                 }
                 console.log('---------------------------------------');
+            }
+
+            // --- Report DB Users Not in Slack ---
+            const missingSlackUsers: (typeof dbUsers.items)[number][] = [];
+            for (const user of dbUsers.items) {
+                if (!user.disabled && !slackUsersByEmail.has(user.email.toLowerCase())) {
+                     missingSlackUsers.push(user);
+                }
+            }
+
+            if (missingSlackUsers.length > 0) {
+                 console.log('--- DB Users Missing from Slack ---');
+                 for (const u of missingSlackUsers) {
+                     console.log(`User: ${u.fname} ${u.lname} - ${u.email}`);
+                 }
+                 console.log('-----------------------------------');
             }
 
         } catch (err) {
@@ -160,7 +176,7 @@ export default class Heartbeat {
                 const end = moment(training.end_ts).tz(tz).format('HH:mm');
 
                 let location = training.location || '_Not Set_';
-                const geom = training.location_geom as any;
+                const geom = training.location_geom as unknown as PointGeometry;
                 if (geom && geom.coordinates) {
                     location += ` (<https://www.google.com/maps/search/?api=1&query=${geom.coordinates[1]},${geom.coordinates[0]}|Map>)`
                 }

@@ -4,6 +4,17 @@ import { sql } from 'drizzle-orm';
 import { PromisePool } from '@supercharge/promise-pool';
 import Err from '@openaddresses/batch-error';
 
+export interface SlackUser {
+    id: string;
+    deleted: boolean;
+    is_bot: boolean;
+    name: string;
+    real_name: string;
+    profile: {
+        email: string;
+    }
+}
+
 export default class Slack {
     client: WebClient;
     config: Config;
@@ -96,13 +107,13 @@ export default class Slack {
         return res.user;
     }
 
-    async getUsers() {
+    async getUsers(): Promise<SlackUser[]> {
         await this.check();
-        const users: any[] = [];
+        const users: SlackUser[] = [];
         for await (const page of this.client.paginate('users.list', { limit: 1000 })) {
             // Check if page (or page['members']) is iterable, depends on how client.paginate yields
             const members = (page as any).members || []; 
-            users.push(...members);
+            users.push(...members as SlackUser[]);
         }
         return users;
     }
