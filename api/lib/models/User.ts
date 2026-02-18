@@ -3,7 +3,7 @@ import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { User, UserTeam, Team, UserExternal } from '../schema.js';
-import { sql, eq, is, asc, desc, max, SQL, InferSelectModel, and, notExists, ilike } from 'drizzle-orm';
+import { sql, eq, is, asc, desc, max, SQL, InferSelectModel, and, notExists } from 'drizzle-orm';
 
 export const User_EmergencyContact = Type.Object({
     name: Type.String(),

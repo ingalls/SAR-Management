@@ -1,7 +1,5 @@
 import { WebClient } from '@slack/web-api';
 import Config from './config.js';
-import { sql, inArray, and, eq } from 'drizzle-orm';
-import { UserExternal } from './schema.js';
 import { PromisePool } from '@supercharge/promise-pool';
 import Err from '@openaddresses/batch-error';
 
