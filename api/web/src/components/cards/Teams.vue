@@ -15,32 +15,62 @@
                                 placeholder='Search…'
                             />
 
+                            <TablerDropdown>
+                                <button class='btn px-2 py-1 ms-2'>
+                                    <IconFilter
+                                        :size='32'
+                                        stroke='1'
+                                    />
+                                </button>
+
+                                <template #dropdown>
+                                    <div
+                                        class='card'
+                                        @click.stop=''
+                                    >
+                                        <div class='card-header'>
+                                            <div class='card-title'>
+                                                Filter Options
+                                            </div>
+                                        </div>
+                                        <div class='card-body row g-2'>
+                                            <div class='col-12'>
+                                                <TablerToggle
+                                                    v-model='paging.fieldable'
+                                                    label='Fieldable Only'
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </TablerDropdown>
+
                             <div
                                 v-if='select'
+                                class='ms-2'
                                 v-text='`${selected.length} Selected`'
                             />
-                        </div>
-                    </div>
 
-                    <div class='ms-auto'>
-                        <div
-                            v-if='!select'
-                            class='btn-list'
-                        >
-                            <button
-                                data-bs-toggle='dropdown'
-                                type='button'
-                                class='btn dropdown-toggle dropdown-toggle-split'
-                                aria-expanded='false'
-                            />
                             <div
-                                class='dropdown-menu dropdown-menu-end'
-                                style=''
+                                v-if='!select'
+                                class='btn-list ms-2'
                             >
-                                <a
-                                    class='dropdown-item cursor-pointer'
-                                    @click='$router.push("/team/new")'
-                                >New Team</a>
+                                <button
+                                    data-bs-toggle='dropdown'
+                                    type='button'
+                                    class='btn dropdown-toggle'
+                                    aria-expanded='false'
+                                    v-text='"New Team"'
+                                />
+                                <div
+                                    class='dropdown-menu dropdown-menu-end'
+                                    style=''
+                                >
+                                    <a
+                                        class='dropdown-item cursor-pointer'
+                                        @click='$router.push("/team/new")'
+                                    >New Team</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,7 +137,13 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
 import {
+    IconFilter,
+} from '@tabler/icons-vue';
+import {
     TablerNone,
+    TablerInput,
+    TablerToggle,
+    TablerDropdown,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import TableFooter from '../util/TableFooter.vue'
@@ -128,7 +164,8 @@ const loading = reactive({
 const paging = reactive({
     limit: 10,
     page: 0,
-    filter: ''
+    filter: '',
+    fieldable: false
 })
 const teams = reactive({
     total: 0,
@@ -155,6 +192,9 @@ const listTeams = async () => {
     const url = window.stdurl('/api/team')
     url.searchParams.append('limit', paging.limit)
     url.searchParams.append('page', paging.page)
+
+    if (paging.fieldable) url.searchParams.append('fieldable', 'true');
+
     url.searchParams.append('filter', paging.filter) 
     const result = await window.std(url)
     
@@ -170,6 +210,11 @@ watch(() => paging.page, async () => {
 
 watch(() => paging.filter, async () => {
     paging.page = 0;
+watch(() => paging.fieldable, async () => {
+    paging.page = 0;
+    await listTeams()
+})
+
     await listTeams()
 })
 

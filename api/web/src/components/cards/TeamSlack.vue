@@ -22,6 +22,11 @@
                 />
             </div>
         </div>
+        <div
+            v-if='syncError'
+            class='alert alert-danger m-0 rounded-0'
+            v-text='syncError'
+        />
         <TablerLoading v-if='loading' />
         <div
             v-if='!loading'
@@ -150,6 +155,7 @@ const props = defineProps({
 });
 
 const loading = ref(true);
+const syncError = ref(null);
 const adding = ref(false);
 const channels = ref([]);
 const newChannelId = ref(null);
@@ -168,7 +174,7 @@ const fetchChannels = async () => {
     loading.value = true;
     try {
         const [linked, available] = await Promise.all([
-             window.std(`/api/team/${props.teamId}/channel`),
+             window.std(`/api/team/${props.teamId}/channel?limit=100`),
              window.std('/api/slack/channels')
         ]);
 
@@ -232,6 +238,7 @@ const deleteChannel = async (id) => {
 };
 
 const sync = async () => {
+    syncError.value = null;
     try {
         loading.value = true;
         await window.std(`/api/team/${props.teamId}/channel/sync`, {
@@ -240,6 +247,7 @@ const sync = async () => {
         });
         loading.value = false;
     } catch (err) {
+        syncError.value = err.message;
         console.error(err);
         loading.value = false;
     }
