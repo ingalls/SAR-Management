@@ -161,6 +161,7 @@ export default class Slack {
         if (!groupName) throw new Err(400, null, 'Slack User Group Name not configured');
 
         const mappings = await this.config.models.TeamChannel.list({
+            limit: 1000,
             where: sql`team_id = ${team_id}`
         });
 
