@@ -132,7 +132,7 @@ export default class Slack {
 
         try {
             const groups = await this.client.usergroups.list({
-                include_disabled: false
+                include_disabled: true
             });
 
             let group = groups.usergroups?.find(g => g.handle === handle || g.name === name);
