@@ -21,7 +21,7 @@
         />
         <TablerNone
             v-else-if='!list.items.length'
-            label='Assigned Users'
+            label='No Assigned Users'
             :create='false'
         />
         <template v-else>

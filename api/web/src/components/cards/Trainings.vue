@@ -63,7 +63,7 @@
         <template v-else-if='!list.items.length'>
             <TablerNone
                 :create='false'
-                :label='Trainings'
+                label='No Trainings'
             />
         </template>
         <template v-else>

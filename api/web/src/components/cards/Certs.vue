@@ -32,7 +32,7 @@
         <template v-if='!list.items.length'>
             <TablerNone
                 :create='false'
-                label='Certificates'
+                label='No Certificates'
             />
         </template>
         <template v-else>

@@ -43,7 +43,7 @@
         <template v-else-if='!list.items.length'>
             <TablerNone
                 :create='false'
-                label='Equipment'
+                label='No Equipment'
                 :compact='true'
             />
         </template>

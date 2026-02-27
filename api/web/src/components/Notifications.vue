@@ -50,7 +50,7 @@
                                 <div class='card-body'>
                                     <template v-if='!list.total'>
                                         <TablerNone
-                                            label='Notifications'
+                                            label='No Notifications'
                                             :create='false'
                                         />
                                     </template>

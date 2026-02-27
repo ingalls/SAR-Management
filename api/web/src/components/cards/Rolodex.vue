@@ -45,7 +45,7 @@
             <TablerNone
                 v-else-if='!list.items.length'
                 :create='false'
-                :label='Rolodex'
+                label='No Rolodex'
             />
             <table
                 v-else

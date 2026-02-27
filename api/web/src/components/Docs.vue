@@ -203,7 +203,7 @@
 
                                     <template v-if='!list.total'>
                                         <TablerNone
-                                            label='Documents'
+                                            label='No Documents'
                                             :create='false'
                                         />
                                     </template>

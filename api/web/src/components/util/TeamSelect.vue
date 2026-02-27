@@ -30,7 +30,7 @@
 
                                     <TablerNone
                                         v-if='list.items.length === 0'
-                                        label='Users'
+                                        label='No Users'
                                         :create='false'
                                     />
                                     <template v-else>
@@ -52,7 +52,7 @@
 
             <template v-if='!teams.length'>
                 <TablerNone
-                    label='Teams Assigned'
+                    label='No Teams Assigned'
                     :create='false'
                     :compact='true'
                 />

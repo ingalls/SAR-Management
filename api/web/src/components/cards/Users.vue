@@ -116,7 +116,7 @@
         />
         <TablerNone
             v-else-if='!list.items.length'
-            label='Users'
+            label='No Users'
             :create='false'
         />
         <template v-else-if='mode === "list"'>

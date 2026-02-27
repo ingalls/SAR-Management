@@ -94,7 +94,7 @@
         <TablerNone
             v-else-if='!list.items.length'
             :create='false'
-            :label='Missions'
+            label='No Missions'
         />
         <template v-else>
             <table class='table card-table table-hover table-vcenter'>

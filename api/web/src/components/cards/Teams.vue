@@ -82,7 +82,7 @@
         </template>
         <template v-else-if='teams.total == 0'>
             <TablerNone
-                label='Teams'
+                label='No Teams'
                 @create='$router.push("/team/new")'
             />
         </template>

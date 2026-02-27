@@ -54,7 +54,7 @@
             </div>
             <TablerNone
                 v-else
-                label='Mission Subjects'
+                label='No Mission Subjects'
                 :create='false'
             />
         </div>

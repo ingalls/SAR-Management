@@ -59,7 +59,7 @@
             <TablerNone
                 v-else-if='!list.items.length'
                 :create='false'
-                :label='Applications'
+                label='No Applications'
             />
             <table
                 v-else

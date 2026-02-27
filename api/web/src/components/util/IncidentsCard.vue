@@ -25,7 +25,7 @@
             />
             <TablerNone
                 v-else-if='!incidents.length'
-                label='Incidents'
+                label='No Incidents'
                 :create='false'
             />
             <div

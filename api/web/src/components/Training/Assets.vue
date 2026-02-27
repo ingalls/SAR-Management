@@ -59,7 +59,7 @@
             </table>
             <TablerNone
                 v-else
-                label='Training Assets'
+                label='No Training Assets'
                 :create='false'
             />
         </div>
