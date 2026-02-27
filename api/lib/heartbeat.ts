@@ -126,8 +126,12 @@ export default class Heartbeat {
                 .process(async (team: any) => {
                     try {
                         await slack.userGroupSync(team.id);
-                    } catch (err) {
-                        console.error(`Failed to sync team ${team.id}`, err);
+                    } catch (err: any) {
+                        if (err.status === 400 && err.safe === 'Slack User Group Sync is disabled for this team') {
+                            console.log(`ok - ${team.name} has no Slack User Group`);
+                        } else {
+                            console.error(`Failed to sync team ${team.name}`, err);
+                        }
                     }
                 });
         } catch (err) {
