@@ -119,7 +119,9 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json({
                 status: 200,
-                message: 'Synced'
+                message: sync.warnings.length
+                    ? `Synced (warnings: ${sync.warnings.join('; ')})`
+                    : 'Synced'
             });
         } catch (err) {
             Err.respond(err, res);

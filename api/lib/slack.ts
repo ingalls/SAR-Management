@@ -155,8 +155,9 @@ export default class Slack {
         }
     }
 
-    async userGroupSync(team_id: number): Promise<{ errors: string[] }> {
+    async userGroupSync(team_id: number): Promise<{ errors: string[], warnings: string[] }> {
         const errors: string[] = [];
+        const warnings: string[] = [];
         await this.check();
 
         const enabled = (await this.config.models.TeamSetting.typed(team_id, 'slack::usergroup::enabled', false)).value;
@@ -172,7 +173,7 @@ export default class Slack {
 
         if (!mappings.total) {
             console.warn(`Slack: No channel mappings found for team ${team_id} - skipping sync`);
-            return { errors };
+            return { errors, warnings };
         }
 
         const users = await this.config.models.User.listExternal('slack::userid', {
@@ -211,18 +212,20 @@ export default class Slack {
 
         if (teamSlackIds.length === 0) {
             console.warn(`Slack: No valid Slack users found for team ${team_id} - skipping sync`);
-            return { errors };
+            return { errors, warnings };
         }
 
         const group = await this.getUserGroup(groupName);
 
         if (!group) {
             errors.push('Failed to find or create Slack User Group');
-            return { errors };
+            return { errors, warnings };
         }
 
         try {
-            const channelIds = mappings.items.map((m: any) => m.channel_id);
+            const channelIds = mappings.items
+                .map((m: any) => m.channel_id)
+                .filter((id: string) => id && id.trim().length > 0);
             if (channelIds.length) {
                 await this.client.usergroups.update({
                     usergroup: group.id!,
@@ -230,7 +233,10 @@ export default class Slack {
                 });
             }
         } catch (err: any) {
-            errors.push(`Slack: Failed to sync default channels to group - ${err.message || err}`);
+            const slackCode = err.data?.error ?? err.code ?? 'unknown';
+            const msg = `Slack: Failed to set default channels on group (${slackCode}) - ${err.message || err}`;
+            console.error(msg, JSON.stringify(err, null, 2));
+            warnings.push(msg);
         }
 
         // usergroups.users.update replaces the entire member list, so one call is all we need.
@@ -248,7 +254,7 @@ export default class Slack {
             errors.push(`${msg} - ${detail}`);
         }
 
-        return { errors };
+        return { errors, warnings };
     }
 
     // Runs fn(), and if Slack returns token_expired, refreshes the token and retries once.
