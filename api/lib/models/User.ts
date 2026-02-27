@@ -64,6 +64,19 @@ export default class UserModel extends Modeler<typeof User> {
         });
     }
 
+    async removeExternal(uid: number, integration: string) {
+        await this.pool.delete(UserExternal).where(and(
+            eq(UserExternal.uid, uid),
+            eq(UserExternal.integration, integration)
+        ));
+    }
+
+    async listLinked(integration: string) {
+        return await this.pool.select().from(UserExternal).where(
+            eq(UserExternal.integration, integration)
+        );
+    }
+
     async listMissingExternal(integration: string) {
         return await this.pool.select().from(User).where(notExists(
             this.pool.select().from(UserExternal).where(and(

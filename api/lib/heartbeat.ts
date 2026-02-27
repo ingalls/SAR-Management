@@ -44,6 +44,7 @@ export default class Heartbeat {
             
             // Map slackUsers by email for easy lookup
             const slackUsersByEmail = new Map<string, SlackUser>();
+            const slackUsersById = new Map<string, SlackUser>();
             for (const sUser of slackUsers) {
                 if (
                     !sUser.deleted && 
@@ -53,6 +54,7 @@ export default class Heartbeat {
                     sUser.profile.email
                 ) {
                     slackUsersByEmail.set(sUser.profile.email.toLowerCase(), sUser);
+                    slackUsersById.set(sUser.id, sUser);
                 }
             }
 
@@ -73,6 +75,20 @@ export default class Heartbeat {
                     }
                 }
             }
+
+            // Remove Invalid Slack Users
+            const linkedUsers = await this.config.models.User.listLinked('slack::userid');
+            for (const link of linkedUsers) {
+                if (!slackUsersById.has(link.value)) {
+                    try {
+                        await this.config.models.User.removeExternal(link.uid, 'slack::userid');
+                        console.log(`Unlinked User ${link.uid} -> Slack ID ${link.value}`);
+                    } catch (err) {
+                        console.error(`Failed to unlink User ${link.uid} -> Slack ID ${link.value}`, err);
+                    }
+                }
+            }
+
 
             // --- Report Unknown Slack Users ---
             const dbUsers = await this.config.models.User.list({ limit: 5000 });
