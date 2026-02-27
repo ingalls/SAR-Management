@@ -34,29 +34,34 @@ export default class Slack {
 
     static async create(config: Config): Promise<Slack | undefined> {
         try {
-            const enabled = (await config.models.Server.from('slack_enabled')).value ? true : false;
+            const enabled = (await config.models.Server.from('slack_enabled')).value;
             if (!enabled) return;
         } catch {
             return;
         }
 
-        let token;
+        let token: string;
         try {
             token = (await config.models.Server.from('slack_token')).value;
         } catch {
             return;
         }
 
-        let refreshToken, clientId, clientSecret, expiry;
-        try { refreshToken = (await config.models.Server.from('slack_refresh')).value; } catch { /* empty */ }
-        try { clientId = (await config.models.Server.from('slack_client_id')).value; } catch { /* empty */ }
-        if (!clientId) {
-            try { clientId = (await config.models.Server.from('slack_app_id')).value; } catch { /* empty */ }
-        }
-        try { clientSecret = (await config.models.Server.from('slack_client_secret')).value; } catch { /* empty */ }
-        try { expiry = parseInt((await config.models.Server.from('slack_token_expiry')).value); } catch { /* empty */ }
+        // Fetch all optional settings in parallel
+        const [refreshToken, clientIdPrimary, clientIdFallback, clientSecret, expiryRaw] = await Promise.all([
+            config.models.Server.from('slack_refresh').then(r => r.value).catch(() => undefined),
+            config.models.Server.from('slack_client_id').then(r => r.value).catch(() => undefined),
+            config.models.Server.from('slack_app_id').then(r => r.value).catch(() => undefined),
+            config.models.Server.from('slack_client_secret').then(r => r.value).catch(() => undefined),
+            config.models.Server.from('slack_token_expiry').then(r => parseInt(r.value)).catch(() => undefined),
+        ]);
 
-        return new Slack(token, config, { refreshToken, clientId, clientSecret, expiry });
+        return new Slack(token, config, {
+            refreshToken,
+            clientId: clientIdPrimary ?? clientIdFallback,
+            clientSecret,
+            expiry: expiryRaw
+        });
     }
 
     async refresh(): Promise<string> {
@@ -228,91 +233,54 @@ export default class Slack {
             errors.push(`Slack: Failed to sync default channels to group - ${err.message || err}`);
         }
 
+        // usergroups.users.update replaces the entire member list, so one call is all we need.
         try {
-            const currentMembers = await this.client.usergroups.users.list({ usergroup: group.id! });
-            if (currentMembers.ok && currentMembers.users) {
-                const currentSet = new Set(currentMembers.users);
-
-                // Add users not in group
-                const toAdd = teamSlackIds.filter(id => !currentSet.has(id));
-                if (toAdd.length > 0) {
-                     await this.client.usergroups.users.update({
-                        usergroup: group.id!,
-                        users: teamSlackIds.join(',')
-                        // Note: update replaces the list, which acts as add+remove.
-                        // If we want to only add, this API is tricky.
-                        // But usually sync implies "make it match".
-                     });
-                } else if (currentMembers.users.length !== teamSlackIds.length && teamSlackIds.length > 0) {
-                     // If no one to add but lengths differ, it means we need to remove someone?
-                     // Verify if "update" is safe. Docs say: "The list of users to be in the user group."
-                     // So we should just send the full list of desired users.
-                     await this.client.usergroups.users.update({
-                        usergroup: group.id!,
-                        users: teamSlackIds.join(',')
-                     });
-                }
-            } else {
-                 // No current members or failed to list, try setting list
-                 if (teamSlackIds.length > 0) {
-                    await this.client.usergroups.users.update({
-                        usergroup: group.id!,
-                        users: teamSlackIds.join(',')
-                    });
-                 }
-            }
-
+            await this.client.usergroups.users.update({
+                usergroup: group.id!,
+                users: teamSlackIds.join(',')
+            });
         } catch (err: any) {
-             const msg = `Slack: Failed to sync users to Group ${groupName}`;
-             console.error(msg, JSON.stringify(err, null, 2));
-
-             if (err.data && err.data.error === 'permission_denied') {
-                 errors.push(`${msg} - Permission denied. Ensure your Slack Token is a User Token (xoxp-) from an Admin/Owner, as Bot tokens cannot manage User Groups.`);
-             } else if (err.data && err.data.error) {
-                errors.push(`${msg} - ${err.data.error}`);
-             } else if (err.message) {
-                errors.push(`${msg} - ${err.message}`);
-             } else {
-                errors.push(msg);
-             }
+            const msg = `Slack: Failed to sync users to Group ${groupName}`;
+            console.error(msg, JSON.stringify(err, null, 2));
+            const detail = err.data?.error === 'permission_denied'
+                ? 'Permission denied. Ensure your Slack Token is a User Token (xoxp-) from an Admin/Owner.'
+                : (err.data?.error ?? err.message ?? err);
+            errors.push(`${msg} - ${detail}`);
         }
 
         return { errors };
     }
 
+    // Runs fn(), and if Slack returns token_expired, refreshes the token and retries once.
+    private async withTokenRefresh<T>(fn: () => Promise<T>): Promise<T> {
+        try {
+            return await fn();
+        } catch (err: any) {
+            if (err.code === 'slack_webapi_platform_error' && err.data?.error === 'token_expired') {
+                await this.refresh();
+                return fn();
+            }
+            throw err;
+        }
+    }
+
     async postMessage(channel: string, text: string): Promise<void> {
         await this.check();
 
-        if (!this.client.token) {
-            console.error('Slack token not configured - cannot send message');
-            return;
-        }
-
         try {
-            await this.client.chat.postMessage({
-                channel: channel,
-                text: text
-            });
-        } catch (err) {
-            const error = err as { code?: string, data?: { error?: string, needed?: string, provided?: string } };
-
-            if (error.code === 'slack_webapi_platform_error' && error.data?.error === 'token_expired') {
-                try {
-                    await this.refresh();
-                    await this.client.chat.postMessage({
-                        channel: channel,
-                        text: text
-                    });
-                } catch (refreshErr) {
-                     console.error('Slack Error: Failed to refresh token and retry message', refreshErr);
+            await this.withTokenRefresh(() => this.client.chat.postMessage({ channel, text }));
+        } catch (err: any) {
+            if (err.code === 'slack_webapi_platform_error') {
+                switch (err.data?.error) {
+                    case 'missing_scope':
+                        console.error(`Slack Error: Missing required scopes. Needed: ${err.data.needed}, Provided: ${err.data.provided}`);
+                        return;
+                    case 'not_in_channel':
+                        console.error(`Slack Error: Bot is not in channel '${channel}'. Please invite the bot.`);
+                        return;
                 }
-            } else if (error.code === 'slack_webapi_platform_error' && error.data?.error === 'missing_scope') {
-                console.error(`Slack Error: The provided token is missing required scopes. Needed: ${error.data.needed}, Provided: ${error.data.provided}`);
-            } else if (error.code === 'slack_webapi_platform_error' && error.data?.error === 'not_in_channel') {
-                console.error(`Slack Error: The bot is not in the channel '${channel}'. Please invite the bot to the channel.`);
-            } else {
-                throw err;
             }
+            throw err;
         }
     }
 }
