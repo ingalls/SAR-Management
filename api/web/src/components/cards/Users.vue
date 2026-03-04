@@ -102,6 +102,7 @@
                                 <UserDropdownIcon
                                     v-else
                                     :button='true'
+                                    :icon-size='32'
                                     @selected='addUser($event)'
                                 />
                             </template>

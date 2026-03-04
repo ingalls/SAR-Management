@@ -107,7 +107,7 @@ export const TeamSetting = pgTable('teams_settings', {
     id: serial().primaryKey(),
     team_id: integer().notNull().references(() => Team.id),
     key: text().notNull(),
-    value: text().notNull().default(''),                                                                                                                                                                              
+    value: text().notNull().default(''),
 });
 
 export const TeamChannel = pgTable('teams_channels', {

@@ -152,6 +152,7 @@
                                 :create='is_iam("Equipment:Manage")'
                                 label='Contained Equipment'
                                 :parent='equipment.id'
+                                :user-filter='true'
                             />
                         </div>
                     </template>

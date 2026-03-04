@@ -1,51 +1,63 @@
 <template>
-    <div class='dropdown'>
-        <div
-            id='dropdownMenuButton1'
-            type='button'
-            :class='{
-                "btn px-2": button
-            }'
-            data-bs-toggle='dropdown'
-            aria-expanded='false'
+    <TablerDropdown>
+        <TablerIconButton
+            :title='title'
+            :disabled='disabled'
+            :class='{ "btn px-2": button }'
+            :style='height ? { height: height + "px", width: height + "px", display: "flex", alignItems: "center", justifyContent: "center" } : {}'
         >
-            <IconPlus
-                :size='24'
-                stroke='1'
+            <IconUserPlus
+                :size='iconSize'
+                :stroke='1'
             />
-        </div>
-        <ul
-            class='dropdown-menu'
-            aria-labelledby='dropdownMenuButton1'
-        >
-            <div class='m-1'>
-                <TablerInput
-                    v-model='filter'
-                    placeholder='Filter Users'
-                />
-
-                <div
-                    v-for='user in list.items'
-                    :key='user.id'
-                    @click='select(user)'
-                >
-                    <div class='d-flex align-items-center my-1 cursor-pointer'>
+        </TablerIconButton>
+        <template #dropdown>
+            <div
+                class='card'
+                style='min-width: 300px;'
+                @click.stop=''
+            >
+                <div class='card-header'>
+                    <div class='card-title'>
+                        Select User
+                    </div>
+                </div>
+                <div class='card-body'>
+                    <TablerInput
+                        v-model='filter'
+                        icon='search'
+                        placeholder='Search Users…'
+                    />
+                    <div
+                        v-for='user in list.items'
+                        :key='user.id'
+                        class='d-flex align-items-center my-1 p-2 cursor-pointer rounded hover-shadow'
+                        @click='select(user)'
+                    >
                         <Avatar :user='user' />
+                    </div>
+                    <div
+                        v-if='!list.items.length'
+                        class='text-muted text-center py-2'
+                    >
+                        No users found
                     </div>
                 </div>
             </div>
-        </ul>
-    </div>
+        </template>
+    </TablerDropdown>
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import Avatar from './Avatar.vue'
 import {
+    TablerDropdown,
+    TablerIconButton,
     TablerInput
 } from '@tak-ps/vue-tabler'
 import {
-    IconPlus
+    IconUserPlus
 } from '@tabler/icons-vue'
 
 const props = defineProps({
@@ -57,6 +69,18 @@ const props = defineProps({
     disabled: {
         type: Boolean,
         default: false
+    },
+    iconSize: {
+        type: Number,
+        default: 24
+    },
+    height: {
+        type: Number,
+        default: null
+    },
+    title: {
+        type: String,
+        default: 'Select User'
     },
     limit: {
         type: Number,

@@ -1,7 +1,7 @@
 <template>
     <div class='card'>
         <div class='card-header'>
-            <div class='col d-flex'>
+            <div class='col d-flex align-items-center'>
                 <h3 class='card-title'>
                     <a
                         class='cursor-pointer'
@@ -9,32 +9,55 @@
                         v-text='label'
                     />
                 </h3>
-                <div class='ms-auto'>
-                    <div class='btn-list'>
+                <div class='ms-auto btn-list'>
+                    <TablerIconButton
+                        v-if='create'
+                        title='New Equipment'
+                        @click='$router.push(`/equipment/new?parent=${parent}`)'
+                    >
                         <IconPlus
-                            v-if='create'
-                            :size='32'
+                            :size='24'
                             :stroke='1'
-                            class='cursor-pointer my-2'
-                            @click='$router.push(`/equipment/new?parent=${parent}`)'
                         />
-                        <div
-                            v-if='search'
-                            class='input-icon'
-                        >
-                            <input
-                                v-model='paging.filter'
-                                style='height: 40px;'
-                                type='text'
-                                class='form-control'
-                                placeholder='Search…'
-                            >
-                            <span class='input-icon-addon'>
-                                <IconSearch :size='24' />
-                            </span>
-                        </div>
-                    </div>
+                    </TablerIconButton>
                 </div>
+            </div>
+        </div>
+
+        <div
+            v-if='search || userFilter'
+            class='row g-2 mx-2 mt-1 mb-2 align-items-center'
+        >
+            <div
+                v-if='search && userFilter'
+                class='col-auto'
+                style='width: calc(100% - 48px)'
+            >
+                <TablerInput
+                    v-model='paging.filter'
+                    icon='search'
+                    placeholder='Search…'
+                />
+            </div>
+            <div
+                v-else-if='search'
+                class='col-12'
+            >
+                <TablerInput
+                    v-model='paging.filter'
+                    icon='search'
+                    placeholder='Search…'
+                />
+            </div>
+            <div
+                v-if='userFilter'
+                class='col-auto'
+            >
+                <UserDropdownIcon
+                    title='Filter by User'
+                    :height='40'
+                    @selected='selectUser($event)'
+                />
             </div>
         </div>
         <template v-if='loading.list'>
@@ -99,13 +122,16 @@
 </template>
 
 <script setup>
-import { reactive, watch, onMounted } from 'vue'
+import { ref, reactive, watch, onMounted } from 'vue'
+
 import TableFooter from '../util/TableFooter.vue';
+import UserDropdownIcon from '../util/UserDropdownIcon.vue';
 import {
     IconPlus,
-    IconSearch
 } from '@tabler/icons-vue';
 import {
+    TablerIconButton,
+    TablerInput,
     TablerLoading,
     TablerNone
 } from '@tak-ps/vue-tabler';
@@ -135,15 +161,26 @@ const props = defineProps({
     footer: {
         type: Boolean,
         default: true
+    },
+    userFilter: {
+        type: Boolean,
+        default: false
     }
 })
+
+const assignedUser = ref(null)
+
+const selectUser = (user) => {
+    assignedUser.value = user.id
+    fetch()
+}
 
 const loading = reactive({
     list: true
 })
 const paging = reactive({
     filter: '',
-    limit: 10,
+    limit: 25,
     page: 0
 })
 const list = reactive({
@@ -158,7 +195,11 @@ const fetch = async () => {
     url.searchParams.append('page', paging.page);
     url.searchParams.append('filter', paging.filter);
 
-    if (typeof props.assigned === 'number') url.searchParams.append('assigned', props.assigned);
+    if (typeof assignedUser.value === 'number') {
+        url.searchParams.append('assigned', assignedUser.value);
+    } else if (typeof props.assigned === 'number') {
+        url.searchParams.append('assigned', props.assigned);
+    }
     if (typeof props.parent === 'number') url.searchParams.append('parent', props.parent);
     const result = await window.std(url);
     list.total = result.total;
