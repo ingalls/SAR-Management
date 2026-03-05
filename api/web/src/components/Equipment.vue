@@ -144,6 +144,11 @@
                                 </div>
                             </div>
                         </div>
+                        <EquipmentIncidentsCard
+                            :equipment-id='equipment.id'
+                            :iam='iam'
+                            :auth='auth'
+                        />
                         <div
                             v-if='equipment.container'
                             class='col-lg-12'
@@ -175,6 +180,7 @@ import {
     IconSettings
 } from '@tabler/icons-vue';
 import CardEquipment from './cards/Equipment.vue';
+import EquipmentIncidentsCard from './util/EquipmentIncidentsCard.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
 import EquipmentProfile from './Equipment/Profile.vue';
 import Avatar from './util/Avatar.vue';

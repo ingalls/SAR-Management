@@ -9,16 +9,16 @@
                     <button
                         type='button'
                         class='btn'
-                        :class="{ 'btn-primary': view === 'files' }"
-                        @click="view = 'files'"
+                        :class='{ &apos;btn-primary&apos;: view === &apos;files&apos; }'
+                        @click='view = &apos;files&apos;'
                     >
                         Files
                     </button>
                     <button
                         type='button'
                         class='btn'
-                        :class="{ 'btn-primary': view === 'photos' }"
-                        @click="view = 'photos'"
+                        :class='{ &apos;btn-primary&apos;: view === &apos;photos&apos; }'
+                        @click='view = &apos;photos&apos;'
                     >
                         Photos
                     </button>
@@ -39,7 +39,7 @@
             </div>
         </div>
         <div
-            v-if="view === 'files'"
+            v-if='view === &apos;files&apos;'
             class='table-responsive'
         >
             <table
@@ -93,7 +93,7 @@
         </div>
 
         <div
-            v-else-if="view === 'photos'"
+            v-else-if='view === &apos;photos&apos;'
             class='p-3'
         >
             <div

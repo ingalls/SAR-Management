@@ -54,6 +54,8 @@ const router = new VueRouter.createRouter({
         { path: '/equipment/new', name: 'equipment-new', component: () => import('./components/EquipmentEdit.vue') },
         { path: '/equipment/:equipid', name: 'equipment', component: () => import('./components/Equipment.vue') },
         { path: '/equipment/:equipid/edit', name: 'equipment-edit', component: () => import('./components/EquipmentEdit.vue') },
+        { path: '/equipment/:equipid/incident/new', name: 'equipment-incident-new', component: () => import('./components/EquipmentIncidentEdit.vue') },
+        { path: '/equipment/:equipid/incident/:incidentid/edit', name: 'equipment-incident-edit', component: () => import('./components/EquipmentIncidentEdit.vue') },
 
         { path: '/doc/:pathMatch(.*)*', name: 'docs', component: () => import('./components/Docs.vue') },
 
