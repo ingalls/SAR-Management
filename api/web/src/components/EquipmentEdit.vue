@@ -52,15 +52,24 @@
                                                     />
                                                 </div>
                                                 <div class='col-md-4 pb-2'>
-                                                    <TablerList
-                                                        key='type'
-                                                        :initial='type'
-                                                        label='Equipment Type'
-                                                        url='/api/equipment-type'
-                                                        listkey='items'
-                                                        namekey='type'
-                                                        @selected='equipment.type_id = $event.id'
-                                                    />
+                                                    <label class='form-label'>Equipment Type</label>
+                                                    <select
+                                                        v-model='equipment.type_id'
+                                                        class='form-select'
+                                                    >
+                                                        <option
+                                                            :value='null'
+                                                            disabled
+                                                        >
+                                                            Select Equipment Type
+                                                        </option>
+                                                        <option
+                                                            v-for='t in equipmentTypes'
+                                                            :key='t.id'
+                                                            :value='t.id'
+                                                            v-text='t.type'
+                                                        />
+                                                    </select>
                                                 </div>
                                                 <div class='col-md-12 pb-2'>
                                                     <TablerInput
@@ -72,6 +81,7 @@
                                                 <div class='col-md-6 pb-2'>
                                                     <TablerInput
                                                         v-model='equipment.quantity'
+                                                        type='number'
                                                         label='Quantity'
                                                     />
                                                 </div>
@@ -242,6 +252,7 @@ export default {
             },
             parent: {},
             assigned: [],
+            equipmentTypes: [],
             equipment: {
                 name: '',
                 description: '',
@@ -260,6 +271,8 @@ export default {
         }
     },
     mounted: async function() {
+        await this.fetchTypes();
+
         if (this.is_iam("Equipment:Manage") && this.$route.params.equipid) {
             await this.fetch();
         } else if (!this.$route.params.equipid) {
@@ -274,6 +287,15 @@ export default {
     },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+        fetchTypes: async function() {
+            const res = await window.std('/api/equipment-type?limit=100');
+            this.equipmentTypes = res.items;
+
+            if (!this.$route.params.equipid && !this.equipment.type_id) {
+                const generic = this.equipmentTypes.find((t) => t.type === 'Generic');
+                if (generic) this.equipment.type_id = generic.id;
+            }
+        },
         uploadurl: function() {
             return window.stdurl(`api/equipment/${this.$route.params.equipid}/profile`);
         },
@@ -313,6 +335,7 @@ export default {
                     method: 'PATCH',
                     body: {
                         ...this.equipment,
+                        parent: this.equipment.parent || null,
                         value: this.equipment.value ? Number(this.equipment.value) : null,
                         quantity: this.equipment.quantity ? parseInt(this.equipment.quantity) : null,
                         assigned: this.assigned.map((a) => { return a.uid || a.id })
@@ -326,6 +349,7 @@ export default {
                     method: 'POST',
                     body: {
                         ...this.equipment,
+                        parent: this.equipment.parent || null,
                         value: this.equipment.value ? Number(this.equipment.value) : null,
                         quantity: this.equipment.quantity ? parseInt(this.equipment.quantity) : null,
                         assigned: this.assigned.map((a) => { return a.uid || a.id })

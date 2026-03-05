@@ -4,7 +4,7 @@
             <h3 class='card-title'>
                 Assets
             </h3>
-            <div class='card-actions btn-actions'>
+            <div class='card-actions btn-actions d-flex align-items-center'>
                 <TablerIconButton
                     v-if='mode === "edit" || is_iam("Training:Manage")'
                     title='Add Asset'

@@ -2,6 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
+import { stringify } from 'csv-stringify/sync';
 import Notify from '../lib/notify.js';
 import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
@@ -12,11 +13,15 @@ import { Equipment } from '../lib/schema.js';
 export default async function router(schema: Schema, config: Config) {
     const notify = new Notify(config);
 
+    const equipFields = new Set(Object.keys(Equipment));
+
     await schema.get('/equipment', {
         name: 'List Equipment',
         group: 'Equipment',
         description: 'Get all equipment in the Org',
         query: Type.Object({
+            format: Type.String({ enum: ['csv', 'json'], default: 'json' }),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Array.from(equipFields) }))),
             limit: Type.Optional(Type.Integer()),
             assigned: Type.Optional(Type.Integer()),
             container: Type.Optional(Type.Boolean()),
@@ -35,25 +40,65 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.VIEW);
 
-            const list = await config.models.Equipment.augmented_list({
-                limit: req.query.limit,
-                page: req.query.page,
-                order: req.query.order,
-                sort: req.query.sort,
-                where: sql`
-                    (
-                        (${Param(req.query.parent)}::BIGINT IS NULL)
-                        OR (${Param(req.query.parent)}::BIGINT = 0 AND parent IS NULL)
-                        OR (${Param(req.query.parent)}::BIGINT IS NOT NULL AND parent = ${Param(req.query.parent)}::BIGINT)
-                    )
-                    AND (${Param(req.query.container)}::BOOLEAN IS NULL OR container = ${Param(req.query.container)})
-                    AND (${Param(req.query.archived)}::BOOLEAN IS NULL OR archived = ${Param(req.query.archived)})
-                    AND (${Param(req.query.filter)}::TEXT IS NULL OR name ~* ${Param(req.query.filter)})
-                    AND (${Param(req.query.assigned)}::INT IS NULL OR assigned_ids @> ARRAY[${Param(req.query.assigned)}::INT])
-                `
-            })
+            const whereClause = sql`
+                (
+                    (${Param(req.query.parent)}::BIGINT IS NULL)
+                    OR (${Param(req.query.parent)}::BIGINT = 0 AND parent IS NULL)
+                    OR (${Param(req.query.parent)}::BIGINT IS NOT NULL AND parent = ${Param(req.query.parent)}::BIGINT)
+                )
+                AND (${Param(req.query.container)}::BOOLEAN IS NULL OR container = ${Param(req.query.container)})
+                AND (${Param(req.query.archived)}::BOOLEAN IS NULL OR archived = ${Param(req.query.archived)})
+                AND (${Param(req.query.filter)}::TEXT IS NULL OR name ~* ${Param(req.query.filter)})
+                AND (${Param(req.query.assigned)}::INT IS NULL OR assigned_ids @> ARRAY[${Param(req.query.assigned)}::INT])
+            `;
 
-            res.json(list);
+            if (req.query.format === 'csv') {
+                const fields = req.query.fields || ['name', 'status', 'description', 'quantity'];
+                res.set('Content-Type', 'text/csv');
+                res.set('Content-Disposition', 'attachment; filename="sar-equipment.csv"');
+                res.write(stringify([fields]));
+
+                let total: number;
+                let page = 0;
+                do {
+                    const list = await config.models.Equipment.augmented_list({
+                        page: page,
+                        limit: 100,
+                        order: req.query.order,
+                        sort: req.query.sort,
+                        where: whereClause
+                    });
+
+                    total = list.total;
+
+                    for (const equip of list.items) {
+                        const line = [];
+                        for (const field of fields) {
+                            if (field === 'assigned') {
+                                line.push((equip.assigned || []).map((a: { fname: string, lname: string}) => `${a.fname} ${a.lname}`).join('; '));
+                            } else {
+                                // @ts-expect-error Dynamic field access
+                                line.push(equip[field] === undefined || equip[field] === null ? '' : equip[field]);
+                            }
+                        }
+                        res.write(stringify([line]));
+                    }
+
+                    page++;
+                } while (total > (page + 1) * 100);
+
+                res.end();
+            } else {
+                const list = await config.models.Equipment.augmented_list({
+                    limit: req.query.limit,
+                    page: req.query.page,
+                    order: req.query.order,
+                    sort: req.query.sort,
+                    where: whereClause
+                });
+
+                res.json(list);
+            }
         } catch (err) {
             Err.respond(err, res);
         }

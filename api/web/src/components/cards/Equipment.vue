@@ -20,6 +20,15 @@
                             :stroke='1'
                         />
                     </TablerIconButton>
+                    <TablerIconButton
+                        title='Export CSV'
+                        @click='exportEquipment'
+                    >
+                        <IconDownload
+                            :size='24'
+                            :stroke='1'
+                        />
+                    </TablerIconButton>
                 </div>
             </div>
         </div>
@@ -128,6 +137,7 @@ import TableFooter from '../util/TableFooter.vue';
 import UserDropdownIcon from '../util/UserDropdownIcon.vue';
 import {
     IconPlus,
+    IconDownload,
 } from '@tabler/icons-vue';
 import {
     TablerIconButton,
@@ -173,6 +183,34 @@ const assignedUser = ref(null)
 const selectUser = (user) => {
     assignedUser.value = user.id
     fetch()
+}
+
+const exportEquipment = async () => {
+    const url = window.stdurl('/api/equipment');
+    url.searchParams.append('format', 'csv');
+    url.searchParams.append('filter', paging.filter);
+
+    const fields = ['name', 'status', 'description', 'quantity'];
+    for (const field of fields) {
+        url.searchParams.append('fields', field);
+    }
+
+    if (typeof assignedUser.value === 'number') {
+        url.searchParams.append('assigned', assignedUser.value);
+    } else if (typeof props.assigned === 'number') {
+        url.searchParams.append('assigned', props.assigned);
+    }
+    if (typeof props.parent === 'number') url.searchParams.append('parent', props.parent);
+
+    const res = await window.std(url);
+    const blob = await res.blob();
+    const durl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = durl;
+    a.download = 'sar-equipment.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 }
 
 const loading = reactive({

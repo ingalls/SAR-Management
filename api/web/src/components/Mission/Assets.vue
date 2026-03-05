@@ -4,7 +4,7 @@
             <h3 class='card-title'>
                 Assets
             </h3>
-            <div class='ms-auto btn-list'>
+            <div class='ms-auto btn-list d-flex align-items-center'>
                 <div class='btn-group'>
                     <button
                         type='button'

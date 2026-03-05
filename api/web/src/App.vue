@@ -11,7 +11,7 @@
                         height='50'
                         width='50'
                         src='/logo.png'
-                        @click='$router.push("/")'
+                        @click='navigate("/", $event)'
                     >
                 </div>
                 <div class='col mx-2'>
@@ -43,47 +43,47 @@
                         <div class='dropdown-menu dropdown-menu-end'>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/")'
+                                @click='navigate("/", $event)'
                             >Home</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/issue")'
+                                @click='navigate("/issue", $event)'
                             >Issues</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/equipment")'
+                                @click='navigate("/equipment", $event)'
                             >Equipment</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/doc")'
+                                @click='navigate("/doc", $event)'
                             >Docs</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/mission")'
+                                @click='navigate("/mission", $event)'
                             >Missions</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/training")'
+                                @click='navigate("/training", $event)'
                             >Training</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/team")'
+                                @click='navigate("/team", $event)'
                             >Team</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/calendar")'
+                                @click='navigate("/calendar", $event)'
                             >Calendar</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/schedule")'
+                                @click='navigate("/schedule", $event)'
                             >On-Call</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/application")'
+                                @click='navigate("/application", $event)'
                             >Applications</a>
                             <a
                                 class='dropdown-item'
-                                @click='$router.push("/rolodex")'
+                                @click='navigate("/rolodex", $event)'
                             >Rolodex</a>
                         </div>
 
@@ -92,7 +92,7 @@
                             class='btn btn-dark'
                             target='_blank'
                             rel='noreferrer'
-                            @click='$router.push("/notification")'
+                            @click='navigate("/notification", $event)'
                         >
                             <IconBell
                                 size='32'
@@ -123,11 +123,11 @@
                             >
                                 <a
                                     class='cursor-pointer dropdown-item'
-                                    @click='$router.push("/profile")'
+                                    @click='navigate("/profile", $event)'
                                 >Profile</a>
                                 <a
                                     class='cursor-pointer dropdown-item'
-                                    @click='$router.push("/logout")'
+                                    @click='navigate("/logout", $event)'
                                 >Logout</a>
                             </ul>
                         </div>
@@ -149,7 +149,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/")'
+                                    @click='navigate("/", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconHome
@@ -163,7 +163,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/issue")'
+                                    @click='navigate("/issue", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconBug
@@ -177,7 +177,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/equipment")'
+                                    @click='navigate("/equipment", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconShovel
@@ -191,7 +191,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/doc")'
+                                    @click='navigate("/doc", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconNotebook
@@ -205,7 +205,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/training")'
+                                    @click='navigate("/training", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconTruck
@@ -219,7 +219,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/mission")'
+                                    @click='navigate("/mission", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconAmbulance
@@ -233,7 +233,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/team")'
+                                    @click='navigate("/team", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconUsers
@@ -247,7 +247,7 @@
                             <li class='nav-item'>
                                 <a
                                     class='nav-link cursor-pointer'
-                                    @click='$router.push("/calendar")'
+                                    @click='navigate("/calendar", $event)'
                                 >
                                     <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                         <IconCalendar
@@ -275,7 +275,7 @@
                                         <a
                                             v-if='is_iam("Incident:View")'
                                             class='nav-link cursor-pointer'
-                                            @click='$router.push("/incident")'
+                                            @click='navigate("/incident", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconMedicalCross
@@ -288,7 +288,7 @@
                                         <a
                                             v-if='is_iam("Statistics:View")'
                                             class='nav-link cursor-pointer'
-                                            @click='$router.push("/stats")'
+                                            @click='navigate("/stats", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconChartBar
@@ -300,7 +300,7 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
-                                            @click='$router.push("/schedule")'
+                                            @click='navigate("/schedule", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconCalendarTime
@@ -312,7 +312,7 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
-                                            @click='$router.push("/application")'
+                                            @click='navigate("/application", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconUserPlus
@@ -324,7 +324,7 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
-                                            @click='$router.push("/rolodex")'
+                                            @click='navigate("/rolodex", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconAddressBook
@@ -346,7 +346,7 @@
                                 <li class='nav-item'>
                                     <a
                                         class='nav-link cursor-pointer'
-                                        @click='$router.push("/admin")'
+                                        @click='navigate("/admin", $event)'
                                     >
                                         <span class='nav-link-icon d-md-none d-lg-inline-block'>
                                             <IconAdjustments
@@ -433,6 +433,14 @@ const user = ref(null)
 const err = ref(false)
 
 const is_iam = (permission) => { return checkIAM(iam, user.value, permission) };
+
+const navigate = (path, event) => {
+    if (event.ctrlKey || event.metaKey) {
+        window.open(router.resolve(path).href, '_blank');
+    } else {
+        router.push(path);
+    }
+};
 
 const enableNav = computed(() => {
     if (!route || !route.name) return false;
