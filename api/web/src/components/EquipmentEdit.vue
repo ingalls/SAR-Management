@@ -102,15 +102,23 @@
                                                             label='Equipment Container?'
                                                         />
 
-                                                        <TablerList
-                                                            key='parent'
-                                                            :initial='parent'
-                                                            label='Parent Container'
-                                                            url='/api/equipment?container=true'
-                                                            listkey='equipment'
-                                                            namekey='name'
-                                                            @selected='equipment.parent = $event.id'
-                                                        />
+                                                        <label class='form-label'>Parent Container</label>
+                                                        <select
+                                                            v-model='equipment.parent'
+                                                            class='form-select'
+                                                        >
+                                                            <option
+                                                                :value='null'
+                                                            >
+                                                                None
+                                                            </option>
+                                                            <option
+                                                                v-for='c in containers'
+                                                                :key='c.id'
+                                                                :value='c.id'
+                                                                v-text='c.name'
+                                                            />
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class='col-md-6 pb-2'>
@@ -200,7 +208,6 @@ import {
     TablerLoading,
     TablerToggle,
     TablerInput,
-    TablerList
 } from '@tak-ps/vue-tabler'
 import UserSelect from './util/UserSelect.vue';
 import NoAccess from './util/NoAccess.vue';
@@ -218,7 +225,6 @@ export default {
         Upload,
         TablerBreadCrumb,
         UserSelect,
-        TablerList,
         TablerInput,
         TablerToggle,
         TablerLoading,
@@ -250,9 +256,9 @@ export default {
             type: {
                 schema: {}
             },
-            parent: {},
             assigned: [],
             equipmentTypes: [],
+            containers: [],
             equipment: {
                 name: '',
                 description: '',
@@ -272,14 +278,15 @@ export default {
     },
     mounted: async function() {
         await this.fetchTypes();
+        await this.fetchContainers();
 
         if (this.is_iam("Equipment:Manage") && this.$route.params.equipid) {
             await this.fetch();
         } else if (!this.$route.params.equipid) {
             const url = new URL(window.location);
             if (url.searchParams.has('parent')) {
-                this.parent = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
-                this.equipment.parent = this.parent.id;
+                const parentEquip = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
+                this.equipment.parent = parentEquip.id;
             }
 
             this.loading.equipment = false;
@@ -296,6 +303,10 @@ export default {
                 if (generic) this.equipment.type_id = generic.id;
             }
         },
+        fetchContainers: async function() {
+            const res = await window.std('/api/equipment?container=true&limit=100');
+            this.containers = res.items;
+        },
         uploadurl: function() {
             return window.stdurl(`api/equipment/${this.$route.params.equipid}/profile`);
         },
@@ -305,9 +316,6 @@ export default {
 
             if (this.equipment.type_id) {
                 this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
-            }
-            if (this.equipment.parent) {
-                this.parent = await window.std(`/api/equipment/${this.equipment.parent}`);
             }
 
             this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).items;
