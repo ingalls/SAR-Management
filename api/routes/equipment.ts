@@ -72,12 +72,11 @@ export default async function router(schema: Schema, config: Config) {
                     total = list.total;
 
                     for (const equip of list.items) {
-                        const line = [];
+                        const line: string[] = [];
                         for (const field of fields) {
                             if (field === 'assigned') {
                                 line.push((equip.assigned || []).map((a: { fname: string, lname: string}) => `${a.fname} ${a.lname}`).join('; '));
                             } else {
-                                // @ts-expect-error Dynamic field access
                                 line.push(equip[field] === undefined || equip[field] === null ? '' : equip[field]);
                             }
                         }

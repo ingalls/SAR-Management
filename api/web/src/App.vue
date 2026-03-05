@@ -503,8 +503,21 @@ onErrorCaptured((error) => {
 
 onMounted(async () => {
     window.addEventListener('error', (evt) => {
+        // Cross-origin script errors surface as "Script error." with no details.
+        // These contain no actionable information so skip them.
+        if (!evt.error && evt.message === 'Script error.') return;
+
         evt.preventDefault();
-        err.value = evt;
+        err.value = evt.error instanceof Error
+            ? evt.error
+            : new Error(evt.message || 'Unknown error');
+    });
+
+    window.addEventListener('unhandledrejection', (evt) => {
+        evt.preventDefault();
+        err.value = evt.reason instanceof Error
+            ? evt.reason
+            : new Error(String(evt.reason) || 'Unhandled promise rejection');
     });
 
     await fetchName();
