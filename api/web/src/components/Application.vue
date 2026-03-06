@@ -69,7 +69,7 @@
 
                                         <div class='ms-auto btn-list d-flex align-items-center'>
                                             <TablerEpoch :date='application.created' />
-                                            <IconSettings
+                                            <IconPencil
                                                 v-if='!edit'
                                                 class='cursor-pointer'
                                                 :size='32'
@@ -151,7 +151,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
-    IconSettings
+    IconPencil
 } from '@tabler/icons-vue';
 
 export default {
@@ -159,7 +159,7 @@ export default {
     components: {
         TablerEpoch,
         CreateComment,
-        IconSettings,
+        IconPencil,
         TablerBreadCrumb,
         TablerLoading,
         TablerDelete,

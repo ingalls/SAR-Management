@@ -32,7 +32,7 @@
                                         v-text='schedule.name'
                                     />
                                     <div class='btn-list ms-auto'>
-                                        <IconSettings
+                                        <IconPencil
                                             v-if='is_iam("Oncall:Admin")'
                                             :size='32'
                                             stroke='1'
@@ -76,7 +76,7 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
-    IconSettings
+    IconPencil
 } from '@tabler/icons-vue';
 
 const route = useRoute();

@@ -23,7 +23,7 @@
                     stroke='1'
                     @click='router.push(`/application/new`)'
                 />
-                <IconSettings
+                <IconPencil
                     v-if='create && is_iam("Application:Manage")'
                     v-tooltip='"Edit Application Form"'
                     class='cursor-pointer'
@@ -137,7 +137,7 @@ import {
 import {
     IconGripVertical,
     IconPlus,
-    IconSettings
+    IconPencil
 } from '@tabler/icons-vue';
 
 const router = useRouter();

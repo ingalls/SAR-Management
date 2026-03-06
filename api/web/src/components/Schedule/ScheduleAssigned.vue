@@ -5,7 +5,7 @@
                 Assigned
             </h3>
             <div class='ms-auto'>
-                <IconSettings
+                <IconPencil
                     v-tooltip='"Edit"'
                     :size='32'
                     stroke='1'
@@ -93,7 +93,7 @@ import { ref, reactive, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Avatar from '../util/Avatar.vue';
 import {
-    IconSettings,
+    IconPencil,
 } from '@tabler/icons-vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';

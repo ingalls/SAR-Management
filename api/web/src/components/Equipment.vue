@@ -40,7 +40,7 @@
                                             style='height: 20px;'
                                         >Archived</span>
 
-                                        <IconSettings
+                                        <IconPencil
                                             v-if='is_iam("Equipment:Manage") && !equipment.archived'
                                             class='cursor-pointer'
                                             :stroke='1'
@@ -177,7 +177,7 @@ import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
 import {
-    IconSettings
+    IconPencil
 } from '@tabler/icons-vue';
 import CardEquipment from './cards/Equipment.vue';
 import EquipmentIncidentsCard from './util/EquipmentIncidentsCard.vue';
