@@ -24,7 +24,11 @@ export default class Login {
 
         if (!user.mfa_secret) throw new Err(403, null, 'MFA Not Setup');
 
-        const verification = await verify({ token, secret: user.mfa_secret });
+        const verification = await verify({
+            token,
+            secret: user.mfa_secret,
+            epochTolerance: [10, 30]
+        });
 
         if (!verification || !verification.valid) throw new Err(403, null, 'Invalid MFA Token');
 
