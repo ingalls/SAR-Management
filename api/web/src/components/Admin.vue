@@ -29,6 +29,9 @@
                             <CardTrainingTags />
                         </div>
                         <div class='col-lg-4'>
+                            <CardKnownCerts />
+                        </div>
+                        <div class='col-lg-4'>
                             <CardHeartbeat />
                         </div>
                     </template>
@@ -44,6 +47,7 @@ import CardTags from './Admin/Tags.vue';
 import CardTrainingTags from './Admin/TrainingTags.vue';
 import CardHeartbeat from './Admin/Heartbeat.vue';
 import ServerConfig from './Admin/ServerConfig.vue';
+import CardKnownCerts from './Admin/KnownCerts.vue';
 import {
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';

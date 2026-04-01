@@ -97,11 +97,18 @@
                 </tr>
             </tbody>
         </table>
+
+        <TableFooter
+            v-if='!loading'
+            :limit='limit'
+            :total='list.total'
+            @page='page = $event'
+        />
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import {
     IconPlus,
     IconPencil,
@@ -115,8 +122,11 @@ import {
     TablerInput,
     TablerNone
 } from '@tak-ps/vue-tabler';
+import TableFooter from '../util/TableFooter.vue';
 
 const loading = ref(true);
+const limit = 10;
+const page = ref(0);
 const list = reactive({
     total: 0,
     items: []
@@ -124,7 +134,11 @@ const list = reactive({
 
 const fetch = async () => {
     loading.value = true;
-    const result = await window.std('/api/mission-tag');
+    const url = window.stdurl('/api/mission-tag');
+    url.searchParams.append('limit', String(limit));
+    url.searchParams.append('page', String(page.value));
+
+    const result = await window.std(url);
     list.total = result.total;
     list.items = result.items;
     loading.value = false;
@@ -138,11 +152,12 @@ const saveTag = async (tag, tagit) => {
         });
         list.items.splice(tagit, 1, newtag);
     } else {
-        const newtag = await window.std('/api/mission-tag', {
+        await window.std('/api/mission-tag', {
             method: 'POST',
             body: tag
         });
-        list.items.splice(tagit, 1, newtag);
+        page.value = 0;
+        await fetch();
     }
 };
 
@@ -153,7 +168,11 @@ const deleteTag = async (tag, tagit) => {
         });
     }
 
-    list.items.splice(tagit, 1);
+    if (list.items.length === 1 && page.value > 0) {
+        page.value = page.value - 1;
+    } else {
+        await fetch();
+    }
 };
 
 const push = () => {
@@ -166,6 +185,10 @@ const push = () => {
 };
 
 onMounted(async () => {
+    await fetch();
+});
+
+watch(page, async () => {
     await fetch();
 });
 </script>
