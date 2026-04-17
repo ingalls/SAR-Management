@@ -22,7 +22,7 @@ function prefix(prefix?: string): string {
 
 export default async function router(schema: Schema, config: Config) {
     const spaces = new Spaces();
-    const convert = new API2PDF(process.env.API2PDF);
+    const convert = new API2PDF(process.env.API2PDF || '');
 
     await schema.get('/doc', {
         name: 'List Docs',
@@ -131,9 +131,9 @@ export default async function router(schema: Schema, config: Config) {
 
                 const url = new URL('/api/doc/convert', config.APIURL);
                 url.searchParams.append('access_token', token);
-                const doc = await convert.libreOfficeAnyToPdf(url);
+                const doc = await convert.libreOfficeAnyToPdf(url.toString()) as API2PDF.Api2PdfResult;
 
-                const file = await fetch(doc.FileUrl);
+                const file = await fetch(doc.FileUrl as string);
 
                 spaces.upload({
                     Key: `documents/${req.query.prefix}${req.query.file}/preview.pdf`,

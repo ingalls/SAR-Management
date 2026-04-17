@@ -340,8 +340,8 @@ export default async function router(schema: Schema, config: Config) {
                  });
 
                  const html = Report.mission(mission, users.items);
-                 const pdf = await convert.chromeHtmlToPdf(html);
-                 return res.redirect(pdf.FileUrl);
+                 const pdf = await convert.chromeHtmlToPdf(html) as API2PDF.Api2PdfResult;
+                 return res.redirect(pdf.FileUrl as string);
             }
 
             throw new Err(400, null, 'Unsupported Format');

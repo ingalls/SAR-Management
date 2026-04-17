@@ -142,7 +142,7 @@
                                 >
                                     <div class='d-flex'>
                                         <a
-                                            v-if='$route.params.scheduleid && is_iam("Rolodex:Admin")'
+                                            v-if='$route.params.rolodexid && is_iam("Rolodex:Admin")'
                                             class='cursor-pointer btn btn-danger'
                                             @click='deleteRolodex'
                                         >
@@ -232,15 +232,22 @@ export default {
             this.loading.rolodex = false;
         }
     },
+    watch: {
+        '$route': async function() {
+            if (this.$route.params.rolodexid) {
+                await this.fetch();
+            }
+        }
+    },
     methods: {
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
         deleteRolodex: async function() {
-            this.loading = true;
+            this.loading.rolodex = true;
             await window.std(`/api/rolodex/${this.$route.params.rolodexid}`, {
                 method: 'DELETE',
             });
 
-            this.loading = false;
+            this.loading.rolodex = false;
             this.$router.push('/rolodex');
         },
         validate: function() {
@@ -258,7 +265,7 @@ export default {
         create: async function() {
             if (!this.validate()) return;
 
-            this.loading = true;
+            this.loading.rolodex = true;
             const create = await window.std('/api/rolodex', {
                 method: 'POST',
                 body: {
@@ -266,8 +273,25 @@ export default {
                 }
             });
 
-            this.loading = false;
+            this.loading.rolodex = false;
             this.$router.push(`/rolodex/${create.id}`);
+        },
+        update: async function() {
+            if (!this.validate()) return;
+
+            this.loading.rolodex = true;
+            await window.std(`/api/rolodex/${this.$route.params.rolodexid}`, {
+                method: 'PATCH',
+                body: {
+                    name: this.rolodex.name,
+                    remarks: this.rolodex.remarks,
+                    phone: this.rolodex.phone,
+                    email: this.rolodex.email,
+                }
+            });
+
+            this.loading.rolodex = false;
+            this.$router.push(`/rolodex/${this.$route.params.rolodexid}`);
         },
         fetch: async function() {
             this.loading.rolodex = true;
