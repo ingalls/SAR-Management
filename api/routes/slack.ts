@@ -124,7 +124,8 @@ export default async function router(schema: Schema, config: Config) {
                     name: user?.name || 'Unknown',
                     real_name: user?.real_name || 'Unknown',
                     email: user?.profile?.email,
-                    is_bot: user?.is_bot || false
+                    is_bot: user?.is_bot || false,
+                    user_id: undefined as number | undefined
                 };
             });
 
