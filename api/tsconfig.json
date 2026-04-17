@@ -4,9 +4,9 @@
         "strictNullChecks": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "module": "nodenext",
+        "module": "esnext",
         "target": "es2022",
-        "moduleResolution": "nodenext",
+        "moduleResolution": "bundler",
         "sourceMap": true,
         "outDir": "dist",
         "types": ["node"]
