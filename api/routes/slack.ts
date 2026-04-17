@@ -57,66 +57,6 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
-    await schema.get('/slack/channels/:channelid/members', {
-        name: 'List Channel Members',
-        group: 'Slack',
-        description: 'List all members of a Slack Channel',
-        params: Type.Object({
-            channelid: Type.String()
-        }),
-        res: Type.Object({
-            members: Type.Array(Type.Object({
-                id: Type.String(),
-                name: Type.String(),
-                real_name: Type.String(),
-                email: Type.Optional(Type.String()),
-                is_bot: Type.Boolean()
-            }))
-        })
-    }, async (req, res) => {
-        try {
-            await Auth.is_admin(config, req);
-
-            const slack = await Slack.create(config);
-            if (!slack) throw new Err(400, null, 'Slack is not configured');
-
-            await slack.check();
-
-            // Get all member IDs in the channel
-            const memberIds: string[] = [];
-            let cursor: string | undefined;
-            do {
-                const page = await slack.client.conversations.members({
-                    channel: req.params.channelid,
-                    limit: 1000,
-                    cursor
-                });
-                if (!page.ok) throw new Err(500, null, 'Slack API Error');
-                memberIds.push(...(page.members || []));
-                cursor = page.response_metadata?.next_cursor;
-            } while (cursor);
-
-            // Get user info for each member
-            const slackUsers = await slack.getUsers();
-            const memberMap = new Map(slackUsers.map(u => [u.id, u]));
-
-            const members = memberIds.map(id => {
-                const user = memberMap.get(id);
-                return {
-                    id,
-                    name: user?.name || 'Unknown',
-                    real_name: user?.real_name || 'Unknown',
-                    email: user?.profile?.email,
-                    is_bot: user?.is_bot || false
-                };
-            });
-
-            res.json({ members });
-        } catch (err) {
-            Err.respond(err, res);
-        }
-    });
-
     await schema.get('/slack/channels/:channelid/membership', {
         name: 'Channel Membership Audit',
         group: 'Slack',
