@@ -28,16 +28,16 @@
                                         <div class='col'>
                                             <div class='d-flex'>
                                                 <div class='btn-list'>
-                                                    <span
+                                                    <TablerBadge
                                                         v-if='issue.status === "closed"'
-                                                        class='badge bg-red text-white'
-                                                        style='height: 20px;'
-                                                    >Closed</span>
-                                                    <span
+                                                        background-color='#d63939'
+                                                        text-color='#ffffff'
+                                                    >Closed</TablerBadge>
+                                                    <TablerBadge
                                                         v-else-if='issue.status === "open"'
-                                                        class='badge bg-green text-white'
-                                                        style='height: 20px;'
-                                                    >Open</span>
+                                                        background-color='#2fb344'
+                                                        text-color='#ffffff'
+                                                    >Open</TablerBadge>
 
                                                     <h3
                                                         class='card-title'
@@ -147,6 +147,7 @@ import Comment from './util/Comment.vue';
 import CreateComment from './Issue/CreateComment.vue';
 import NoAccess from './util/NoAccess.vue';
 import {
+    TablerBadge,
     TablerBreadCrumb,
     TablerMarkdown,
     TablerLoading,

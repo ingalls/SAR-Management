@@ -109,16 +109,16 @@
                                         <span v-else>Never</span>
                                     </td>
                                     <td v-if='["status"].includes(h.name)'>
-                                        <span
+                                        <TablerBadge
                                             v-if='issue.status === "closed"'
-                                            class='badge bg-red text-white'
-                                            style='height: 20px;'
-                                        >Closed</span>
-                                        <span
+                                            background-color='#d63939'
+                                            text-color='#ffffff'
+                                        >Closed</TablerBadge>
+                                        <TablerBadge
                                             v-else-if='issue.status === "open"'
-                                            class='badge bg-green text-white'
-                                            style='height: 20px;'
-                                        >Open</span>
+                                            background-color='#2fb344'
+                                            text-color='#ffffff'
+                                        >Open</TablerBadge>
                                     </td>
                                     <td v-else>
                                         <span v-text='issue[h.name]' />
@@ -146,6 +146,7 @@ import NoAccess from '../util/NoAccess.vue';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    TablerBadge,
     TablerEnum,
     TablerNone,
     TablerEpoch,

@@ -34,6 +34,30 @@
                         <div class='col-lg-4'>
                             <CardHeartbeat />
                         </div>
+                        <div class='col-lg-4'>
+                            <div class='card'>
+                                <div class='card-header'>
+                                    <h3 class='card-title'>
+                                        Slack Management
+                                    </h3>
+                                </div>
+                                <div class='card-body'>
+                                    <p class='text-secondary'>
+                                        Manage Slack channel memberships and audit team presence.
+                                    </p>
+                                    <a
+                                        class='btn btn-primary'
+                                        @click='$router.push("/admin/slack")'
+                                    >
+                                        <IconBrandSlack
+                                            :size='20'
+                                            class='me-2'
+                                        />
+                                        Channel Membership
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </template>
                 </div>
             </div>
@@ -42,6 +66,7 @@
 </template>
 
 <script setup>
+import { IconBrandSlack } from '@tabler/icons-vue';
 import CardRoles from './Admin/Roles.vue';
 import CardTags from './Admin/Tags.vue';
 import CardTrainingTags from './Admin/TrainingTags.vue';

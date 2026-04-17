@@ -157,11 +157,12 @@
                                                     class='ms-auto'
                                                 />
                                             </template>
-                                            <span
+                                            <TablerBadge
                                                 v-if='mission.required'
-                                                class='ms-auto badge bg-red text-white'
-                                                style='height: 20px;'
-                                            >Required</span>
+                                                class='ms-auto'
+                                                background-color='#d63939'
+                                                text-color='#ffffff'
+                                            >Required</TablerBadge>
                                         </div>
                                     </div>
                                 </td>
@@ -192,6 +193,7 @@ import NoAccess from '../util/NoAccess.vue';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    TablerBadge,
     TablerNone,
     TablerEpoch,
     TablerRefreshButton,

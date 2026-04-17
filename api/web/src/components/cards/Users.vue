@@ -142,11 +142,12 @@
                                         @click='$router.push(`/user/${user.id}`)'
                                     >
                                         <div class='d-flex align-items-center'>
-                                            <span
+                                            <TablerBadge
                                                 v-if='user.disabled'
-                                                class='badge bg-red text-white me-3'
-                                                style='height: 20px;'
-                                            >DISABLED</span>
+                                                class='me-3'
+                                                background-color='#d63939'
+                                                text-color='#ffffff'
+                                            >DISABLED</TablerBadge>
 
                                             <Avatar
                                                 :link='true'
@@ -271,6 +272,7 @@ import TeamSelect from '../util/TeamSelect.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    TablerBadge,
     TablerNone,
     TablerInput,
     TablerDropdown,

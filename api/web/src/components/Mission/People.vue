@@ -34,10 +34,10 @@
                                 {{ person.name }}
                             </div>
                             <div class='mt-1'>
-                                <span
-                                    class='badge text-white'
-                                    :class='roleClass(person.role)'
-                                >{{ person.role }}</span>
+                                <TablerBadge
+                                    :background-color='roleColor(person.role)'
+                                    text-color='#ffffff'
+                                >{{ person.role }}</TablerBadge>
                             </div>
                         </div>
                         <div class='col-auto'>
@@ -63,6 +63,7 @@
 
 <script>
 import {
+    TablerBadge,
     TablerIconButton,
     TablerNone
 } from '@tak-ps/vue-tabler';
@@ -74,6 +75,7 @@ import iam from '../../iam.js';
 export default {
     name: 'MissionPeople',
     components: {
+        TablerBadge,
         TablerIconButton,
         TablerNone,
         IconPlus
@@ -93,16 +95,16 @@ export default {
         }
     },
     methods: {
-        roleClass(role) {
+        roleColor(role) {
             switch (role) {
                 case 'Subject':
-                    return 'bg-red';
+                    return '#d63939';
                 case 'Reporting Party':
-                    return 'bg-blue';
+                    return '#206bc4';
                 case 'Witness':
-                    return 'bg-yellow';
+                    return '#f59f00';
                 default:
-                    return 'bg-secondary';
+                    return '#6e7582';
             }
         },
         is_iam: function(permission) { return iam(this.iam, this.auth, permission) },

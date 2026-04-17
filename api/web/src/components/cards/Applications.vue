@@ -81,16 +81,16 @@
                         <template v-for='h in header'>
                             <template v-if='h.display'>
                                 <td v-if='["archived"].includes(h.name)'>
-                                    <span
+                                    <TablerBadge
                                         v-if='application.archived'
-                                        class='badge bg-red text-white'
-                                        style='height: 20px;'
-                                    >Archived</span>
-                                    <span
+                                        background-color='#d63939'
+                                        text-color='#ffffff'
+                                    >Archived</TablerBadge>
+                                    <TablerBadge
                                         v-else
-                                        class='badge bg-green text-white'
-                                        style='height: 20px;'
-                                    >Active</span>
+                                        background-color='#2fb344'
+                                        text-color='#ffffff'
+                                    >Active</TablerBadge>
                                 </td>
                                 <td v-else-if='["updated", "created"].includes(h.name)'>
                                     <TablerEpoch
@@ -121,12 +121,13 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { stdclick } from '../../std.ts';
-import phoneFormat from 'phone';
+import { phone as phoneFormat } from 'phone';
 import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
+    TablerBadge,
     TablerNone,
     TablerEnum,
     TablerInput,

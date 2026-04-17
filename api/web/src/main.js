@@ -111,6 +111,7 @@ const router = new VueRouter.createRouter({
         { path: '/user/:userid/cert/:certid', name: 'cert', component: () => import('./components/Cert.vue') },
 
         { path: '/admin', name: 'admin', component: () => import('./components/Admin.vue') },
+        { path: '/admin/slack', name: 'admin-slack', component: () => import('./components/AdminSlack.vue') },
 
         { path: '/:catchAll(.*)', name: 'lost', component: () => import('./components/Lost.vue') },
     ]

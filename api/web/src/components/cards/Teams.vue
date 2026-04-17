@@ -107,16 +107,18 @@
                                         @click='click(team)'
                                         v-text='team.name'
                                     />
-                                    <span
+                                    <TablerBadge
                                         v-if='selected.includes(team.id)'
-                                        class='badge bg-blue mx-2'
-                                        style='height: 20px;'
-                                    >Selected</span>
-                                    <span
+                                        class='mx-2'
+                                        background-color='#206bc4'
+                                        text-color='#ffffff'
+                                    >Selected</TablerBadge>
+                                    <TablerBadge
                                         v-if='team.fieldable'
-                                        class='ms-auto badge bg-green text-white'
-                                        style='height: 20px;'
-                                    >Fieldable</span>
+                                        class='ms-auto'
+                                        background-color='#2fb344'
+                                        text-color='#ffffff'
+                                    >Fieldable</TablerBadge>
                                 </div>
                             </td>
                             <td v-text='team.users.length || "None"' />
@@ -140,6 +142,7 @@ import {
     IconFilter,
 } from '@tabler/icons-vue';
 import {
+    TablerBadge,
     TablerNone,
     TablerInput,
     TablerToggle,

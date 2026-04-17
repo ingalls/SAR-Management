@@ -34,11 +34,12 @@
 
                                         <div class='ms-auto'>
                                             <div class='btn-list'>
-                                                <span
+                                                <TablerBadge
                                                     v-if='team.fieldable'
-                                                    class='ms-auto badge bg-green text-white'
-                                                    style='height: 20px;'
-                                                >Fieldable</span>
+                                                    class='ms-auto'
+                                                    background-color='#2fb344'
+                                                    text-color='#ffffff'
+                                                >Fieldable</TablerBadge>
                                                 <TeamBadge :team='team' />
 
                                                 <button
@@ -90,6 +91,7 @@ import TeamBadge from './util/TeamBadge.vue';
 import iamHelper from '../iam.js';
 import CardUsers from './cards/Users.vue';
 import {
+    TablerBadge,
     TablerBreadCrumb,
     TablerLoading
 } from '@tak-ps/vue-tabler';

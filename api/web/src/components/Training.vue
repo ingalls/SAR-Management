@@ -60,11 +60,12 @@
                                                 class='card-title'
                                                 v-text='`${training.title} @ ${training.location || "Unknown"}`'
                                             />
-                                            <span
+                                            <TablerBadge
                                                 v-if='training.required'
-                                                class='mx-2 badge bg-red text-white'
-                                                style='height: 20px;'
-                                            >Required</span>
+                                                class='mx-2'
+                                                background-color='#d63939'
+                                                text-color='#ffffff'
+                                            >Required</TablerBadge>
 
                                             <div class='ms-auto btn-list'>
                                                 <TablerEpochRange
@@ -196,6 +197,7 @@ import {
     IconPencil
 } from '@tabler/icons-vue';
 import {
+    TablerBadge,
     TablerEpochRange,
     TablerBreadCrumb,
     TablerMarkdown,

@@ -6,8 +6,8 @@ scp "sar:~/sar-latest.dump" .
 echo "DROP DATABASE sar;" | psql
 echo "CREATE DATABASE sar;" | psql
 
-psql sar < sar-latest.dump
+pg_restore -d postgresql://localhost:5432/sar -Fc sar-latest.dump
 
-#echo "UPDATE users SET email = username || '@ingalls.ca'" | psql sar
+echo "UPDATE users SET email = username || '@ingalls.ca'" | psql sar
 
 npm run dev

@@ -41,16 +41,16 @@
                                     <div class='col-12 d-flex align-items-center'>
                                         <div v-if='$route.params.applicationid'>
                                             <div class='d-flex align-items-center'>
-                                                <span
+                                                <TablerBadge
                                                     v-if='application.archived'
-                                                    class='badge bg-red text-white'
-                                                    style='height: 20px;'
-                                                >Archived</span>
-                                                <span
+                                                    background-color='#d63939'
+                                                    text-color='#ffffff'
+                                                >Archived</TablerBadge>
+                                                <TablerBadge
                                                     v-else
-                                                    class='badge bg-green text-white'
-                                                    style='height: 20px;'
-                                                >Active</span>
+                                                    background-color='#2fb344'
+                                                    text-color='#ffffff'
+                                                >Active</TablerBadge>
 
                                                 <div class='card-title mx-2'>
                                                     <span v-text='application.name' />
@@ -140,10 +140,11 @@
 <script>
 import iam from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import phoneFormat from 'phone';
+import { phone as phoneFormat } from 'phone';
 import CreateComment from './Application/CreateComment.vue';
 import Comment from './util/Comment.vue';
 import {
+    TablerBadge,
     TablerEpoch,
     TablerBreadCrumb,
     TablerSchema,

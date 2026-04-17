@@ -34,36 +34,36 @@
 
                                     <div class='ms-auto'>
                                         <div class='btn-list ms-auto align-items-center'>
-                                            <span
+                                            <TablerBadge
                                                 v-if='user.disabled'
-                                                class='badge bg-red text-white'
-                                                style='height: 20px;'
-                                            >DISABLED</span>
-                                            <span
+                                                background-color='#d63939'
+                                                text-color='#ffffff'
+                                            >DISABLED</TablerBadge>
+                                            <TablerBadge
                                                 v-else-if='user.access === "admin"'
-                                                class='badge bg-red text-white'
-                                                style='height: 20px;'
-                                            >Admin</span>
-                                            <span
+                                                background-color='#d63939'
+                                                text-color='#ffffff'
+                                            >Admin</TablerBadge>
+                                            <TablerBadge
                                                 v-else-if='user.access === "user"'
-                                                class='badge bg-blue text-white'
-                                                style='height: 20px;'
-                                            >User</span>
-                                            <span
+                                                background-color='#206bc4'
+                                                text-color='#ffffff'
+                                            >User</TablerBadge>
+                                            <TablerBadge
                                                 v-else-if='user.access === "read"'
-                                                class='badge bg-gray text-white'
-                                                style='height: 20px;'
-                                            >Read</span>
-                                            <span
+                                                background-color='#667382'
+                                                text-color='#ffffff'
+                                            >Read</TablerBadge>
+                                            <TablerBadge
                                                 v-if='user.mfa_enabled'
-                                                class='badge bg-green text-white'
-                                                style='height: 20px;'
-                                            >MFA</span>
-                                            <span
+                                                background-color='#2fb344'
+                                                text-color='#ffffff'
+                                            >MFA</TablerBadge>
+                                            <TablerBadge
                                                 v-else
-                                                class='badge bg-yellow text-white'
-                                                style='height: 20px;'
-                                            >No MFA</span>
+                                                background-color='#f59f00'
+                                                text-color='#ffffff'
+                                            >No MFA</TablerBadge>
                                             <button
                                                 data-bs-toggle='dropdown'
                                                 type='button'
@@ -308,6 +308,7 @@ import CardCerts from './cards/Certs.vue';
 import NoAccess from './util/NoAccess.vue';
 import TeamBadge from './util/TeamBadge.vue'
 import {
+    TablerBadge,
     TablerEpoch,
     TablerBreadCrumb,
     TablerLoading

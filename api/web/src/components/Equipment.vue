@@ -29,16 +29,16 @@
                                         v-text='equipment.name'
                                     />
                                     <div class='ms-auto btn-list align-items-center'>
-                                        <span
+                                        <TablerBadge
                                             v-if='equipment.container'
-                                            class='badge bg-blue text-white'
-                                            style='height: 20px;'
-                                        >Container</span>
-                                        <span
+                                            background-color='#206bc4'
+                                            text-color='#ffffff'
+                                        >Container</TablerBadge>
+                                        <TablerBadge
                                             v-if='equipment.archived'
-                                            class='badge bg-red text-white'
-                                            style='height: 20px;'
-                                        >Archived</span>
+                                            background-color='#d63939'
+                                            text-color='#ffffff'
+                                        >Archived</TablerBadge>
 
                                         <IconPencil
                                             v-if='is_iam("Equipment:Manage") && !equipment.archived'
@@ -173,6 +173,7 @@ import { useRoute } from 'vue-router';
 import NoAccess from './util/NoAccess.vue';
 import iamHelper from '../iam.js';
 import {
+    TablerBadge,
     TablerLoading,
     TablerBreadCrumb
 } from '@tak-ps/vue-tabler';
