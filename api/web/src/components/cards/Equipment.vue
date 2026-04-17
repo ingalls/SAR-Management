@@ -62,7 +62,8 @@
                 v-if='userFilter'
                 class='col-auto'
             >
-                <UserDropdownIcon
+                <UserSelect
+                    mode='icon'
                     title='Filter by User'
                     :height='40'
                     @selected='selectUser($event)'
@@ -134,7 +135,7 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 
 import TableFooter from '../util/TableFooter.vue';
-import UserDropdownIcon from '../util/UserDropdownIcon.vue';
+import UserSelect from '../util/UserSelect.vue';
 import {
     IconPlus,
     IconDownload,

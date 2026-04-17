@@ -63,7 +63,7 @@
             </div>
         </template>
         <template v-else>
-            <div class='card-body'>
+            <div class='card-body overflow-hidden' style='word-break: break-word;'>
                 <TablerMarkdown :markdown='comment.body' />
             </div>
         </template>

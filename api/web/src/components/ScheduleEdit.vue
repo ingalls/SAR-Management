@@ -90,9 +90,10 @@
                                 </div>
 
                                 <div class='mx-4'>
-                                    <UserPresentSelect
+                                    <UserSelect
                                         v-if='!$route.params.scheduleid'
                                         v-model='assigned'
+                                        mode='card'
                                         label='Scheduled Users'
                                         :confirmed='true'
                                     />
@@ -184,7 +185,7 @@
 import iam from '../iam.js';
 import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
-import UserPresentSelect from './util/UserPresentSelect.vue';
+import UserSelect from './util/UserSelect.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -195,7 +196,7 @@ export default {
     name: 'ScheduleEdit',
     components: {
         TablerInput,
-        UserPresentSelect,
+        UserSelect,
         TablerLoading,
         TablerBreadCrumb,
         NoAccess

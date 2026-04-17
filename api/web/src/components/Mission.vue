@@ -181,8 +181,9 @@
                             v-if='!loading.mission'
                             class='col-lg-6'
                         >
-                            <UserPresentSelect
+                            <UserSelect
                                 v-model='assigned'
+                                mode='card'
                                 :loading='loading.assigned'
                                 @push='postAssigned($event)'
                                 @patch='patchAssigned($event)'
@@ -203,7 +204,7 @@ import Location from './Mission/Location.vue';
 import Assets from './Mission/Assets.vue';
 import People from './Mission/People.vue';
 import IncidentsCard from './util/IncidentsCard.vue';
-import UserPresentSelect from './util/UserPresentSelect.vue';
+import UserSelect from './util/UserSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
     TablerEpochRange,
@@ -225,7 +226,7 @@ export default {
         IconFileTypePdf,
         Location,
         IncidentsCard,
-        UserPresentSelect,
+        UserSelect,
         People,
         TablerBreadCrumb,
         TablerLoading,

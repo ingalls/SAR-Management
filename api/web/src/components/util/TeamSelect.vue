@@ -20,30 +20,28 @@
                             />
                         </template>
                         <template #dropdown>
-                            <div class='card'>
-                                <div class='card-body'>
-                                    <TablerInput
-                                        v-model='filter'
-                                        icon='search'
-                                        placeholder='Filter Teams'
-                                    />
+                            <div class='p-3'>
+                                <TablerInput
+                                    v-model='filter'
+                                    icon='search'
+                                    placeholder='Filter Teams'
+                                />
 
-                                    <TablerNone
-                                        v-if='list.items.length === 0'
-                                        label='No Users'
-                                        :create='false'
-                                    />
-                                    <template v-else>
-                                        <div
-                                            v-for='team in list.items'
-                                            :key='team.id'
-                                            class='py-2 px-2 rounded cursor-pointer hover-light'
-                                            @click='push_teams(team)'
-                                        >
-                                            <TeamBadge :team='team' />
-                                        </div>
-                                    </template>
-                                </div>
+                                <TablerNone
+                                    v-if='list.items.length === 0'
+                                    label='No Users'
+                                    :create='false'
+                                />
+                                <template v-else>
+                                    <div
+                                        v-for='team in list.items'
+                                        :key='team.id'
+                                        class='py-2 px-2 rounded cursor-pointer hover-light'
+                                        @click='push_teams(team)'
+                                    >
+                                        <TeamBadge :team='team' />
+                                    </div>
+                                </template>
                             </div>
                         </template>
                     </TablerDropdown>

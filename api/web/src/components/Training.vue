@@ -168,8 +168,9 @@
                             v-if='!loading.training'
                             class='col-lg-6'
                         >
-                            <UserPresentSelect
+                            <UserSelect
                                 v-model='assigned'
+                                mode='card'
                                 label='Training Roster'
                                 :disabled='!is_iam("Training:Manage")'
                                 :loading='loading.assigned'
@@ -191,7 +192,7 @@ import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import IncidentsCard from './util/IncidentsCard.vue';
 import TrainingAssets from './Training/Assets.vue';
-import UserPresentSelect from './util/UserPresentSelect.vue';
+import UserSelect from './util/UserSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import {
     IconPencil
@@ -215,7 +216,7 @@ export default {
         TrainingAssets,
         IconPencil,
         TablerIconButton,
-        UserPresentSelect,
+        UserSelect,
         TablerLoading,
         TablerBreadCrumb,
         TablerMarkdown,

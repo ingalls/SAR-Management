@@ -83,30 +83,28 @@
                                                     </div>
                                                 </template>
                                                 <template #dropdown>
-                                                    <div class='card'>
-                                                        <div class='card-body'>
-                                                            <TablerInput
-                                                                v-model='user_filter'
-                                                                icon='search'
-                                                                placeholder='Filter Users'
-                                                            />
+                                                    <div class='p-3'>
+                                                        <TablerInput
+                                                            v-model='user_filter'
+                                                            icon='search'
+                                                            placeholder='Filter Users'
+                                                        />
 
-                                                            <TablerNone
-                                                                v-if='user_list.items.length === 0'
-                                                                label='No Users'
-                                                                :create='false'
-                                                            />
-                                                            <template v-else>
-                                                                <div
-                                                                    v-for='user in user_list.items'
-                                                                    :key='user.id'
-                                                                    class='py-2 px-2 rounded cursor-pointer hover-light'
-                                                                    @click='selectUser(user)'
-                                                                >
-                                                                    <Avatar :user='user' />
-                                                                </div>
-                                                            </template>
-                                                        </div>
+                                                        <TablerNone
+                                                            v-if='user_list.items.length === 0'
+                                                            label='No Users'
+                                                            :create='false'
+                                                        />
+                                                        <template v-else>
+                                                            <div
+                                                                v-for='user in user_list.items'
+                                                                :key='user.id'
+                                                                class='py-2 px-2 rounded cursor-pointer hover-light'
+                                                                @click='selectUser(user)'
+                                                            >
+                                                                <Avatar :user='user' />
+                                                            </div>
+                                                        </template>
                                                     </div>
                                                 </template>
                                             </TablerDropdown>
@@ -158,28 +156,26 @@
                                                             </div>
                                                         </template>
                                                         <template #dropdown>
-                                                            <div class='card'>
-                                                                <div class='card-body'>
-                                                                    <TablerInput
-                                                                        v-model='mission_filter'
-                                                                        icon='search'
-                                                                        placeholder='Filter Missions'
+                                                            <div class='p-3'>
+                                                                <TablerInput
+                                                                    v-model='mission_filter'
+                                                                    icon='search'
+                                                                    placeholder='Filter Missions'
+                                                                />
+                                                                <TablerNone
+                                                                    v-if='mission_list.items.length === 0'
+                                                                    label='No Missions'
+                                                                    :create='false'
+                                                                />
+                                                                <template v-else>
+                                                                    <div
+                                                                        v-for='mission in mission_list.items'
+                                                                        :key='mission.id'
+                                                                        class='py-2 px-2 rounded cursor-pointer hover-light'
+                                                                        @click='selectMission(mission)'
+                                                                        v-text='mission.title'
                                                                     />
-                                                                    <TablerNone
-                                                                        v-if='mission_list.items.length === 0'
-                                                                        label='No Missions'
-                                                                        :create='false'
-                                                                    />
-                                                                    <template v-else>
-                                                                        <div
-                                                                            v-for='mission in mission_list.items'
-                                                                            :key='mission.id'
-                                                                            class='py-2 px-2 rounded cursor-pointer hover-light'
-                                                                            @click='selectMission(mission)'
-                                                                            v-text='mission.title'
-                                                                        />
-                                                                    </template>
-                                                                </div>
+                                                                </template>
                                                             </div>
                                                         </template>
                                                     </TablerDropdown>
@@ -210,28 +206,26 @@
                                                             </div>
                                                         </template>
                                                         <template #dropdown>
-                                                            <div class='card'>
-                                                                <div class='card-body'>
-                                                                    <TablerInput
-                                                                        v-model='training_filter'
-                                                                        icon='search'
-                                                                        placeholder='Filter Trainings'
+                                                            <div class='p-3'>
+                                                                <TablerInput
+                                                                    v-model='training_filter'
+                                                                    icon='search'
+                                                                    placeholder='Filter Trainings'
+                                                                />
+                                                                <TablerNone
+                                                                    v-if='training_list.items.length === 0'
+                                                                    label='No Trainings'
+                                                                    :create='false'
+                                                                />
+                                                                <template v-else>
+                                                                    <div
+                                                                        v-for='training in training_list.items'
+                                                                        :key='training.id'
+                                                                        class='py-2 px-2 rounded cursor-pointer hover-light'
+                                                                        @click='selectTraining(training)'
+                                                                        v-text='training.title'
                                                                     />
-                                                                    <TablerNone
-                                                                        v-if='training_list.items.length === 0'
-                                                                        label='No Trainings'
-                                                                        :create='false'
-                                                                    />
-                                                                    <template v-else>
-                                                                        <div
-                                                                            v-for='training in training_list.items'
-                                                                            :key='training.id'
-                                                                            class='py-2 px-2 rounded cursor-pointer hover-light'
-                                                                            @click='selectTraining(training)'
-                                                                            v-text='training.title'
-                                                                        />
-                                                                    </template>
-                                                                </div>
+                                                                </template>
                                                             </div>
                                                         </template>
                                                     </TablerDropdown>

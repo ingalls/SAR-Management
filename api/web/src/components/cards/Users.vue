@@ -24,15 +24,12 @@
 
                             <template #dropdown>
                                 <div
-                                    class='card'
                                     @click.stop=''
                                 >
-                                    <div class='card-header'>
-                                        <div class='card-title'>
-                                            Filter Options
-                                        </div>
+                                    <div class='px-3 pt-3 pb-1 fw-bold'>
+                                        Filter Options
                                     </div>
-                                    <div class='card-body row g-2'>
+                                    <div class='px-3 pb-3 row g-2'>
                                         <div class='col-12'>
                                             <TablerToggle
                                                 v-model='paging.disabled'
@@ -99,8 +96,9 @@
                                     v-if='loading.add'
                                     :inline='true'
                                 />
-                                <UserDropdownIcon
+                                <UserSelect
                                     v-else
+                                    mode='icon'
                                     :button='true'
                                     :icon-size='32'
                                     @selected='addUser($event)'
@@ -267,7 +265,7 @@ import {
     IconPolaroid,
     IconAddressBook,
 } from '@tabler/icons-vue';
-import UserDropdownIcon from '../util/UserDropdownIcon.vue'
+import UserSelect from '../util/UserSelect.vue'
 import TeamSelect from '../util/TeamSelect.vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';

@@ -25,15 +25,12 @@
 
                                 <template #dropdown>
                                     <div
-                                        class='card'
                                         @click.stop=''
                                     >
-                                        <div class='card-header'>
-                                            <div class='card-title'>
-                                                Filter Options
-                                            </div>
+                                        <div class='px-3 pt-3 pb-1 fw-bold'>
+                                            Filter Options
                                         </div>
-                                        <div class='card-body row g-2'>
+                                        <div class='px-3 pb-3 row g-2'>
                                             <div class='col-12'>
                                                 <TablerToggle
                                                     v-model='paging.fieldable'

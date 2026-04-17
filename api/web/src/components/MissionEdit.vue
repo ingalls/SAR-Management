@@ -115,8 +115,9 @@
                             v-if='!$route.params.missionid'
                             class='col-lg-12'
                         >
-                            <UserPresentSelect
+                            <UserSelect
                                 v-model='assigned'
+                                mode='card'
                                 :confirmed='true'
                             />
                         </div>
@@ -164,7 +165,7 @@
 import iam from '../iam.js';
 import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
-import UserPresentSelect from './util/UserPresentSelect.vue';
+import UserSelect from './util/UserSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import TeamSelect from './util/TeamSelect.vue';
@@ -184,7 +185,7 @@ export default {
         MdEditor,
         TablerInput,
         LocationDropdown,
-        UserPresentSelect,
+        UserSelect,
         TablerLoading,
         TablerBreadCrumb,
         MissionTagSelect,

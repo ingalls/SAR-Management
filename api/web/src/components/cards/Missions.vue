@@ -59,24 +59,22 @@
                     </TablerIconButton>
                     <template #dropdown>
                         <div
-                            class='card'
+                            class='p-3 row g-2'
                             style='min-width: 500px;'
                         >
-                            <div class='card-body row g-2'>
-                                <div class='col-md-6'>
-                                    <TablerInput
-                                        v-model='paging.start'
-                                        type='date'
-                                        label='Start Date'
-                                    />
-                                </div>
-                                <div class='col-md-6'>
-                                    <TablerInput
-                                        v-model='paging.end'
-                                        type='date'
-                                        label='End Date'
-                                    />
-                                </div>
+                            <div class='col-md-6'>
+                                <TablerInput
+                                    v-model='paging.start'
+                                    type='date'
+                                    label='Start Date'
+                                />
+                            </div>
+                            <div class='col-md-6'>
+                                <TablerInput
+                                    v-model='paging.end'
+                                    type='date'
+                                    label='End Date'
+                                />
                             </div>
                         </div>
                     </template>
