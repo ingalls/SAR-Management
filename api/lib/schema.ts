@@ -172,7 +172,7 @@ export const Cert = pgTable('certs', {
     asset: integer().notNull().references(() => Asset.id)
 });
 
-export const Equipment: ReturnType<typeof pgTable> = pgTable('equipment', {
+export const Equipment: any = pgTable('equipment', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),

@@ -91,7 +91,7 @@ export default async function router(schema: Schema, config: Config) {
                 // @ts-expect-error Type
                 res.json(app);
 
-                await notify.users('Application', 'View', {
+                await notify.users('Application', PermissionsLevel.VIEW, {
                     text: 'A new application has been submitted',
                     url: `application/${app.id}`
                 });

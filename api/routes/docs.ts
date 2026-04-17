@@ -5,7 +5,7 @@ import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Spaces from '../lib/aws/spaces.js';
 import busboy from 'busboy';
 import API2PDF from 'api2pdf';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, DocResponse } from '../lib/types.js';
@@ -109,7 +109,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             if (req.query.access_token) {
-                const decoded = jwt.verify(req.query.access_token, config.SigningSecret);
+                const decoded = jwt.verify(req.query.access_token, config.SigningSecret) as JwtPayload;
 
                 const file = await spaces.get({
                     Key: `documents/${decoded.p ? decoded.p : ''}${decoded.f}`
@@ -137,7 +137,7 @@ export default async function router(schema: Schema, config: Config) {
 
                 spaces.upload({
                     Key: `documents/${req.query.prefix}${req.query.file}/preview.pdf`,
-                    Body: file.body
+                    Body: file.body as any
                 });
 
                 res.json({
@@ -233,7 +233,7 @@ export default async function router(schema: Schema, config: Config) {
             throw new Err(400, null, 'Missing Content-Type Header');
         }
 
-        let bb;
+        let bb: ReturnType<typeof busboy> | undefined;
         try {
             bb = busboy({
                 headers: req.headers,
@@ -243,6 +243,7 @@ export default async function router(schema: Schema, config: Config) {
             });
         } catch (err) {
             Err.respond(err, res);
+            return;
         }
 
         const uploads: Array<Promise<unknown>> = [];

@@ -2,6 +2,11 @@ import S3 from '@aws-sdk/client-s3';
 import Err from '@openaddresses/batch-error';
 import { Upload } from "@aws-sdk/lib-storage";
 
+interface SpacesInput {
+    Bucket?: string;
+    [key: string]: any;
+}
+
 export default class Spaces {
     client: S3.S3Client;
 
@@ -22,64 +27,64 @@ export default class Spaces {
         });
     }
 
-    async list(params: S3.ListObjectsCommandInput): Promise<S3.ListObjectsCommandOutput> {
+    async list(params: SpacesInput): Promise<S3.ListObjectsCommandOutput> {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         try {
-            return await this.client.send(new S3.ListObjectsCommand(params));
+            return await this.client.send(new S3.ListObjectsCommand(params as S3.ListObjectsCommandInput));
         } catch (err) {
             throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to List Objects');
         }
     }
 
-    async upload(params: S3.PutObjectCommandInput) {
+    async upload(params: SpacesInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         try {
-            const upload = new Upload({ client: this.client, params });
+            const upload = new Upload({ client: this.client, params: params as S3.PutObjectCommandInput });
             return await upload.done();
         } catch (err) {
             throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Put Object');
         }
     }
 
-    async put(params: S3.PutObjectCommandInput) {
+    async put(params: SpacesInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
-            return await this.client.send(new S3.PutObjectCommand(params));
+            return await this.client.send(new S3.PutObjectCommand(params as S3.PutObjectCommandInput));
         } catch (err) {
             throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Put Object');
         }
     }
 
-    async head(params: S3.HeadObjectCommandInput) {
+    async head(params: SpacesInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
-            return await this.client.send(new S3.HeadObjectCommand(params));
+            return await this.client.send(new S3.HeadObjectCommand(params as S3.HeadObjectCommandInput));
         } catch (err) {
             throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Head Object');
         }
     }
 
-    async get(params: S3.GetObjectCommandInput) {
+    async get(params: SpacesInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
-            return await this.client.send(new S3.GetObjectCommand(params));
+            return await this.client.send(new S3.GetObjectCommand(params as S3.GetObjectCommandInput));
         } catch (err) {
             throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Get Object');
         }
     }
 
-    async delete(params: S3.DeleteObjectCommandInput) {
+    async delete(params: SpacesInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
-            return await this.client.send(new S3.DeleteObjectCommand(params));
+            return await this.client.send(new S3.DeleteObjectCommand(params as S3.DeleteObjectCommandInput));
         } catch (err) {
             throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Head Object');
         }
     }
 
-    async deleteRecursive(params: { Bucket?: string; Prefix: string }) {
+    async deleteRecursive(params: SpacesInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         try {

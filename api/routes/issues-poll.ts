@@ -38,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json({
                 ...poll,
-                vote: vote.question_id
+                vote: vote ? vote.question_id : null
             })
         } catch (err) {
             Err.respond(err, res);

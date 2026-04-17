@@ -47,7 +47,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
  */
 
 export default async function server() {
-    const config = await Config.env(args);
+    const config = await Config.env(args as any);
     if (config.heartbeat) new Heartbeat(config);
 
     const app = express();
@@ -105,14 +105,14 @@ export default async function server() {
         rewrites: [{
             from: /.*\/js\/.*$/,
             to: function(context) {
-                return context.parsedUrl.pathname.replace(/.*\/js\//, '/js/');
+                return context.parsedUrl.pathname!.replace(/.*\/js\//, '/js/');
             }
         },{
             from: /.*$/,
             to: function(context) {
-                const parse = path.parse(context.parsedUrl.path);
+                const parse = path.parse(context.parsedUrl.path!);
                 if (parse.ext) {
-                    return context.parsedUrl.pathname;
+                    return context.parsedUrl.pathname!;
                 } else {
                     return '/';
                 }
