@@ -75,7 +75,7 @@ export default async function router(schema: Schema, config: Config) {
 
             const known = Object.keys(Permissions);
 
-            const value = {
+            const value: Record<string, any> = {
                 disabled: req.body.disabled,
                 settings: {}
             };

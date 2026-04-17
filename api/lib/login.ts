@@ -73,7 +73,7 @@ export default class Login {
         });
     }
 
-    static async reset(config: Config, body): Promise<InferSelectModel<typeof User>> {
+    static async reset(config: Config, body: { token?: string; password?: string }): Promise<InferSelectModel<typeof User>> {
         if (!body.token) throw new Err(400, null, 'token required');
         if (!body.password) throw new Err(400, null, 'password required');
 
@@ -132,7 +132,7 @@ export default class Login {
         };
     }
 
-    static async attempt(config: Config, body, secret): Promise<{
+    static async attempt(config: Config, body: { username?: string; password?: string; token?: string }, secret: string): Promise<{
         id: number;
         username: string;
         access: string;

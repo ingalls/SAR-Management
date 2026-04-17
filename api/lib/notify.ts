@@ -1,5 +1,5 @@
 import Email from './email.js';
-import { Permissions } from './auth.js';
+import { Permissions, PermissionsLevel } from './auth.js';
 import Config from './config.js';
 import { sql } from 'drizzle-orm';
 
@@ -27,7 +27,7 @@ export default class Notify {
         const user = await this.config.models.User.from(uid);
 
         if (this.email) {
-            let setting;
+            let setting: Record<string, any>;
             try {
                 setting = await this.config.models.UserSetting.from(sql`
                     uid = ${uid}
@@ -53,11 +53,12 @@ export default class Notify {
         }
     }
 
-    async users(type, minperm, notification): Promise<void> {
+    async users(type: string, minperm: PermissionsLevel, notification: { text: string; url: string }): Promise<void> {
         try {
-            if (!Permissions[type]) throw new Error('Permission not included in permission set');
-            if (!Permissions[type].includes(minperm)) throw new Error('Mim Perm not included in permission set');
-            const perms = Permissions[type].slice(0, Permissions[type].indexOf(minperm) + 1);
+            const permsMap = Permissions as Record<string, PermissionsLevel[]>;
+            if (!permsMap[type]) throw new Error('Permission not included in permission set');
+            if (!permsMap[type].includes(minperm)) throw new Error('Mim Perm not included in permission set');
+            const perms = permsMap[type].slice(0, permsMap[type].indexOf(minperm) + 1);
 
             const users = (await this.config.models.Notification.users(type, perms)).items;
 

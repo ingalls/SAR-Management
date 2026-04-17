@@ -2,7 +2,7 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { User, ScheduleOverride } from '../schema.js';
+import { ScheduleOverride } from '../schema.js';
 import { sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
 export const AugmentedScheduleOverride = Type.Object({
@@ -32,8 +32,6 @@ export default class ScheduleOverrideModel extends Modeler<typeof ScheduleOverri
     async augmented_list(query: GenericListInput = {}): Promise<GenericList<Static<typeof AugmentedScheduleOverride>>> {
         const order = query.order && query.order === 'desc' ? desc : asc;
         const orderBy = order(query.sort ? this.key(query.sort) : this.requiredPrimaryKey());
-
-        const OverrideUser = User;
 
         const pgres = await this.pool
             .select({

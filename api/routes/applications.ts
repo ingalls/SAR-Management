@@ -139,15 +139,15 @@ export default async function router(schema: Schema, config: Config) {
             // @ts-expect-error AJV Errors fail
             if (!isValid) return Err.respond(new Err(400, null, 'Validation Error'), res, ajv.errors);
 
-            const input = {
+            const input: Record<string, any> = {
                 schema,
-                meta: {}
+                meta: {} as Record<string, any>
             };
             for (const prop in req.body) {
                 if (['name', 'phone', 'email', 'group'].includes(prop)) {
                     input[prop] = req.body[prop];
                 } else {
-                    input.meta[prop] = req.body[prop];
+                    (input.meta as Record<string, any>)[prop] = req.body[prop];
                 }
             }
 

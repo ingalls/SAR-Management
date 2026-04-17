@@ -77,7 +77,7 @@ export default async function router(schema: Schema, config: Config) {
                             if (field === 'assigned') {
                                 line.push((equip.assigned || []).map((a: { fname: string, lname: string}) => `${a.fname} ${a.lname}`).join('; '));
                             } else {
-                                line.push(equip[field] === undefined || equip[field] === null ? '' : equip[field]);
+                            line.push((equip[field as keyof typeof equip] as any) === undefined || (equip[field as keyof typeof equip] as any) === null ? '' : (equip[field as keyof typeof equip] as any));
                             }
                         }
                         res.write(stringify([line]));

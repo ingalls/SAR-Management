@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { Pool } from '@openaddresses/batch-generic';
 import { eq } from 'drizzle-orm';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import Config from './config.js';
 import { Request } from 'express';
 import * as pgschema from './schema.js';
@@ -20,7 +20,7 @@ export enum AuthUserType {
 }
 
 export type AuthUser = {
-    iam: object;
+    iam: Record<string, PermissionsLevel>;
     scopes: Array<string>;
     type: AuthUserType;
     id: number;
@@ -96,20 +96,23 @@ class AuthAugment {
                 .leftJoin(pgschema.Team, eq(pgschema.UserTeam.tid, pgschema.Team.id))
                 .where(eq(pgschema.UserTeam.uid, userid))
 
-            const iam = {};
+            const iam: Record<string, PermissionsLevel> = {};
             for (const iamrow of pgiam) {
-                const i = iamrow.iam;
+                const i = iamrow.iam as Record<string, PermissionsLevel> | null;
+                if (!i) continue;
                 for (const group in i) {
+                    const perms = (Permissions as Record<string, PermissionsLevel[]>)[group];
                     if (!iam[group]) {
                         iam[group] = i[group];
-                    } else if (Permissions[group] && Permissions[group].indexOf(iam[group]) > Permissions[group].indexOf(i[group])) {
+                    } else if (perms && perms.indexOf(iam[group]) > perms.indexOf(i[group])) {
                         iam[group] = i[group];
                     }
                 }
             }
 
             for (const group in Permissions) {
-                if (!iam[group]) iam[group] = Permissions[group][Permissions[group].length - 1];
+                const perms = (Permissions as Record<string, PermissionsLevel[]>)[group];
+                if (!iam[group]) iam[group] = perms[perms.length - 1];
             }
 
             return iam;
@@ -200,7 +203,7 @@ export default class Auth {
     }
 
     // Ensure Scope Of token is respected
-    static async is_scope(config: Config, req: Request<any, any, any, any>, scopes, opts: {
+    static async is_scope(config: Config, req: Request<any, any, any, any>, scopes: string[], opts: {
         token: boolean
     } = { token: false }): Promise<AuthUser> {
         const auth = await Auth.is_auth(config, req, opts);
@@ -238,7 +241,7 @@ export default class Auth {
                 throw new Err(401, null, 'No bearer token present');
             } else {
                 try {
-                    const decoded = jwt.verify(authorization[1], config.SigningSecret);
+                    const decoded = jwt.verify(authorization[1], config.SigningSecret) as JwtPayload;
                     const user = await config.models.User.from(decoded.u)
 
                     return {
@@ -261,7 +264,7 @@ export default class Auth {
             }
         } else if (req.query.token && opts.token) {
             try {
-                const decoded = jwt.verify(req.query.token, config.SigningSecret);
+                const decoded = jwt.verify(req.query.token, config.SigningSecret) as JwtPayload;
                 const user = await config.models.User.from(decoded.u)
                 return {
                     id: user.id,

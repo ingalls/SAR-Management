@@ -149,7 +149,7 @@ export default class Slack {
         } catch (err: any) {
             console.error(JSON.stringify(err, null, 2));
             if (err.data?.error === 'permission_denied') {
-                throw new Error('Permission denied. Slack User Group management requires a User Token (xoxp-) from a Workspace Admin. Bot tokens are often restricted.');
+                throw new Error('Permission denied. Slack User Group management requires a User Token (xoxp-) from a Workspace Admin. Bot tokens are often restricted.', { cause: err });
             }
             throw err;
         }

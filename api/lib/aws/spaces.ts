@@ -22,15 +22,17 @@ export default class Spaces {
         });
     }
 
-    async list(params): Promise<S3.ListObjectsCommandOutput> {
+    async list(params: S3.ListObjectsCommandInput): Promise<S3.ListObjectsCommandOutput> {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
-        return await this.client.send(new S3.ListObjectsCommand(params));
-    } catch (err) {
-        throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to Head Object');
+        try {
+            return await this.client.send(new S3.ListObjectsCommand(params));
+        } catch (err) {
+            throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'Failed to List Objects');
+        }
     }
 
-    async upload(params) {
+    async upload(params: S3.PutObjectCommandInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         try {
@@ -41,7 +43,7 @@ export default class Spaces {
         }
     }
 
-    async put(params) {
+    async put(params: S3.PutObjectCommandInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
             return await this.client.send(new S3.PutObjectCommand(params));
@@ -50,7 +52,7 @@ export default class Spaces {
         }
     }
 
-    async head(params) {
+    async head(params: S3.HeadObjectCommandInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
             return await this.client.send(new S3.HeadObjectCommand(params));
@@ -59,7 +61,7 @@ export default class Spaces {
         }
     }
 
-    async get(params) {
+    async get(params: S3.GetObjectCommandInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
             return await this.client.send(new S3.GetObjectCommand(params));
@@ -68,7 +70,7 @@ export default class Spaces {
         }
     }
 
-    async delete(params) {
+    async delete(params: S3.DeleteObjectCommandInput) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
         try {
             return await this.client.send(new S3.DeleteObjectCommand(params));
@@ -77,11 +79,11 @@ export default class Spaces {
         }
     }
 
-    async deleteRecursive(params) {
+    async deleteRecursive(params: { Bucket?: string; Prefix: string }) {
         if (!params.Bucket && process.env.SPACES_BUCKET) params.Bucket = process.env.SPACES_BUCKET;
 
         try {
-            let ContinuationToken ;
+            let ContinuationToken: string | undefined;
 
             do {
                 const list = await this.client.send(new S3.ListObjectsV2Command({
