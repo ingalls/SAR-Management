@@ -358,7 +358,9 @@ export const Schedule = pgTable('schedule', {
     name: text().notNull(),
     body: text().notNull().default(''),
     handoff: text().notNull().default('06:00'),
-    disabled: boolean().notNull().default(false)
+    disabled: boolean().notNull().default(false),
+    rotation_type: text().notNull().default('none'),
+    rotation_period: integer().notNull().default(1)
 });
 
 export const ScheduleAssigned = pgTable('schedules_assigned', {
@@ -374,6 +376,19 @@ export const ScheduleEvent = pgTable('schedules_event', {
     start_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     end_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     uid: integer().notNull().references(() => User.id),
+});
+
+export const ScheduleOverride = pgTable('schedules_override', {
+    id: serial().primaryKey(),
+    schedule_id: integer().notNull().references(() => Schedule.id),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    start_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+    end_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+    uid: integer().notNull().references(() => User.id),
+    override_uid: integer().references(() => User.id),
+    reason: text().notNull().default(''),
+    created_by: integer().notNull().references(() => User.id),
 });
 
 export const Server = pgTable('server', {

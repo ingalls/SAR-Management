@@ -49,6 +49,48 @@
                         </div>
                     </div>
                     <template v-if='!loading.schedule && is_iam("Oncall:View")'>
+                        <div
+                            v-if='oncall.length'
+                            class='col-lg-12'
+                        >
+                            <div class='card'>
+                                <div class='card-header'>
+                                    <h3 class='card-title'>
+                                        <IconPhoneCall
+                                            :size='20'
+                                            :stroke='1.5'
+                                            class='me-2'
+                                        />
+                                        Currently On-Call
+                                    </h3>
+                                </div>
+                                <div class='list-group list-group-flush'>
+                                    <div
+                                        v-for='entry in oncall'
+                                        :key='entry.uid'
+                                        class='list-group-item'
+                                    >
+                                        <div class='d-flex align-items-center'>
+                                            <span class='avatar avatar-sm me-2'>
+                                                {{ entry.fname.charAt(0) }}{{ entry.lname.charAt(0) }}
+                                            </span>
+                                            <div>
+                                                <span class='fw-medium'>{{ entry.fname }} {{ entry.lname }}</span>
+                                                <span
+                                                    v-if='entry.is_override'
+                                                    class='badge bg-yellow-lt ms-2'
+                                                >
+                                                    Override
+                                                </span>
+                                            </div>
+                                            <small class='text-muted ms-auto'>
+                                                Until {{ formatTime(entry.end_ts) }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class='col-lg-12'>
                             <CardScheduleCalendar
                                 :schedule='schedule'
@@ -65,8 +107,9 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import moment from 'moment';
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardScheduleAssigned from './Schedule/ScheduleAssigned.vue';
@@ -76,7 +119,8 @@ import {
     TablerLoading
 } from '@tak-ps/vue-tabler'
 import {
-    IconPencil
+    IconPencil,
+    IconPhoneCall
 } from '@tabler/icons-vue';
 
 const route = useRoute();
@@ -98,6 +142,7 @@ const loading = reactive({
 })
 
 const schedule = reactive({})
+const oncall = ref([])
 
 const assigned = reactive({
     total: 0,
@@ -108,11 +153,23 @@ function is_iam(permission) {
     return iamHelper(props.iam, props.auth, permission) 
 }
 
+function formatTime(ts) {
+    return moment(ts).format('ddd MMM D, h:mm A');
+}
+
 async function fetch() {
     loading.schedule = true;
     const result = await window.std(`/api/schedule/${route.params.scheduleid}`);
     Object.assign(schedule, result);
     loading.schedule = false;
+}
+
+async function fetchOnCall() {
+    try {
+        oncall.value = await window.std(`/api/schedule/${route.params.scheduleid}/oncall`);
+    } catch (err) {
+        oncall.value = [];
+    }
 }
 
 async function fetchAssigned() {
@@ -124,7 +181,10 @@ async function fetchAssigned() {
 }
 
 onMounted(async () => {
-    if (is_iam('Oncall:View')) await fetch();
+    if (is_iam('Oncall:View')) {
+        await fetch();
+        await fetchOnCall();
+    }
 })
 
 defineExpose({

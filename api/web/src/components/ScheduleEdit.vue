@@ -16,7 +16,7 @@
             <div class='container-xl'>
                 <div class='row row-deck row-cards'>
                     <NoAccess
-                        v-if='!is_iam("Schedule:Admin")'
+                        v-if='!is_iam("Oncall:Admin")'
                         title='New Schedule'
                     />
                     <TablerLoading v-if='loading.schedule' />
@@ -54,6 +54,38 @@
                                                 description='Default time at which Schedules change'
                                             />
                                         </div>
+                                        <div class='col-md-6'>
+                                            <label class='form-label'>Rotation Type</label>
+                                            <select
+                                                v-model='schedule.rotation_type'
+                                                class='form-select'
+                                            >
+                                                <option value='none'>
+                                                    None (Manual)
+                                                </option>
+                                                <option value='daily'>
+                                                    Daily
+                                                </option>
+                                                <option value='weekly'>
+                                                    Weekly
+                                                </option>
+                                                <option value='custom'>
+                                                    Custom (Days)
+                                                </option>
+                                            </select>
+                                            <small class='form-hint'>How shifts rotate among assigned members</small>
+                                        </div>
+                                        <div
+                                            v-if='schedule.rotation_type !== "none"'
+                                            class='col-md-6'
+                                        >
+                                            <TablerInput
+                                                v-model='schedule.rotation_period'
+                                                type='number'
+                                                label='Rotation Period'
+                                                :description='rotationPeriodDescription'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -66,10 +98,56 @@
                                     />
                                 </div>
 
+                                <div
+                                    v-if='$route.params.scheduleid && schedule.rotation_type !== "none"'
+                                    class='card-body border-top'
+                                >
+                                    <h4 class='mb-3'>
+                                        Generate Rotation
+                                    </h4>
+                                    <p class='text-muted'>
+                                        Automatically create shift events by rotating through assigned members.
+                                    </p>
+                                    <div class='row row-cards'>
+                                        <div class='col-md-5'>
+                                            <TablerInput
+                                                v-model='generate.start_date'
+                                                type='date'
+                                                label='Start Date'
+                                            />
+                                        </div>
+                                        <div class='col-md-5'>
+                                            <TablerInput
+                                                v-model='generate.end_date'
+                                                type='date'
+                                                label='End Date'
+                                            />
+                                        </div>
+                                        <div class='col-md-2 d-flex align-items-end'>
+                                            <button
+                                                class='btn btn-primary w-100'
+                                                :disabled='generate.loading'
+                                                @click='generateRotation'
+                                            >
+                                                <span
+                                                    v-if='generate.loading'
+                                                    class='spinner-border spinner-border-sm me-1'
+                                                />
+                                                Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div
+                                        v-if='generate.result'
+                                        class='alert alert-success mt-3'
+                                        v-text='generate.result'
+                                    />
+                                </div>
+
                                 <div class='col-12 py-1 pb-4 px-4'>
                                     <div class='d-flex'>
                                         <a
-                                            v-if='$route.params.scheduleid && is_iam("Schedule:Admin")'
+                                            v-if='$route.params.scheduleid && is_iam("Oncall:Admin")'
                                             class='cursor-pointer btn btn-danger'
                                             @click='deleteSchedule'
                                         >
@@ -104,6 +182,7 @@
 
 <script>
 import iam from '../iam.js';
+import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import UserPresentSelect from './util/UserPresentSelect.vue';
 import {
@@ -144,13 +223,28 @@ export default {
             schedule: {
                 name: '',
                 body: '',
-                handoff: '06:00'
+                handoff: '06:00',
+                rotation_type: 'none',
+                rotation_period: 1
             },
-            assigned: []
+            assigned: [],
+            generate: {
+                start_date: moment().format('YYYY-MM-DD'),
+                end_date: moment().add(4, 'weeks').format('YYYY-MM-DD'),
+                loading: false,
+                result: ''
+            }
+        }
+    },
+    computed: {
+        rotationPeriodDescription: function() {
+            if (this.schedule.rotation_type === 'daily') return 'Number of days per shift';
+            if (this.schedule.rotation_type === 'weekly') return 'Number of weeks per shift';
+            return 'Number of days per shift';
         }
     },
     mounted: async function() {
-        if (this.$route.params.scheduleid && this.is_iam('Schedule:Admin')) {
+        if (this.$route.params.scheduleid && this.is_iam('Oncall:Admin')) {
             await this.fetch();
         } else {
             this.loading.schedule = false;
@@ -204,6 +298,44 @@ export default {
             this.schedule = await window.std(`/api/schedule/${this.$route.params.scheduleid}`);
             this.loading.schedule = false;
         },
+        update: async function() {
+            if (!this.validate()) return;
+
+            this.loading.schedule = true;
+            await window.std(`/api/schedule/${this.$route.params.scheduleid}`, {
+                method: 'PATCH',
+                body: {
+                    name: this.schedule.name,
+                    body: this.schedule.body,
+                    handoff: this.schedule.handoff,
+                    rotation_type: this.schedule.rotation_type,
+                    rotation_period: parseInt(this.schedule.rotation_period)
+                }
+            });
+
+            this.loading.schedule = false;
+            this.$router.push(`/schedule/${this.$route.params.scheduleid}`);
+        },
+        generateRotation: async function() {
+            this.generate.loading = true;
+            this.generate.result = '';
+
+            try {
+                const result = await window.std(`/api/schedule/${this.$route.params.scheduleid}/generate`, {
+                    method: 'POST',
+                    body: {
+                        start_date: this.generate.start_date,
+                        end_date: this.generate.end_date
+                    }
+                });
+
+                this.generate.result = result.message;
+            } catch (err) {
+                this.generate.result = err.message || 'Failed to generate rotation';
+            }
+
+            this.generate.loading = false;
+        }
     }
 }
 </script>

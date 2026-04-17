@@ -1,23 +1,15 @@
 {
-    "ts-node": {
-        "esm": true
-    },
     "compilerOptions": {
         "strict": true,
-        "skipLibCheck": true,
-        "module": "es2022",
+        "strictNullChecks": true,
         "esModuleInterop": true,
+        "skipLibCheck": true,
+        "module": "nodenext",
         "target": "es2022",
-        "noImplicitAny": false,
-        "moduleResolution": "node",
+        "moduleResolution": "nodenext",
         "sourceMap": true,
         "outDir": "dist",
-        "baseUrl": ".",
-        "paths": {
-            "*": [
-                "node_modules/*"
-            ]
-        }
+        "types": ["node"]
     },
     "exclude": [],
     "include": [

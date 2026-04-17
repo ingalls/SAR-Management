@@ -6,6 +6,7 @@ import EquipmentAssignedModel from './models/EquipmentAssigned.js'
 import IssueModel from './models/Issue.js'
 import IssueAssignedModel from './models/IssueAssigned.js'
 import ScheduleAssignedModel from './models/ScheduleAssigned.js'
+import ScheduleOverrideModel from './models/ScheduleOverride.js'
 import IssueCommentModel from './models/IssueComment.js'
 import MissionAssignedModel from './models/MissionAssigned.js'
 import TrainingAssignedModel from './models/TrainingAssigned.js'
@@ -69,6 +70,7 @@ export default class Models {
     EquipmentAssigned: EquipmentAssignedModel;
     IssueAssigned: IssueAssignedModel;
     ScheduleAssigned: ScheduleAssignedModel;
+    ScheduleOverride: ScheduleOverrideModel;
     ScheduleEvent: ScheduleEventModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
@@ -88,6 +90,7 @@ export default class Models {
         this.TrainingAssigned = new TrainingAssignedModel(pg);
         this.MissionAssigned = new MissionAssignedModel(pg);
         this.ScheduleAssigned = new ScheduleAssignedModel(pg);
+        this.ScheduleOverride = new ScheduleOverrideModel(pg);
         this.Stats = new StatsModel(pg);
         this.TeamSetting = new TeamSettingModel(pg);
         this.Team = new TeamModel(pg);

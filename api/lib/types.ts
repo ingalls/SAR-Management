@@ -9,6 +9,7 @@ import { AugmentedMissionAssigned } from './models/MissionAssigned.js';
 import { AugmentedTrainingAssigned } from './models/TrainingAssigned.js';
 import { AugmentedIssueAssigned } from './models/IssueAssigned.js';
 import { AugmentedScheduleAssigned } from './models/ScheduleAssigned.js';
+import { AugmentedScheduleOverride } from './models/ScheduleOverride.js';
 import { AugmentedEquipment } from './models/Equipment.js';
 import { AugmentedUser } from './models/User.js';
 import { AugmentedTraining } from './models/Training.js';
@@ -45,6 +46,7 @@ export const IssueAssignedResponse = AugmentedIssueAssigned;
 export const MissionAssignedResponse = AugmentedMissionAssigned;
 export const TrainingAssignedResponse = AugmentedTrainingAssigned;
 export const ScheduleAssignedResponse = AugmentedScheduleAssigned;
+export const ScheduleOverrideResponse = AugmentedScheduleOverride;
 
 export const UserDashboardResponse = createSelectSchema(schemas.UserDashboard, {
     id: Type.Integer(),

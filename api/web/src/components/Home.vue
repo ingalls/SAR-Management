@@ -134,6 +134,15 @@
                                     @remove='removeCard(card.id)'
                                 />
                             </template>
+                            <template v-else-if='card.name === "OnCall"'>
+                                <OnCallCard
+                                    :iam='props.iam'
+                                    :auth='props.auth'
+                                    :drag-handle='true'
+                                    :menu='true'
+                                    @remove='removeCard(card.id)'
+                                />
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -148,12 +157,14 @@ import 'gridstack/dist/gridstack.min.css';
 import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
+import OnCallCard from './cards/OnCall.vue';
 import { GridStack } from 'gridstack';
 import moment from 'moment';
 import { 
     IconChecklist,
     IconSchool,
-    IconCalendar
+    IconCalendar,
+    IconPhoneCall
 } from '@tabler/icons-vue';
 
 const props = defineProps({
@@ -191,6 +202,12 @@ const availableWidgets = [
         label: 'Calendar', 
         icon: IconCalendar,
         description: 'View upcoming events on a calendar.'
+    },
+    {
+        name: 'OnCall',
+        label: 'On-Call',
+        icon: IconPhoneCall,
+        description: 'See who is currently on-call.'
     }
 ];
 
