@@ -9,16 +9,16 @@
                     <button
                         type='button'
                         class='btn'
-                        :class='{ &apos;btn-primary&apos;: view === &apos;files&apos; }'
-                        @click='view = &apos;files&apos;'
+                        :class='{ "btn-primary": view === "files" }'
+                        @click='view = "files"'
                     >
                         Files
                     </button>
                     <button
                         type='button'
                         class='btn'
-                        :class='{ &apos;btn-primary&apos;: view === &apos;photos&apos; }'
-                        @click='view = &apos;photos&apos;'
+                        :class='{ "btn-primary": view === "photos" }'
+                        @click='view = "photos"'
                     >
                         Photos
                     </button>

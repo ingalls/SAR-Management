@@ -184,6 +184,7 @@ export default {
         Avatar,
         NoAccess,
         Comment,
+        TablerBadge,
         TablerLoading,
         TablerMarkdown,
         TablerBreadCrumb,

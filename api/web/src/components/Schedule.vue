@@ -167,7 +167,7 @@ async function fetch() {
 async function fetchOnCall() {
     try {
         oncall.value = await window.std(`/api/schedule/${route.params.scheduleid}/oncall`);
-    } catch (err) {
+    } catch {
         oncall.value = [];
     }
 }

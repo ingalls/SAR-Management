@@ -209,6 +209,7 @@ import {
 export default {
     name: 'TrainingsNew',
     components: {
+        TablerBadge,
         TablerEpochRange,
         TeamBadge,
         Location,

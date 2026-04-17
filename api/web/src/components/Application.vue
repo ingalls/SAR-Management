@@ -158,6 +158,7 @@ import {
 export default {
     name: 'Application',
     components: {
+        TablerBadge,
         TablerEpoch,
         CreateComment,
         IconPencil,

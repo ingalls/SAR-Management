@@ -161,7 +161,7 @@ const saveTag = async (tag, tagit) => {
     }
 };
 
-const deleteTag = async (tag, tagit) => {
+const deleteTag = async (tag) => {
     if (tag.id) {
         await window.std(`/api/mission-tag/${tag.id}`, {
             method: 'DELETE',

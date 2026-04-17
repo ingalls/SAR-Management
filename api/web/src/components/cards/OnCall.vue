@@ -170,7 +170,7 @@ const fetchOnCall = async () => {
     loading.value = true;
     try {
         entries.value = await window.std('/api/schedule/oncall');
-    } catch (err) {
+    } catch {
         entries.value = [];
     }
     loading.value = false;

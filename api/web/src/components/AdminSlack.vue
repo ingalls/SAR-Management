@@ -158,8 +158,7 @@
                                                     class='cursor-pointer'
                                                     background-color='rgba(32, 107, 196, 0.2)'
                                                     text-color='#206bc4'
-                                                    v-text='team.name'
-                                                />
+                                                >{{ team.name }}</TablerBadge>
                                             </a>
                                             <span
                                                 v-if='membership.should_be_present.length'

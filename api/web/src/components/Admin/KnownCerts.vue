@@ -186,7 +186,7 @@ const saveCert = async (cert, certit) => {
     }
 };
 
-const deleteCert = async (cert, certit) => {
+const deleteCert = async (cert) => {
     error.value = '';
 
     try {

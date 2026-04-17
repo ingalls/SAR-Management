@@ -161,7 +161,7 @@ const saveRole = async (role, roleit) => {
     }
 };
 
-const deleteRole = async (role, roleit) => {
+const deleteRole = async (role) => {
     if (role.id) {
         await window.std(`/api/mission-role/${role.id}`, {
             method: 'DELETE',

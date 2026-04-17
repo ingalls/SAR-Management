@@ -1,6 +1,6 @@
 <template>
     <!-- Icon/Single Mode -->
-    <TablerDropdown v-if="mode === 'icon'">
+    <TablerDropdown v-if='mode === `icon`'>
         <TablerIconButton
             :title='title'
             :disabled='disabled'
@@ -47,7 +47,7 @@
 
     <!-- Card/Roster Mode -->
     <div
-        v-else-if="mode === 'card'"
+        v-else-if='mode === `card`'
         class='card'
     >
         <div class='card-header'>

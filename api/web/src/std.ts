@@ -9,7 +9,7 @@ declare global {
             headers?: Record<string, string>;
             body?: unknown;
             method?: string;
-        }) => Promise<any>;
+        }) => Promise<unknown>;
     }
 }
 
@@ -39,7 +39,7 @@ function std() {
             body?: unknown;
             method?: string;
         } = {}
-    ): Promise<any> {
+    ): Promise<unknown> {
         url = window.stdurl(url);
         if (!opts) opts = {};
 
@@ -73,7 +73,7 @@ function std() {
             }
 
             const err = new Error((bdy.message as string) || `Status Code: ${res.status}`);
-            (err as any).body = bdy;
+            (err as unknown as Record<string, unknown>).body = bdy;
             throw err;
         } else if (res.status === 401) {
             delete localStorage.token;
