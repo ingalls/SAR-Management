@@ -43,52 +43,52 @@
                                         <div class='attendance-controls__group'>
                                             <div class='attendance-controls__label'>Show</div>
                                             <div class='attendance-segmented'>
-                                                <button
+                                                <TablerButton
                                                     class='attendance-segmented__button'
                                                     :class='{ "is-active": filter.eventType === "all" }'
                                                     :disabled='loading.attendance'
                                                     @click='filter.eventType = "all"'
                                                 >
                                                     All
-                                                </button>
-                                                <button
+                                                </TablerButton>
+                                                <TablerButton
                                                     class='attendance-segmented__button'
                                                     :class='{ "is-active": filter.eventType === "mission" }'
                                                     :disabled='loading.attendance || !canViewMission'
                                                     @click='filter.eventType = "mission"'
                                                 >
                                                     Missions
-                                                </button>
-                                                <button
+                                                </TablerButton>
+                                                <TablerButton
                                                     class='attendance-segmented__button'
                                                     :class='{ "is-active": filter.eventType === "training" }'
                                                     :disabled='loading.attendance || !canViewTraining'
                                                     @click='filter.eventType = "training"'
                                                 >
                                                     Trainings
-                                                </button>
+                                                </TablerButton>
                                             </div>
                                         </div>
 
                                         <div class='attendance-controls__group'>
                                             <div class='attendance-controls__label'>Cutoff Mode</div>
                                             <div class='attendance-segmented'>
-                                                <button
+                                                <TablerButton
                                                     class='attendance-segmented__button'
                                                     :class='{ "is-active": filter.cutoffMode === "percent" }'
                                                     :disabled='loading.attendance'
                                                     @click='setCutoffMode("percent")'
                                                 >
                                                     Percent
-                                                </button>
-                                                <button
+                                                </TablerButton>
+                                                <TablerButton
                                                     class='attendance-segmented__button'
                                                     :class='{ "is-active": filter.cutoffMode === "number" }'
                                                     :disabled='loading.attendance'
                                                     @click='setCutoffMode("number")'
                                                 >
                                                     Count
-                                                </button>
+                                                </TablerButton>
                                             </div>
                                         </div>
 
@@ -134,13 +134,13 @@
                                                 </div>
                                             </div>
 
-                                            <button
-                                                class='btn btn-primary attendance-filter-button'
+                                            <TablerButton
+                                                class='btn-primary attendance-filter-button'
                                                 :disabled='loading.attendance'
                                                 @click='refresh'
                                             >
                                                 Refresh Roster
-                                            </button>
+                                            </TablerButton>
                                         </div>
                                     </div>
                                 </div>
@@ -194,8 +194,7 @@
                                                         :key='event.key'
                                                         class='attendance-matrix__event-col'
                                                     >
-                                                        <button
-                                                            type='button'
+                                                        <TablerButton
                                                             class='attendance-event-head'
                                                             :title='eventTooltip(event)'
                                                             @click='gotoEvent(event)'
@@ -221,7 +220,7 @@
                                                                 class='text-secondary small'
                                                                 v-text='formatCompactDate(event.start_ts)'
                                                             />
-                                                        </button>
+                                                        </TablerButton>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -232,8 +231,7 @@
                                                     :class='{ "attendance-row--failing": !row.meetsCutoff }'
                                                 >
                                                     <th class='attendance-matrix__member-col'>
-                                                        <button
-                                                            type='button'
+                                                        <TablerButton
                                                             class='attendance-member'
                                                             @click='gotoUser(row)'
                                                         >
@@ -258,7 +256,7 @@
                                                                 :class='row.meetsCutoff ? "bg-green-lt" : "bg-red-lt"'
                                                                 v-text='row.meetsCutoff ? "Passing" : "Below Cutoff"'
                                                             />
-                                                        </button>
+                                                        </TablerButton>
                                                     </th>
 
                                                     <td
@@ -266,8 +264,7 @@
                                                         :key='`${row.id}-${event.key}`'
                                                         class='attendance-matrix__cell'
                                                     >
-                                                        <button
-                                                            type='button'
+                                                        <TablerButton
                                                             class='attendance-mark'
                                                             :class='{ "is-attended": event.attendees.has(row.id), "is-missed": !event.attendees.has(row.id) }'
                                                             :title='event.attendees.has(row.id) ? `${row.displayName} attended ${event.title}` : `${row.displayName} did not attend ${event.title}`'
@@ -279,7 +276,7 @@
                                                                 stroke='2'
                                                             />
                                                             <span v-else class='attendance-mark__dot' />
-                                                        </button>
+                                                        </TablerButton>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -299,6 +296,7 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import {
+    TablerButton,
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -331,6 +329,7 @@ export default {
     components: {
         IconCheck,
         NoAccess,
+        TablerButton,
         TablerInput,
         TablerLoading
     },
