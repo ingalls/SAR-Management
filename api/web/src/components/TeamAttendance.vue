@@ -43,52 +43,52 @@
                                         <div class='attendance-controls__group'>
                                             <div class='attendance-controls__label'>Show</div>
                                             <div class='attendance-segmented'>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.eventType === "all" }'
+                                                <TablerButton
+                                                    class='attendance-filter-toggle'
+                                                    :class='filter.eventType === "all" ? "btn-primary" : "btn-outline-secondary"'
                                                     :disabled='loading.attendance'
                                                     @click='filter.eventType = "all"'
                                                 >
                                                     All
-                                                </button>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.eventType === "mission" }'
+                                                </TablerButton>
+                                                <TablerButton
+                                                    class='attendance-filter-toggle'
+                                                    :class='filter.eventType === "mission" ? "btn-primary" : "btn-outline-secondary"'
                                                     :disabled='loading.attendance || !canViewMission'
                                                     @click='filter.eventType = "mission"'
                                                 >
                                                     Missions
-                                                </button>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.eventType === "training" }'
+                                                </TablerButton>
+                                                <TablerButton
+                                                    class='attendance-filter-toggle'
+                                                    :class='filter.eventType === "training" ? "btn-primary" : "btn-outline-secondary"'
                                                     :disabled='loading.attendance || !canViewTraining'
                                                     @click='filter.eventType = "training"'
                                                 >
                                                     Trainings
-                                                </button>
+                                                </TablerButton>
                                             </div>
                                         </div>
 
                                         <div class='attendance-controls__group'>
                                             <div class='attendance-controls__label'>Cutoff Mode</div>
                                             <div class='attendance-segmented'>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.cutoffMode === "percent" }'
+                                                <TablerButton
+                                                    class='attendance-filter-toggle'
+                                                    :class='filter.cutoffMode === "percent" ? "btn-primary" : "btn-outline-secondary"'
                                                     :disabled='loading.attendance'
                                                     @click='setCutoffMode("percent")'
                                                 >
                                                     Percent
-                                                </button>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.cutoffMode === "number" }'
+                                                </TablerButton>
+                                                <TablerButton
+                                                    class='attendance-filter-toggle'
+                                                    :class='filter.cutoffMode === "number" ? "btn-primary" : "btn-outline-secondary"'
                                                     :disabled='loading.attendance'
                                                     @click='setCutoffMode("number")'
                                                 >
                                                     Count
-                                                </button>
+                                                </TablerButton>
                                             </div>
                                         </div>
 
@@ -134,13 +134,13 @@
                                                 </div>
                                             </div>
 
-                                            <button
-                                                class='btn btn-primary attendance-filter-button'
+                                            <TablerButton
+                                                class='btn-primary attendance-filter-button'
                                                 :disabled='loading.attendance'
                                                 @click='refresh'
                                             >
                                                 Refresh Roster
-                                            </button>
+                                            </TablerButton>
                                         </div>
                                     </div>
                                 </div>
@@ -299,6 +299,7 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import {
+    TablerButton,
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -331,6 +332,7 @@ export default {
     components: {
         IconCheck,
         NoAccess,
+        TablerButton,
         TablerInput,
         TablerLoading
     },
@@ -625,25 +627,8 @@ export default {
     gap: 0.65rem;
 }
 
-.attendance-segmented__button {
-    padding: 0.75rem 1rem;
-    border: 1px solid #d6e2ea;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #ffffff 0%, #f4f8fb 100%);
-    color: #264454;
-    font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.attendance-segmented__button:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(26, 53, 71, 0.08);
-}
-
-.attendance-segmented__button.is-active {
-    border-color: #134461;
-    background: linear-gradient(135deg, #153f5b 0%, #1a6b73 100%);
-    color: #ffffff;
+.attendance-filter-toggle {
+    min-width: 6.5rem;
 }
 
 .attendance-controls__footer {
@@ -728,25 +713,8 @@ export default {
     margin-bottom: 0;
 }
 
-.attendance-matrix__member-col {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    min-width: 16rem;
-    background: #ffffff;
-    box-shadow: 1px 0 0 #e6edf3;
-}
-
-.attendance-matrix__event-col {
-    min-width: 8.5rem;
-    max-width: 8.5rem;
-    padding: 0.5rem;
-    vertical-align: top;
-    text-align: center;
-}
-
-.attendance-event-head {
-    display: grid;
+.attendance-filter-toggle {
+    min-width: 6.5rem;
     gap: 0.35rem;
     width: 100%;
     padding: 0;
