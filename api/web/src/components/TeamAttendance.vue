@@ -1,17 +1,5 @@
 <template>
-    <div class='attendance-page'>
-        <div class='page-wrapper'>
-            <div class='page-header d-print-none'>
-                <div class='container-xl'>
-                    <div class='row g-2 align-items-center'>
-                        <div class='col d-flex'>
-                            <TablerBreadCrumb />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div>
         <div class='page-body'>
             <div class='container-xl'>
                 <div class='row row-deck row-cards'>
@@ -21,74 +9,15 @@
                     />
                     <template v-else>
                         <div class='col-12'>
-                            <div
-                                v-if='loading.team'
-                                class='card'
-                            >
-                                <TablerLoading desc='Loading Team Attendance' />
-                            </div>
-
-                            <template v-else>
-                                <div class='card attendance-hero'>
-                                    <div class='attendance-hero__body'>
-                                        <div class='attendance-hero__copy'>
-                                            <div class='attendance-hero__eyebrow'>Attendance Roster</div>
-                                            <h1
-                                                class='attendance-hero__title'
-                                                v-text='team.name'
-                                            />
-                                            <p class='attendance-hero__subtitle'>
-                                                Compare every member against the selected mission and training window, then apply either a percent target or a raw attendance count.
-                                            </p>
-                                        </div>
-
-                                        <div class='attendance-hero__meta'>
-                                            <TeamBadge :team='team' />
-                                            <div class='attendance-hero__range'>
-                                                <span v-text='formatDate(filter.start)' />
-                                                <span class='mx-2'>to</span>
-                                                <span v-text='formatDate(filter.end)' />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class='attendance-hero__stats'>
-                                        <div class='attendance-stat-tile'>
-                                            <div class='attendance-stat-tile__label'>Visible Events</div>
-                                            <div
-                                                class='attendance-stat-tile__value'
-                                                v-text='totalVisibleEvents'
-                                            />
-                                        </div>
-                                        <div class='attendance-stat-tile'>
-                                            <div class='attendance-stat-tile__label'>Passing Members</div>
-                                            <div
-                                                class='attendance-stat-tile__value'
-                                                v-text='passingUsers'
-                                            />
-                                        </div>
-                                        <div class='attendance-stat-tile'>
-                                            <div class='attendance-stat-tile__label'>Missions</div>
-                                            <div
-                                                class='attendance-stat-tile__value'
-                                                v-text='missionCount'
-                                            />
-                                        </div>
-                                        <div class='attendance-stat-tile'>
-                                            <div class='attendance-stat-tile__label'>Trainings</div>
-                                            <div
-                                                class='attendance-stat-tile__value'
-                                                v-text='trainingCount'
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-
-                        <div class='col-12'>
                             <div class='card attendance-panel'>
-                                <div class='card-body'>
+                                <TablerLoading
+                                    v-if='loading.team'
+                                    desc='Loading Team Attendance'
+                                />
+                                <div
+                                    v-else
+                                    class='card-body'
+                                >
                                     <div class='attendance-controls'>
                                         <div class='attendance-controls__inputs'>
                                             <div class='attendance-control'>
@@ -225,36 +154,6 @@
                             />
 
                             <template v-else>
-                                <div class='attendance-summary-grid'>
-                                    <div class='card attendance-summary-card'>
-                                        <div class='attendance-summary-card__label'>Passing Threshold</div>
-                                        <div class='attendance-summary-card__value'>
-                                            <span v-text='requiredCount' />
-                                        </div>
-                                        <div class='attendance-summary-card__detail'>
-                                            Members need at least <span v-text='requiredCount' /> attended <span v-text='opportunityLabel' /> in the visible range.
-                                        </div>
-                                    </div>
-                                    <div class='card attendance-summary-card'>
-                                        <div class='attendance-summary-card__label'>Pass Rate</div>
-                                        <div class='attendance-summary-card__value'>
-                                            <span v-text='users.length ? `${Math.round((passingUsers / users.length) * 100)}%` : "0%"' />
-                                        </div>
-                                        <div class='attendance-summary-card__detail'>
-                                            <span v-text='passingUsers' /> of <span v-text='users.length' /> team members currently meet the cutoff.
-                                        </div>
-                                    </div>
-                                    <div class='card attendance-summary-card'>
-                                        <div class='attendance-summary-card__label'>Visible Mix</div>
-                                        <div class='attendance-summary-card__value'>
-                                            <span v-text='visibleMissionCount' /> / <span v-text='visibleTrainingCount' />
-                                        </div>
-                                        <div class='attendance-summary-card__detail'>
-                                            Missions on the left, trainings on the right, with filtering available at any time.
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div
                                     v-if='!filteredEvents.length'
                                     class='card attendance-empty-state'
@@ -274,23 +173,19 @@
                                     <div class='card-header attendance-roster-card__header'>
                                         <div>
                                             <h3 class='card-title'>Attendance Matrix</h3>
-                                            <div class='attendance-roster-card__subtitle'>
+                                            <div class='text-secondary small'>
                                                 Click any event card or member row to jump into the underlying record.
                                             </div>
                                         </div>
 
-                                        <div class='attendance-legend'>
-                                            <span class='attendance-legend__item'>
-                                                <span class='attendance-legend__swatch is-attended' /> Attended
-                                            </span>
-                                            <span class='attendance-legend__item'>
-                                                <span class='attendance-legend__swatch is-missed' /> Missed
-                                            </span>
+                                        <div class='attendance-legend btn-list'>
+                                            <span class='badge bg-green-lt'>Attended</span>
+                                            <span class='badge bg-secondary-lt'>Missed</span>
                                         </div>
                                     </div>
 
                                     <div class='attendance-matrix-wrap'>
-                                        <table class='attendance-matrix'>
+                                        <table class='table card-table table-hover table-vcenter attendance-matrix'>
                                             <thead>
                                                 <tr>
                                                     <th class='attendance-matrix__member-col'>Responder</th>
@@ -300,31 +195,31 @@
                                                         class='attendance-matrix__event-col'
                                                     >
                                                         <button
-                                                            class='attendance-event-card'
-                                                            :class='`is-${event.source}`'
+                                                            type='button'
+                                                            class='attendance-event-head'
                                                             :title='eventTooltip(event)'
                                                             @click='gotoEvent(event)'
                                                         >
-                                                            <span class='attendance-event-card__type'>
+                                                            <span class='attendance-event-head__badges'>
                                                                 <span
-                                                                    class='attendance-event-card__badge'
-                                                                    :class='`is-${event.source}`'
+                                                                    class='badge'
+                                                                    :class='event.source === "mission" ? "bg-orange-lt" : "bg-green-lt"'
                                                                     v-text='event.sourceLabel'
                                                                 />
                                                                 <span
                                                                     v-if='event.required'
-                                                                    class='attendance-event-card__required'
+                                                                    class='badge bg-red-lt'
                                                                 >
                                                                     Required
                                                                 </span>
                                                             </span>
                                                             <span
-                                                                class='attendance-event-card__title'
+                                                                class='attendance-event-head__title'
                                                                 v-text='event.title'
                                                             />
                                                             <span
-                                                                class='attendance-event-card__date'
-                                                                v-text='formatDate(event.start_ts)'
+                                                                class='text-secondary small'
+                                                                v-text='formatCompactDate(event.start_ts)'
                                                             />
                                                         </button>
                                                     </th>
@@ -334,39 +229,33 @@
                                                 <tr
                                                     v-for='row in rosterRows'
                                                     :key='row.id'
-                                                    class='attendance-row'
-                                                    :class='{ "is-failing": !row.meetsCutoff }'
+                                                    :class='{ "attendance-row--failing": !row.meetsCutoff }'
                                                 >
                                                     <th class='attendance-matrix__member-col'>
                                                         <button
-                                                            class='attendance-member-card'
+                                                            type='button'
+                                                            class='attendance-member'
                                                             @click='gotoUser(row)'
                                                         >
                                                             <span
-                                                                class='attendance-member-card__avatar'
+                                                                class='avatar avatar-sm attendance-member__avatar'
                                                                 v-text='row.initials'
                                                             />
 
-                                                            <span class='attendance-member-card__meta'>
+                                                            <span class='attendance-member__meta'>
                                                                 <span
-                                                                    class='attendance-member-card__name'
+                                                                    class='attendance-member__name'
                                                                     v-text='row.displayName'
                                                                 />
-                                                                <span class='attendance-member-card__stats'>
+                                                                <span class='attendance-member__stats text-secondary small'>
                                                                     <span v-text='`${row.attended}/${totalVisibleEvents || 0} attended`' />
                                                                     <span v-text='`${row.percent}%`' />
-                                                                </span>
-                                                                <span class='attendance-member-card__progress'>
-                                                                    <span
-                                                                        class='attendance-member-card__progress-bar'
-                                                                        :style='{ width: `${row.percent}%` }'
-                                                                    />
                                                                 </span>
                                                             </span>
 
                                                             <span
-                                                                class='attendance-member-card__status'
-                                                                :class='{ "is-passing": row.meetsCutoff, "is-failing": !row.meetsCutoff }'
+                                                                class='badge ms-auto'
+                                                                :class='row.meetsCutoff ? "bg-green-lt" : "bg-red-lt"'
                                                                 v-text='row.meetsCutoff ? "Passing" : "Below Cutoff"'
                                                             />
                                                         </button>
@@ -378,6 +267,7 @@
                                                         class='attendance-matrix__cell'
                                                     >
                                                         <button
+                                                            type='button'
                                                             class='attendance-mark'
                                                             :class='{ "is-attended": event.attendees.has(row.id), "is-missed": !event.attendees.has(row.id) }'
                                                             :title='event.attendees.has(row.id) ? `${row.displayName} attended ${event.title}` : `${row.displayName} did not attend ${event.title}`'
@@ -385,7 +275,7 @@
                                                         >
                                                             <IconCheck
                                                                 v-if='event.attendees.has(row.id)'
-                                                                :size='18'
+                                                                :size='14'
                                                                 stroke='2'
                                                             />
                                                             <span v-else class='attendance-mark__dot' />
@@ -407,10 +297,8 @@
 
 <script>
 import NoAccess from './util/NoAccess.vue';
-import TeamBadge from './util/TeamBadge.vue';
 import iam from '../iam.js';
 import {
-    TablerBreadCrumb,
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
@@ -443,9 +331,7 @@ export default {
     components: {
         IconCheck,
         NoAccess,
-        TeamBadge,
         TablerInput,
-        TablerBreadCrumb,
         TablerLoading
     },
     props: {
@@ -501,12 +387,6 @@ export default {
         },
         totalVisibleEvents: function() {
             return this.filteredEvents.length;
-        },
-        missionCount: function() {
-            return this.events.filter((event) => event.source === 'mission').length;
-        },
-        trainingCount: function() {
-            return this.events.filter((event) => event.source === 'training').length;
         },
         visibleMissionCount: function() {
             return this.filteredEvents.filter((event) => event.source === 'mission').length;
@@ -693,6 +573,12 @@ export default {
                 year: 'numeric'
             }).format(parseDateValue(value));
         },
+        formatCompactDate: function(value) {
+            return new Intl.DateTimeFormat('en-US', {
+                month: 'short',
+                day: 'numeric'
+            }).format(parseDateValue(value));
+        },
         eventTooltip: function(event) {
             return `${event.sourceLabel}: ${event.title} (${this.formatDate(event.start_ts)} to ${this.formatDate(event.end_ts)})`;
         },
@@ -704,102 +590,6 @@ export default {
 </script>
 
 <style scoped>
-.attendance-page {
-    position: relative;
-}
-
-.attendance-hero {
-    overflow: hidden;
-    border: none;
-    color: #f4fbff;
-    background:
-        radial-gradient(circle at top right, rgba(253, 233, 155, 0.28), transparent 30%),
-        linear-gradient(135deg, #17324d 0%, #1f6871 55%, #2aa0a0 100%);
-    box-shadow: 0 28px 60px rgba(17, 39, 58, 0.2);
-}
-
-.attendance-hero__body {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    justify-content: space-between;
-    padding: 1.75rem 1.75rem 1rem;
-}
-
-.attendance-hero__copy {
-    max-width: 42rem;
-}
-
-.attendance-hero__eyebrow {
-    margin-bottom: 0.65rem;
-    font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.78;
-}
-
-.attendance-hero__title {
-    margin: 0;
-    font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
-    font-size: clamp(2rem, 3vw, 3.25rem);
-    font-weight: 700;
-    line-height: 1;
-}
-
-.attendance-hero__subtitle {
-    max-width: 34rem;
-    margin: 1rem 0 0;
-    color: rgba(244, 251, 255, 0.82);
-    font-size: 1rem;
-    line-height: 1.6;
-}
-
-.attendance-hero__meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.85rem;
-}
-
-.attendance-hero__range {
-    padding: 0.7rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    font-weight: 600;
-}
-
-.attendance-hero__stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem;
-    padding: 0 1.75rem 1.75rem;
-}
-
-.attendance-stat-tile {
-    min-height: 6.5rem;
-    padding: 1rem 1.1rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 1.1rem;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(8px);
-}
-
-.attendance-stat-tile__label {
-    margin-bottom: 0.45rem;
-    color: rgba(244, 251, 255, 0.72);
-    font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.attendance-stat-tile__value {
-    font-size: 2rem;
-    font-weight: 700;
-}
-
 .attendance-panel {
     border: none;
     box-shadow: 0 18px 40px rgba(19, 39, 54, 0.08);
@@ -894,40 +684,6 @@ export default {
     min-width: 12rem;
 }
 
-.attendance-summary-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.attendance-summary-card {
-    padding: 1.3rem;
-    border: none;
-    background: linear-gradient(180deg, #ffffff 0%, #f9fbfc 100%);
-    box-shadow: 0 16px 30px rgba(19, 39, 54, 0.08);
-}
-
-.attendance-summary-card__label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #637888;
-}
-
-.attendance-summary-card__value {
-    margin: 0.6rem 0;
-    color: #17324d;
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.attendance-summary-card__detail {
-    color: #566c7b;
-    line-height: 1.5;
-}
-
 .attendance-empty-state {
     border: 1px dashed #c6d5de;
     background: linear-gradient(180deg, #ffffff 0%, #f7fbfc 100%);
@@ -945,9 +701,7 @@ export default {
 }
 
 .attendance-roster-card {
-    border: none;
-    background: linear-gradient(180deg, #f8fbfb 0%, #ffffff 100%);
-    box-shadow: 0 22px 45px rgba(19, 39, 54, 0.09);
+    overflow: hidden;
 }
 
 .attendance-roster-card__header {
@@ -958,309 +712,166 @@ export default {
     align-items: center;
 }
 
-.attendance-roster-card__subtitle {
-    color: #617786;
-    font-size: 0.95rem;
-}
-
 .attendance-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.attendance-legend__item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    color: #4d6473;
-    font-weight: 600;
-}
-
-.attendance-legend__swatch {
-    width: 0.9rem;
-    height: 0.9rem;
-    border-radius: 999px;
-    display: inline-block;
-}
-
-.attendance-legend__swatch.is-attended {
-    background: linear-gradient(135deg, #0e8d7f 0%, #48c692 100%);
-}
-
-.attendance-legend__swatch.is-missed {
-    background: #dbe6ec;
+    gap: 0.5rem;
 }
 
 .attendance-matrix-wrap {
     overflow: auto;
-    padding: 0 1.25rem 1.25rem;
 }
 
 .attendance-matrix {
     width: max-content;
     min-width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 0.9rem;
+    margin-bottom: 0;
 }
 
 .attendance-matrix__member-col {
     position: sticky;
     left: 0;
-    z-index: 3;
-    min-width: 20rem;
-    padding: 0 1rem 0 0;
-    background: transparent;
+    z-index: 2;
+    min-width: 16rem;
+    background: #ffffff;
+    box-shadow: 1px 0 0 #e6edf3;
 }
 
 .attendance-matrix__event-col {
-    min-width: 11rem;
-    padding: 0 0.6rem;
+    min-width: 8.5rem;
+    max-width: 8.5rem;
+    padding: 0.5rem;
     vertical-align: top;
+    text-align: center;
 }
 
-.attendance-event-card {
-    display: grid;
-    gap: 0.6rem;
-    width: 100%;
-    min-height: 8.75rem;
-    padding: 1rem;
-    text-align: left;
-    border: 1px solid #dce6eb;
-    border-radius: 1.1rem;
-    background: linear-gradient(180deg, #ffffff 0%, #f4f8fb 100%);
-    box-shadow: 0 10px 25px rgba(27, 53, 69, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.attendance-event-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 28px rgba(27, 53, 69, 0.14);
-}
-
-.attendance-event-card.is-mission {
-    background: linear-gradient(180deg, #fff7ef 0%, #fffdf9 100%);
-}
-
-.attendance-event-card.is-training {
-    background: linear-gradient(180deg, #eff8f7 0%, #fbfefd 100%);
-}
-
-.attendance-event-card__type {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    align-items: center;
-}
-
-.attendance-event-card__badge,
-.attendance-event-card__required {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.28rem 0.55rem;
-    border-radius: 999px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.attendance-event-card__badge.is-mission {
-    background: rgba(209, 118, 0, 0.12);
-    color: #9b4f00;
-}
-
-.attendance-event-card__badge.is-training {
-    background: rgba(12, 138, 113, 0.12);
-    color: #0c725e;
-}
-
-.attendance-event-card__required {
-    background: rgba(190, 54, 49, 0.12);
-    color: #b43b35;
-}
-
-.attendance-event-card__title {
-    color: #17324d;
-    font-weight: 700;
-    line-height: 1.35;
-}
-
-.attendance-event-card__date {
-    color: #617786;
-    font-size: 0.9rem;
-}
-
-.attendance-row.is-failing .attendance-member-card {
-    border-color: rgba(195, 74, 71, 0.24);
-    background: linear-gradient(180deg, #fff8f6 0%, #ffffff 100%);
-}
-
-.attendance-member-card {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    padding: 1rem 1.1rem;
-    text-align: left;
-    border: 1px solid #dce6eb;
-    border-radius: 1.1rem;
-    background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
-    box-shadow: 0 10px 22px rgba(27, 53, 69, 0.08);
-}
-
-.attendance-member-card__avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #17324d 0%, #2a8b88 100%);
-    color: #ffffff;
-    font-weight: 700;
-}
-
-.attendance-member-card__meta {
+.attendance-event-head {
     display: grid;
     gap: 0.35rem;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: left;
 }
 
-.attendance-member-card__name {
-    color: #17324d;
-    font-weight: 700;
-}
-
-.attendance-member-card__stats {
+.attendance-event-head__badges {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.7rem;
-    color: #627786;
-    font-size: 0.92rem;
-}
-
-.attendance-member-card__progress {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 0.48rem;
-    overflow: hidden;
-    border-radius: 999px;
-    background: #deeaef;
-}
-
-.attendance-member-card__progress-bar {
-    position: absolute;
-    inset: 0 auto 0 0;
-    display: block;
-    border-radius: inherit;
-    background: linear-gradient(90deg, #1a6b73 0%, #35b38f 100%);
-}
-
-.attendance-member-card__status {
-    display: inline-flex;
-    align-items: center;
+    gap: 0.25rem;
     justify-content: center;
-    padding: 0.45rem 0.8rem;
-    border-radius: 999px;
-    font-size: 0.74rem;
+}
+
+.attendance-event-head__title {
+    display: -webkit-box;
+    overflow: hidden;
+    color: #1f2d3d;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    text-wrap: balance;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.attendance-row--failing td,
+.attendance-row--failing th {
+    background: #fff7f6;
+}
+
+.attendance-member {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+    border: none;
+    background: transparent;
+}
+
+.attendance-member__avatar {
+    background: #e9f0f5;
+    color: #345166;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
 }
 
-.attendance-member-card__status.is-passing {
-    background: rgba(12, 138, 113, 0.12);
-    color: #0d7860;
+.attendance-member__meta {
+    display: grid;
+    min-width: 0;
+    gap: 0.1rem;
 }
 
-.attendance-member-card__status.is-failing {
-    background: rgba(190, 54, 49, 0.12);
-    color: #b43b35;
+.attendance-member__name {
+    overflow: hidden;
+    color: #1f2d3d;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.attendance-member__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .attendance-matrix__cell {
-    padding: 0 0.6rem;
+    padding: 0.5rem;
     text-align: center;
     vertical-align: middle;
 }
 
 .attendance-mark {
-    width: 3rem;
-    height: 3rem;
+    width: 1.75rem;
+    height: 1.75rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #dbe5ea;
-    border-radius: 1rem;
-    background: #f6fafc;
-    color: #3b5566;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.attendance-mark:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 16px rgba(27, 53, 69, 0.12);
+    border: 1px solid #d7e0e7;
+    border-radius: 0.375rem;
+    background: #f6f8fb;
+    color: #4b6477;
 }
 
 .attendance-mark.is-attended {
-    border-color: rgba(12, 138, 113, 0.2);
-    background: linear-gradient(135deg, #0e8d7f 0%, #48c692 100%);
+    border-color: #a9ddbe;
+    background: #2fb344;
     color: #ffffff;
 }
 
 .attendance-mark.is-missed {
-    background: linear-gradient(180deg, #f7fafc 0%, #eef4f7 100%);
+    background: #f3f6f9;
 }
 
 .attendance-mark__dot {
-    width: 0.45rem;
-    height: 0.45rem;
+    width: 0.3rem;
+    height: 0.3rem;
     border-radius: 999px;
     background: #8aa0ae;
 }
 
 @media (max-width: 1100px) {
-    .attendance-hero__stats,
-    .attendance-summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .attendance-controls__inputs {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 768px) {
-    .attendance-hero__body,
-    .attendance-hero__stats {
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
-    }
-
-    .attendance-hero__stats,
-    .attendance-summary-grid {
-        grid-template-columns: 1fr;
-    }
-
     .attendance-controls__footer,
     .attendance-roster-card__header {
         align-items: flex-start;
     }
 
-    .attendance-member-card {
-        grid-template-columns: auto 1fr;
-    }
-
-    .attendance-member-card__status {
-        grid-column: 1 / -1;
-        justify-self: flex-start;
-    }
-
     .attendance-matrix__member-col {
-        min-width: 17rem;
+        min-width: 14rem;
+    }
+
+    .attendance-matrix__event-col {
+        min-width: 7.5rem;
     }
 }
 </style>
