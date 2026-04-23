@@ -5,14 +5,14 @@
                 <div class='row row-deck row-cards'>
                     <NoAccess
                         v-if='!is_iam("Team:View")'
-                        title='Team'
+                        title='Attendance'
                     />
                     <template v-else>
                         <div class='col-12'>
-                            <div class='card attendance-panel'>
+                            <div class='card'>
                                 <TablerLoading
-                                    v-if='loading.team'
-                                    desc='Loading Team Attendance'
+                                    v-if='loading.teams'
+                                    desc='Loading Attendance'
                                 />
                                 <div
                                     v-else
@@ -38,83 +38,103 @@
                                                     type='date'
                                                 />
                                             </div>
-                                        </div>
-
-                                        <div class='attendance-controls__group'>
-                                            <div class='attendance-controls__label'>Show</div>
-                                            <div class='attendance-segmented'>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.eventType === "all" }'
-                                                    :disabled='loading.attendance'
-                                                    @click='filter.eventType = "all"'
-                                                >
-                                                    All
-                                                </button>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.eventType === "mission" }'
-                                                    :disabled='loading.attendance || !canViewMission'
-                                                    @click='filter.eventType = "mission"'
-                                                >
-                                                    Missions
-                                                </button>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.eventType === "training" }'
-                                                    :disabled='loading.attendance || !canViewTraining'
-                                                    @click='filter.eventType = "training"'
-                                                >
-                                                    Trainings
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div class='attendance-controls__group'>
-                                            <div class='attendance-controls__label'>Cutoff Mode</div>
-                                            <div class='attendance-segmented'>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.cutoffMode === "percent" }'
-                                                    :disabled='loading.attendance'
-                                                    @click='setCutoffMode("percent")'
-                                                >
-                                                    Percent
-                                                </button>
-                                                <button
-                                                    class='attendance-segmented__button'
-                                                    :class='{ "is-active": filter.cutoffMode === "number" }'
-                                                    :disabled='loading.attendance'
-                                                    @click='setCutoffMode("number")'
-                                                >
-                                                    Count
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div class='attendance-controls__inputs'>
                                             <div class='attendance-control'>
-                                                <TablerInput
-                                                    v-model='filter.percent'
-                                                    label='Percent Target'
-                                                    :disabled='loading.attendance || filter.cutoffMode !== "percent"'
-                                                    :error='errors.percent'
-                                                    type='number'
-                                                    min='0'
-                                                    max='100'
-                                                    step='1'
-                                                />
+                                                <label class='form-label'>Team</label>
+                                                <select
+                                                    v-model='filter.team'
+                                                    class='form-select'
+                                                    :disabled='loading.attendance'
+                                                >
+                                                    <option value=''>All Teams</option>
+                                                    <option
+                                                        v-for='team in teams'
+                                                        :key='team.id'
+                                                        :value='String(team.id)'
+                                                    >
+                                                        {{ team.name }}
+                                                    </option>
+                                                </select>
                                             </div>
-                                            <div class='attendance-control'>
-                                                <TablerInput
-                                                    v-model='filter.count'
-                                                    label='Attendance Count'
-                                                    :disabled='loading.attendance || filter.cutoffMode !== "number"'
-                                                    :error='errors.count'
-                                                    type='number'
-                                                    min='0'
-                                                    step='1'
-                                                />
+                                        </div>
+
+                                        <div class='row g-3'>
+                                            <div class='col-12 col-lg-6'>
+                                                <div class='attendance-controls__group'>
+                                                    <div class='attendance-controls__label'>Show</div>
+                                                    <TablerPillGroup
+                                                        v-model='filter.eventType'
+                                                        class='attendance-segmented'
+                                                        :disabled='loading.attendance'
+                                                        name='attendance-event-type'
+                                                        :options='eventTypeOptions'
+                                                    >
+                                                        <template #option='{ option }'>
+                                                            <span class='attendance-pill-option d-inline-flex align-items-center gap-1'>
+                                                                <component
+                                                                    :is='pillIcon(option.icon)'
+                                                                    :size='14'
+                                                                    stroke='2'
+                                                                />
+                                                                <span v-text='option.label' />
+                                                            </span>
+                                                        </template>
+                                                    </TablerPillGroup>
+                                                </div>
+                                            </div>
+
+                                            <div class='col-12 col-lg-6'>
+                                                <div class='attendance-controls__group'>
+                                                    <div class='attendance-controls__label'>Cutoff Mode</div>
+                                                    <TablerPillGroup
+                                                        :model-value='filter.cutoffMode'
+                                                        class='attendance-segmented'
+                                                        :disabled='loading.attendance'
+                                                        name='attendance-cutoff-mode'
+                                                        :options='cutoffModeOptions'
+                                                        @update:model-value='setCutoffMode'
+                                                    >
+                                                        <template #option='{ option }'>
+                                                            <span class='attendance-pill-option d-inline-flex align-items-center gap-1'>
+                                                                <component
+                                                                    :is='pillIcon(option.icon)'
+                                                                    :size='14'
+                                                                    stroke='2'
+                                                                />
+                                                                <span v-text='option.label' />
+                                                            </span>
+                                                        </template>
+                                                    </TablerPillGroup>
+
+                                                    <div
+                                                        v-if='filter.cutoffMode === "percent"'
+                                                        class='attendance-control'
+                                                    >
+                                                        <TablerInput
+                                                            v-model='filter.percent'
+                                                            label='Percent Target'
+                                                            :disabled='loading.attendance'
+                                                            :error='errors.percent'
+                                                            type='number'
+                                                            min='0'
+                                                            max='100'
+                                                            step='1'
+                                                        />
+                                                    </div>
+                                                    <div
+                                                        v-else
+                                                        class='attendance-control'
+                                                    >
+                                                        <TablerInput
+                                                            v-model='filter.count'
+                                                            label='Attendance Count'
+                                                            :disabled='loading.attendance'
+                                                            :error='errors.count'
+                                                            type='number'
+                                                            min='0'
+                                                            step='1'
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -134,13 +154,13 @@
                                                 </div>
                                             </div>
 
-                                            <button
+                                            <TablerButton
                                                 class='btn btn-primary attendance-filter-button'
                                                 :disabled='loading.attendance'
                                                 @click='refresh'
                                             >
                                                 Refresh Roster
-                                            </button>
+                                            </TablerButton>
                                         </div>
                                     </div>
                                 </div>
@@ -299,11 +319,18 @@
 import NoAccess from './util/NoAccess.vue';
 import iam from '../iam.js';
 import {
+    TablerButton,
     TablerInput,
-    TablerLoading
+    TablerLoading,
+    TablerPillGroup
 } from '@tak-ps/vue-tabler';
 import {
-    IconCheck
+    IconCheck,
+    IconHash,
+    IconHelicopter,
+    IconList,
+    IconPercentage,
+    IconSchool
 } from '@tabler/icons-vue';
 
 function todayDate() {
@@ -330,9 +357,16 @@ export default {
     name: 'TeamAttendance',
     components: {
         IconCheck,
+        IconHash,
+        IconHelicopter,
+        IconList,
+        IconPercentage,
+        IconSchool,
         NoAccess,
+        TablerButton,
         TablerInput,
-        TablerLoading
+        TablerLoading,
+        TablerPillGroup
     },
     props: {
         iam: {
@@ -347,7 +381,7 @@ export default {
     data: function() {
         return {
             loading: {
-                team: true,
+                teams: true,
                 attendance: true
             },
             errors: {
@@ -359,18 +393,15 @@ export default {
             filter: {
                 start: monthAgoDate(),
                 end: todayDate(),
+                team: '',
                 eventType: 'all',
                 cutoffMode: 'percent',
                 percent: 33,
                 count: 4
             },
             events: [],
+            teams: [],
             users: [],
-            team: {
-                id: null,
-                name: '',
-                body: ''
-            }
         };
     },
     computed: {
@@ -379,6 +410,41 @@ export default {
         },
         canViewTraining: function() {
             return this.is_iam('Training:View');
+        },
+        eventTypeOptions: function() {
+            return [
+                {
+                    value: 'all',
+                    label: 'All',
+                    icon: 'all'
+                },
+                {
+                    value: 'mission',
+                    label: 'Missions',
+                    icon: 'mission',
+                    disabled: !this.canViewMission
+                },
+                {
+                    value: 'training',
+                    label: 'Trainings',
+                    icon: 'training',
+                    disabled: !this.canViewTraining
+                }
+            ];
+        },
+        cutoffModeOptions: function() {
+            return [
+                {
+                    value: 'percent',
+                    label: 'Percent',
+                    icon: 'percent'
+                },
+                {
+                    value: 'number',
+                    label: 'Count',
+                    icon: 'count'
+                }
+            ];
         },
         filteredEvents: function() {
             if (this.filter.eventType === 'mission') return this.events.filter((event) => event.source === 'mission');
@@ -446,12 +512,22 @@ export default {
     mounted: async function() {
         if (!this.is_iam('Team:View')) return;
 
-        await this.fetchTeam();
+        const routeTeam = this.$route.query.team;
+        if (routeTeam) this.filter.team = String(routeTeam);
+
+        await this.fetchTeams();
         await this.refresh();
     },
     methods: {
         is_iam: function(permission) {
             return iam(this.iam, this.auth, permission);
+        },
+        pillIcon: function(icon) {
+            if (icon === 'mission') return 'IconHelicopter';
+            if (icon === 'training') return 'IconSchool';
+            if (icon === 'percent') return 'IconPercentage';
+            if (icon === 'count') return 'IconHash';
+            return 'IconList';
         },
         setCutoffMode: function(mode) {
             if (mode === this.filter.cutoffMode) return;
@@ -504,15 +580,21 @@ export default {
 
             this.loading.attendance = false;
         },
-        fetchTeam: async function() {
-            this.loading.team = true;
-            this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
-            this.loading.team = false;
+        fetchTeams: async function() {
+            this.loading.teams = true;
+
+            const url = window.stdurl('/api/team');
+            url.searchParams.append('limit', 1000);
+
+            const list = await window.std(url);
+            this.teams = list.items;
+            this.loading.teams = false;
         },
         fetchUsers: async function() {
             const url = window.stdurl('/api/user');
-            url.searchParams.append('team', this.team.id);
             url.searchParams.append('limit', 1000);
+
+            if (this.filter.team) url.searchParams.append('team', this.filter.team);
 
             const list = await window.std(url);
             this.users = list.items;
@@ -533,7 +615,8 @@ export default {
             url.searchParams.append('start', rangeBoundary(this.filter.start));
             url.searchParams.append('end', rangeBoundary(this.filter.end, true));
             url.searchParams.append('limit', 1000);
-            url.searchParams.append('team', this.team.id);
+
+            if (this.filter.team) url.searchParams.append('team', this.filter.team);
 
             const list = await window.std(url);
 
@@ -590,11 +673,6 @@ export default {
 </script>
 
 <style scoped>
-.attendance-panel {
-    border: none;
-    box-shadow: 0 18px 40px rgba(19, 39, 54, 0.08);
-}
-
 .attendance-controls {
     display: grid;
     gap: 1.25rem;
@@ -602,7 +680,7 @@ export default {
 
 .attendance-controls__inputs {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1rem;
 }
 
@@ -619,31 +697,11 @@ export default {
     color: #5e7381;
 }
 
-.attendance-segmented {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-}
-
-.attendance-segmented__button {
-    padding: 0.75rem 1rem;
-    border: 1px solid #d6e2ea;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #ffffff 0%, #f4f8fb 100%);
-    color: #264454;
-    font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.attendance-segmented__button:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(26, 53, 71, 0.08);
-}
-
-.attendance-segmented__button.is-active {
-    border-color: #134461;
-    background: linear-gradient(135deg, #153f5b 0%, #1a6b73 100%);
-    color: #ffffff;
+.attendance-pill-option {
+    justify-content: center;
+    min-height: 1.25rem;
+    width: 100%;
+    white-space: nowrap;
 }
 
 .attendance-controls__footer {
@@ -765,6 +823,7 @@ export default {
 .attendance-event-head__title {
     display: -webkit-box;
     overflow: hidden;
+    line-clamp: 2;
     color: #1f2d3d;
     font-size: 0.8125rem;
     font-weight: 600;

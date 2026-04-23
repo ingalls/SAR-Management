@@ -75,6 +75,10 @@
                             >Calendar</a>
                             <a
                                 class='dropdown-item'
+                                @click='navigate("/attendance", $event)'
+                            >Attendance</a>
+                            <a
+                                class='dropdown-item'
                                 @click='navigate("/schedule", $event)'
                             >On-Call</a>
                             <a
@@ -300,6 +304,18 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
+                                            @click='navigate("/attendance", $event)'
+                                        >
+                                            <span class='nav-link-icon'>
+                                                <IconChecklist
+                                                    size='32'
+                                                    stroke='2'
+                                                />
+                                            </span>
+                                            <span class='nav-link-title'>Attendance</span>
+                                        </a>
+                                        <a
+                                            class='nav-link cursor-pointer'
                                             @click='navigate("/schedule", $event)'
                                         >
                                             <span class='nav-link-icon'>
@@ -403,6 +419,7 @@ import checkIAM from './iam.js';
 
 import {
     IconBug,
+    IconChecklist,
     IconChartBar,
     IconHome,
     IconUserPlus,
