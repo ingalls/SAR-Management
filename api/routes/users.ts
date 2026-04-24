@@ -25,6 +25,32 @@ export function userFormat(u: Static<typeof UserResponse>): Static<typeof UserRe
     return u;
 }
 
+export function createUserVCard(user: Static<typeof UserResponse>) {
+    const card = new VCard()
+        .addName({
+            familyName: user.lname,
+            givenName: user.fname
+        })
+        .addCompany({
+            name: 'MesaSAR'
+        })
+        .addEmail({
+            address: user.email,
+            type: ['internet']
+        });
+
+    if (user.phone) {
+        const parsedPhone = phone(user.phone);
+
+        card.addPhoneNumber({
+            number: parsedPhone.isValid ? parsedPhone.phoneNumber : user.phone,
+            type: ['cell']
+        });
+    }
+
+    return card;
+}
+
 export default async function router(schema: Schema, config: Config) {
     const email = new Email(config);
     const fields = new Set(Object.keys(User))
@@ -55,7 +81,7 @@ export default async function router(schema: Schema, config: Config) {
 
             if (['vcard', 'csv'].includes(req.query.format)) {
                 if (req.query.format === 'vcard') {
-                    res.set('Content-Type', 'text/x-vcard');
+                    res.set('Content-Type', 'text/vcard');
                     res.set('Content-Disposition', 'attachment; filename="sar-users.vcf"');
                 } else if (req.query.format === 'csv') {
                     res.set('Content-Type', 'text/csv');
@@ -84,13 +110,7 @@ export default async function router(schema: Schema, config: Config) {
 
                     for (const user of list.items) {
                         if (req.query.format === 'vcard') {
-                            // @ts-expect-error Old School import problems
-                            const card = new VCard.default();
-                            card.addName(user.lname, user.fname);
-                            card.addCompany('MesaSAR');
-                            card.addEmail(user.email);
-                            card.addPhoneNumber(phone(user.phone).phoneNumber);
-                            res.write(card.toString());
+                            res.write(createUserVCard(user).toString());
                         } else if (req.query.format === 'csv') {
                             const line = [];
                             for (const field of (req.query.fields || [])) {

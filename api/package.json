@@ -64,7 +64,7 @@
         "qrcode": "^1.5.4",
         "sharp": "^0.34.0",
         "swagger-ui-express": "^5.0.0",
-        "vcard-creator": "^0.7.0"
+        "vcard-creator": "^1.0.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

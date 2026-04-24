@@ -547,11 +547,11 @@ onMounted(async () => {
 
 <style>
 .hover-light:hover {
-    background: #f5f5f5;
+    background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
 .hover-dark:hover {
-    background: #0f172a;
+    background: color-mix(in srgb, currentColor 16%, transparent);
 }
 </style>
 

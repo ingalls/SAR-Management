@@ -10,7 +10,7 @@ import { User } from '../lib/schema.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import { StandardResponse, UserResponse } from '../lib/types.js';
-import { userFormat } from './users.js';
+import { createUserVCard, userFormat } from './users.js';
 
 export default async function router(schema: Schema, config: Config) {
     const fields = new Set(Object.keys(User))
@@ -43,7 +43,7 @@ export default async function router(schema: Schema, config: Config) {
 
             if (['vcard', 'csv'].includes(req.query.format)) {
                 if (req.query.format === 'vcard') {
-                    res.set('Content-Type', 'text/x-vcard');
+                    res.set('Content-Type', 'text/vcard');
                     res.set('Content-Disposition', 'attachment; filename="sar-users.vcf"');
                 } else if (req.query.format === 'csv') {
                     res.set('Content-Type', 'text/csv');
@@ -68,13 +68,7 @@ export default async function router(schema: Schema, config: Config) {
 
                     for (const user of list.items) {
                         if (req.query.format === 'vcard') {
-                            // @ts-expect-error Old School import problems
-                            const card = new VCard.default();
-                            card.addName(user.lname, user.fname);
-                            card.addCompany('MesaSAR');
-                            card.addEmail(user.email);
-                            card.addPhoneNumber(phone(user.phone).phoneNumber);
-                            res.write(card.toString());
+                            res.write(createUserVCard(user).toString());
                         } else if (req.query.format === 'csv') {
                             const line = [];
                             for (const field of (req.query.fields || [])) {
