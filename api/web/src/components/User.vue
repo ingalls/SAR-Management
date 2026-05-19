@@ -38,32 +38,44 @@
                                                 v-if='user.disabled'
                                                 background-color='#d63939'
                                                 text-color='#ffffff'
-                                            >DISABLED</TablerBadge>
+                                            >
+                                                DISABLED
+                                            </TablerBadge>
                                             <TablerBadge
                                                 v-else-if='user.access === "admin"'
                                                 background-color='#d63939'
                                                 text-color='#ffffff'
-                                            >Admin</TablerBadge>
+                                            >
+                                                Admin
+                                            </TablerBadge>
                                             <TablerBadge
                                                 v-else-if='user.access === "user"'
                                                 background-color='#206bc4'
                                                 text-color='#ffffff'
-                                            >User</TablerBadge>
+                                            >
+                                                User
+                                            </TablerBadge>
                                             <TablerBadge
                                                 v-else-if='user.access === "read"'
                                                 background-color='#667382'
                                                 text-color='#ffffff'
-                                            >Read</TablerBadge>
+                                            >
+                                                Read
+                                            </TablerBadge>
                                             <TablerBadge
                                                 v-if='user.mfa_enabled'
                                                 background-color='#2fb344'
                                                 text-color='#ffffff'
-                                            >MFA</TablerBadge>
+                                            >
+                                                MFA
+                                            </TablerBadge>
                                             <TablerBadge
                                                 v-else
                                                 background-color='#f59f00'
                                                 text-color='#ffffff'
-                                            >No MFA</TablerBadge>
+                                            >
+                                                No MFA
+                                            </TablerBadge>
                                             <button
                                                 data-bs-toggle='dropdown'
                                                 type='button'

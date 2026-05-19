@@ -109,13 +109,17 @@
                                         class='mx-2'
                                         background-color='#206bc4'
                                         text-color='#ffffff'
-                                    >Selected</TablerBadge>
+                                    >
+                                        Selected
+                                    </TablerBadge>
                                     <TablerBadge
                                         v-if='team.fieldable'
                                         class='ms-auto'
                                         background-color='#2fb344'
                                         text-color='#ffffff'
-                                    >Fieldable</TablerBadge>
+                                    >
+                                        Fieldable
+                                    </TablerBadge>
                                 </div>
                             </td>
                             <td v-text='team.users.length || "None"' />

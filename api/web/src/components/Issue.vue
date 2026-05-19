@@ -32,12 +32,16 @@
                                                         v-if='issue.status === "closed"'
                                                         background-color='#d63939'
                                                         text-color='#ffffff'
-                                                    >Closed</TablerBadge>
+                                                    >
+                                                        Closed
+                                                    </TablerBadge>
                                                     <TablerBadge
                                                         v-else-if='issue.status === "open"'
                                                         background-color='#2fb344'
                                                         text-color='#ffffff'
-                                                    >Open</TablerBadge>
+                                                    >
+                                                        Open
+                                                    </TablerBadge>
 
                                                     <h3
                                                         class='card-title'
@@ -141,8 +145,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import Comment from './util/Comment.vue';
 import CreateComment from './Issue/CreateComment.vue';
 import NoAccess from './util/NoAccess.vue';
@@ -156,6 +160,8 @@ import Avatar from './util/Avatar.vue';
 import IssuePoll from './Issue/Poll.vue';
 import UserSelect from './util/UserSelect.vue';
 import moment from 'moment';
+import { reactive, ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 moment.updateLocale('en', {
     relativeTime : {
@@ -178,113 +184,104 @@ moment.updateLocale('en', {
     }
 });
 
-export default {
-    name: 'Issue',
-    components: {
-        Avatar,
-        NoAccess,
-        Comment,
-        TablerBadge,
-        TablerLoading,
-        TablerMarkdown,
-        TablerBreadCrumb,
-        CreateComment,
-        IssuePoll,
-        UserSelect
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            issue: {
-                id: '',
-                title: '',
-                body: '',
-                status: 'open'
-            },
-            loading: {
-                issue: true,
-                assigned: true
-            },
-            assigned: [],
-            comments: {
-                items: []
-            }
-        }
-    },
-    computed: {
-        fromNow: function() {
-            return "Posted " + moment(this.issue.created).fromNow();
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Issue:View")) {
-            await this.fetch();
-            await this.fetchAssigned();
-            await this.fetchComments();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.issue = true;
-            this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`);
-            this.loading.issue = false;
-        },
-        fetchAssigned: async function() {
-            this.loading.assigned = true;
-            this.assigned = (await window.std(`/api/issue/${this.$route.params.issueid}/assigned`)).items;
-            this.loading.assigned = false;
-        },
-        deleteAssigned: async function(user) {
-            await window.std(`/api/issue/${this.$route.params.issueid}/assigned/${user.id}`, {
-                method: 'DELETE'
-            })
-        },
-        fetchComments: async function() {
-            this.comments = await window.std(`/api/issue/${this.$route.params.issueid}/comment`);
-        },
-        deleteComment: async function(comment) {
-            await window.std(`/api/issue/${this.$route.params.issueid}/comment/${comment.id}`, {
-                method: 'DELETE'
-            })
-            await this.fetchComments();
-        },
-        updateComment: async function(comment) {
-            await window.std(`/api/issue/${this.$route.params.issueid}/comment/${comment.id}`, {
-                method: 'PATCH',
-                body: comment
-            })
-            await this.fetchComments();
-        },
-        postAssigned: async function(user) {
-            this.loading.assigned = true;
-            await window.std(`/api/issue/${this.$route.params.issueid}/assigned`, {
-                method: 'POST',
-                body: {
-                    uid: user.id
-                }
-            })
-
-            await this.fetchAssigned();
-        },
-        update: async function(status) {
-            if (status) this.issue.status = status;
-            this.issue = await window.std(`/api/issue/${this.$route.params.issueid}`, {
-                method: 'PATCH',
-                body: {
-                    status: this.issue.status
-                }
-            });
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+
+const issue = reactive({
+    id: '',
+    title: '',
+    body: '',
+    status: 'open'
+});
+const loading = reactive({
+    issue: true,
+    assigned: true
+});
+const assigned = ref([]);
+const comments = reactive({
+    items: []
+});
+
+const fromNow = computed(() => {
+    return "Posted " + moment(issue.created).fromNow();
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function fetch() {
+    loading.issue = true;
+    Object.assign(issue, await window.std(`/api/issue/${route.params.issueid}`));
+    loading.issue = false;
 }
+
+async function fetchAssigned() {
+    loading.assigned = true;
+    assigned.value = (await window.std(`/api/issue/${route.params.issueid}/assigned`)).items;
+    loading.assigned = false;
+}
+
+async function deleteAssigned(user) {
+    await window.std(`/api/issue/${route.params.issueid}/assigned/${user.id}`, {
+        method: 'DELETE'
+    });
+}
+
+async function fetchComments() {
+    Object.assign(comments, await window.std(`/api/issue/${route.params.issueid}/comment`));
+}
+
+async function deleteComment(comment) {
+    await window.std(`/api/issue/${route.params.issueid}/comment/${comment.id}`, {
+        method: 'DELETE'
+    });
+    await fetchComments();
+}
+
+async function updateComment(comment) {
+    await window.std(`/api/issue/${route.params.issueid}/comment/${comment.id}`, {
+        method: 'PATCH',
+        body: comment
+    });
+    await fetchComments();
+}
+
+async function postAssigned(user) {
+    loading.assigned = true;
+    await window.std(`/api/issue/${route.params.issueid}/assigned`, {
+        method: 'POST',
+        body: {
+            uid: user.id
+        }
+    });
+
+    await fetchAssigned();
+}
+
+async function update(status) {
+    if (status) issue.status = status;
+    Object.assign(issue, await window.std(`/api/issue/${route.params.issueid}`, {
+        method: 'PATCH',
+        body: {
+            status: issue.status
+        }
+    }));
+}
+
+onMounted(async () => {
+    if (is_iam("Issue:View")) {
+        await fetch();
+        await fetchAssigned();
+        await fetchComments();
+    }
+});
 </script>

@@ -45,12 +45,16 @@
                                                     v-if='application.archived'
                                                     background-color='#d63939'
                                                     text-color='#ffffff'
-                                                >Archived</TablerBadge>
+                                                >
+                                                    Archived
+                                                </TablerBadge>
                                                 <TablerBadge
                                                     v-else
                                                     background-color='#2fb344'
                                                     text-color='#ffffff'
-                                                >Active</TablerBadge>
+                                                >
+                                                    Active
+                                                </TablerBadge>
 
                                                 <div class='card-title mx-2'>
                                                     <span v-text='application.name' />
@@ -137,8 +141,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import { phone as phoneFormat } from 'phone';
 import CreateComment from './Application/CreateComment.vue';
@@ -154,126 +158,121 @@ import {
 import {
     IconPencil
 } from '@tabler/icons-vue';
+import { reactive, ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'Application',
-    components: {
-        TablerBadge,
-        TablerEpoch,
-        CreateComment,
-        IconPencil,
-        TablerBreadCrumb,
-        TablerLoading,
-        TablerDelete,
-        TablerSchema,
-        NoAccess,
-        Comment
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            edit: ["application-edit", "application-new"].includes(this.$route.name),
-            loading: {
-                save: false,
-                application: true,
-            },
-            comments: {
-                application_comments: []
-            },
-            application: {
-                name: '',
-                schema: {},
-                created: new Date()
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.$route.params.applicationid && this.is_iam("Application:View")) {
-            await this.fetch();
-            await this.fetchComments();
+    auth: {
+        type: Object,
+        required: true
+    }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const edit = ref(["application-edit", "application-new"].includes(route.name));
+const loading = reactive({
+    save: false,
+    application: true,
+});
+const comments = reactive({
+    application_comments: []
+});
+const application = reactive({
+    name: '',
+    schema: {},
+    created: new Date()
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function fetchComments() {
+    Object.assign(comments, await window.std(`/api/application/${route.params.applicationid}/comment`));
+}
+
+async function deleteComment(comment) {
+    await window.std(`/api/application/${route.params.applicationid}/comment/${comment.id}`, {
+        method: 'DELETE'
+    });
+    await fetchComments();
+}
+
+async function updateComment(comment) {
+    await window.std(`/api/application/${route.params.applicationid}/comment/${comment.id}`, {
+        method: 'PATCH',
+        body: comment
+    });
+    await fetchComments();
+}
+
+async function submit() {
+    loading.save = true;
+
+    try {
+        const body = JSON.parse(JSON.stringify(application));
+        for (const prop of ['id', 'schema', 'created', 'updated', 'archived']) delete body[prop];
+        if (route.params.applicationid) {
+            Object.assign(application, await window.std(`/api/application/${route.params.applicationid}`, {
+                method: 'PATCH', body
+            }));
         } else {
-            this.application.schema = await this.getSchema();
-            this.loading.application = false;
+            Object.assign(application, await window.std(`/api/application`, {
+                method: 'POST', body
+            }));
         }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetchComments: async function() {
-            this.comments = await window.std(`/api/application/${this.$route.params.applicationid}/comment`);
-        },
-        deleteComment: async function(comment) {
-            await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {
-                method: 'DELETE'
-            })
-            await this.fetchComments();
-        },
-        updateComment: async function(comment) {
-            await window.std(`/api/application/${this.$route.params.applicationid}/comment/${comment.id}`, {
-                method: 'PATCH',
-                body: comment
-            })
-            await this.fetchComments();
-        },
-        submit: async function() {
-            this.loading.save = true;
 
-            try {
-                const body = JSON.parse(JSON.stringify(this.application));
-                for (const prop of ['id', 'schema', 'created', 'updated', 'archived']) delete body[prop];
-                if (this.$route.params.applicationid) {
-                    this.application = await window.std(`/api/application/${this.$route.params.applicationid}`, {
-                        method: 'PATCH', body
-                    });
-                } else {
-                    this.application = await window.std(`/api/application`, {
-                        method: 'POST', body
-                    });
-                }
-
-                this.$router.push(`/application/${this.application.id}`);
-            } catch (err) {
-                this.loading.save = false;
-                throw err;
-            }
-        },
-        deleteApp: async function() {
-            this.loading.application = true;
-            await window.std(`/api/application/${this.$route.params.applicationid}`, {
-                method: 'DELETE'
-            });
-            this.loading.application = false;
-            this.$router.push('/application');
-        },
-        format: function(number) {
-            const p = phoneFormat(number);
-
-            if (!p.isValid) return number;
-
-            if (p.countryCode === '+1') {
-                return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
-            } else {
-                return p;
-            }
-        },
-        fetch: async function() {
-            this.loading.application = true;
-            const application = await window.std(`/api/application/${this.$route.params.applicationid}`);
-            application.phone = this.format(application.phone);
-            this.application = application;
-            this.loading.application = false;
-        },
-        getSchema: async function() {
-            return JSON.parse((await window.std('/api/server/application')).value);
-        },
+        router.push(`/application/${application.id}`);
+    } catch (err) {
+        loading.save = false;
+        throw err;
     }
 }
+
+async function deleteApp() {
+    loading.application = true;
+    await window.std(`/api/application/${route.params.applicationid}`, {
+        method: 'DELETE'
+    });
+    loading.application = false;
+    router.push('/application');
+}
+
+function format(number) {
+    const p = phoneFormat(number);
+
+    if (!p.isValid) return number;
+
+    if (p.countryCode === '+1') {
+        return `${p.phoneNumber.slice(0, 2)} (${p.phoneNumber.slice(2, 5)}) ${p.phoneNumber.slice(5, 8)}-${p.phoneNumber.slice(8, 12)}`;
+    } else {
+        return p;
+    }
+}
+
+async function fetch() {
+    loading.application = true;
+    const data = await window.std(`/api/application/${route.params.applicationid}`);
+    data.phone = format(data.phone);
+    Object.assign(application, data);
+    loading.application = false;
+}
+
+async function getSchema() {
+    return JSON.parse((await window.std('/api/server/application')).value);
+}
+
+onMounted(async () => {
+    if (route.params.applicationid && is_iam("Application:View")) {
+        await fetch();
+        await fetchComments();
+    } else {
+        application.schema = await getSchema();
+        loading.application = false;
+    }
+});
 </script>

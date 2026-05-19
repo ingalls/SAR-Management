@@ -167,7 +167,9 @@
                                                     class='ms-auto'
                                                     background-color='#d63939'
                                                     text-color='#ffffff'
-                                                >Required</TablerBadge>
+                                                >
+                                                    Required
+                                                </TablerBadge>
                                             </div>
                                         </div>
                                     </td>

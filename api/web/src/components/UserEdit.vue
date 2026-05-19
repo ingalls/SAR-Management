@@ -216,141 +216,130 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import Upload from './util/Upload.vue';
 import {
     TablerNone,
     TablerBreadCrumb,
     TablerLoading,
     TablerInput,
-} from '@tak-ps/vue-tabler'
+} from '@tak-ps/vue-tabler';
 import {
     IconPlus,
     IconTrash
 } from '@tabler/icons-vue';
 import UserProfile from './User/Profile.vue';
+import { reactive, ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'UserEdit',
-    components: {
-        TablerNone,
-        Upload,
-        IconPlus,
-        IconTrash,
-        UserProfile,
-        TablerLoading,
-        TablerInput,
-        TablerBreadCrumb
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            token: localStorage.token,
-            base: window.stdurl('/').origin,
-            cache: +new Date(),
-            headers: {
-                Authorization: `Bearer ${localStorage.token}`
-            },
-            upload: false,
-            loading: {
-                user: true
-            },
-            errors: {
-                username: '',
-                email: '',
-                fname: '',
-                lname: '',
-                phone: '',
-                bday: '',
-                address_street: '',
-                address_city: '',
-                address_state: '',
-                address_zip: '',
-                start_year: ''
-            },
-            user: {
-                username: '',
-                email: '',
-                fname: '',
-                lname: '',
-                phone: '',
-                bday: '',
-                address_street: '',
-                address_city: '',
-                address_state: '',
-                address_zip: '',
-                start_year: '',
-                emergency: []
-            }
-        }
-    },
-    mounted: async function() {
-        await this.fetch();
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        uploadurl: function() {
-            return window.stdurl(`api/user/${this.$route.params.userid}/profile`);
-        },
-        fetch: async function() {
-            this.loading.user = true;
-            this.user = await window.std(`/api/user/${this.$route.params.userid}`);
-            this.loading.user = false;
-        },
-        create: async function() {
-            for (const field of ['username', 'email', 'fname', 'lname']) {
-                if (!this.user[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = '';
-            }
-
-            if (this.user.start_year && isNaN(parseInt(this.user.start_year))) {
-                this.errors.start_year = 'Invalid Year'
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            this.loading.user = true;
-            const create = await window.std(`/api/user/${this.$route.params.userid}`, {
-                method: 'PATCH',
-                body: {
-                    username: this.user.username,
-                    email: this.user.email,
-                    fname: this.user.fname,
-                    lname: this.user.lname,
-                    phone: this.user.phone,
-                    bday: this.user.bday || undefined,
-                    address_street: this.user.address_street,
-                    address_city: this.user.address_city,
-                    address_zip: this.user.address_zip,
-                    address_state: this.user.address_state,
-                    start_year: this.user.start_year ? parseInt(this.user.start_year) : undefined,
-                    emergency: this.user.emergency
-                }
-            });
-
-            this.loading.user = false;
-            this.$router.push(`/user/${create.id}`);
-        },
-        deleteUser: async function() {
-            this.loading.user = true;
-            await window.std(`/api/user/${this.$route.params.userid}`, {
-                method: 'DELETE',
-            });
-            this.loading.user = false;
-            this.$router.push(`/user/${this.$route.params.userid}`);
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const cache = ref(+new Date());
+const headers = ref({ Authorization: `Bearer ${localStorage.token}` });
+const upload = ref(false);
+const loading = reactive({
+    user: true
+});
+const errors = reactive({
+    username: '',
+    email: '',
+    fname: '',
+    lname: '',
+    phone: '',
+    bday: '',
+    address_street: '',
+    address_city: '',
+    address_state: '',
+    address_zip: '',
+    start_year: ''
+});
+const user = reactive({
+    username: '',
+    email: '',
+    fname: '',
+    lname: '',
+    phone: '',
+    bday: '',
+    address_street: '',
+    address_city: '',
+    address_state: '',
+    address_zip: '',
+    start_year: '',
+    emergency: []
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+function uploadurl() {
+    return window.stdurl(`api/user/${route.params.userid}/profile`);
 }
+
+async function fetch() {
+    loading.user = true;
+    Object.assign(user, await window.std(`/api/user/${route.params.userid}`));
+    loading.user = false;
+}
+
+async function create() {
+    for (const field of ['username', 'email', 'fname', 'lname']) {
+        if (!user[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = '';
+    }
+
+    if (user.start_year && isNaN(parseInt(user.start_year))) {
+        errors.start_year = 'Invalid Year';
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    loading.user = true;
+    const updated = await window.std(`/api/user/${route.params.userid}`, {
+        method: 'PATCH',
+        body: {
+            username: user.username,
+            email: user.email,
+            fname: user.fname,
+            lname: user.lname,
+            phone: user.phone,
+            bday: user.bday || undefined,
+            address_street: user.address_street,
+            address_city: user.address_city,
+            address_zip: user.address_zip,
+            address_state: user.address_state,
+            start_year: user.start_year ? parseInt(user.start_year) : undefined,
+            emergency: user.emergency
+        }
+    });
+
+    loading.user = false;
+    router.push(`/user/${updated.id}`);
+}
+
+async function deleteUser() {
+    loading.user = true;
+    await window.std(`/api/user/${route.params.userid}`, {
+        method: 'DELETE',
+    });
+    loading.user = false;
+    router.push(`/user/${route.params.userid}`);
+}
+
+onMounted(async () => {
+    await fetch();
+});
 </script>

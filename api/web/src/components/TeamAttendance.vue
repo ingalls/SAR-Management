@@ -45,7 +45,9 @@
                                                     class='form-select'
                                                     :disabled='loading.attendance'
                                                 >
-                                                    <option value=''>All Teams</option>
+                                                    <option value=''>
+                                                        All Teams
+                                                    </option>
                                                     <option
                                                         v-for='team in teams'
                                                         :key='team.id'
@@ -60,7 +62,9 @@
                                         <div class='row g-3'>
                                             <div class='col-12 col-lg-6'>
                                                 <div class='attendance-controls__group'>
-                                                    <div class='attendance-controls__label'>Show</div>
+                                                    <div class='attendance-controls__label'>
+                                                        Show
+                                                    </div>
                                                     <TablerPillGroup
                                                         v-model='filter.eventType'
                                                         class='attendance-segmented'
@@ -84,7 +88,9 @@
 
                                             <div class='col-12 col-lg-6'>
                                                 <div class='attendance-controls__group'>
-                                                    <div class='attendance-controls__label'>Cutoff Mode</div>
+                                                    <div class='attendance-controls__label'>
+                                                        Cutoff Mode
+                                                    </div>
                                                     <TablerPillGroup
                                                         :model-value='filter.cutoffMode'
                                                         class='attendance-segmented'
@@ -140,7 +146,9 @@
 
                                         <div class='attendance-controls__footer'>
                                             <div class='attendance-cutoff'>
-                                                <div class='attendance-cutoff__label'>Current Threshold</div>
+                                                <div class='attendance-cutoff__label'>
+                                                    Current Threshold
+                                                </div>
                                                 <div class='attendance-cutoff__value'>
                                                     <span v-text='requiredCount' /> of <span v-text='totalVisibleEvents' />
                                                     <span class='attendance-cutoff__context'>
@@ -179,7 +187,9 @@
                                     class='card attendance-empty-state'
                                 >
                                     <div class='card-body'>
-                                        <h3 class='attendance-empty-state__title'>No attendance opportunities in this view</h3>
+                                        <h3 class='attendance-empty-state__title'>
+                                            No attendance opportunities in this view
+                                        </h3>
                                         <p class='attendance-empty-state__body'>
                                             Adjust the date range or switch the type filter back to All to bring missions and trainings back into the roster.
                                         </p>
@@ -192,7 +202,9 @@
                                 >
                                     <div class='card-header attendance-roster-card__header'>
                                         <div>
-                                            <h3 class='card-title'>Attendance Matrix</h3>
+                                            <h3 class='card-title'>
+                                                Attendance Matrix
+                                            </h3>
                                             <div class='text-secondary small'>
                                                 Click any event card or member row to jump into the underlying record.
                                             </div>
@@ -208,7 +220,9 @@
                                         <table class='table card-table table-hover table-vcenter attendance-matrix'>
                                             <thead>
                                                 <tr>
-                                                    <th class='attendance-matrix__member-col'>Responder</th>
+                                                    <th class='attendance-matrix__member-col'>
+                                                        Responder
+                                                    </th>
                                                     <th
                                                         v-for='event in filteredEvents'
                                                         :key='event.key'
@@ -298,7 +312,10 @@
                                                                 :size='14'
                                                                 stroke='2'
                                                             />
-                                                            <span v-else class='attendance-mark__dot' />
+                                                            <span
+                                                                v-else
+                                                                class='attendance-mark__dot'
+                                                            />
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -315,9 +332,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import NoAccess from './util/NoAccess.vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
 import {
     TablerButton,
     TablerInput,
@@ -332,6 +349,22 @@ import {
     IconPercentage,
     IconSchool
 } from '@tabler/icons-vue';
+import { reactive, ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
+    }
+});
+
+const route = useRoute();
+const router = useRouter();
 
 function todayDate() {
     return new Date().toISOString().slice(0, 10);
@@ -353,323 +386,259 @@ function parseDateValue(value) {
     return new Date(value);
 }
 
-export default {
-    name: 'TeamAttendance',
-    components: {
-        IconCheck,
-        IconHash,
-        IconHelicopter,
-        IconList,
-        IconPercentage,
-        IconSchool,
-        NoAccess,
-        TablerButton,
-        TablerInput,
-        TablerLoading,
-        TablerPillGroup
-    },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                teams: true,
-                attendance: true
-            },
-            errors: {
-                start: '',
-                end: '',
-                percent: '',
-                count: ''
-            },
-            filter: {
-                start: monthAgoDate(),
-                end: todayDate(),
-                team: '',
-                eventType: 'all',
-                cutoffMode: 'percent',
-                percent: 33,
-                count: 4
-            },
-            events: [],
-            teams: [],
-            users: [],
-        };
-    },
-    computed: {
-        canViewMission: function() {
-            return this.is_iam('Mission:View');
-        },
-        canViewTraining: function() {
-            return this.is_iam('Training:View');
-        },
-        eventTypeOptions: function() {
-            return [
-                {
-                    value: 'all',
-                    label: 'All',
-                    icon: 'all'
-                },
-                {
-                    value: 'mission',
-                    label: 'Missions',
-                    icon: 'mission',
-                    disabled: !this.canViewMission
-                },
-                {
-                    value: 'training',
-                    label: 'Trainings',
-                    icon: 'training',
-                    disabled: !this.canViewTraining
-                }
-            ];
-        },
-        cutoffModeOptions: function() {
-            return [
-                {
-                    value: 'percent',
-                    label: 'Percent',
-                    icon: 'percent'
-                },
-                {
-                    value: 'number',
-                    label: 'Count',
-                    icon: 'count'
-                }
-            ];
-        },
-        filteredEvents: function() {
-            if (this.filter.eventType === 'mission') return this.events.filter((event) => event.source === 'mission');
-            if (this.filter.eventType === 'training') return this.events.filter((event) => event.source === 'training');
-            return this.events;
-        },
-        totalVisibleEvents: function() {
-            return this.filteredEvents.length;
-        },
-        visibleMissionCount: function() {
-            return this.filteredEvents.filter((event) => event.source === 'mission').length;
-        },
-        visibleTrainingCount: function() {
-            return this.filteredEvents.filter((event) => event.source === 'training').length;
-        },
-        cutoffPercent: function() {
-            const value = Number(this.filter.percent);
-            return Number.isFinite(value) ? value : 0;
-        },
-        cutoffNumber: function() {
-            const value = Number(this.filter.count);
-            if (!Number.isFinite(value)) return 0;
-            return Math.max(0, Math.floor(value));
-        },
-        requiredCount: function() {
-            if (this.filter.cutoffMode === 'percent') {
-                return Math.ceil(this.totalVisibleEvents * (this.cutoffPercent / 100));
-            }
+const loading = reactive({
+    teams: true,
+    attendance: true
+});
+const errors = reactive({
+    start: '',
+    end: '',
+    percent: '',
+    count: ''
+});
+const filter = reactive({
+    start: monthAgoDate(),
+    end: todayDate(),
+    team: '',
+    eventType: 'all',
+    cutoffMode: 'percent',
+    percent: 33,
+    count: 4
+});
+const events = ref([]);
+const teams = ref([]);
+const users = ref([]);
 
-            return this.cutoffNumber;
-        },
-        rosterRows: function() {
-            return [...this.users]
-                .map((user) => {
-                    const attended = this.filteredEvents.reduce((sum, event) => {
-                        return sum + (event.attendees.has(user.id) ? 1 : 0);
-                    }, 0);
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
 
-                    const percent = this.totalVisibleEvents ? Math.round((attended / this.totalVisibleEvents) * 100) : 0;
+const canViewMission = computed(() => is_iam('Mission:View'));
+const canViewTraining = computed(() => is_iam('Training:View'));
 
-                    return {
-                        ...user,
-                        attended,
-                        percent,
-                        initials: this.userInitials(user),
-                        displayName: `${user.fname} ${user.lname}`,
-                        meetsCutoff: attended >= this.requiredCount
-                    };
-                })
-                .sort((a, b) => {
-                    if (a.meetsCutoff !== b.meetsCutoff) return a.meetsCutoff ? -1 : 1;
-                    if (a.attended !== b.attended) return b.attended - a.attended;
-                    return a.displayName.localeCompare(b.displayName);
-                });
-        },
-        passingUsers: function() {
-            return this.rosterRows.filter((row) => row.meetsCutoff).length;
-        },
-        opportunityLabel: function() {
-            if (this.filter.eventType === 'mission') return 'missions';
-            if (this.filter.eventType === 'training') return 'trainings';
-            return 'events';
-        }
-    },
-    mounted: async function() {
-        if (!this.is_iam('Team:View')) return;
+const eventTypeOptions = computed(() => [
+    { value: 'all', label: 'All', icon: 'all' },
+    { value: 'mission', label: 'Missions', icon: 'mission', disabled: !canViewMission.value },
+    { value: 'training', label: 'Trainings', icon: 'training', disabled: !canViewTraining.value }
+]);
 
-        const routeTeam = this.$route.query.team;
-        if (routeTeam) this.filter.team = String(routeTeam);
+const cutoffModeOptions = computed(() => [
+    { value: 'percent', label: 'Percent', icon: 'percent' },
+    { value: 'number', label: 'Count', icon: 'count' }
+]);
 
-        await this.fetchTeams();
-        await this.refresh();
-    },
-    methods: {
-        is_iam: function(permission) {
-            return iam(this.iam, this.auth, permission);
-        },
-        pillIcon: function(icon) {
-            if (icon === 'mission') return 'IconHelicopter';
-            if (icon === 'training') return 'IconSchool';
-            if (icon === 'percent') return 'IconPercentage';
-            if (icon === 'count') return 'IconHash';
-            return 'IconList';
-        },
-        setCutoffMode: function(mode) {
-            if (mode === this.filter.cutoffMode) return;
+const filteredEvents = computed(() => {
+    if (filter.eventType === 'mission') return events.value.filter((event) => event.source === 'mission');
+    if (filter.eventType === 'training') return events.value.filter((event) => event.source === 'training');
+    return events.value;
+});
 
-            if (mode === 'number' && !this.cutoffNumber) {
-                this.filter.count = Math.max(1, Math.ceil(this.totalVisibleEvents * (this.cutoffPercent / 100)));
-            }
+const totalVisibleEvents = computed(() => filteredEvents.value.length);
 
-            this.filter.cutoffMode = mode;
-        },
-        validateFilters: function() {
-            const rawCount = Number(this.filter.count);
+const cutoffPercent = computed(() => {
+    const value = Number(filter.percent);
+    return Number.isFinite(value) ? value : 0;
+});
 
-            this.errors = {
-                start: '',
-                end: '',
-                percent: '',
-                count: ''
-            };
+const cutoffNumber = computed(() => {
+    const value = Number(filter.count);
+    if (!Number.isFinite(value)) return 0;
+    return Math.max(0, Math.floor(value));
+});
 
-            if (!this.filter.start) this.errors.start = 'Cannot be empty';
-            if (!this.filter.end) this.errors.end = 'Cannot be empty';
-
-            if (this.filter.start && this.filter.end && this.filter.start > this.filter.end) {
-                this.errors.end = 'End date must be on or after the start date';
-            }
-
-            if (this.filter.cutoffMode === 'percent') {
-                if (this.cutoffPercent < 0 || this.cutoffPercent > 100) {
-                    this.errors.percent = 'Use a value between 0 and 100';
-                }
-            } else if (!Number.isFinite(rawCount) || rawCount < 0) {
-                this.errors.count = 'Use a value of 0 or more';
-            }
-
-            return !Object.values(this.errors).some(Boolean);
-        },
-        refresh: async function() {
-            if (!this.validateFilters()) return;
-
-            this.loading.attendance = true;
-
-            await Promise.all([
-                this.fetchUsers(),
-                this.fetchEvents()
-            ]);
-
-            if (this.filter.eventType === 'mission' && !this.canViewMission) this.filter.eventType = 'all';
-            if (this.filter.eventType === 'training' && !this.canViewTraining) this.filter.eventType = 'all';
-
-            this.loading.attendance = false;
-        },
-        fetchTeams: async function() {
-            this.loading.teams = true;
-
-            const url = window.stdurl('/api/team');
-            url.searchParams.append('limit', 1000);
-
-            const list = await window.std(url);
-            this.teams = list.items;
-            this.loading.teams = false;
-        },
-        fetchUsers: async function() {
-            const url = window.stdurl('/api/user');
-            url.searchParams.append('limit', 1000);
-
-            if (this.filter.team) url.searchParams.append('team', this.filter.team);
-
-            const list = await window.std(url);
-            this.users = list.items;
-        },
-        fetchEvents: async function() {
-            const tasks = [];
-
-            if (this.canViewMission) tasks.push(this.fetchEventsByType('mission'));
-            if (this.canViewTraining) tasks.push(this.fetchEventsByType('training'));
-
-            const results = await Promise.all(tasks);
-            this.events = results
-                .flat()
-                .sort((a, b) => new Date(a.start_ts) - new Date(b.start_ts));
-        },
-        fetchEventsByType: async function(source) {
-            const url = window.stdurl(`/api/${source}`);
-            url.searchParams.append('start', rangeBoundary(this.filter.start));
-            url.searchParams.append('end', rangeBoundary(this.filter.end, true));
-            url.searchParams.append('limit', 1000);
-
-            if (this.filter.team) url.searchParams.append('team', this.filter.team);
-
-            const list = await window.std(url);
-
-            return await Promise.all(list.items.map(async (item) => {
-                const assigned = await window.std(`/api/${source}/${item.id}/assigned`);
-                const attendees = new Set();
-
-                for (const user of assigned.items) {
-                    if (!user.confirmed) continue;
-                    attendees.add(user.uid);
-                }
-
-                return {
-                    id: item.id,
-                    key: `${source}-${item.id}`,
-                    title: item.title,
-                    start_ts: item.start_ts,
-                    end_ts: item.end_ts,
-                    source,
-                    sourceLabel: source === 'mission' ? 'Mission' : 'Training',
-                    route: `/${source}/${item.id}`,
-                    required: Boolean(item.required),
-                    attendees
-                };
-            }));
-        },
-        gotoEvent: function(event) {
-            this.$router.push(event.route);
-        },
-        gotoUser: function(user) {
-            this.$router.push(`/user/${user.id}`);
-        },
-        formatDate: function(value) {
-            return new Intl.DateTimeFormat('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            }).format(parseDateValue(value));
-        },
-        formatCompactDate: function(value) {
-            return new Intl.DateTimeFormat('en-US', {
-                month: 'short',
-                day: 'numeric'
-            }).format(parseDateValue(value));
-        },
-        eventTooltip: function(event) {
-            return `${event.sourceLabel}: ${event.title} (${this.formatDate(event.start_ts)} to ${this.formatDate(event.end_ts)})`;
-        },
-        userInitials: function(user) {
-            return `${user.fname?.[0] || ''}${user.lname?.[0] || ''}`.toUpperCase();
-        }
+const requiredCount = computed(() => {
+    if (filter.cutoffMode === 'percent') {
+        return Math.ceil(totalVisibleEvents.value * (cutoffPercent.value / 100));
     }
-};
+    return cutoffNumber.value;
+});
+
+const rosterRows = computed(() => {
+    return [...users.value]
+        .map((user) => {
+            const attended = filteredEvents.value.reduce((sum, event) => {
+                return sum + (event.attendees.has(user.id) ? 1 : 0);
+            }, 0);
+
+            const percent = totalVisibleEvents.value ? Math.round((attended / totalVisibleEvents.value) * 100) : 0;
+
+            return {
+                ...user,
+                attended,
+                percent,
+                initials: userInitials(user),
+                displayName: `${user.fname} ${user.lname}`,
+                meetsCutoff: attended >= requiredCount.value
+            };
+        })
+        .sort((a, b) => {
+            if (a.meetsCutoff !== b.meetsCutoff) return a.meetsCutoff ? -1 : 1;
+            if (a.attended !== b.attended) return b.attended - a.attended;
+            return a.displayName.localeCompare(b.displayName);
+        });
+});
+
+function pillIcon(icon) {
+    if (icon === 'mission') return IconHelicopter;
+    if (icon === 'training') return IconSchool;
+    if (icon === 'percent') return IconPercentage;
+    if (icon === 'count') return IconHash;
+    return IconList;
+}
+
+function setCutoffMode(mode) {
+    if (mode === filter.cutoffMode) return;
+
+    if (mode === 'number' && !cutoffNumber.value) {
+        filter.count = Math.max(1, Math.ceil(totalVisibleEvents.value * (cutoffPercent.value / 100)));
+    }
+
+    filter.cutoffMode = mode;
+}
+
+function validateFilters() {
+    errors.start = '';
+    errors.end = '';
+    errors.percent = '';
+    errors.count = '';
+
+    if (!filter.start) errors.start = 'Cannot be empty';
+    if (!filter.end) errors.end = 'Cannot be empty';
+
+    if (filter.start && filter.end && filter.start > filter.end) {
+        errors.end = 'End date must be on or after the start date';
+    }
+
+    const rawCount = Number(filter.count);
+    if (filter.cutoffMode === 'percent') {
+        if (cutoffPercent.value < 0 || cutoffPercent.value > 100) {
+            errors.percent = 'Use a value between 0 and 100';
+        }
+    } else if (!Number.isFinite(rawCount) || rawCount < 0) {
+        errors.count = 'Use a value of 0 or more';
+    }
+
+    return !Object.values(errors).some(Boolean);
+}
+
+async function refresh() {
+    if (!validateFilters()) return;
+
+    loading.attendance = true;
+
+    await Promise.all([fetchUsers(), fetchEvents()]);
+
+    if (filter.eventType === 'mission' && !canViewMission.value) filter.eventType = 'all';
+    if (filter.eventType === 'training' && !canViewTraining.value) filter.eventType = 'all';
+
+    loading.attendance = false;
+}
+
+async function fetchTeams() {
+    loading.teams = true;
+
+    const url = window.stdurl('/api/team');
+    url.searchParams.append('limit', 1000);
+
+    const list = await window.std(url);
+    teams.value = list.items;
+    loading.teams = false;
+}
+
+async function fetchUsers() {
+    const url = window.stdurl('/api/user');
+    url.searchParams.append('limit', 1000);
+
+    if (filter.team) url.searchParams.append('team', filter.team);
+
+    const list = await window.std(url);
+    users.value = list.items;
+}
+
+async function fetchEvents() {
+    const tasks = [];
+
+    if (canViewMission.value) tasks.push(fetchEventsByType('mission'));
+    if (canViewTraining.value) tasks.push(fetchEventsByType('training'));
+
+    const results = await Promise.all(tasks);
+    events.value = results
+        .flat()
+        .sort((a, b) => new Date(a.start_ts) - new Date(b.start_ts));
+}
+
+async function fetchEventsByType(source) {
+    const url = window.stdurl(`/api/${source}`);
+    url.searchParams.append('start', rangeBoundary(filter.start));
+    url.searchParams.append('end', rangeBoundary(filter.end, true));
+    url.searchParams.append('limit', 1000);
+
+    if (filter.team) url.searchParams.append('team', filter.team);
+
+    const list = await window.std(url);
+
+    return await Promise.all(list.items.map(async (item) => {
+        const assigned = await window.std(`/api/${source}/${item.id}/assigned`);
+        const attendees = new Set();
+
+        for (const user of assigned.items) {
+            if (!user.confirmed) continue;
+            attendees.add(user.uid);
+        }
+
+        return {
+            id: item.id,
+            key: `${source}-${item.id}`,
+            title: item.title,
+            start_ts: item.start_ts,
+            end_ts: item.end_ts,
+            source,
+            sourceLabel: source === 'mission' ? 'Mission' : 'Training',
+            route: `/${source}/${item.id}`,
+            required: Boolean(item.required),
+            attendees
+        };
+    }));
+}
+
+function gotoEvent(event) {
+    router.push(event.route);
+}
+
+function gotoUser(user) {
+    router.push(`/user/${user.id}`);
+}
+
+function formatDate(value) {
+    return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+    }).format(parseDateValue(value));
+}
+
+function formatCompactDate(value) {
+    return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric'
+    }).format(parseDateValue(value));
+}
+
+function eventTooltip(event) {
+    return `${event.sourceLabel}: ${event.title} (${formatDate(event.start_ts)} to ${formatDate(event.end_ts)})`;
+}
+
+function userInitials(user) {
+    return `${user.fname?.[0] || ''}${user.lname?.[0] || ''}`.toUpperCase();
+}
+
+onMounted(async () => {
+    if (!is_iam('Team:View')) return;
+
+    const routeTeam = route.query.team;
+    if (routeTeam) filter.team = String(routeTeam);
+
+    await fetchTeams();
+    await refresh();
+});
 </script>
 
 <style scoped>

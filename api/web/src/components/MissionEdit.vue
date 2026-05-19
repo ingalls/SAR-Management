@@ -79,19 +79,7 @@
                                             />
                                         </div>
                                         <div class='col-12 col-md-12'>
-                                            <MdEditor
-                                                v-model='mission.body'
-                                                :preview='false'
-                                                no-upload-img
-                                                no-mermaid
-                                                :no-katex='true'
-                                                :toolbars-exclude='[
-                                                    "save",
-                                                    "prettier",
-                                                    "mermaid"
-                                                ]'
-                                                language='en-US'
-                                            />
+                                            <MDEditorShim v-model='mission.body' />
                                         </div>
                                         <div class='col-md-12'>
                                             <LocationDropdown
@@ -112,7 +100,7 @@
                             </div>
                         </div>
                         <div
-                            v-if='!$route.params.missionid'
+                            v-if='!route.params.missionid'
                             class='col-lg-12'
                         >
                             <UserSelect
@@ -127,7 +115,7 @@
                                     <div class='col-md-12'>
                                         <div class='d-flex'>
                                             <a
-                                                v-if='$route.params.missionid && is_iam("Mission:Admin")'
+                                                v-if='route.params.missionid && is_iam("Mission:Admin")'
                                                 class='cursor-pointer btn btn-danger'
                                                 @click='deleteMission'
                                             >
@@ -135,7 +123,7 @@
                                             </a>
                                             <div class='ms-auto'>
                                                 <a
-                                                    v-if='$route.params.missionid'
+                                                    v-if='route.params.missionid'
                                                     class='cursor-pointer btn btn-primary'
                                                     @click='update'
                                                 >
@@ -161,8 +149,10 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import iamHelper from '../iam.js';
 import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import UserSelect from './util/UserSelect.vue';
@@ -170,195 +160,184 @@ import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import MissionTagSelect from './util/MissionTagSelect.vue';
-import { MdEditor } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import MDEditorShim from './util/MDEditorShim.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 
-export default {
-    name: 'MissionEdit',
-    components: {
-        Location,
-        MdEditor,
-        TablerInput,
-        LocationDropdown,
-        UserSelect,
-        TablerLoading,
-        TablerBreadCrumb,
-        MissionTagSelect,
-        TeamSelect,
-        NoAccess
+const route = useRoute();
+const router = useRouter();
+
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                mission: true
-            },
-            errors: {
-                title: '',
-                body: '',
-                start_ts: '',
-                end_ts: '',
-                location_geom: '',
-                location: ''
-            },
-            mission: {
-                title: '',
-                location: '',
-                body: '',
-                start_ts: '',
-                end_ts: '',
-                externalid: '',
-                location_geom: null,
-                teams: [],
-                tags: [],
-            },
-            assigned: []
-        }
-    },
-    watch: {
-        'mission.start_ts': function() {
-            if (this.mission.start_ts && !this.mission.end_ts) {
-                this.mission.end_ts = this.mission.start_ts;
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.$route.params.missionid && this.is_iam('Mission:Manage')) {
-            await this.fetch();
-        } else {
-            const url = new URL(window.location);
-
-            if (url.searchParams.has('title')) {
-                this.mission.title = url.searchParams.get('title')
-            }
-
-            if (url.searchParams.has('start')) {
-                this.mission.start_ts = moment(url.searchParams.get('start')).format('YYYY-MM-DDTHH:mm');
-            }
-
-            if (url.searchParams.has('end')) {
-                this.mission.end_ts = moment(url.searchParams.get('end')).format('YYYY-MM-DDTHH:mm');
-            }
-
-            this.loading.mission = false;
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        deleteMission: async function() {
-            this.loading.mission = true;
-            await window.std(`/api/mission/${this.$route.params.missionid}`, {
-                method: 'DELETE',
-            });
-
-            this.loading.mission = false;
-            this.$router.push('/mission');
-        },
-        validate: function() {
-            for (const field of ['title', 'location', 'body', 'location']) {
-                if (!this.mission[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = '';
-            }
-
-            for (const field of ['start_ts', 'end_ts']) {
-                if (!this.mission[field]) {
-                    this.errors[field] = 'Cannot be empty';
-                    continue;
-                }
-
-                try {
-                    new Date(this.mission[field]);
-                    this.errors[field] = '';
-                } catch {
-                    this.errors[field] = 'Invalid Date';
-                }
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            if (!this.mission.location_geom) throw new Error('A Location Geometry must be selected');
-
-            return true;
-        },
-        update: async function() {
-            if (!this.validate()) return;
-
-            try {
-                this.loading.mission = true;
-                const update = await window.std(`/api/mission/${this.$route.params.missionid}`, {
-                    method: 'PATCH',
-                    body: {
-                        title: this.mission.title,
-                        externalid: this.mission.externalid,
-                        body: this.mission.body,
-                        location: this.mission.location,
-                        location_geom: this.mission.location_geom,
-                        start_ts: moment(this.mission.start_ts).toISOString(),
-                        end_ts: moment(this.mission.end_ts).toISOString(),
-                        teams: this.mission.teams.map((team) => { return team.id }),
-                        tags: this.mission.tags.map((tag) => { return tag.id }),
-                    }
-                });
-
-                this.$router.push(`/mission/${update.id}`);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                this.loading.mission = false;
-            }
-        },
-        create: async function() {
-            if (!this.validate()) return;
-
-            this.loading.mission = true;
-
-            const create = await window.std('/api/mission', {
-                method: 'POST',
-                body: {
-                    ...this.mission,
-                    start_ts: moment(this.mission.start_ts).toISOString(),
-                    end_ts: moment(this.mission.end_ts).toISOString(),
-                    teams: this.mission.teams.map((team) => { return team.id }),
-                    tags: this.mission.tags.map((tag) => { return tag.id }),
-                    assigned: this.assigned.map((a) => {
-                        return {
-                            uid: a.id,
-                            role: a.role || 'General',
-                            confirmed: a.confirmed || true
-                        }
-                    })
-                }
-            });
-
-            this.loading.mission = false;
-            this.$router.push(`/mission/${create.id}`);
-        },
-        fetch: async function() {
-            this.loading.mission = true;
-            const mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
-
-            mission.start_ts = moment(mission.start_ts).format('YYYY-MM-DDTHH:mm');
-            mission.end_ts = moment(mission.end_ts).format('YYYY-MM-DDTHH:mm');
-
-            this.mission = mission;
-            this.loading.mission = false;
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const loading = reactive({ mission: true });
+
+const errors = reactive({
+    title: '',
+    body: '',
+    start_ts: '',
+    end_ts: '',
+    location_geom: '',
+    location: ''
+});
+
+const mission = reactive({
+    title: '',
+    location: '',
+    body: '',
+    start_ts: '',
+    end_ts: '',
+    externalid: '',
+    location_geom: null,
+    teams: [],
+    tags: [],
+});
+
+const assigned = ref([]);
+
+watch(() => mission.start_ts, () => {
+    if (mission.start_ts && !mission.end_ts) {
+        mission.end_ts = mission.start_ts;
+    }
+});
+
+onMounted(async () => {
+    if (route.params.missionid && is_iam('Mission:Manage')) {
+        await fetch();
+    } else {
+        const url = new URL(window.location);
+
+        if (url.searchParams.has('title')) {
+            mission.title = url.searchParams.get('title');
+        }
+
+        if (url.searchParams.has('start')) {
+            mission.start_ts = moment(url.searchParams.get('start')).format('YYYY-MM-DDTHH:mm');
+        }
+
+        if (url.searchParams.has('end')) {
+            mission.end_ts = moment(url.searchParams.get('end')).format('YYYY-MM-DDTHH:mm');
+        }
+
+        loading.mission = false;
+    }
+});
+
+function is_iam(permission) {
+    return iamHelper(props.iam, props.auth, permission);
+}
+
+async function deleteMission() {
+    loading.mission = true;
+    await window.std(`/api/mission/${route.params.missionid}`, {
+        method: 'DELETE',
+    });
+
+    loading.mission = false;
+    router.push('/mission');
+}
+
+function validate() {
+    for (const field of ['title', 'location', 'body', 'location']) {
+        if (!mission[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = '';
+    }
+
+    for (const field of ['start_ts', 'end_ts']) {
+        if (!mission[field]) {
+            errors[field] = 'Cannot be empty';
+            continue;
+        }
+
+        try {
+            new Date(mission[field]);
+            errors[field] = '';
+        } catch {
+            errors[field] = 'Invalid Date';
+        }
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    if (!mission.location_geom) throw new Error('A Location Geometry must be selected');
+
+    return true;
+}
+
+async function update() {
+    if (!validate()) return;
+
+    try {
+        loading.mission = true;
+        const updated = await window.std(`/api/mission/${route.params.missionid}`, {
+            method: 'PATCH',
+            body: {
+                title: mission.title,
+                externalid: mission.externalid,
+                body: mission.body,
+                location: mission.location,
+                location_geom: mission.location_geom,
+                start_ts: moment(mission.start_ts).toISOString(),
+                end_ts: moment(mission.end_ts).toISOString(),
+                teams: mission.teams.map((team) => team.id),
+                tags: mission.tags.map((tag) => tag.id),
+            }
+        });
+
+        router.push(`/mission/${updated.id}`);
+    } catch (err) {
+        console.error(err);
+    } finally {
+        loading.mission = false;
+    }
+}
+
+async function create() {
+    if (!validate()) return;
+
+    loading.mission = true;
+
+    const created = await window.std('/api/mission', {
+        method: 'POST',
+        body: {
+            ...mission,
+            start_ts: moment(mission.start_ts).toISOString(),
+            end_ts: moment(mission.end_ts).toISOString(),
+            teams: mission.teams.map((team) => team.id),
+            tags: mission.tags.map((tag) => tag.id),
+            assigned: assigned.value.map((a) => ({
+                uid: a.id,
+                role: a.role || 'General',
+                confirmed: a.confirmed || true
+            }))
+        }
+    });
+
+    loading.mission = false;
+    router.push(`/mission/${created.id}`);
+}
+
+async function fetch() {
+    loading.mission = true;
+    const data = await window.std(`/api/mission/${route.params.missionid}`);
+
+    data.start_ts = moment(data.start_ts).format('YYYY-MM-DDTHH:mm');
+    data.end_ts = moment(data.end_ts).format('YYYY-MM-DDTHH:mm');
+
+    Object.assign(mission, data);
+    loading.mission = false;
 }
 </script>

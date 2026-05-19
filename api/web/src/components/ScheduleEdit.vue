@@ -181,8 +181,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import UserSelect from './util/UserSelect.vue';
@@ -191,152 +191,149 @@ import {
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import { reactive, ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'ScheduleEdit',
-    components: {
-        TablerInput,
-        UserSelect,
-        TablerLoading,
-        TablerBreadCrumb,
-        NoAccess
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                schedule: true
-            },
-            errors: {
-                name: '',
-                body: '',
-                handoff: ''
-            },
-            schedule: {
-                name: '',
-                body: '',
-                handoff: '06:00',
-                rotation_type: 'none',
-                rotation_period: 1
-            },
-            assigned: [],
-            generate: {
-                start_date: moment().format('YYYY-MM-DD'),
-                end_date: moment().add(4, 'weeks').format('YYYY-MM-DD'),
-                loading: false,
-                result: ''
-            }
-        }
-    },
-    computed: {
-        rotationPeriodDescription: function() {
-            if (this.schedule.rotation_type === 'daily') return 'Number of days per shift';
-            if (this.schedule.rotation_type === 'weekly') return 'Number of weeks per shift';
-            return 'Number of days per shift';
-        }
-    },
-    mounted: async function() {
-        if (this.$route.params.scheduleid && this.is_iam('Oncall:Admin')) {
-            await this.fetch();
-        } else {
-            this.loading.schedule = false;
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        deleteSchedule: async function() {
-            this.loading = true;
-            await window.std(`/api/schedule/${this.$route.params.scheduleid}`, {
-                method: 'DELETE',
-            });
-
-            this.loading = false;
-            this.$router.push('/schedule');
-        },
-        validate: function() {
-            for (const field of ['name', 'body', 'handoff']) {
-                if (!this.schedule[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = '';
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            return true;
-        },
-        create: async function() {
-            if (!this.validate()) return;
-
-            this.loading = true;
-            const create = await window.std('/api/schedule', {
-                method: 'POST',
-                body: {
-                    ...this.schedule,
-                    assigned: this.assigned.map((a) => {
-                        return {
-                            uid: a.id,
-                            role: a.role
-                        }
-                    })
-                }
-            });
-
-            this.loading = false;
-            this.$router.push(`/schedule/${create.id}`);
-        },
-        fetch: async function() {
-            this.loading.schedule = true;
-            this.schedule = await window.std(`/api/schedule/${this.$route.params.scheduleid}`);
-            this.loading.schedule = false;
-        },
-        update: async function() {
-            if (!this.validate()) return;
-
-            this.loading.schedule = true;
-            await window.std(`/api/schedule/${this.$route.params.scheduleid}`, {
-                method: 'PATCH',
-                body: {
-                    name: this.schedule.name,
-                    body: this.schedule.body,
-                    handoff: this.schedule.handoff,
-                    rotation_type: this.schedule.rotation_type,
-                    rotation_period: parseInt(this.schedule.rotation_period)
-                }
-            });
-
-            this.loading.schedule = false;
-            this.$router.push(`/schedule/${this.$route.params.scheduleid}`);
-        },
-        generateRotation: async function() {
-            this.generate.loading = true;
-            this.generate.result = '';
-
-            try {
-                const result = await window.std(`/api/schedule/${this.$route.params.scheduleid}/generate`, {
-                    method: 'POST',
-                    body: {
-                        start_date: this.generate.start_date,
-                        end_date: this.generate.end_date
-                    }
-                });
-
-                this.generate.result = result.message;
-            } catch (err) {
-                this.generate.result = err.message || 'Failed to generate rotation';
-            }
-
-            this.generate.loading = false;
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const loading = reactive({
+    schedule: true
+});
+const errors = reactive({
+    name: '',
+    body: '',
+    handoff: ''
+});
+const schedule = reactive({
+    name: '',
+    body: '',
+    handoff: '06:00',
+    rotation_type: 'none',
+    rotation_period: 1
+});
+const assigned = ref([]);
+const generate = reactive({
+    start_date: moment().format('YYYY-MM-DD'),
+    end_date: moment().add(4, 'weeks').format('YYYY-MM-DD'),
+    loading: false,
+    result: ''
+});
+
+const rotationPeriodDescription = computed(() => {
+    if (schedule.rotation_type === 'daily') return 'Number of days per shift';
+    if (schedule.rotation_type === 'weekly') return 'Number of weeks per shift';
+    return 'Number of days per shift';
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function deleteSchedule() {
+    loading.schedule = true;
+    await window.std(`/api/schedule/${route.params.scheduleid}`, {
+        method: 'DELETE',
+    });
+
+    loading.schedule = false;
+    router.push('/schedule');
 }
+
+function validate() {
+    for (const field of ['name', 'body', 'handoff']) {
+        if (!schedule[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = '';
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    return true;
+}
+
+async function create() {
+    if (!validate()) return;
+
+    loading.schedule = true;
+    const created = await window.std('/api/schedule', {
+        method: 'POST',
+        body: {
+            ...schedule,
+            assigned: assigned.value.map((a) => {
+                return {
+                    uid: a.id,
+                    role: a.role
+                }
+            })
+        }
+    });
+
+    loading.schedule = false;
+    router.push(`/schedule/${created.id}`);
+}
+
+async function fetch() {
+    loading.schedule = true;
+    Object.assign(schedule, await window.std(`/api/schedule/${route.params.scheduleid}`));
+    loading.schedule = false;
+}
+
+async function update() {
+    if (!validate()) return;
+
+    loading.schedule = true;
+    await window.std(`/api/schedule/${route.params.scheduleid}`, {
+        method: 'PATCH',
+        body: {
+            name: schedule.name,
+            body: schedule.body,
+            handoff: schedule.handoff,
+            rotation_type: schedule.rotation_type,
+            rotation_period: parseInt(schedule.rotation_period)
+        }
+    });
+
+    loading.schedule = false;
+    router.push(`/schedule/${route.params.scheduleid}`);
+}
+
+async function generateRotation() {
+    generate.loading = true;
+    generate.result = '';
+
+    try {
+        const result = await window.std(`/api/schedule/${route.params.scheduleid}/generate`, {
+            method: 'POST',
+            body: {
+                start_date: generate.start_date,
+                end_date: generate.end_date
+            }
+        });
+
+        generate.result = result.message;
+    } catch (err) {
+        generate.result = err.message || 'Failed to generate rotation';
+    }
+
+    generate.loading = false;
+}
+
+onMounted(async () => {
+    if (route.params.scheduleid && is_iam('Oncall:Admin')) {
+        await fetch();
+    } else {
+        loading.schedule = false;
+    }
+});
 </script>

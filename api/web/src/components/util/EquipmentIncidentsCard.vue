@@ -38,7 +38,7 @@
                     :key='incident.id'
                     class='list-group-item'
                     :class='{ "cursor-pointer": is_iam("Equipment:Manage") }'
-                    @click='is_iam("Equipment:Manage") ? $router.push(`/equipment/${equipmentId}/incident/${incident.id}/edit`) : null'
+                    @click='is_iam("Equipment:Manage") ? router.push(`/equipment/${equipmentId}/incident/${incident.id}/edit`) : null'
                 >
                     <div class='row align-items-center'>
                         <div class='col text-truncate'>
@@ -61,64 +61,56 @@
     </div>
 </template>
 
-<script>
-import iam from '../../iam.js';
+<script setup>
+import iamHelper from '../../iam.js';
 import NoAccess from './NoAccess.vue';
 import { TablerNone, TablerEpoch, TablerIconButton, TablerLoading } from '@tak-ps/vue-tabler';
 import { IconPlus } from '@tabler/icons-vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-    name: 'EquipmentIncidentsCard',
-    components: {
-        TablerNone,
-        TablerEpoch,
-        TablerIconButton,
-        TablerLoading,
-        IconPlus,
-        NoAccess
+const props = defineProps({
+    cols: {
+        type: String,
+        default: 'col-lg-12'
     },
-    props: {
-        cols: {
-            type: String,
-            default: 'col-lg-12'
-        },
-        equipmentId: {
-            type: Number,
-            required: true
-        },
-        label: {
-            type: String,
-            default: 'Equipment Incidents'
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
+    equipmentId: {
+        type: Number,
+        required: true
     },
-    data: function() {
-        return {
-            loading: true,
-            incidents: []
-        }
+    label: {
+        type: String,
+        default: 'Equipment Incidents'
     },
-    mounted: async function() {
-        await this.fetch();
+    iam: {
+        type: Object,
+        required: true
     },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading = true;
-            const res = await window.std(`/api/equipment/${this.equipmentId}/incident`);
-            this.incidents = res.items;
-            this.loading = false;
-        },
-        create: function() {
-            this.$router.push(`/equipment/${this.equipmentId}/incident/new`);
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const router = useRouter();
+
+const loading = ref(true);
+const incidents = ref([]);
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function fetch() {
+    loading.value = true;
+    const res = await window.std(`/api/equipment/${props.equipmentId}/incident`);
+    incidents.value = res.items;
+    loading.value = false;
 }
+
+function create() {
+    router.push(`/equipment/${props.equipmentId}/incident/new`);
+}
+
+onMounted(async () => {
+    await fetch();
+});
 </script>

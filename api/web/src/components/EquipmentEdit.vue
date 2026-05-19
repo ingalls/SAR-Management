@@ -202,7 +202,7 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import {
     TablerBreadCrumb,
     TablerLoading,
@@ -215,159 +215,149 @@ import Alert from './util/Alert.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
 import EquipmentProfile from './Equipment/Profile.vue';
 import Upload from './util/Upload.vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
+import { reactive, ref, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'EquipmentEdit',
-    components: {
-        Alert,
-        NoAccess,
-        Upload,
-        TablerBreadCrumb,
-        UserSelect,
-        TablerInput,
-        TablerToggle,
-        TablerLoading,
-        EquipmentMeta,
-        EquipmentProfile
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            upload: false,
-            token: localStorage.token,
-            base: window.stdurl('/').origin,
-            cache: +new Date(),
-            headers: {
-                Authorization: `Bearer ${localStorage.token}`
-            },
-            loading: {
-                equipment: true,
-            },
-            type: {
-                schema: {}
-            },
-            assigned: [],
-            equipmentTypes: [],
-            containers: [],
-            equipment: {
-                name: '',
-                description: '',
-                container: false,
-                value: '',
-                quantity: 1,
-                parent: null,
-                type: null,
-                meta: {}
-            }
-        }
-    },
-    watch: {
-        'equipment.type_id': async function() {
-            this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
-        }
-    },
-    mounted: async function() {
-        await this.fetchTypes();
-        await this.fetchContainers();
+    auth: {
+        type: Object,
+        required: true
+    }
+});
 
-        if (this.is_iam("Equipment:Manage") && this.$route.params.equipid) {
-            await this.fetch();
-        } else if (!this.$route.params.equipid) {
-            const url = new URL(window.location);
-            if (url.searchParams.has('parent')) {
-                const parentEquip = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
-                this.equipment.parent = parentEquip.id;
-            }
+const route = useRoute();
+const router = useRouter();
 
-            this.loading.equipment = false;
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetchTypes: async function() {
-            const res = await window.std('/api/equipment-type?limit=100');
-            this.equipmentTypes = res.items;
+const upload = ref(false);
+const cache = ref(+new Date());
+const headers = reactive({
+    Authorization: `Bearer ${localStorage.token}`
+});
+const loading = reactive({
+    equipment: true,
+});
+const type = reactive({
+    schema: {}
+});
+const assigned = ref([]);
+const equipmentTypes = ref([]);
+const containers = ref([]);
+const equipment = reactive({
+    name: '',
+    description: '',
+    container: false,
+    value: '',
+    quantity: 1,
+    parent: null,
+    type: null,
+    meta: {}
+});
 
-            if (!this.$route.params.equipid && !this.equipment.type_id) {
-                const generic = this.equipmentTypes.find((t) => t.type === 'Generic');
-                if (generic) this.equipment.type_id = generic.id;
-            }
-        },
-        fetchContainers: async function() {
-            const res = await window.std('/api/equipment?container=true&limit=100');
-            this.containers = res.items;
-        },
-        uploadurl: function() {
-            return window.stdurl(`api/equipment/${this.$route.params.equipid}/profile`);
-        },
-        fetch: async function() {
-            this.loading.equipment = true;
-            this.equipment = await window.std(`/api/equipment/${this.$route.params.equipid}`);
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
 
-            if (this.equipment.type_id) {
-                this.type = await window.std(`/api/equipment-type/${this.equipment.type_id}`);
-            }
+watch(() => equipment.type_id, async () => {
+    Object.assign(type, await window.std(`/api/equipment-type/${equipment.type_id}`));
+});
 
-            this.assigned = (await window.std(`/api/equipment/${this.equipment.id}/assigned`)).items;
+async function fetchTypes() {
+    const res = await window.std('/api/equipment-type?limit=100');
+    equipmentTypes.value = res.items;
 
-            this.loading.equipment = false;
-        },
-        archive: async function() {
-            this.loading.equipment = true;
-
-            await window.std(`/api/equipment/${this.$route.params.equipid}`, {
-                method: 'PATCH',
-                body: {
-                    archived: true
-                }
-            })
-
-            this.loading.equipment = false;
-            this.$router.push(`/equipment/${this.$route.params.equipid}`);
-        },
-        save: async function() {
-            this.loading.equipment = true;
-
-            if (this.$route.params.equipid) {
-                await window.std(`/api/equipment/${this.$route.params.equipid}`, {
-                    method: 'PATCH',
-                    body: {
-                        ...this.equipment,
-                        parent: this.equipment.parent || null,
-                        value: this.equipment.value ? Number(this.equipment.value) : null,
-                        quantity: this.equipment.quantity ? parseInt(this.equipment.quantity) : null,
-                        assigned: this.assigned.map((a) => { return a.uid || a.id })
-                    }
-                })
-
-                this.loading.equipment = false;
-                this.$router.push(`/equipment/${this.$route.params.equipid}`);
-            } else {
-                const equip = await window.std('/api/equipment', {
-                    method: 'POST',
-                    body: {
-                        ...this.equipment,
-                        parent: this.equipment.parent || null,
-                        value: this.equipment.value ? Number(this.equipment.value) : null,
-                        quantity: this.equipment.quantity ? parseInt(this.equipment.quantity) : null,
-                        assigned: this.assigned.map((a) => { return a.uid || a.id })
-                    }
-                })
-
-                this.loading.equipment = false;
-                this.$router.push(`/equipment/${equip.id}`);
-            }
-        }
+    if (!route.params.equipid && !equipment.type_id) {
+        const generic = equipmentTypes.value.find((t) => t.type === 'Generic');
+        if (generic) equipment.type_id = generic.id;
     }
 }
+
+async function fetchContainers() {
+    const res = await window.std('/api/equipment?container=true&limit=100');
+    containers.value = res.items;
+}
+
+function uploadurl() {
+    return window.stdurl(`api/equipment/${route.params.equipid}/profile`);
+}
+
+async function fetch() {
+    loading.equipment = true;
+    Object.assign(equipment, await window.std(`/api/equipment/${route.params.equipid}`));
+
+    if (equipment.type_id) {
+        Object.assign(type, await window.std(`/api/equipment-type/${equipment.type_id}`));
+    }
+
+    assigned.value = (await window.std(`/api/equipment/${equipment.id}/assigned`)).items;
+
+    loading.equipment = false;
+}
+
+async function archive() {
+    loading.equipment = true;
+
+    await window.std(`/api/equipment/${route.params.equipid}`, {
+        method: 'PATCH',
+        body: {
+            archived: true
+        }
+    });
+
+    loading.equipment = false;
+    router.push(`/equipment/${route.params.equipid}`);
+}
+
+async function save() {
+    loading.equipment = true;
+
+    if (route.params.equipid) {
+        await window.std(`/api/equipment/${route.params.equipid}`, {
+            method: 'PATCH',
+            body: {
+                ...equipment,
+                parent: equipment.parent || null,
+                value: equipment.value ? Number(equipment.value) : null,
+                quantity: equipment.quantity ? parseInt(equipment.quantity) : null,
+                assigned: assigned.value.map((a) => { return a.uid || a.id })
+            }
+        });
+
+        loading.equipment = false;
+        router.push(`/equipment/${route.params.equipid}`);
+    } else {
+        const equip = await window.std('/api/equipment', {
+            method: 'POST',
+            body: {
+                ...equipment,
+                parent: equipment.parent || null,
+                value: equipment.value ? Number(equipment.value) : null,
+                quantity: equipment.quantity ? parseInt(equipment.quantity) : null,
+                assigned: assigned.value.map((a) => { return a.uid || a.id })
+            }
+        });
+
+        loading.equipment = false;
+        router.push(`/equipment/${equip.id}`);
+    }
+}
+
+onMounted(async () => {
+    await fetchTypes();
+    await fetchContainers();
+
+    if (is_iam("Equipment:Manage") && route.params.equipid) {
+        await fetch();
+    } else if (!route.params.equipid) {
+        const url = new URL(window.location);
+        if (url.searchParams.has('parent')) {
+            const parentEquip = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
+            equipment.parent = parentEquip.id;
+        }
+
+        loading.equipment = false;
+    }
+});
 </script>

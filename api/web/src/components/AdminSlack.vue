@@ -169,7 +169,10 @@
                                                     background-color='rgba(245, 159, 0, 0.2)'
                                                     text-color='#f59f00'
                                                 >
-                                                    <IconUserPlus :size='14' class='me-1' />
+                                                    <IconUserPlus
+                                                        :size='14'
+                                                        class='me-1'
+                                                    />
                                                     {{ membership.should_be_present.length }} Should Be Present
                                                 </TablerBadge>
                                             </span>
@@ -238,17 +241,23 @@
                                                         v-if='shouldNotBePresentIds.has(member.id)'
                                                         background-color='rgba(214, 57, 57, 0.2)'
                                                         text-color='#d63939'
-                                                    >Should Not Be Present</TablerBadge>
+                                                    >
+                                                        Should Not Be Present
+                                                    </TablerBadge>
                                                     <TablerBadge
                                                         v-else-if='member.is_bot'
                                                         background-color='rgba(147, 51, 234, 0.2)'
                                                         text-color='#9333ea'
-                                                    >Bot</TablerBadge>
+                                                    >
+                                                        Bot
+                                                    </TablerBadge>
                                                     <TablerBadge
                                                         v-else
                                                         background-color='rgba(32, 107, 196, 0.2)'
                                                         text-color='#206bc4'
-                                                    >User</TablerBadge>
+                                                    >
+                                                        User
+                                                    </TablerBadge>
                                                 </td>
                                             </tr>
                                         </tbody>

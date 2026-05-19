@@ -118,74 +118,65 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import { TablerBreadCrumb } from '@tak-ps/vue-tabler';
-import iam from '../iam.js';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'MissionPersonEdit',
-    components: {
-        TablerBreadCrumb
-    },
-    props: {
-        iam: { type: Object, required: true },
-        auth: { type: Object, required: true }
-    },
-    data() {
-        return {
-            loading: true,
-            person: {
-                name: '',
-                role: 'Subject',
-                address: '',
-                phone: '',
-                email: '',
-                notes: ''
-            }
-        };
-    },
-    computed: {
-        isNew() {
-            return !this.$route.params.personid;
-        }
-    },
-    mounted() {
-        if (!this.isNew) {
-            this.fetch();
-        } else {
-            this.loading = false;
-        }
-    },
-    methods: {
-        is_iam(permission) { return iam(this.iam, this.auth, permission); },
-        async fetch() {
-            this.loading = true;
-            this.person = await window.std(`/api/mission/${this.$route.params.missionid}/person/${this.$route.params.personid}`);
-            this.loading = false;
-        },
-        async save() {
-            this.loading = true;
-            let url = `/api/mission/${this.$route.params.missionid}/person`;
-            let method = 'POST';
+defineProps({
+    iam: { type: Object, required: true },
+    auth: { type: Object, required: true }
+});
 
-            if (!this.isNew) {
-                url += `/${this.$route.params.personid}`;
-                method = 'PATCH';
-            }
+const route = useRoute();
+const router = useRouter();
 
-            try {
-                const res = await window.std(url, {
-                    method: method,
-                    body: this.person
-                });
-                this.$router.push(`/mission/${this.$route.params.missionid}/person/${res.id}`);
-            } catch (err) {
-                console.error(err);
-                // Handle error (alert or toast)
-            } finally {
-                this.loading = false;
-            }
-        }
+const loading = ref(true);
+const person = ref({
+    name: '',
+    role: 'Subject',
+    address: '',
+    phone: '',
+    email: '',
+    notes: ''
+});
+
+const isNew = computed(() => !route.params.personid);
+
+async function fetch() {
+    loading.value = true;
+    person.value = await window.std(`/api/mission/${route.params.missionid}/person/${route.params.personid}`);
+    loading.value = false;
+}
+
+async function save() {
+    loading.value = true;
+    let url = `/api/mission/${route.params.missionid}/person`;
+    let method = 'POST';
+
+    if (!isNew.value) {
+        url += `/${route.params.personid}`;
+        method = 'PATCH';
+    }
+
+    try {
+        const res = await window.std(url, {
+            method: method,
+            body: person.value
+        });
+        router.push(`/mission/${route.params.missionid}/person/${res.id}`);
+    } catch (err) {
+        console.error(err);
+    } finally {
+        loading.value = false;
     }
 }
+
+onMounted(() => {
+    if (!isNew.value) {
+        fetch();
+    } else {
+        loading.value = false;
+    }
+});
 </script>

@@ -39,7 +39,9 @@
                                                     class='ms-auto'
                                                     background-color='#2fb344'
                                                     text-color='#ffffff'
-                                                >Fieldable</TablerBadge>
+                                                >
+                                                    Fieldable
+                                                </TablerBadge>
                                                 <TeamBadge :team='team' />
 
                                                 <button

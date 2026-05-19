@@ -197,8 +197,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import Assets from './Mission/Assets.vue';
@@ -217,130 +217,118 @@ import {
     IconPencil,
     IconFileTypePdf
 } from '@tabler/icons-vue';
+import { reactive, ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
-export default {
-    name: 'Mission',
-    components: {
-        TablerEpochRange,
-        IconPencil,
-        IconFileTypePdf,
-        Location,
-        IncidentsCard,
-        UserSelect,
-        People,
-        TablerBreadCrumb,
-        TablerLoading,
-        TablerMarkdown,
-        TablerIconButton,
-        TeamBadge,
-        NoAccess,
-        Assets
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                mission: true,
-                assigned: true
-            },
-            mission: {
-                title: '',
-                body: '',
-                start_ts: '',
-                end_ts: '',
-                teams: [],
-                assets: [],
-                people: [],
-                assets_id: [],
-                incidents: []
-            },
-            assigned: []
-        }
-    },
-    computed: {
-        is_roster: function() {
-            if (this.mission.start_ts > +new Date()) return false;
-            if (this.mission.start_ts < +new Date() - 604800000) return false; //Only request in last week
-
-            return this.assigned.every((a) => {
-                return a.uid != this.auth.id;
-            });
-        }
-    },
-    mounted: async function() {
-        await window.std('/api/location');
-
-        if (this.is_iam("Mission:View")) {
-            await this.fetch();
-            await this.fetchAssigned();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        download: function() {
-            window.open(`/api/mission/${this.$route.params.missionid}/export?format=pdf&token=${localStorage.token}`, "_blank");
-        },
-        fetch: async function() {
-            this.loading.mission = true;
-            this.mission = await window.std(`/api/mission/${this.$route.params.missionid}`);
-            this.loading.mission = false;
-        },
-        request: async function() {
-            this.loading.request = true;
-            await window.std(`/api/mission/${this.$route.params.missionid}/assigned/request`, {
-                method: 'POST'
-            })
-
-            await this.fetchAssigned();
-
-            this.loading.request = false;
-        },
-        fetchAssigned: async function() {
-            this.loading.assigned = true;
-            this.assigned = (await window.std(`/api/mission/${this.$route.params.missionid}/assigned`)).items;
-            this.loading.assigned = false;
-        },
-        deleteAssigned: async function(user) {
-            this.loading.assigned = true;
-
-            await window.std(`/api/mission/${this.$route.params.missionid}/assigned/${user.id}`, {
-                method: 'DELETE'
-            })
-
-            await this.fetchAssigned();
-        },
-        patchAssigned: async function(user) {
-            this.loading.assigned = true;
-            await window.std(`/api/mission/${this.$route.params.missionid}/assigned/${user.id}`, {
-                method: 'PATCH',
-                body: {
-                    role: user.role,
-                    confirmed: user.confirmed
-                }
-            })
-
-            await this.fetchAssigned();
-        },
-        postAssigned: async function(user) {
-            this.loading.assigned = true;
-            await window.std(`/api/mission/${this.$route.params.missionid}/assigned`, {
-                method: 'POST',
-                body: {
-                    uid: user.id
-                }
-            })
-
-            await this.fetchAssigned();
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+
+const loading = reactive({
+    mission: true,
+    assigned: true
+});
+const mission = reactive({
+    title: '',
+    body: '',
+    start_ts: '',
+    end_ts: '',
+    teams: [],
+    assets: [],
+    people: [],
+    assets_id: [],
+    incidents: []
+});
+const assigned = ref([]);
+
+const is_roster = computed(() => {
+    if (mission.start_ts > +new Date()) return false;
+    if (mission.start_ts < +new Date() - 604800000) return false;
+
+    return assigned.value.every((a) => {
+        return a.uid != props.auth.id;
+    });
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+function download() {
+    window.open(`/api/mission/${route.params.missionid}/export?format=pdf&token=${localStorage.token}`, "_blank");
 }
+
+async function fetch() {
+    loading.mission = true;
+    Object.assign(mission, await window.std(`/api/mission/${route.params.missionid}`));
+    loading.mission = false;
+}
+
+async function request() {
+    loading.request = true;
+    await window.std(`/api/mission/${route.params.missionid}/assigned/request`, {
+        method: 'POST'
+    });
+
+    await fetchAssigned();
+
+    loading.request = false;
+}
+
+async function fetchAssigned() {
+    loading.assigned = true;
+    assigned.value = (await window.std(`/api/mission/${route.params.missionid}/assigned`)).items;
+    loading.assigned = false;
+}
+
+async function deleteAssigned(user) {
+    loading.assigned = true;
+
+    await window.std(`/api/mission/${route.params.missionid}/assigned/${user.id}`, {
+        method: 'DELETE'
+    });
+
+    await fetchAssigned();
+}
+
+async function patchAssigned(user) {
+    loading.assigned = true;
+    await window.std(`/api/mission/${route.params.missionid}/assigned/${user.id}`, {
+        method: 'PATCH',
+        body: {
+            role: user.role,
+            confirmed: user.confirmed
+        }
+    });
+
+    await fetchAssigned();
+}
+
+async function postAssigned(user) {
+    loading.assigned = true;
+    await window.std(`/api/mission/${route.params.missionid}/assigned`, {
+        method: 'POST',
+        body: {
+            uid: user.id
+        }
+    });
+
+    await fetchAssigned();
+}
+
+onMounted(async () => {
+    await window.std('/api/location');
+
+    if (is_iam("Mission:View")) {
+        await fetch();
+        await fetchAssigned();
+    }
+});
 </script>

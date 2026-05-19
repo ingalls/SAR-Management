@@ -2,7 +2,9 @@
     <TablerBadge
         :background-color='team.colour_bg'
         :text-color='team.colour_txt'
-    >{{ team.name }}</TablerBadge>
+    >
+        {{ team.name }}
+    </TablerBadge>
 </template>
 
 <script setup>

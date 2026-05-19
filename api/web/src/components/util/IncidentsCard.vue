@@ -37,7 +37,7 @@
                     :key='incident.id'
                     class='list-group-item'
                     :class='{ "cursor-pointer": is_iam("Incident:Manage") }'
-                    @click='is_iam("Incident:Manage") ? $router.push(`/incident/${incident.id}/edit`) : null'
+                    @click='is_iam("Incident:Manage") ? router.push(`/incident/${incident.id}/edit`) : null'
                 >
                     <div class='row align-items-center'>
                         <div class='col text-truncate'>
@@ -60,60 +60,53 @@
     </div>
 </template>
 
-<script>
-import iam from '../../iam.js';
+<script setup>
+import iamHelper from '../../iam.js';
 import NoAccess from './NoAccess.vue';
 import { TablerNone, TablerEpoch, TablerIconButton } from '@tak-ps/vue-tabler';
 import { IconPlus } from '@tabler/icons-vue';
+import { useRouter } from 'vue-router';
 
-export default {
-    name: 'IncidentsCard',
-    components: {
-        TablerNone,
-        TablerEpoch,
-        TablerIconButton,
-        IconPlus,
-        NoAccess
+const props = defineProps({
+    cols: {
+        type: String,
+        default: 'col-lg-12'
     },
-    props: {
-        cols: {
-            type: String,
-            default: 'col-lg-12'
-        },
-        incidents: {
-            type: Array,
-            required: true
-        },
-        label: {
-            type: String,
-            default: 'Related Incidents'
-        },
-        mission_id: {
-            type: Number
-        },
-        training_id: {
-            type: Number
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
+    incidents: {
+        type: Array,
+        required: true
     },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        create: function() {
-            if (this.mission_id) {
-                this.$router.push(`/incident/new?mission_id=${this.mission_id}`);
-            } else if (this.training_id) {
-                this.$router.push(`/incident/new?training_id=${this.training_id}`);
-            } else {
-                this.$router.push('/incident/new');
-            }
-        }
+    label: {
+        type: String,
+        default: 'Related Incidents'
+    },
+    mission_id: {
+        type: Number
+    },
+    training_id: {
+        type: Number
+    },
+    iam: {
+        type: Object,
+        required: true
+    },
+    auth: {
+        type: Object,
+        required: true
+    }
+});
+
+const router = useRouter();
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+function create() {
+    if (props.mission_id) {
+        router.push(`/incident/new?mission_id=${props.mission_id}`);
+    } else if (props.training_id) {
+        router.push(`/incident/new?training_id=${props.training_id}`);
+    } else {
+        router.push('/incident/new');
     }
 }
 </script>

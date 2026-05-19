@@ -113,12 +113,16 @@
                                             v-if='issue.status === "closed"'
                                             background-color='#d63939'
                                             text-color='#ffffff'
-                                        >Closed</TablerBadge>
+                                        >
+                                            Closed
+                                        </TablerBadge>
                                         <TablerBadge
                                             v-else-if='issue.status === "open"'
                                             background-color='#2fb344'
                                             text-color='#ffffff'
-                                        >Open</TablerBadge>
+                                        >
+                                            Open
+                                        </TablerBadge>
                                     </td>
                                     <td v-else>
                                         <span v-text='issue[h.name]' />

@@ -37,19 +37,7 @@
                                                 label='Issue Title'
                                                 :error='errors.title'
                                             />
-                                            <MdEditor
-                                                v-model='issue.body'
-                                                :preview='false'
-                                                no-upload-img
-                                                no-mermaid
-                                                :no-katex='true'
-                                                :toolbars-exclude='[
-                                                    "save",
-                                                    "prettier",
-                                                    "mermaid"
-                                                ]'
-                                                language='en-US'
-                                            />
+                                            <MDEditorShim v-model='issue.body' />
                                         </div>
                                         <div class='col-md-12 d-flex'>
                                             <div class='ms-auto'>
@@ -77,8 +65,7 @@ import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import { MdEditor } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import MDEditorShim from './util/MDEditorShim.vue';
 import {
     TablerBreadCrumb,
     TablerLoading,

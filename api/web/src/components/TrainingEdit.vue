@@ -73,19 +73,7 @@
                                             />
                                         </div>
                                         <div class='col-md-12'>
-                                            <MdEditor
-                                                v-model='training.body'
-                                                :preview='false'
-                                                no-upload-img
-                                                no-mermaid
-                                                :no-katex='true'
-                                                :toolbars-exclude='[
-                                                    "save",
-                                                    "prettier",
-                                                    "mermaid"
-                                                ]'
-                                                language='en-US'
-                                            />
+                                            <MDEditorShim v-model='training.body' />
                                         </div>
                                         <div class='col-md-12'>
                                             <LocationDropdown
@@ -138,138 +126,126 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import TrainingTagSelect from './util/TrainingTagSelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
-import { MdEditor } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import MDEditorShim from './util/MDEditorShim.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
     TablerToggle,
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import { reactive, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'TrainingsEdit',
-    components: {
-        Location,
-        MdEditor,
-        TablerInput,
-        TablerToggle,
-        TablerLoading,
-        TeamSelect,
-        TrainingTagSelect,
-        LocationDropdown,
-        NoAccess,
-        TablerBreadCrumb,
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            timezone: '',
-            loading: {
-                training: true
-            },
-            training: {
-                title: '',
-                required: false,
-                body: '',
-                tags: [],
-                location: '',
-                location_geom: null,
-                start_ts: '',
-                end_ts: '',
-                teams: []
-            }
-        }
-    },
-    watch: {
-        'training.start_ts': function() {
-            if (this.training.start_ts && !this.training.end_ts) {
-                this.training.end_ts = this.training.start_ts;
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.$route.params.trainingid && this.is_iam('Training:Manage')) {
-            await this.fetch();
-        } else {
-            const url = new URL(window.location);
-
-            if (url.searchParams.has('title')) {
-                this.training.title = url.searchParams.get('title')
-            }
-
-            if (url.searchParams.has('start')) {
-                this.training.start_ts = moment(url.searchParams.get('start')).format('YYYY-MM-DDTHH:mm');
-            }
-
-            if (url.searchParams.has('end')) {
-                this.training.end_ts = moment(url.searchParams.get('end')).format('YYYY-MM-DDTHH:mm');
-            }
-
-            this.loading.training = false;
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.training = true;
-            const training = await window.std(`/api/training/${this.$route.params.trainingid}`);
-
-            training.start_ts = moment(training.start_ts).format('YYYY-MM-DDTHH:mm');
-            training.end_ts = moment(training.end_ts).format('YYYY-MM-DDTHH:mm');
-
-            this.training = training;
-            this.loading.training = false;
-        },
-        create: async function() {
-            const body = JSON.parse(JSON.stringify(this.training));
-            body.teams = body.teams.map((team) => { return team.id });
-            body.tags = body.tags.map((tag) => { return tag.id });
-            body.start_ts = moment(body.start_ts).toISOString();
-            body.end_ts = moment(body.end_ts).toISOString();
-
-            const create = await window.std('/api/training', {
-                method: 'POST', body
-            });
-
-            this.$router.push(`/training/${create.id}`);
-        },
-        deleteTraining: async function() {
-            await window.std(`/api/training/${this.training.id}`, {
-                method: 'DELETE'
-            });
-            this.$router.push(`/training`);
-        },
-        update: async function() {
-            const body = JSON.parse(JSON.stringify(this.training));
-            body.teams = body.teams.map((team) => { return team.id });
-            body.tags = body.tags.map((tag) => { return tag.id });
-            body.start_ts = moment(body.start_ts).toISOString();
-            body.end_ts = moment(body.end_ts).toISOString();
-
-            const create = await window.std(`/api/training/${this.training.id}`, {
-                method: 'PATCH', body
-            });
-
-            this.$router.push(`/training/${create.id}`);
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const loading = reactive({
+    training: true
+});
+const training = reactive({
+    title: '',
+    required: false,
+    body: '',
+    tags: [],
+    location: '',
+    location_geom: null,
+    start_ts: '',
+    end_ts: '',
+    teams: []
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+watch(() => training.start_ts, () => {
+    if (training.start_ts && !training.end_ts) {
+        training.end_ts = training.start_ts;
+    }
+});
+
+async function fetch() {
+    loading.training = true;
+    const data = await window.std(`/api/training/${route.params.trainingid}`);
+
+    data.start_ts = moment(data.start_ts).format('YYYY-MM-DDTHH:mm');
+    data.end_ts = moment(data.end_ts).format('YYYY-MM-DDTHH:mm');
+
+    Object.assign(training, data);
+    loading.training = false;
 }
+
+async function create() {
+    const body = JSON.parse(JSON.stringify(training));
+    body.teams = body.teams.map((team) => { return team.id });
+    body.tags = body.tags.map((tag) => { return tag.id });
+    body.start_ts = moment(body.start_ts).toISOString();
+    body.end_ts = moment(body.end_ts).toISOString();
+
+    const created = await window.std('/api/training', {
+        method: 'POST', body
+    });
+
+    router.push(`/training/${created.id}`);
+}
+
+async function deleteTraining() {
+    await window.std(`/api/training/${training.id}`, {
+        method: 'DELETE'
+    });
+    router.push(`/training`);
+}
+
+async function update() {
+    const body = JSON.parse(JSON.stringify(training));
+    body.teams = body.teams.map((team) => { return team.id });
+    body.tags = body.tags.map((tag) => { return tag.id });
+    body.start_ts = moment(body.start_ts).toISOString();
+    body.end_ts = moment(body.end_ts).toISOString();
+
+    const updated = await window.std(`/api/training/${training.id}`, {
+        method: 'PATCH', body
+    });
+
+    router.push(`/training/${updated.id}`);
+}
+
+onMounted(async () => {
+    if (route.params.trainingid && is_iam('Training:Manage')) {
+        await fetch();
+    } else {
+        const url = new URL(window.location);
+
+        if (url.searchParams.has('title')) {
+            training.title = url.searchParams.get('title');
+        }
+
+        if (url.searchParams.has('start')) {
+            training.start_ts = moment(url.searchParams.get('start')).format('YYYY-MM-DDTHH:mm');
+        }
+
+        if (url.searchParams.has('end')) {
+            training.end_ts = moment(url.searchParams.get('end')).format('YYYY-MM-DDTHH:mm');
+        }
+
+        loading.training = false;
+    }
+});
 </script>

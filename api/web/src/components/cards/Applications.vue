@@ -85,12 +85,16 @@
                                         v-if='application.archived'
                                         background-color='#d63939'
                                         text-color='#ffffff'
-                                    >Archived</TablerBadge>
+                                    >
+                                        Archived
+                                    </TablerBadge>
                                     <TablerBadge
                                         v-else
                                         background-color='#2fb344'
                                         text-color='#ffffff'
-                                    >Active</TablerBadge>
+                                    >
+                                        Active
+                                    </TablerBadge>
                                 </td>
                                 <td v-else-if='["updated", "created"].includes(h.name)'>
                                     <TablerEpoch

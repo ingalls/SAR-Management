@@ -33,12 +33,16 @@
                                             v-if='equipment.container'
                                             background-color='#206bc4'
                                             text-color='#ffffff'
-                                        >Container</TablerBadge>
+                                        >
+                                            Container
+                                        </TablerBadge>
                                         <TablerBadge
                                             v-if='equipment.archived'
                                             background-color='#d63939'
                                             text-color='#ffffff'
-                                        >Archived</TablerBadge>
+                                        >
+                                            Archived
+                                        </TablerBadge>
 
                                         <IconPencil
                                             v-if='is_iam("Equipment:Manage") && !equipment.archived'

@@ -175,8 +175,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import {
     IconPencil
@@ -187,117 +187,112 @@ import {
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
+import { reactive, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'RolodexEdit',
-    components: {
-        TablerInput,
-        TablerLoading,
-        TablerBreadCrumb,
-        IconPencil,
-        TablerIconButton,
-        NoAccess
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                rolodex: true
-            },
-            errors: {
-                name: '',
-            },
-            rolodex: {
-                name: '',
-                remarks: '',
-                body: '',
-                phone: '',
-                email: ''
-            },
-        }
-    },
-    mounted: async function() {
-        if (this.$route.params.rolodexid && this.is_iam('Rolodex:Manage')) {
-            await this.fetch();
-        } else {
-            this.loading.rolodex = false;
-        }
-    },
-    watch: {
-        '$route': async function() {
-            if (this.$route.params.rolodexid) {
-                await this.fetch();
-            }
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        deleteRolodex: async function() {
-            this.loading.rolodex = true;
-            await window.std(`/api/rolodex/${this.$route.params.rolodexid}`, {
-                method: 'DELETE',
-            });
-
-            this.loading.rolodex = false;
-            this.$router.push('/rolodex');
-        },
-        validate: function() {
-            for (const field of ['name']) {
-                if (!this.rolodex[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = '';
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            return true;
-        },
-        create: async function() {
-            if (!this.validate()) return;
-
-            this.loading.rolodex = true;
-            const create = await window.std('/api/rolodex', {
-                method: 'POST',
-                body: {
-                    ...this.rolodex,
-                }
-            });
-
-            this.loading.rolodex = false;
-            this.$router.push(`/rolodex/${create.id}`);
-        },
-        update: async function() {
-            if (!this.validate()) return;
-
-            this.loading.rolodex = true;
-            await window.std(`/api/rolodex/${this.$route.params.rolodexid}`, {
-                method: 'PATCH',
-                body: {
-                    name: this.rolodex.name,
-                    remarks: this.rolodex.remarks,
-                    phone: this.rolodex.phone,
-                    email: this.rolodex.email,
-                }
-            });
-
-            this.loading.rolodex = false;
-            this.$router.push(`/rolodex/${this.$route.params.rolodexid}`);
-        },
-        fetch: async function() {
-            this.loading.rolodex = true;
-            this.rolodex = await window.std(`/api/rolodex/${this.$route.params.rolodexid}`);
-            this.loading.rolodex = false;
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const loading = reactive({
+    rolodex: true
+});
+const errors = reactive({
+    name: '',
+});
+const rolodex = reactive({
+    name: '',
+    remarks: '',
+    body: '',
+    phone: '',
+    email: ''
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function deleteRolodex() {
+    loading.rolodex = true;
+    await window.std(`/api/rolodex/${route.params.rolodexid}`, {
+        method: 'DELETE',
+    });
+
+    loading.rolodex = false;
+    router.push('/rolodex');
 }
+
+function validate() {
+    for (const field of ['name']) {
+        if (!rolodex[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = '';
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    return true;
+}
+
+async function create() {
+    if (!validate()) return;
+
+    loading.rolodex = true;
+    const created = await window.std('/api/rolodex', {
+        method: 'POST',
+        body: {
+            ...rolodex,
+        }
+    });
+
+    loading.rolodex = false;
+    router.push(`/rolodex/${created.id}`);
+}
+
+async function update() {
+    if (!validate()) return;
+
+    loading.rolodex = true;
+    await window.std(`/api/rolodex/${route.params.rolodexid}`, {
+        method: 'PATCH',
+        body: {
+            name: rolodex.name,
+            remarks: rolodex.remarks,
+            phone: rolodex.phone,
+            email: rolodex.email,
+        }
+    });
+
+    loading.rolodex = false;
+    router.push(`/rolodex/${route.params.rolodexid}`);
+}
+
+async function fetch() {
+    loading.rolodex = true;
+    Object.assign(rolodex, await window.std(`/api/rolodex/${route.params.rolodexid}`));
+    loading.rolodex = false;
+}
+
+watch(route, async () => {
+    if (route.params.rolodexid) {
+        await fetch();
+    }
+});
+
+onMounted(async () => {
+    if (route.params.rolodexid && is_iam('Rolodex:Manage')) {
+        await fetch();
+    } else {
+        loading.rolodex = false;
+    }
+});
 </script>

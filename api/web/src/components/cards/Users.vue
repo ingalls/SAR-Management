@@ -145,7 +145,9 @@
                                                 class='me-3'
                                                 background-color='#d63939'
                                                 text-color='#ffffff'
-                                            >DISABLED</TablerBadge>
+                                            >
+                                                DISABLED
+                                            </TablerBadge>
 
                                             <Avatar
                                                 :link='true'

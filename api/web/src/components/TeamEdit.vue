@@ -223,8 +223,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import TeamBadge from './util/TeamBadge.vue';
 import TeamSlack from './cards/TeamSlack.vue';
@@ -237,126 +237,122 @@ import {
     TablerToggle,
     TablerSelect
 } from '@tak-ps/vue-tabler';
+import { reactive, ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'TeamEdit',
-    components: {
-        IconPlus,
-        NoAccess,
-        TablerLoading,
-        TablerToggle,
-        TablerSelect,
-        TablerBreadCrumb,
-        TeamBadge,
-        TeamSlack
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                fieldability: false,
-                team: true,
-                iam: true
-            },
-            errors: {
-                name: false,
-                body: false
-            },
-            iamlist: {},
-            fieldability: [],
-            team: {
-                name: '',
-                body: '',
-                colour_bg: '#9aa0a6',
-                colour_txt: '#000000',
-                fieldable: true,
-                iam: {}
-            }
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam("Team:Manage")) {
-            await this.fetchiam();
-            await this.fetchFieldability();
-            await this.fetch();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetchiam: async function() {
-            this.loading.iam = true;
-            this.iamlist = await window.std(`/api/iam`);
-            this.loading.iam = false;
-        },
-        fetchFieldability: async function() {
-            this.loading.fieldability = true;
-            this.team = await window.std(`/api/team/${this.$route.params.teamid}/fieldability`);
-            this.loading.fieldability = false;
-        },
-        fetch: async function() {
-            this.loading.team = true;
-            this.team = await window.std(`/api/team/${this.$route.params.teamid}`);
-            this.loading.team = false;
-        },
-        deleteTeam: async function() {
-            await window.std(`/api/team/${this.$route.params.teamid}`, {
-                method: 'DELETE'
-            });
-
-            this.$router.push('/team');
-        },
-        update: async function() {
-            for (const field of ['name', 'body']) {
-                if (!this.team[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            const update = await window.std(`/api/team/${this.$route.params.teamid}`, {
-                method: 'PATCH',
-                body: {
-                    name: this.team.name,
-                    body: this.team.body,
-                    fieldable: this.team.fieldable,
-                    colour_bg: this.team.colour_bg,
-                    colour_txt: this.team.colour_txt
-                }
-            });
-
-            this.$router.push(`/team/${update.id}`);
-        },
-        updateField: async function() {
-            const update = await window.std(`/api/team/${this.$route.params.teamid}/fieldability`, {
-                method: 'PATCH',
-                body: {
-                    fieldability: this.fieldability
-                }
-            });
-
-            this.$router.push(`/team/${update.id}`);
-        },
-        updateIAM: async function() {
-            const update = await window.std(`/api/team/${this.$route.params.teamid}`, {
-                method: 'PATCH',
-                body: {
-                    iam: this.team.iam
-                }
-            });
-
-            this.$router.push(`/team/${update.id}`);
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const loading = reactive({
+    fieldability: false,
+    team: true,
+    iam: true
+});
+const errors = reactive({
+    name: false,
+    body: false
+});
+const iamlist = ref({});
+const fieldability = ref([]);
+const team = reactive({
+    name: '',
+    body: '',
+    colour_bg: '#9aa0a6',
+    colour_txt: '#000000',
+    fieldable: true,
+    iam: {}
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function fetchiam() {
+    loading.iam = true;
+    iamlist.value = await window.std(`/api/iam`);
+    loading.iam = false;
 }
+
+async function fetchFieldability() {
+    loading.fieldability = true;
+    Object.assign(team, await window.std(`/api/team/${route.params.teamid}/fieldability`));
+    loading.fieldability = false;
+}
+
+async function fetch() {
+    loading.team = true;
+    Object.assign(team, await window.std(`/api/team/${route.params.teamid}`));
+    loading.team = false;
+}
+
+async function deleteTeam() {
+    await window.std(`/api/team/${route.params.teamid}`, {
+        method: 'DELETE'
+    });
+
+    router.push('/team');
+}
+
+async function update() {
+    for (const field of ['name', 'body']) {
+        if (!team[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = false;
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    const updated = await window.std(`/api/team/${route.params.teamid}`, {
+        method: 'PATCH',
+        body: {
+            name: team.name,
+            body: team.body,
+            fieldable: team.fieldable,
+            colour_bg: team.colour_bg,
+            colour_txt: team.colour_txt
+        }
+    });
+
+    router.push(`/team/${updated.id}`);
+}
+
+async function updateField() {
+    const updated = await window.std(`/api/team/${route.params.teamid}/fieldability`, {
+        method: 'PATCH',
+        body: {
+            fieldability: fieldability.value
+        }
+    });
+
+    router.push(`/team/${updated.id}`);
+}
+
+async function updateIAM() {
+    const updated = await window.std(`/api/team/${route.params.teamid}`, {
+        method: 'PATCH',
+        body: {
+            iam: team.iam
+        }
+    });
+
+    router.push(`/team/${updated.id}`);
+}
+
+onMounted(async () => {
+    if (is_iam("Team:Manage")) {
+        await fetchiam();
+        await fetchFieldability();
+        await fetch();
+    }
+});
 </script>

@@ -74,8 +74,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../../iam.js';
+<script setup>
+import iamHelper from '../../iam.js';
 import Upload from '../util/Upload.vue';
 import {
     TablerNone,
@@ -85,60 +85,54 @@ import {
 import {
     IconPlus
 } from '@tabler/icons-vue';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
-export default {
-    name: 'TrainingAssets',
-    components: {
-        Upload,
-        TablerNone,
-        TablerIconButton,
-        TablerDelete,
-        IconPlus
+const props = defineProps({
+    training: {
+        type: Object,
+        required: true
     },
-    props: {
-        training: {
-            type: Object,
-            required: true
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        },
-        mode: {
-            type: String,
-            default: 'view'
-        }
+    iam: {
+        type: Object,
+        required: true
     },
-    emits: ['refresh'],
-    data: function() {
-        return {
-            token: localStorage.token,
-            showUpload: false
-        }
+    auth: {
+        type: Object,
+        required: true
     },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        postAsset: async function(asset) {
-            this.showUpload = false;
-            const assets = this.training.assets_id ? [...this.training.assets_id] : [];
-            assets.push(asset.id);
-            await this.patchTraining({ assets: assets });
-        },
-        deleteAsset: async function(assetId) {
-            const assets = this.training.assets_id ? this.training.assets_id.filter((a) => a !== assetId) : [];
-            await this.patchTraining({ assets: assets });
-        },
-        patchTraining: async function(body) {
-            await window.std(`/api/training/${this.$route.params.trainingid}`, {
-                method: 'PATCH',
-                body
-            });
-            this.$emit('refresh');
-        }
+    mode: {
+        type: String,
+        default: 'view'
     }
+});
+
+const emit = defineEmits(['refresh']);
+
+const route = useRoute();
+
+const token = ref(localStorage.token);
+const showUpload = ref(false);
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function postAsset(asset) {
+    showUpload.value = false;
+    const assets = props.training.assets_id ? [...props.training.assets_id] : [];
+    assets.push(asset.id);
+    await patchTraining({ assets: assets });
+}
+
+async function deleteAsset(assetId) {
+    const assets = props.training.assets_id ? props.training.assets_id.filter((a) => a !== assetId) : [];
+    await patchTraining({ assets: assets });
+}
+
+async function patchTraining(body) {
+    await window.std(`/api/training/${route.params.trainingid}`, {
+        method: 'PATCH',
+        body
+    });
+    emit('refresh');
 }
 </script>

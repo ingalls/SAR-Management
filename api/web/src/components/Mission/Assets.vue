@@ -172,8 +172,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../../iam.js';
+<script setup>
+import iamHelper from '../../iam.js';
 import Upload from '../util/Upload.vue';
 import {
     TablerNone,
@@ -185,75 +185,66 @@ import {
     IconTrash,
     IconDownload
 } from '@tabler/icons-vue';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
-export default {
-    name: 'MissionAssets',
-    components: {
-        Upload,
-        TablerNone,
-        TablerIconButton,
-        TablerDelete,
-        IconPlus,
-        IconTrash,
-        IconDownload
+const props = defineProps({
+    mission: {
+        type: Object,
+        required: true
     },
-    props: {
-        mission: {
-            type: Object,
-            required: true
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        },
-        mode: {
-            type: String,
-            default: 'view'
-        }
+    iam: {
+        type: Object,
+        required: true
     },
-    emits: ['refresh'],
-    data: function() {
-        return {
-            token: localStorage.token,
-            showUpload: false,
-            view: 'files'
-        }
+    auth: {
+        type: Object,
+        required: true
     },
-    computed: {
-        photos: function() {
-            if (!this.mission.assets) return [];
-            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-            return this.mission.assets.filter((asset) => {
-                const ext = asset.name.split('.').pop().toLowerCase();
-                return imageExtensions.includes(ext);
-            });
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        postAsset: async function(asset) {
-            this.showUpload = false;
-            if (!asset || !asset.id) return;
-
-            const assets = this.mission.assets_id ? [...this.mission.assets_id] : [];
-            assets.push(asset.id);
-            await this.patchMission({ assets: assets });
-        },
-        deleteAsset: async function(assetId) {
-            const assets = this.mission.assets_id ? this.mission.assets_id.filter((a) => a !== assetId) : [];
-            await this.patchMission({ assets: assets });
-        },
-        patchMission: async function(body) {
-            await window.std(`/api/mission/${this.$route.params.missionid}`, {
-                method: 'PATCH',
-                body
-            });
-            this.$emit('refresh');
-        }
+    mode: {
+        type: String,
+        default: 'view'
     }
+});
+
+const emit = defineEmits(['refresh']);
+
+const route = useRoute();
+
+const token = ref(localStorage.token);
+const showUpload = ref(false);
+const view = ref('files');
+
+const photos = computed(() => {
+    if (!props.mission.assets) return [];
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    return props.mission.assets.filter((asset) => {
+        const ext = asset.name.split('.').pop().toLowerCase();
+        return imageExtensions.includes(ext);
+    });
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function postAsset(asset) {
+    showUpload.value = false;
+    if (!asset || !asset.id) return;
+
+    const assets = props.mission.assets_id ? [...props.mission.assets_id] : [];
+    assets.push(asset.id);
+    await patchMission({ assets: assets });
+}
+
+async function deleteAsset(assetId) {
+    const assets = props.mission.assets_id ? props.mission.assets_id.filter((a) => a !== assetId) : [];
+    await patchMission({ assets: assets });
+}
+
+async function patchMission(body) {
+    await window.std(`/api/mission/${route.params.missionid}`, {
+        method: 'PATCH',
+        body
+    });
+    emit('refresh');
 }
 </script>

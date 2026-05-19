@@ -32,19 +32,7 @@
                                             label='Issue Title'
                                             :error='errors.title'
                                         />
-                                        <MdEditor
-                                            v-model='issue.body'
-                                            :preview='false'
-                                            no-upload-img
-                                            no-mermaid
-                                            :no-katex='true'
-                                            :toolbars-exclude='[
-                                                "save",
-                                                "prettier",
-                                                "mermaid"
-                                            ]'
-                                            language='en-US'
-                                        />
+                                        <MDEditorShim v-model='issue.body' />
                                     </div>
                                     <div class='col-md-2'>
                                         <UserSelect
@@ -140,12 +128,11 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import UserSelect from './util/UserSelect.vue';
-import { MdEditor } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import MDEditorShim from './util/MDEditorShim.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
@@ -156,87 +143,75 @@ import {
     IconTrash,
     IconPlus,
 } from '@tabler/icons-vue';
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-    name: 'IssuesNew',
-    components: {
-        NoAccess,
-        TablerInput,
-        IconGraph,
-        IconGraphOff,
-        TablerBreadCrumb,
-        UserSelect,
-        IconTrash,
-        MdEditor,
-        IconPlus
-
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            poll: {
-                shown: false,
-                questions: [{
-                    name: 'Sample Question 1'
-                },{
-                    name: 'Sample Question 2'
-                },{
-                    name: 'Sample Question 3'
-                }]
-            },
-            errors: {
-                title: '',
-                body: ''
-            },
-            issue: {
-                title: '',
-                body: '',
-                assigned: []
-            }
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        create: async function() {
-            for (const field of ['title', 'body']) {
-                if (!this.issue[field]) this.errors[field] = 'Cannot be empty';
-                else this.errors[field] = false;
-            }
-
-            for (const e in this.errors) {
-                if (this.errors[e]) return;
-            }
-
-            const body = {
-                title: this.issue.title,
-                body: this.issue.body,
-                assigned: this.issue.assigned.map((a) => {
-                    return a.id;
-                })
-            }
-
-            if (this.poll.shown) {
-                body.poll = {
-                    questions: this.poll.questions
-                }
-            };
-
-            const create = await window.std('/api/issue', {
-                method: 'POST',
-                body
-            });
-
-            this.$router.push(`/issue/${create.id}`);
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const router = useRouter();
+
+const poll = reactive({
+    shown: false,
+    questions: [{
+        name: 'Sample Question 1'
+    },{
+        name: 'Sample Question 2'
+    },{
+        name: 'Sample Question 3'
+    }]
+});
+
+const errors = reactive({
+    title: '',
+    body: ''
+});
+
+const issue = reactive({
+    title: '',
+    body: '',
+    assigned: []
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function create() {
+    for (const field of ['title', 'body']) {
+        if (!issue[field]) errors[field] = 'Cannot be empty';
+        else errors[field] = false;
+    }
+
+    for (const e in errors) {
+        if (errors[e]) return;
+    }
+
+    const body = {
+        title: issue.title,
+        body: issue.body,
+        assigned: issue.assigned.map((a) => {
+            return a.id;
+        })
+    }
+
+    if (poll.shown) {
+        body.poll = {
+            questions: poll.questions
+        }
+    };
+
+    const created = await window.std('/api/issue', {
+        method: 'POST',
+        body
+    });
+
+    router.push(`/issue/${created.id}`);
 }
 </script>

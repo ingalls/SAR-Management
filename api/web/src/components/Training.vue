@@ -65,7 +65,9 @@
                                                 class='mx-2'
                                                 background-color='#d63939'
                                                 text-color='#ffffff'
-                                            >Required</TablerBadge>
+                                            >
+                                                Required
+                                            </TablerBadge>
 
                                             <div class='ms-auto btn-list'>
                                                 <TablerEpochRange
@@ -186,8 +188,8 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import Location from './Mission/Location.vue';
 import IncidentsCard from './util/IncidentsCard.vue';
@@ -205,114 +207,102 @@ import {
     TablerLoading,
     TablerIconButton
 } from '@tak-ps/vue-tabler';
+import { reactive, ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
-export default {
-    name: 'TrainingsNew',
-    components: {
-        TablerBadge,
-        TablerEpochRange,
-        TeamBadge,
-        Location,
-        IncidentsCard,
-        TrainingAssets,
-        IconPencil,
-        TablerIconButton,
-        UserSelect,
-        TablerLoading,
-        TablerBreadCrumb,
-        TablerMarkdown,
-        NoAccess
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: {
-                assigned: true,
-                request: false,
-                training: true
-            },
-            assigned: [],
-            training: {
-                title: '',
-                body: '',
-                start_ts: '',
-                end_ts: '',
-                incidents: []
-            }
-        }
-    },
-    computed: {
-        is_roster: function() {
-            if (this.training.start_ts > +new Date()) return false;
-            if (this.training.start_ts < +new Date() - (604800000 * 2)) return false; //Only request in last 2 weeks
-
-            return this.assigned.every((a) => {
-                return a.uid != this.auth.id;
-            });
-        }
-    },
-    mounted: async function() {
-        if (this.is_iam('Training:View')) {
-            await this.fetch();
-            await this.fetchAssigned();
-        }
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        fetch: async function() {
-            this.loading.training = true;
-            this.training = await window.std(`/api/training/${this.$route.params.trainingid}`);
-            this.loading.training = false;
-        },
-        fetchAssigned: async function() {
-            this.loading.assigned = true;
-            this.assigned = (await window.std(`/api/training/${this.$route.params.trainingid}/assigned`)).items;
-            this.loading.assigned = false;
-        },
-        request: async function() {
-            this.loading.request = true;
-            await window.std(`/api/training/${this.$route.params.trainingid}/assigned/request`, {
-                method: 'POST'
-            })
-
-            await this.fetchAssigned();
-
-            this.loading.request = false;
-        },
-        deleteAssigned: async function(user) {
-            await window.std(`/api/training/${this.$route.params.trainingid}/assigned/${user.id}`, {
-                method: 'DELETE'
-            })
-        },
-        patchAssigned: async function(user) {
-            await window.std(`/api/training/${this.$route.params.trainingid}/assigned/${user.id}`, {
-                method: 'PATCH',
-                body: {
-                    role: user.role,
-                    confirmed: user.confirmed
-                }
-            })
-        },
-        postAssigned: async function(user) {
-            this.loading.assigned = true;
-            await window.std(`/api/training/${this.$route.params.trainingid}/assigned`, {
-                method: 'POST',
-                body: {
-                    uid: user.id
-                }
-            })
-
-            await this.fetchAssigned();
-        },
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+
+const loading = reactive({
+    assigned: true,
+    request: false,
+    training: true
+});
+const assigned = ref([]);
+const training = reactive({
+    title: '',
+    body: '',
+    start_ts: '',
+    end_ts: '',
+    incidents: []
+});
+
+const is_roster = computed(() => {
+    if (training.start_ts > +new Date()) return false;
+    if (training.start_ts < +new Date() - (604800000 * 2)) return false;
+
+    return assigned.value.every((a) => {
+        return a.uid != props.auth.id;
+    });
+});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function fetch() {
+    loading.training = true;
+    Object.assign(training, await window.std(`/api/training/${route.params.trainingid}`));
+    loading.training = false;
 }
+
+async function fetchAssigned() {
+    loading.assigned = true;
+    assigned.value = (await window.std(`/api/training/${route.params.trainingid}/assigned`)).items;
+    loading.assigned = false;
+}
+
+async function request() {
+    loading.request = true;
+    await window.std(`/api/training/${route.params.trainingid}/assigned/request`, {
+        method: 'POST'
+    });
+
+    await fetchAssigned();
+
+    loading.request = false;
+}
+
+async function deleteAssigned(user) {
+    await window.std(`/api/training/${route.params.trainingid}/assigned/${user.id}`, {
+        method: 'DELETE'
+    });
+}
+
+async function patchAssigned(user) {
+    await window.std(`/api/training/${route.params.trainingid}/assigned/${user.id}`, {
+        method: 'PATCH',
+        body: {
+            role: user.role,
+            confirmed: user.confirmed
+        }
+    });
+}
+
+async function postAssigned(user) {
+    loading.assigned = true;
+    await window.std(`/api/training/${route.params.trainingid}/assigned`, {
+        method: 'POST',
+        body: {
+            uid: user.id
+        }
+    });
+
+    await fetchAssigned();
+}
+
+onMounted(async () => {
+    if (is_iam('Training:View')) {
+        await fetch();
+        await fetchAssigned();
+    }
+});
 </script>

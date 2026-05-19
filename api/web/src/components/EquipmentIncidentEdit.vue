@@ -192,19 +192,7 @@
                                         </div>
                                         <div class='col-12'>
                                             <label class='form-label'>Description</label>
-                                            <MdEditor
-                                                v-model='incident.body'
-                                                :preview='false'
-                                                no-upload-img
-                                                no-mermaid
-                                                :no-katex='true'
-                                                :toolbars-exclude='[
-                                                    "save",
-                                                    "prettier",
-                                                    "mermaid"
-                                                ]'
-                                                language='en-US'
-                                            />
+                                            <MDEditorShim v-model='incident.body' />
                                         </div>
                                     </div>
                                 </div>
@@ -217,11 +205,10 @@
     </div>
 </template>
 
-<script>
-import iam from '../iam.js';
+<script setup>
+import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import { MdEditor } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import MDEditorShim from './util/MDEditorShim.vue';
 import {
     TablerBreadCrumb,
     TablerLoading,
@@ -231,152 +218,146 @@ import {
     TablerNone
 } from '@tak-ps/vue-tabler';
 import { IconX } from '@tabler/icons-vue';
+import { reactive, ref, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'EquipmentIncidentEdit',
-    components: {
-        MdEditor,
-        TablerBreadCrumb,
-        TablerLoading,
-        TablerInput,
-        TablerDelete,
-        TablerDropdown,
-        TablerNone,
-        NoAccess,
-        IconX
+const props = defineProps({
+    iam: {
+        type: Object,
+        required: true
     },
-    props: {
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
-    },
-    data: function() {
-        return {
-            loading: true,
-            mode: 'mission',
-            mission_filter: '',
-            training_filter: '',
-            equipmentName: '',
-            incident: {
-                id: null,
-                title: '',
-                body: '',
-                date: new Date().toISOString().slice(0, 16),
-                equipment_id: null,
-                mission_id: null,
-                training_id: null
-            },
-            selected_mission: null,
-            selected_training: null,
-            mission_list: { items: [] },
-            training_list: { items: [] }
-        }
-    },
-    watch: {
-        mode: function() {
-            if (this.mode === 'mission') {
-                this.incident.training_id = null;
-                this.selected_training = null;
-            } else if (this.mode === 'training') {
-                this.incident.mission_id = null;
-                this.selected_mission = null;
-            }
-        },
-        mission_filter: async function() { await this.searchMissions(); },
-        training_filter: async function() { await this.searchTrainings(); }
-    },
-    mounted: async function() {
-        if (!this.is_iam('Equipment:Manage')) return;
-
-        const equipmentId = parseInt(this.$route.params.equipid);
-        const equipment = await window.std(`/api/equipment/${equipmentId}`);
-        this.equipmentName = equipment.name;
-
-        if (this.$route.params.incidentid) {
-            this.incident = await window.std(`/api/equipment/${equipmentId}/incident/${this.$route.params.incidentid}`);
-
-            if (this.incident.mission_id) {
-                this.selected_mission = await window.std(`/api/mission/${this.incident.mission_id}`);
-                this.mode = 'mission';
-            }
-            if (this.incident.training_id) {
-                this.selected_training = await window.std(`/api/training/${this.incident.training_id}`);
-                this.mode = 'training';
-            }
-
-            if (this.incident.date) {
-                this.incident.date = this.incident.date.slice(0, 16);
-            }
-        } else {
-            this.incident.equipment_id = equipmentId;
-        }
-
-        await Promise.all([
-            this.searchMissions(),
-            this.searchTrainings()
-        ]);
-
-        this.loading = false;
-    },
-    methods: {
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
-        searchMissions: async function() {
-            const url = window.stdurl('/api/mission');
-            if (this.mission_filter) url.searchParams.append('filter', this.mission_filter);
-            url.searchParams.append('limit', 10);
-            this.mission_list = await window.std(url);
-        },
-        searchTrainings: async function() {
-            const url = window.stdurl('/api/training');
-            if (this.training_filter) url.searchParams.append('filter', this.training_filter);
-            url.searchParams.append('limit', 10);
-            this.training_list = await window.std(url);
-        },
-        selectMission: function(mission) {
-            this.selected_mission = mission;
-            this.incident.mission_id = mission.id;
-        },
-        selectTraining: function(training) {
-            this.selected_training = training;
-            this.incident.training_id = training.id;
-        },
-        deleteIncident: async function() {
-            const equipmentId = this.$route.params.equipid;
-            await window.std(`/api/equipment/${equipmentId}/incident/${this.incident.id}`, { method: 'DELETE' });
-            this.$router.push(`/equipment/${equipmentId}`);
-        },
-        save: async function() {
-            if (!this.incident.title) return;
-            if (!this.incident.date) return;
-
-            const equipmentId = this.$route.params.equipid;
-            const body = {
-                title: this.incident.title,
-                body: this.incident.body,
-                date: new Date(this.incident.date).toISOString(),
-                mission_id: this.incident.mission_id || undefined,
-                training_id: this.incident.training_id || undefined
-            };
-
-            if (this.incident.id) {
-                await window.std(`/api/equipment/${equipmentId}/incident/${this.incident.id}`, {
-                    method: 'PATCH',
-                    body
-                });
-            } else {
-                await window.std(`/api/equipment/${equipmentId}/incident`, {
-                    method: 'POST',
-                    body
-                });
-            }
-
-            this.$router.push(`/equipment/${equipmentId}`);
-        }
+    auth: {
+        type: Object,
+        required: true
     }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const loading = ref(true);
+const mode = ref('mission');
+const mission_filter = ref('');
+const training_filter = ref('');
+const equipmentName = ref('');
+const incident = reactive({
+    id: null,
+    title: '',
+    body: '',
+    date: new Date().toISOString().slice(0, 16),
+    equipment_id: null,
+    mission_id: null,
+    training_id: null
+});
+const selected_mission = ref(null);
+const selected_training = ref(null);
+const mission_list = reactive({ items: [] });
+const training_list = reactive({ items: [] });
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+watch(mode, () => {
+    if (mode.value === 'mission') {
+        incident.training_id = null;
+        selected_training.value = null;
+    } else if (mode.value === 'training') {
+        incident.mission_id = null;
+        selected_mission.value = null;
+    }
+});
+
+watch(mission_filter, async () => { await searchMissions(); });
+watch(training_filter, async () => { await searchTrainings(); });
+
+async function searchMissions() {
+    const url = window.stdurl('/api/mission');
+    if (mission_filter.value) url.searchParams.append('filter', mission_filter.value);
+    url.searchParams.append('limit', 10);
+    Object.assign(mission_list, await window.std(url));
 }
+
+async function searchTrainings() {
+    const url = window.stdurl('/api/training');
+    if (training_filter.value) url.searchParams.append('filter', training_filter.value);
+    url.searchParams.append('limit', 10);
+    Object.assign(training_list, await window.std(url));
+}
+
+function selectMission(mission) {
+    selected_mission.value = mission;
+    incident.mission_id = mission.id;
+}
+
+function selectTraining(training) {
+    selected_training.value = training;
+    incident.training_id = training.id;
+}
+
+async function deleteIncident() {
+    const equipmentId = route.params.equipid;
+    await window.std(`/api/equipment/${equipmentId}/incident/${incident.id}`, { method: 'DELETE' });
+    router.push(`/equipment/${equipmentId}`);
+}
+
+async function save() {
+    if (!incident.title) return;
+    if (!incident.date) return;
+
+    const equipmentId = route.params.equipid;
+    const body = {
+        title: incident.title,
+        body: incident.body,
+        date: new Date(incident.date).toISOString(),
+        mission_id: incident.mission_id || undefined,
+        training_id: incident.training_id || undefined
+    };
+
+    if (incident.id) {
+        await window.std(`/api/equipment/${equipmentId}/incident/${incident.id}`, {
+            method: 'PATCH',
+            body
+        });
+    } else {
+        await window.std(`/api/equipment/${equipmentId}/incident`, {
+            method: 'POST',
+            body
+        });
+    }
+
+    router.push(`/equipment/${equipmentId}`);
+}
+
+onMounted(async () => {
+    if (!is_iam('Equipment:Manage')) return;
+
+    const equipmentId = parseInt(route.params.equipid);
+    const equipment = await window.std(`/api/equipment/${equipmentId}`);
+    equipmentName.value = equipment.name;
+
+    if (route.params.incidentid) {
+        Object.assign(incident, await window.std(`/api/equipment/${equipmentId}/incident/${route.params.incidentid}`));
+
+        if (incident.mission_id) {
+            selected_mission.value = await window.std(`/api/mission/${incident.mission_id}`);
+            mode.value = 'mission';
+        }
+        if (incident.training_id) {
+            selected_training.value = await window.std(`/api/training/${incident.training_id}`);
+            mode.value = 'training';
+        }
+
+        if (incident.date) {
+            incident.date = incident.date.slice(0, 16);
+        }
+    } else {
+        incident.equipment_id = equipmentId;
+    }
+
+    await Promise.all([
+        searchMissions(),
+        searchTrainings()
+    ]);
+
+    loading.value = false;
+});
 </script>

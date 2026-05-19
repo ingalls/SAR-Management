@@ -23,7 +23,8 @@ export default ts.config(
             "vue/multi-word-component-names": 1,
             "vue/no-multiple-template-root": 0,
             "vue/no-v-model-argument": 0,
-            "vue/require-v-for-key": 0
+            "vue/require-v-for-key": 0,
+            "vue/component-api-style": ["error", ["script-setup"]]
         }
     },
     {

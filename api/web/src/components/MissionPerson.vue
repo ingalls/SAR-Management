@@ -25,7 +25,7 @@
                                     <TablerIconButton
                                         v-if='is_iam("Mission:Manage")'
                                         title='Edit Person'
-                                        @click='$router.push(`/mission/${$route.params.missionid}/person/${$route.params.personid}/edit`)'
+                                        @click='router.push(`/mission/${route.params.missionid}/person/${route.params.personid}/edit`)'
                                     >
                                         <IconPencil
                                             size='24'
@@ -96,46 +96,41 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import { TablerBreadCrumb, TablerIconButton } from '@tak-ps/vue-tabler';
 import { IconPencil, IconTrash } from '@tabler/icons-vue';
-import iam from '../iam.js';
+import iamHelper from '../iam.js';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'MissionPerson',
-    components: {
-        TablerBreadCrumb,
-        TablerIconButton,
-        IconPencil,
-        IconTrash
-    },
-    props: {
-        iam: { type: Object, required: true },
-        auth: { type: Object, required: true }
-    },
-    data() {
-        return {
-            loading: true,
-            person: {}
-        };
-    },
-    mounted() {
-        this.fetch();
-    },
-    methods: {
-        is_iam(permission) { return iam(this.iam, this.auth, permission); },
-        async fetch() {
-            this.loading = true;
-            this.person = await window.std(`/api/mission/${this.$route.params.missionid}/person/${this.$route.params.personid}`);
-            this.loading = false;
-        },
-        async deletePerson() {
-            if (!confirm('Are you sure you want to delete this person?')) return;
-            await window.std(`/api/mission/${this.$route.params.missionid}/person/${this.$route.params.personid}`, {
-                method: 'DELETE'
-            });
-            this.$router.push(`/mission/${this.$route.params.missionid}`);
-        }
-    }
+const props = defineProps({
+    iam: { type: Object, required: true },
+    auth: { type: Object, required: true }
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const loading = ref(true);
+const person = ref({});
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
+
+async function fetch() {
+    loading.value = true;
+    person.value = await window.std(`/api/mission/${route.params.missionid}/person/${route.params.personid}`);
+    loading.value = false;
 }
+
+async function deletePerson() {
+    if (!confirm('Are you sure you want to delete this person?')) return;
+    await window.std(`/api/mission/${route.params.missionid}/person/${route.params.personid}`, {
+        method: 'DELETE'
+    });
+    router.push(`/mission/${route.params.missionid}`);
+}
+
+onMounted(() => {
+    fetch();
+});
 </script>

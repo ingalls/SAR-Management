@@ -9,7 +9,7 @@
                     <TablerIconButton
                         v-if='is_iam("Mission:Manage")'
                         title='Add Subject'
-                        @click='$router.push(`/mission/${mission.id}/person/new`)'
+                        @click='router.push(`/mission/${mission.id}/person/new`)'
                     >
                         <IconPlus
                             size='24'
@@ -26,7 +26,7 @@
                     v-for='person in mission.people'
                     :key='person.id'
                     class='list-group-item list-group-item-action cursor-pointer'
-                    @click='$router.push(`/mission/${mission.id}/person/${person.id}`)'
+                    @click='router.push(`/mission/${mission.id}/person/${person.id}`)'
                 >
                     <div class='row align-items-center'>
                         <div class='col text-truncate'>
@@ -37,7 +37,9 @@
                                 <TablerBadge
                                     :background-color='roleColor(person.role)'
                                     text-color='#ffffff'
-                                >{{ person.role }}</TablerBadge>
+                                >
+                                    {{ person.role }}
+                                </TablerBadge>
                             </div>
                         </div>
                         <div class='col-auto'>
@@ -61,7 +63,7 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import {
     TablerBadge,
     TablerIconButton,
@@ -70,44 +72,38 @@ import {
 import {
     IconPlus
 } from '@tabler/icons-vue';
-import iam from '../../iam.js';
+import iamHelper from '../../iam.js';
+import { useRouter } from 'vue-router';
 
-export default {
-    name: 'MissionPeople',
-    components: {
-        TablerBadge,
-        TablerIconButton,
-        TablerNone,
-        IconPlus
+const props = defineProps({
+    mission: {
+        type: Object,
+        required: true
     },
-    props: {
-        mission: {
-            type: Object,
-            required: true
-        },
-        iam: {
-            type: Object,
-            required: true
-        },
-        auth: {
-            type: Object,
-            required: true
-        }
+    iam: {
+        type: Object,
+        required: true
     },
-    methods: {
-        roleColor(role) {
-            switch (role) {
-                case 'Subject':
-                    return '#d63939';
-                case 'Reporting Party':
-                    return '#206bc4';
-                case 'Witness':
-                    return '#f59f00';
-                default:
-                    return '#6e7582';
-            }
-        },
-        is_iam: function(permission) { return iam(this.iam, this.auth, permission) },
+    auth: {
+        type: Object,
+        required: true
+    }
+});
+
+const router = useRouter();
+
+function roleColor(role) {
+    switch (role) {
+        case 'Subject':
+            return '#d63939';
+        case 'Reporting Party':
+            return '#206bc4';
+        case 'Witness':
+            return '#f59f00';
+        default:
+            return '#6e7582';
     }
 }
+
+function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
 </script>

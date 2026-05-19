@@ -38,19 +38,7 @@
 
         <TablerLoading v-if='loading' />
         <template v-else-if='edit'>
-            <MdEditor
-                v-model='body'
-                :preview='false'
-                no-upload-img
-                no-mermaid
-                :no-katex='true'
-                :toolbars-exclude='[
-                    "save",
-                    "prettier",
-                    "mermaid"
-                ]'
-                language='en-US'
-            />
+            <MDEditorShim v-model='body' />
             <div class='card-footer d-flex'>
                 <div class='ms-auto'>
                     <button
@@ -63,7 +51,10 @@
             </div>
         </template>
         <template v-else>
-            <div class='card-body overflow-hidden' style='word-break: break-word;'>
+            <div
+                class='card-body overflow-hidden'
+                style='word-break: break-word;'
+            >
                 <TablerMarkdown :markdown='comment.body' />
             </div>
         </template>
@@ -78,8 +69,7 @@ import {
 } from '@tak-ps/vue-tabler'
 import Avatar from './Avatar.vue';
 import moment from 'moment';
-import { MdEditor } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import MDEditorShim from './MDEditorShim.vue';
 
 moment.updateLocale('en', {
     relativeTime : {
