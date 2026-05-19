@@ -224,6 +224,12 @@ onMounted(async () => {
 
     calendar.value = new Calendar(calendarEl.value, {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek,dayGridDay,listWeek'
+        },
+        initialView: 'dayGridMonth',
         height: '100%',
         timeZone: 'local',
         selectable: true,

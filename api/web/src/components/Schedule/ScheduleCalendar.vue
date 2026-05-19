@@ -23,7 +23,7 @@ schedules_assigned.json<template>
         <div class='card-body'>
             <div
                 id='calendar'
-                style='width: 100%; height: 500px;'
+                style='width: 100%; height: 600px;'
             />
         </div>
 
@@ -279,6 +279,12 @@ const submitOverride = async () => {
 onMounted(async () => {
     calendar.value = new Calendar(document.getElementById('calendar'), {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek,dayGridDay,listWeek'
+        },
+        initialView: 'dayGridMonth',
         timeZone: 'local',
         selectable: true,
         unselectAuto: true,
