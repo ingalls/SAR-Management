@@ -6,12 +6,11 @@ import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { Schedule, ScheduleAssigned, ScheduleOverride } from '../lib/schema.js';
+import { Schedule, ScheduleOverride } from '../lib/schema.js';
 import {
     StandardResponse,
     ScheduleResponse,
     ScheduleEventResponse,
-    ScheduleAssignedResponse,
     ScheduleOverrideResponse
 } from '../lib/types.js';
 
@@ -34,6 +33,31 @@ export const OnCallEntry = Type.Object({
     end_ts: Type.String(),
     is_override: Type.Boolean()
 });
+
+type ScheduleRecord = Static<typeof ScheduleResponse>;
+
+async function assertScheduleMember(config: Config, schedule: ScheduleRecord, uid: number): Promise<void> {
+    try {
+        await config.models.User.augmented_from(sql`
+            users.id = ${uid}
+            AND users.disabled = false
+            AND teams_id @> ARRAY[${schedule.team_id}::INT]
+        `);
+    } catch (err) {
+        throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'User is not part of the schedule subteam');
+    }
+}
+
+async function listScheduleMembers(config: Config, schedule: ScheduleRecord) {
+    return await config.models.User.augmented_list({
+        limit: 1000,
+        sort: 'id',
+        where: sql`
+            users.disabled = false
+            AND teams_id @> ARRAY[${schedule.team_id}::INT]
+        `
+    });
+}
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/schedule', {
@@ -76,32 +100,21 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Schedules',
         description: 'Create a new schedule',
         body: Type.Object({
+            team_id: Type.Integer(),
             name: Type.String(),
             body: Type.String(),
             handoff: Type.Optional(Type.String()),
             rotation_type: Type.Optional(Type.String({ default: 'none', enum: ['none', 'daily', 'weekly', 'custom'] })),
-            rotation_period: Type.Optional(Type.Integer({ default: 1 })),
-            assigned: Type.Optional(Type.Array(ScheduleAssignedResponse))
+            rotation_period: Type.Optional(Type.Integer({ default: 1 }))
         }),
         res: ScheduleResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.ADMIN);
 
-            const assigned = req.body.assigned;
-            delete req.body.assigned;
+            await config.models.Team.from(req.body.team_id);
 
             const schedule = await config.models.Schedule.generate(req.body);
-
-            if (assigned) {
-                for (const a of assigned) {
-                    await config.models.ScheduleAssigned.generate({
-                        schedule_id: schedule.id,
-                        role: 'Default',
-                        uid: a.uid
-                    });
-                }
-            }
 
             res.json(schedule);
         } catch (err) {
@@ -117,6 +130,7 @@ export default async function router(schema: Schema, config: Config) {
             scheduleid: Type.Integer(),
         }),
         body: Type.Object({
+            team_id: Type.Optional(Type.Integer()),
             name: Type.Optional(Type.String()),
             body: Type.Optional(Type.String()),
             handoff: Type.Optional(Type.String()),
@@ -127,6 +141,8 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.MANAGE);
+
+            if (req.body.team_id) await config.models.Team.from(req.body.team_id);
 
             const schedule = await config.models.Schedule.commit(req.params.scheduleid, req.body);
             res.json(schedule);
@@ -152,16 +168,8 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
-            await config.models.Schedule.from(req.params.scheduleid);
-
-            try {
-                await config.models.ScheduleAssigned.from(sql`
-                    schedule_id = ${req.params.scheduleid}
-                    AND uid = ${req.body.uid}
-                `);
-            } catch (err) {
-                throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'User is not part of On-Call Schedule')
-            }
+            const schedule = await config.models.Schedule.from(req.params.scheduleid);
+            await assertScheduleMember(config, schedule, req.body.uid);
 
             const event = await config.models.ScheduleEvent.generate({
                 ...req.body,
@@ -193,16 +201,7 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             const schedule = await config.models.Schedule.from(req.params.scheduleid);
-            if (req.body.uid) {
-                try {
-                    await config.models.ScheduleAssigned.from(sql`
-                        schedule_id = ${req.params.scheduleid}
-                        AND uid = ${req.body.uid}
-                    `);
-                } catch (err) {
-                    throw new Err(400, err instanceof Error ? err : new Error(String(err)), 'User is not part of On-Call Schedule')
-                }
-            }
+            if (req.body.uid) await assertScheduleMember(config, schedule, req.body.uid);
 
             const event = await config.models.ScheduleEvent.from(req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
@@ -312,41 +311,6 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             res.json(await config.models.Schedule.from(req.params.scheduleid));
-        } catch (err) {
-             Err.respond(err, res);
-        }
-    });
-
-    await schema.get('/schedule/:scheduleid/assigned', {
-        name: 'Get Assigned',
-        group: 'Schedules',
-        description: 'Get Assigned',
-        params: Type.Object({
-            scheduleid: Type.Integer(),
-        }),
-        query: Type.Object({
-            limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),
-            order: Type.Optional(Type.Enum(GenericListOrder)),
-            sort: Type.Optional(Type.String({default: 'id', enum: Object.keys(ScheduleAssigned)})),
-        }),
-        res: Type.Object({
-            total: Type.Integer(),
-            items: Type.Array(ScheduleAssignedResponse)
-        })
-    }, async (req, res) => {
-        try {
-            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
-
-            res.json(await config.models.ScheduleAssigned.augmented_list({
-                limit: req.query.limit,
-                page: req.query.page,
-                order: req.query.order,
-                sort: req.query.sort,
-                where: sql`
-                    schedule_id = ${req.params.scheduleid}
-                `
-            }));
         } catch (err) {
              Err.respond(err, res);
         }
@@ -541,13 +505,10 @@ export default async function router(schema: Schema, config: Config) {
                 throw new Err(400, null, 'Schedule does not have a rotation type configured');
             }
 
-            const assigned = await config.models.ScheduleAssigned.augmented_list({
-                limit: 100,
-                where: sql`schedule_id = ${schedule.id}`
-            });
+            const assigned = await listScheduleMembers(config, schedule);
 
             if (assigned.items.length === 0) {
-                throw new Err(400, null, 'Schedule has no assigned members for rotation');
+                throw new Err(400, null, 'Schedule subteam has no active members for rotation');
             }
 
             let periodDays: number;
@@ -593,7 +554,7 @@ export default async function router(schema: Schema, config: Config) {
                     schedule_id: schedule.id,
                     start_ts: shiftStart.toISOString(),
                     end_ts: shiftEnd.toISOString(),
-                    uid: member.uid
+                    uid: member.id
                 });
 
                 eventsCreated++;
@@ -674,7 +635,9 @@ export default async function router(schema: Schema, config: Config) {
         try {
             const auth = await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
-            await config.models.Schedule.from(req.params.scheduleid);
+            const schedule = await config.models.Schedule.from(req.params.scheduleid);
+            await assertScheduleMember(config, schedule, req.body.uid);
+            if (req.body.override_uid) await assertScheduleMember(config, schedule, req.body.override_uid);
 
             const override = await config.models.ScheduleOverride.generate({
                 schedule_id: req.params.scheduleid,
@@ -715,6 +678,9 @@ export default async function router(schema: Schema, config: Config) {
             const schedule = await config.models.Schedule.from(req.params.scheduleid);
             const override = await config.models.ScheduleOverride.from(req.params.overrideid);
             if (override.schedule_id !== schedule.id) throw new Err(400, null, 'Override is not part of specified schedule');
+
+            if (req.body.uid) await assertScheduleMember(config, schedule, req.body.uid);
+            if (req.body.override_uid) await assertScheduleMember(config, schedule, req.body.override_uid);
 
             await config.models.ScheduleOverride.commit(req.params.overrideid, req.body);
 

@@ -110,6 +110,10 @@ const props = defineProps({
         type: Boolean,
         default: undefined
     },
+    single: {
+        type: Boolean,
+        default: false
+    },
     disabled: {
         type: Boolean,
         default: false
@@ -125,7 +129,8 @@ const list = ref({
 const teams = ref([])
 
 const push_teams = async (team) => {
-    teams.value.push(team)
+    if (props.single) teams.value = [team]
+    else teams.value.push(team)
     emit('push', team)
     await listTeams()
 }

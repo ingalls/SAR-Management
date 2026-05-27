@@ -5,7 +5,6 @@ import ScheduleEventModel from './models/ScheduleEvent.js'
 import EquipmentAssignedModel from './models/EquipmentAssigned.js'
 import IssueModel from './models/Issue.js'
 import IssueAssignedModel from './models/IssueAssigned.js'
-import ScheduleAssignedModel from './models/ScheduleAssigned.js'
 import ScheduleOverrideModel from './models/ScheduleOverride.js'
 import IssueCommentModel from './models/IssueComment.js'
 import MissionAssignedModel from './models/MissionAssigned.js'
@@ -69,7 +68,6 @@ export default class Models {
     IssueComment: IssueCommentModel;
     EquipmentAssigned: EquipmentAssignedModel;
     IssueAssigned: IssueAssignedModel;
-    ScheduleAssigned: ScheduleAssignedModel;
     ScheduleOverride: ScheduleOverrideModel;
     ScheduleEvent: ScheduleEventModel;
 
@@ -89,7 +87,6 @@ export default class Models {
         this.IssueAssigned = new IssueAssignedModel(pg);
         this.TrainingAssigned = new TrainingAssignedModel(pg);
         this.MissionAssigned = new MissionAssignedModel(pg);
-        this.ScheduleAssigned = new ScheduleAssignedModel(pg);
         this.ScheduleOverride = new ScheduleOverrideModel(pg);
         this.Stats = new StatsModel(pg);
         this.TeamSetting = new TeamSettingModel(pg);

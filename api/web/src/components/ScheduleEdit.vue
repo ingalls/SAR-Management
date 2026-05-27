@@ -45,6 +45,18 @@
                                             />
                                         </div>
                                         <div class='col-md-12'>
+                                            <TeamSelect
+                                                v-model='selectedTeams'
+                                                label='Subteam'
+                                                :single='true'
+                                            />
+                                            <div
+                                                v-if='errors.team_id'
+                                                class='invalid-feedback d-block'
+                                                v-text='errors.team_id'
+                                            />
+                                        </div>
+                                        <div class='col-md-12'>
                                             <TablerInput
                                                 v-model='schedule.handoff'
                                                 type='time'
@@ -73,7 +85,7 @@
                                                     Custom (Days)
                                                 </option>
                                             </select>
-                                            <small class='form-hint'>How shifts rotate among assigned members</small>
+                                            <small class='form-hint'>How shifts rotate among subteam members</small>
                                         </div>
                                         <div
                                             v-if='schedule.rotation_type !== "none"'
@@ -89,16 +101,6 @@
                                     </div>
                                 </div>
 
-                                <div class='mx-4'>
-                                    <UserSelect
-                                        v-if='!$route.params.scheduleid'
-                                        v-model='assigned'
-                                        mode='card'
-                                        label='Scheduled Users'
-                                        :confirmed='true'
-                                    />
-                                </div>
-
                                 <div
                                     v-if='$route.params.scheduleid && schedule.rotation_type !== "none"'
                                     class='card-body border-top'
@@ -107,7 +109,7 @@
                                         Generate Rotation
                                     </h4>
                                     <p class='text-muted'>
-                                        Automatically create shift events by rotating through assigned members.
+                                        Automatically create shift events by rotating through subteam members.
                                     </p>
                                     <div class='row row-cards'>
                                         <div class='col-md-5'>
@@ -185,13 +187,13 @@
 import iamHelper from '../iam.js';
 import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
-import UserSelect from './util/UserSelect.vue';
+import TeamSelect from './util/TeamSelect.vue';
 import {
     TablerBreadCrumb,
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
-import { reactive, ref, computed, onMounted } from 'vue';
+import { reactive, ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps({
@@ -212,18 +214,20 @@ const loading = reactive({
     schedule: true
 });
 const errors = reactive({
+    team_id: '',
     name: '',
     body: '',
     handoff: ''
 });
 const schedule = reactive({
+    team_id: null,
     name: '',
     body: '',
     handoff: '06:00',
     rotation_type: 'none',
     rotation_period: 1
 });
-const assigned = ref([]);
+const selectedTeams = ref([]);
 const generate = reactive({
     start_date: moment().format('YYYY-MM-DD'),
     end_date: moment().add(4, 'weeks').format('YYYY-MM-DD'),
@@ -255,6 +259,9 @@ function validate() {
         else errors[field] = '';
     }
 
+    if (!schedule.team_id) errors.team_id = 'Select a subteam';
+    else errors.team_id = '';
+
     for (const e in errors) {
         if (errors[e]) return;
     }
@@ -270,12 +277,7 @@ async function create() {
         method: 'POST',
         body: {
             ...schedule,
-            assigned: assigned.value.map((a) => {
-                return {
-                    uid: a.id,
-                    role: a.role
-                }
-            })
+            rotation_period: parseInt(schedule.rotation_period)
         }
     });
 
@@ -286,6 +288,7 @@ async function create() {
 async function fetch() {
     loading.schedule = true;
     Object.assign(schedule, await window.std(`/api/schedule/${route.params.scheduleid}`));
+    selectedTeams.value = [await window.std(`/api/team/${schedule.team_id}`)];
     loading.schedule = false;
 }
 
@@ -297,6 +300,7 @@ async function update() {
         method: 'PATCH',
         body: {
             name: schedule.name,
+            team_id: schedule.team_id,
             body: schedule.body,
             handoff: schedule.handoff,
             rotation_type: schedule.rotation_type,
@@ -328,6 +332,10 @@ async function generateRotation() {
 
     generate.loading = false;
 }
+
+watch(selectedTeams, () => {
+    schedule.team_id = selectedTeams.value[0]?.id || null;
+}, { deep: true });
 
 onMounted(async () => {
     if (route.params.scheduleid && is_iam('Oncall:Admin')) {

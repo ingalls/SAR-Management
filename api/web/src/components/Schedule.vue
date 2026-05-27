@@ -97,7 +97,7 @@
                             />
                         </div>
                         <div class='col-lg-12'>
-                            <CardScheduleAssigned />
+                            <CardScheduleAssigned :schedule='schedule' />
                         </div>
                     </template>
                 </div>
@@ -138,16 +138,10 @@ const props = defineProps({
 
 const loading = reactive({
     schedule: true,
-    assigned: true,
 })
 
 const schedule = reactive({})
 const oncall = ref([])
-
-const assigned = reactive({
-    total: 0,
-    assigned: []
-})
 
 function is_iam(permission) { 
     return iamHelper(props.iam, props.auth, permission) 
@@ -172,22 +166,10 @@ async function fetchOnCall() {
     }
 }
 
-async function fetchAssigned() {
-    loading.assigned = true;
-    const result = await window.std(`/api/schedule/${route.params.scheduleid}/assigned`);
-    assigned.total = result.total;
-    assigned.assigned = result.assigned;
-    loading.assigned = false;
-}
-
 onMounted(async () => {
     if (is_iam('Oncall:View')) {
         await fetch();
         await fetchOnCall();
     }
-})
-
-defineExpose({
-    fetchAssigned
 })
 </script>

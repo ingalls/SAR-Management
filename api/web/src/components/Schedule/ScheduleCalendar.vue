@@ -1,4 +1,4 @@
-schedules_assigned.json<template>
+<template>
     <div class='card'>
         <div class='card-header'>
             <h1 class='card-title'>
@@ -103,9 +103,9 @@ schedules_assigned.json<template>
                     <template v-if='modal.type === "override"'>
                         <UserDropdown
                             v-model='modal.title'
-                            :url='`/api/schedule/${schedule.id}/assigned`'
+                            :url='`/api/team/${schedule.team_id}/user`'
                             label='Replacement'
-                            @selected='modal.user = $event.uid'
+                            @selected='modal.user = $event.id'
                         />
                         <TablerInput
                             v-model='modal.reason'
@@ -116,8 +116,8 @@ schedules_assigned.json<template>
                     <template v-else>
                         <UserDropdown
                             v-model='modal.title'
-                            :url='`/api/schedule/${schedule.id}/assigned`'
-                            @selected='modal.user = $event.uid'
+                            :url='`/api/team/${schedule.team_id}/user`'
+                            @selected='modal.user = $event.id'
                         />
                     </template>
                 </div>

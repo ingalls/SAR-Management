@@ -355,19 +355,13 @@ export const Schedule = pgTable('schedule', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    team_id: integer().notNull().references(() => Team.id),
     name: text().notNull(),
     body: text().notNull().default(''),
     handoff: text().notNull().default('06:00'),
     disabled: boolean().notNull().default(false),
     rotation_type: text().notNull().default('none'),
     rotation_period: integer().notNull().default(1)
-});
-
-export const ScheduleAssigned = pgTable('schedules_assigned', {
-    id: serial().primaryKey(),
-    schedule_id: integer().notNull().references(() => Schedule.id),
-    role: text().notNull(),
-    uid: integer().notNull().references(() => User.id),
 });
 
 export const ScheduleEvent = pgTable('schedules_event', {

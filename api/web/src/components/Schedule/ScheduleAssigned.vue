@@ -2,26 +2,17 @@
     <div class='card'>
         <div class='card-header'>
             <h3 class='card-title'>
-                Assigned
+                Subteam Members
             </h3>
-            <div class='ms-auto'>
-                <IconPencil
-                    v-tooltip='"Edit"'
-                    :size='32'
-                    stroke='1'
-                    class='cursor-pointer'
-                    @click='edit = !edit'
-                />
-            </div>
         </div>
 
         <TablerLoading
             v-if='loading.list'
-            desc='Loading Assigned'
+            desc='Loading Subteam Members'
         />
         <TablerNone
             v-else-if='!list.items.length'
-            label='No Assigned Users'
+            label='No Subteam Members'
             :create='false'
         />
         <template v-else>
@@ -35,7 +26,7 @@
                     />
                     <tbody>
                         <tr
-                            v-for='(user, user_it) in list.items'
+                            v-for='user in list.items'
                             :key='user.id'
                         >
                             <template v-for='h in header'>
@@ -46,27 +37,6 @@
                                                 :link='true'
                                                 :user='user'
                                             />
-
-                                            <div
-                                                v-if='edit'
-                                                class='ms-auto'
-                                            >
-                                                <div
-                                                    v-if='!user._loading'
-                                                    class='btn-list'
-                                                >
-                                                    <TablerDelete
-                                                        displaytype='icon'
-                                                        @delete='removeUser(user, user_it)'
-                                                    />
-                                                </div>
-                                                <div
-                                                    v-else
-                                                    class='btn-list'
-                                                >
-                                                    <TablerLoading :inline='true' />
-                                                </div>
-                                            </div>
                                         </div>
                                     </td>
                                     <td v-else>
@@ -90,22 +60,21 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import Avatar from '../util/Avatar.vue';
-import {
-    IconPencil,
-} from '@tabler/icons-vue'
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerNone,
-    TablerLoading,
-    TablerDelete
+    TablerLoading
 } from '@tak-ps/vue-tabler'
 
-const route = useRoute();
+const props = defineProps({
+    schedule: {
+        type: Object,
+        required: true
+    }
+});
 
-const edit = ref(false);
 const loading = reactive({
     list: true,
 });
@@ -127,7 +96,7 @@ watch(paging, async () => {
 }, { deep: true });
 
 const listAssignedSchema = async () => {
-    const schema = await window.std('/api/schema?method=GET&url=/schedule/:scheduleid/assigned');
+    const schema = await window.std('/api/schema?method=GET&url=/team/:teamid/user');
     header.value = ['name'].map((h) => {
         return { name: h, display: true };
     });
@@ -147,7 +116,7 @@ const listAssignedSchema = async () => {
 
 const listAssigned = async () => {
     loading.list = true;
-    const url = window.stdurl(`/api/schedule/${route.params.scheduleid}/assigned`);
+    const url = window.stdurl(`/api/team/${props.schedule.team_id}/user`);
     url.searchParams.append('limit', paging.limit);
     url.searchParams.append('page', paging.page);
     url.searchParams.append('filter', paging.filter);

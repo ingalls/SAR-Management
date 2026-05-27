@@ -204,6 +204,13 @@
       "when": 1776456448009,
       "tag": "0028_equal_wildside",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1779848254897,
+      "tag": "0029_schedule_subteam",
+      "breakpoints": true
     }
   ]
 }
