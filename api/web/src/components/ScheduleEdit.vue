@@ -105,46 +105,7 @@
                                     v-if='$route.params.scheduleid && schedule.rotation_type !== "none"'
                                     class='card-body border-top'
                                 >
-                                    <h4 class='mb-3'>
-                                        Generate Rotation
-                                    </h4>
-                                    <p class='text-muted'>
-                                        Automatically create shift events by rotating through subteam members.
-                                    </p>
-                                    <div class='row row-cards'>
-                                        <div class='col-md-5'>
-                                            <TablerInput
-                                                v-model='generate.start_date'
-                                                type='date'
-                                                label='Start Date'
-                                            />
-                                        </div>
-                                        <div class='col-md-5'>
-                                            <TablerInput
-                                                v-model='generate.end_date'
-                                                type='date'
-                                                label='End Date'
-                                            />
-                                        </div>
-                                        <div class='col-md-2 d-flex align-items-end'>
-                                            <button
-                                                class='btn btn-primary w-100'
-                                                :disabled='generate.loading'
-                                                @click='generateRotation'
-                                            >
-                                                <span
-                                                    v-if='generate.loading'
-                                                    class='spinner-border spinner-border-sm me-1'
-                                                />
-                                                Generate
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div
-                                        v-if='generate.result'
-                                        class='alert alert-success mt-3'
-                                        v-text='generate.result'
-                                    />
+                                    <ScheduleGenerateRotation :schedule-id='route.params.scheduleid' />
                                 </div>
 
                                 <div class='col-12 py-1 pb-4 px-4'>
@@ -185,8 +146,8 @@
 
 <script setup>
 import iamHelper from '../iam.js';
-import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
+import ScheduleGenerateRotation from './Schedule/GenerateRotation.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import {
     TablerBreadCrumb,
@@ -228,12 +189,6 @@ const schedule = reactive({
     rotation_period: 1
 });
 const selectedTeams = ref([]);
-const generate = reactive({
-    start_date: moment().format('YYYY-MM-DD'),
-    end_date: moment().add(4, 'weeks').format('YYYY-MM-DD'),
-    loading: false,
-    result: ''
-});
 
 const rotationPeriodDescription = computed(() => {
     if (schedule.rotation_type === 'daily') return 'Number of days per shift';
@@ -310,27 +265,6 @@ async function update() {
 
     loading.schedule = false;
     router.push(`/schedule/${route.params.scheduleid}`);
-}
-
-async function generateRotation() {
-    generate.loading = true;
-    generate.result = '';
-
-    try {
-        const result = await window.std(`/api/schedule/${route.params.scheduleid}/generate`, {
-            method: 'POST',
-            body: {
-                start_date: generate.start_date,
-                end_date: generate.end_date
-            }
-        });
-
-        generate.result = result.message;
-    } catch (err) {
-        generate.result = err.message || 'Failed to generate rotation';
-    }
-
-    generate.loading = false;
 }
 
 watch(selectedTeams, () => {

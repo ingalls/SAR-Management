@@ -1,17 +1,18 @@
 import Err from '@openaddresses/batch-error';
-import { GenericListOrder } from '@openaddresses/batch-generic';
+import { GenericListOrder, Param } from '@openaddresses/batch-generic';
 import { Type, Static } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
 import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { Schedule, ScheduleOverride } from '../lib/schema.js';
+import { Schedule, ScheduleOverride, User } from '../lib/schema.js';
 import {
     StandardResponse,
     ScheduleResponse,
     ScheduleEventResponse,
-    ScheduleOverrideResponse
+    ScheduleOverrideResponse,
+    UserResponse
 } from '../lib/types.js';
 
 export const Event = Type.Object({
@@ -311,6 +312,46 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
             res.json(await config.models.Schedule.from(req.params.scheduleid));
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
+    await schema.get('/schedule/:scheduleid/members', {
+        name: 'Get Schedule Members',
+        group: 'Schedules',
+        description: 'Get users from the subteam assigned to a schedule',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+        }),
+        query: Type.Object({
+            limit: Type.Optional(Type.Integer()),
+            page: Type.Optional(Type.Integer()),
+            order: Type.Optional(Type.Enum(GenericListOrder)),
+            sort: Type.Optional(Type.String({default: 'id', enum: Object.keys(User)})),
+            filter: Type.Optional(Type.String({ default: '' }))
+        }),
+        res: Type.Object({
+            total: Type.Integer(),
+            items: Type.Array(UserResponse)
+        })
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
+
+            const schedule = await config.models.Schedule.from(req.params.scheduleid);
+
+            res.json(await config.models.User.augmented_list({
+                limit: req.query.limit,
+                page: req.query.page,
+                order: req.query.order,
+                sort: req.query.sort,
+                where: sql`
+                    users.disabled = false
+                    AND teams_id @> ARRAY[${schedule.team_id}::INT]
+                    AND (${Param(req.query.filter)}::TEXT IS NULL OR fname||' '||lname ~* ${Param(req.query.filter)})
+                `
+            }));
         } catch (err) {
              Err.respond(err, res);
         }

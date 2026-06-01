@@ -96,7 +96,7 @@ watch(paging, async () => {
 }, { deep: true });
 
 const listAssignedSchema = async () => {
-    const schema = await window.std('/api/schema?method=GET&url=/team/:teamid/user');
+    const schema = await window.std('/api/schema?method=GET&url=/schedule/:scheduleid/members');
     header.value = ['name'].map((h) => {
         return { name: h, display: true };
     });
@@ -116,7 +116,7 @@ const listAssignedSchema = async () => {
 
 const listAssigned = async () => {
     loading.list = true;
-    const url = window.stdurl(`/api/team/${props.schedule.team_id}/user`);
+    const url = window.stdurl(`/api/schedule/${props.schedule.id}/members`);
     url.searchParams.append('limit', paging.limit);
     url.searchParams.append('page', paging.page);
     url.searchParams.append('filter', paging.filter);

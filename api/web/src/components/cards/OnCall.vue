@@ -76,14 +76,12 @@
                                 :key='entry.uid'
                                 class='d-flex align-items-center py-1'
                             >
-                                <span class='avatar avatar-sm me-2'>
-                                    {{ entry.fname.charAt(0) }}{{ entry.lname.charAt(0) }}
-                                </span>
                                 <div class='flex-fill'>
                                     <div class='d-flex align-items-center'>
-                                        <span class='fw-medium'>
-                                            {{ entry.fname }} {{ entry.lname }}
-                                        </span>
+                                        <Avatar
+                                            :user='entry'
+                                            :link='true'
+                                        />
                                         <span
                                             v-if='entry.is_override'
                                             class='badge bg-yellow-lt ms-2'
@@ -108,6 +106,7 @@
 import { ref, computed, onMounted } from 'vue';
 import moment from 'moment';
 import iamHelper from '../../iam.js';
+import Avatar from '../util/Avatar.vue';
 import NoAccess from '../util/NoAccess.vue';
 import {
     TablerNone,

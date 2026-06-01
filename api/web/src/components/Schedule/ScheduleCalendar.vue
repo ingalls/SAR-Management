@@ -103,7 +103,7 @@
                     <template v-if='modal.type === "override"'>
                         <UserDropdown
                             v-model='modal.title'
-                            :url='`/api/team/${schedule.team_id}/user`'
+                            :url='`/api/schedule/${schedule.id}/members`'
                             label='Replacement'
                             @selected='modal.user = $event.id'
                         />
@@ -116,7 +116,7 @@
                     <template v-else>
                         <UserDropdown
                             v-model='modal.title'
-                            :url='`/api/team/${schedule.team_id}/user`'
+                            :url='`/api/schedule/${schedule.id}/members`'
                             @selected='modal.user = $event.id'
                         />
                     </template>
@@ -191,6 +191,7 @@ const resetModal = () => {
 
 const switchToOverride = () => {
     modal.type = 'override';
+    modal.id = null;
     modal.override_uid = modal.user;
     modal.user = null;
     modal.title = '';
