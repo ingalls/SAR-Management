@@ -15,22 +15,26 @@
             </h3>
 
             <div class='btn-list ms-auto'>
-                <IconPlus
+                <TablerIconButton
                     v-if='create && is_iam("Application:Manage")'
-                    v-tooltip='"Create Application"'
-                    class='cursor-pointer'
-                    size='32'
-                    stroke='1'
+                    title='Create Application'
                     @click='router.push(`/application/new`)'
-                />
-                <IconPencil
+                >
+                    <IconPlus
+                        size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
+                <TablerIconButton
                     v-if='create && is_iam("Application:Manage")'
-                    v-tooltip='"Edit Application Form"'
-                    class='cursor-pointer'
-                    size='32'
-                    stroke='1'
+                    title='Edit Application Form'
                     @click='router.push(`/application/edit`)'
-                />
+                >
+                    <IconPencil
+                        size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
             </div>
         </div>
 
@@ -136,7 +140,8 @@ import {
     TablerEnum,
     TablerInput,
     TablerEpoch,
-    TablerLoading
+    TablerLoading,
+    TablerIconButton
 } from '@tak-ps/vue-tabler'
 
 import {

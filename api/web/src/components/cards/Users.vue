@@ -83,14 +83,15 @@
                                 /></label>
                             </div>
 
-                            <button class='btn px-2'>
+                            <TablerIconButton
+                                title='Export vCard'
+                                @click='exportUsers("vcard")'
+                            >
                                 <IconAddressBook
-                                    class='cursor-pointer'
                                     size='32'
                                     stroke='1'
-                                    @click='exportUsers("vcard")'
                                 />
-                            </button>
+                            </TablerIconButton>
                             <template v-if='edit'>
                                 <TablerLoading
                                     v-if='loading.add'
@@ -280,6 +281,7 @@ import {
     TablerEpoch,
     TablerLoading,
     TablerToggle,
+    TablerIconButton,
 } from '@tak-ps/vue-tabler'
 import UserProfile from '../User/Profile.vue';
 

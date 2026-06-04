@@ -42,13 +42,16 @@
                                                 stroke='1'
                                             />
                                         </TablerIconButton>
-                                        <IconPencil
+                                        <TablerIconButton
                                             v-if='is_iam("Oncall:Admin")'
-                                            :size='32'
-                                            stroke='1'
-                                            class='cursor-pointer'
+                                            title='Edit Schedule'
                                             @click='$router.push(`/schedule/${$route.params.scheduleid}/edit`)'
-                                        />
+                                        >
+                                            <IconPencil
+                                                :size='32'
+                                                stroke='1'
+                                            />
+                                        </TablerIconButton>
                                     </div>
                                 </div>
                             </template>

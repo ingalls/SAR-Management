@@ -16,14 +16,16 @@
             </h3>
 
             <div class='btn-list ms-auto'>
-                <IconPlus
+                <TablerIconButton
                     v-if='create && is_iam("Issue:Manage")'
-                    v-tooltip='"New Issue"'
-                    class='cursor-pointer'
-                    :size='32'
-                    :stroke='1'
+                    title='New Issue'
                     @click='$router.push(`/issue/new`)'
-                />
+                >
+                    <IconPlus
+                        :size='32'
+                        :stroke='1'
+                    />
+                </TablerIconButton>
                 
                 <TablerDropdown
                     v-if='menu'
@@ -156,7 +158,8 @@ import {
     TablerEpoch,
     TablerInput,
     TablerLoading,
-    TablerDropdown
+    TablerDropdown,
+    TablerIconButton
 } from '@tak-ps/vue-tabler'
 import {
     IconGripVertical,

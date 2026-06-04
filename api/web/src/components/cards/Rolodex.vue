@@ -15,14 +15,16 @@
             </h3>
 
             <div class='btn-list ms-auto'>
-                <IconPlus
+                <TablerIconButton
                     v-if='create && is_iam("Rolodex:Manage")'
-                    v-tooltip='"Create Rolodex"'
-                    class='cursor-pointer'
-                    size='32'
-                    stroke='1'
+                    title='Create Rolodex'
                     @click='$router.push(`/rolodex/new`)'
-                />
+                >
+                    <IconPlus
+                        size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
             </div>
         </div>
 
@@ -119,7 +121,8 @@ import {
     TablerNone,
     TablerInput,
     TablerEpoch,
-    TablerLoading
+    TablerLoading,
+    TablerIconButton
 } from '@tak-ps/vue-tabler'
 
 import {

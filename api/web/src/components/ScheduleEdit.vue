@@ -101,13 +101,6 @@
                                     </div>
                                 </div>
 
-                                <div
-                                    v-if='$route.params.scheduleid && schedule.rotation_type !== "none"'
-                                    class='card-body border-top'
-                                >
-                                    <ScheduleGenerateRotation :schedule-id='route.params.scheduleid' />
-                                </div>
-
                                 <div class='col-12 py-1 pb-4 px-4'>
                                     <div class='d-flex'>
                                         <a
@@ -147,7 +140,6 @@
 <script setup>
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import ScheduleGenerateRotation from './Schedule/GenerateRotation.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import {
     TablerBreadCrumb,

@@ -73,13 +73,16 @@
 
                                         <div class='ms-auto btn-list d-flex align-items-center'>
                                             <TablerEpoch :date='application.created' />
-                                            <IconPencil
+                                            <TablerIconButton
                                                 v-if='!edit'
-                                                class='cursor-pointer'
-                                                :size='32'
-                                                :stroke='1'
+                                                title='Edit Application'
                                                 @click='$router.push(`/application/${$route.params.applicationid}/edit`)'
-                                            />
+                                            >
+                                                <IconPencil
+                                                    :size='32'
+                                                    :stroke='1'
+                                                />
+                                            </TablerIconButton>
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +156,8 @@ import {
     TablerBreadCrumb,
     TablerSchema,
     TablerDelete,
-    TablerLoading
+    TablerLoading,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
     IconPencil

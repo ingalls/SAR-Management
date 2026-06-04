@@ -14,12 +14,15 @@
                         stroke='1'
                     />
                 </TablerIconButton>
+                <TablerIconButton
+                title='Add Channel'
+                @click='adding = !adding'
+            >
                 <IconPlus
                     :size='32'
                     stroke='1'
-                    class='cursor-pointer'
-                    @click='adding = !adding'
                 />
+            </TablerIconButton>
             </div>
         </div>
         <div

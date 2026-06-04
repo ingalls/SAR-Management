@@ -23,12 +23,15 @@
                                 </h1>
 
                                 <div class='ms-auto btn-list'>
-                                    <IconPlus
-                                        :size='32'
-                                        stroke='1'
-                                        class='cursor-pointer'
+                                    <TablerIconButton
+                                        title='New Schedule'
                                         @click='$router.push("/schedule/new")'
-                                    />
+                                    >
+                                        <IconPlus
+                                            :size='32'
+                                            stroke='1'
+                                        />
+                                    </TablerIconButton>
                                 </div>
                             </div>
                             <template v-if='loading.list'>
@@ -120,7 +123,8 @@ import {
 import {
     TablerNone,
     TablerLoading,
-    TablerBreadCrumb
+    TablerBreadCrumb,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 
 const props = defineProps({

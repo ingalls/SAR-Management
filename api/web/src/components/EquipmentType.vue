@@ -29,13 +29,16 @@
                                         v-text='type.type'
                                     />
                                     <div class='ms-auto'>
-                                        <IconPencil
+                                        <TablerIconButton
                                             v-if='is_iam("Equipment:Admin")'
-                                            :size='32'
-                                            stroke='1'
-                                            class='cursor-pointer'
+                                            title='Edit Type'
                                             @click='$router.push(`/equipment/type/${$route.params.typeid}/edit`)'
-                                        />
+                                        >
+                                            <IconPencil
+                                                :size='32'
+                                                stroke='1'
+                                            />
+                                        </TablerIconButton>
                                     </div>
                                 </div>
                                 <div class='card-body'>
@@ -61,7 +64,8 @@ import NoAccess from './util/NoAccess.vue';
 import iamHelper from '../iam.js';
 import {
     TablerBreadCrumb,
-    TablerLoading
+    TablerLoading,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
     IconPencil

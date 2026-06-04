@@ -44,12 +44,15 @@
                                         v-if='is_iam("Equipment:Admin")'
                                         class='ms-auto'
                                     >
-                                        <IconPlus
-                                            :size='32'
-                                            stroke='1'
-                                            class='cursor-pointer'
+                                        <TablerIconButton
+                                            title='New Type'
                                             @click='$router.push("/equipment/type/new")'
-                                        />
+                                        >
+                                            <IconPlus
+                                                :size='32'
+                                                stroke='1'
+                                            />
+                                        </TablerIconButton>
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +101,8 @@ import NoAccess from './util/NoAccess.vue';
 import {
     TablerNone,
     TablerEpoch,
-    TablerBreadCrumb
+    TablerBreadCrumb,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 import iamHelper from '../iam.js';
 import {

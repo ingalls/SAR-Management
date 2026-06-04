@@ -44,13 +44,16 @@
                                             Archived
                                         </TablerBadge>
 
-                                        <IconPencil
+                                        <TablerIconButton
                                             v-if='is_iam("Equipment:Manage") && !equipment.archived'
-                                            class='cursor-pointer'
-                                            :stroke='1'
-                                            :size='32'
+                                            title='Edit Equipment'
                                             @click='$router.push(`/equipment/${$route.params.equipid}/edit`)'
-                                        />
+                                        >
+                                            <IconPencil
+                                                :stroke='1'
+                                                :size='32'
+                                            />
+                                        </TablerIconButton>
                                     </div>
                                 </div>
                                 <div class='row row-0'>
@@ -179,7 +182,8 @@ import iamHelper from '../iam.js';
 import {
     TablerBadge,
     TablerLoading,
-    TablerBreadCrumb
+    TablerBreadCrumb,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
     IconPencil
