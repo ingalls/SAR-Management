@@ -61,12 +61,24 @@
                                                 <template v-if='h.display'>
                                                     <td>
                                                         <template v-if='h.name === "name"'>
-                                                            <span v-text='schedule[h.name]' />
-                                                            <div v-if='schedule.oncall_uid' class='mt-1'>
-                                                                <Avatar
-                                                                    :user='{ uid: schedule.oncall_uid, fname: schedule.oncall_fname, lname: schedule.oncall_lname }'
-                                                                    :link='true'
-                                                                />
+                                                            <div class='d-flex align-items-center justify-content-between'>
+                                                                <span v-text='schedule[h.name]' />
+                                                                <div v-if='schedule.oncall_uid' class='ms-3 text-end'>
+                                                                    <div class='d-flex align-items-center justify-content-end text-muted mb-1'>
+                                                                        <IconPhoneCall
+                                                                            :size='14'
+                                                                            :stroke='1.5'
+                                                                            class='me-1 text-success'
+                                                                        />
+                                                                        <small>Currently Oncall</small>
+                                                                    </div>
+                                                                    <div class='d-flex justify-content-end'>
+                                                                        <Avatar
+                                                                            :user='{ uid: schedule.oncall_uid, fname: schedule.oncall_fname, lname: schedule.oncall_lname }'
+                                                                            :link='true'
+                                                                        />
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </template>
                                                         <template v-else>
@@ -102,7 +114,8 @@ import TableHeader from './util/TableHeader.vue';
 import TableFooter from './util/TableFooter.vue';
 import Avatar from './util/Avatar.vue';
 import {
-    IconPlus
+    IconPlus,
+    IconPhoneCall
 } from '@tabler/icons-vue';
 import {
     TablerNone,

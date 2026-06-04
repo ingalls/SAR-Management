@@ -311,7 +311,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
 
-            res.json(await config.models.Schedule.from(req.params.scheduleid));
+            res.json(await config.models.Schedule.augmented_from(req.params.scheduleid));
         } catch (err) {
              Err.respond(err, res);
         }
