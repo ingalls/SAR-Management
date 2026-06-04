@@ -172,6 +172,55 @@ export default async function router(schema: Schema, config: Config) {
             const schedule = await config.models.Schedule.from(req.params.scheduleid);
             await assertScheduleMember(config, schedule, req.body.uid);
 
+            const newStart = new Date(req.body.start_ts);
+            const newEnd = new Date(req.body.end_ts);
+
+            // Find all overlapping events for this schedule
+            const overlappingEvents = await config.models.ScheduleEvent.list({
+                where: sql`
+                    schedule_id = ${req.params.scheduleid}
+                    AND start_ts < ${req.body.end_ts}
+                    AND end_ts > ${req.body.start_ts}
+                `
+            });
+
+            // Handle each overlapping event
+            for (const existing of overlappingEvents.items) {
+                const existingStart = new Date(existing.start_ts);
+                const existingEnd = new Date(existing.end_ts);
+
+                // Case 1: New event completely covers existing event - delete it
+                if (newStart <= existingStart && newEnd >= existingEnd) {
+                    await config.models.ScheduleEvent.delete(existing.id);
+                }
+                // Case 2: New event is completely within existing event - split it
+                else if (newStart > existingStart && newEnd < existingEnd) {
+                    // Truncate existing event to end at new event's start
+                    await config.models.ScheduleEvent.commit(existing.id, {
+                        end_ts: req.body.start_ts
+                    });
+                    // Create a new event for the remaining part after the new event
+                    await config.models.ScheduleEvent.generate({
+                        schedule_id: req.params.scheduleid,
+                        uid: existing.uid,
+                        start_ts: req.body.end_ts,
+                        end_ts: existing.end_ts
+                    });
+                }
+                // Case 3: Overlap at the start of existing event - truncate its end
+                else if (newStart > existingStart && newStart < existingEnd) {
+                    await config.models.ScheduleEvent.commit(existing.id, {
+                        end_ts: req.body.start_ts
+                    });
+                }
+                // Case 4: Overlap at the end of existing event - truncate its start
+                else if (newEnd > existingStart && newEnd < existingEnd) {
+                    await config.models.ScheduleEvent.commit(existing.id, {
+                        start_ts: req.body.end_ts
+                    });
+                }
+            }
+
             const event = await config.models.ScheduleEvent.generate({
                 ...req.body,
                 schedule_id: req.params.scheduleid
@@ -206,6 +255,57 @@ export default async function router(schema: Schema, config: Config) {
 
             const event = await config.models.ScheduleEvent.from(req.params.eventid);
             if (event.schedule_id !== schedule.id) throw new Err(400, null, 'Event is not part of specified schedule');
+
+            // Determine new start/end times (use existing if not provided)
+            const newStart = new Date(req.body.start_ts || event.start_ts);
+            const newEnd = new Date(req.body.end_ts || event.end_ts);
+
+            // Find all overlapping events for this schedule, excluding the current event
+            const overlappingEvents = await config.models.ScheduleEvent.list({
+                where: sql`
+                    schedule_id = ${req.params.scheduleid}
+                    AND id != ${req.params.eventid}
+                    AND start_ts < ${newEnd.toISOString()}
+                    AND end_ts > ${newStart.toISOString()}
+                `
+            });
+
+            // Handle each overlapping event
+            for (const existing of overlappingEvents.items) {
+                const existingStart = new Date(existing.start_ts);
+                const existingEnd = new Date(existing.end_ts);
+
+                // Case 1: Updated event completely covers existing event - delete it
+                if (newStart <= existingStart && newEnd >= existingEnd) {
+                    await config.models.ScheduleEvent.delete(existing.id);
+                }
+                // Case 2: Updated event is completely within existing event - split it
+                else if (newStart > existingStart && newEnd < existingEnd) {
+                    // Truncate existing event to end at updated event's start
+                    await config.models.ScheduleEvent.commit(existing.id, {
+                        end_ts: newStart.toISOString()
+                    });
+                    // Create a new event for the remaining part after the updated event
+                    await config.models.ScheduleEvent.generate({
+                        schedule_id: req.params.scheduleid,
+                        uid: existing.uid,
+                        start_ts: newEnd.toISOString(),
+                        end_ts: existing.end_ts
+                    });
+                }
+                // Case 3: Overlap at the start of existing event - truncate its end
+                else if (newStart > existingStart && newStart < existingEnd) {
+                    await config.models.ScheduleEvent.commit(existing.id, {
+                        end_ts: newStart.toISOString()
+                    });
+                }
+                // Case 4: Overlap at the end of existing event - truncate its start
+                else if (newEnd > existingStart && newEnd < existingEnd) {
+                    await config.models.ScheduleEvent.commit(existing.id, {
+                        start_ts: newEnd.toISOString()
+                    });
+                }
+            }
 
             await config.models.ScheduleEvent.commit(req.params.eventid, req.body);
 
