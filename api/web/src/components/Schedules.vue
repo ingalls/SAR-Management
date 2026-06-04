@@ -22,7 +22,12 @@
                                     On Call Schedules
                                 </h1>
 
-                                <div class='ms-auto btn-list'>
+                                <div class='ms-auto btn-list align-items-center'>
+                                    <TablerInput
+                                        v-model='paging.filter'
+                                        icon='search'
+                                        placeholder='Search…'
+                                    />
                                     <TablerIconButton
                                         title='New Schedule'
                                         @click='$router.push("/schedule/new")'
@@ -111,7 +116,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, watch } from 'vue';
 import iamHelper from '../iam.js';
 import TableHeader from './util/TableHeader.vue';
 import TableFooter from './util/TableFooter.vue';
@@ -124,7 +129,8 @@ import {
     TablerNone,
     TablerLoading,
     TablerBreadCrumb,
-    TablerIconButton
+    TablerIconButton,
+    TablerInput
 } from '@tak-ps/vue-tabler';
 
 const props = defineProps({
@@ -145,7 +151,7 @@ const loading = reactive({
 
 const paging = reactive({
     filter: '',
-    sort: 'Name',
+    sort: 'name',
     order: 'asc',
     limit: 10,
     page: 0
@@ -164,7 +170,13 @@ function is_iam(permission) {
 
 async function listSchedules() {
     loading.list = true;
-    const result = await window.std('/api/schedule');
+    const url = new URL('/api/schedule', window.location.origin);
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
+    url.searchParams.append('sort', paging.sort);
+    url.searchParams.append('order', paging.order);
+    const result = await window.std(url);
     list.total = result.total;
     list.items = result.items;
     loading.list = false;
@@ -199,4 +211,8 @@ onMounted(async () => {
     await listSchedulesSchema();
     await listSchedules();
 })
+
+watch(paging, async () => {
+    await listSchedules();
+}, { deep: true })
 </script>
