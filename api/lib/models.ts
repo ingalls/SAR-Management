@@ -2,6 +2,7 @@ import Modeler, { Pool } from '@openaddresses/batch-generic';
 import NotificationModel from './models/Notification.js'
 import EquipmentModel from './models/Equipment.js'
 import ScheduleEventModel from './models/ScheduleEvent.js'
+import ScheduleModel from './models/Schedule.js'
 import EquipmentAssignedModel from './models/EquipmentAssigned.js'
 import IssueModel from './models/Issue.js'
 import IssueAssignedModel from './models/IssueAssigned.js'
@@ -41,7 +42,7 @@ export default class Models {
     MissionPerson: Modeler<typeof pgtypes.MissionPerson>;
     PollQuestion: Modeler<typeof pgtypes.PollQuestion>;
     PollVote: Modeler<typeof pgtypes.PollVote>;
-    Schedule: Modeler<typeof pgtypes.Schedule>;
+    Schedule: ScheduleModel;
     Server: Modeler<typeof pgtypes.Server>;
     TrainingTag: Modeler<typeof pgtypes.TrainingTag>;
     TrainingTagAssigned: Modeler<typeof pgtypes.TrainingTagAssigned>;
@@ -113,7 +114,7 @@ export default class Models {
         this.MissionPerson = new Modeler(pg, pgtypes.MissionPerson);
         this.PollQuestion = new Modeler(pg, pgtypes.PollQuestion);
         this.PollVote = new Modeler(pg, pgtypes.PollVote);
-        this.Schedule = new Modeler(pg, pgtypes.Schedule);
+        this.Schedule = new ScheduleModel(pg);
         this.Server = new Modeler(pg, pgtypes.Server);
         this.TrainingTag = new Modeler(pg, pgtypes.TrainingTag);
         this.TrainingTagAssigned = new Modeler(pg, pgtypes.TrainingTagAssigned);

@@ -59,7 +59,20 @@
                                         >
                                             <template v-for='h in header'>
                                                 <template v-if='h.display'>
-                                                    <td><span v-text='schedule[h.name]' /></td>
+                                                    <td>
+                                                        <template v-if='h.name === "name"'>
+                                                            <span v-text='schedule[h.name]' />
+                                                            <div v-if='schedule.oncall_uid' class='mt-1'>
+                                                                <Avatar
+                                                                    :user='{ uid: schedule.oncall_uid, fname: schedule.oncall_fname, lname: schedule.oncall_lname }'
+                                                                    :link='true'
+                                                                />
+                                                            </div>
+                                                        </template>
+                                                        <template v-else>
+                                                            <span v-text='schedule[h.name]' />
+                                                        </template>
+                                                    </td>
                                                 </template>
                                             </template>
                                         </tr>
@@ -87,6 +100,7 @@ import { reactive, onMounted } from 'vue';
 import iamHelper from '../iam.js';
 import TableHeader from './util/TableHeader.vue';
 import TableFooter from './util/TableFooter.vue';
+import Avatar from './util/Avatar.vue';
 import {
     IconPlus
 } from '@tabler/icons-vue';

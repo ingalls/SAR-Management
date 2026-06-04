@@ -1,6 +1,7 @@
 import { createSelectSchema } from 'drizzle-typebox';
 import { AugmentedTeam } from './models/Team.js';
 import { AugmentedIssue } from './models/Issue.js';
+import { AugmentedSchedule } from './models/Schedule.js';
 import { AugmentedScheduleEvent } from './models/ScheduleEvent.js';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
 import { AugmentedIssueComment } from './models/IssueComment.js';
@@ -74,10 +75,7 @@ export const FieldabilityResponse = createSelectSchema(schemas.Fieldability, {
     team: Type.Integer()
 });
 
-export const ScheduleResponse = createSelectSchema(schemas.Schedule, {
-    id: Type.Integer(),
-    disabled: Type.Boolean()
-});
+export const ScheduleResponse = AugmentedSchedule;
 
 export const AssetResponse = Type.Object({
     id: Type.Integer(),
