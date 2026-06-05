@@ -45,7 +45,7 @@ export default async function router(schema: Schema, config: Config) {
                     AND (${Param(req.query.assigned)}::INT IS NULL OR users @> ARRAY[${Param(req.query.assigned)}::INT])
                     AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
                     AND (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
-                    AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts <= ${Param(req.query.end)}::TIMESTAMP)
+                    AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts < ${Param(req.query.end)}::TIMESTAMP + INTERVAL '1 day')
                 `
             }))
         } catch (err) {
