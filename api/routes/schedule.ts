@@ -21,7 +21,8 @@ export const Event = Type.Object({
     start: Type.String(),
     end: Type.String(),
     uid: Type.Integer(),
-    id: Type.Integer()
+    id: Type.Integer(),
+    color: Type.Optional(Type.String())
 });
 
 export const OnCallEntry = Type.Object({
@@ -34,8 +35,6 @@ export const OnCallEntry = Type.Object({
     end_ts: Type.String(),
     is_override: Type.Boolean()
 });
-
-type ScheduleRecord = Static<typeof ScheduleResponse>;
 
 async function assertScheduleMember(config: Config, schedule: { team_id: number }, uid: number): Promise<void> {
     try {
@@ -389,6 +388,102 @@ export default async function router(schema: Schema, config: Config) {
                         imageurl: '',
                         start: moment(event.start_ts).toISOString(),
                         end: moment(event.end_ts).toISOString()
+                    });
+                }
+            }
+
+            // Fetch overrides to account for coverage gaps
+            const overrides = (await config.models.ScheduleOverride.list({
+                limit: 1000,
+                where: sql`
+                    schedule_id = ${req.params.scheduleid}
+                    AND start_ts >= ${req.query.start}
+                    AND end_ts <= ${req.query.end}
+                `
+            })).items;
+
+            // Combine events and overrides into coverage periods
+            const coverage: Array<{ start: Date; end: Date }> = [];
+            for (const event of events) {
+                coverage.push({ start: new Date(event.start), end: new Date(event.end) });
+            }
+            for (const override of overrides) {
+                coverage.push({ start: new Date(override.start_ts), end: new Date(override.end_ts) });
+            }
+
+            // Sort coverage periods by start time
+            coverage.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+            // Merge overlapping coverage periods
+            const merged: Array<{ start: Date; end: Date }> = [];
+            for (const period of coverage) {
+                if (merged.length === 0) {
+                    merged.push({ ...period });
+                } else {
+                    const last = merged[merged.length - 1];
+                    if (period.start <= last.end) {
+                        last.end = new Date(Math.max(last.end.getTime(), period.end.getTime()));
+                    } else {
+                        merged.push({ ...period });
+                    }
+                }
+            }
+
+            // Find gaps and create "Unscheduled" events
+            const rangeStart = new Date(req.query.start);
+            const rangeEnd = new Date(req.query.end);
+            let gapId = -1;
+
+            if (merged.length === 0) {
+                // No coverage at all - entire range is unscheduled
+                events.push({
+                    id: gapId--,
+                    uid: 0,
+                    title: 'Unscheduled',
+                    imageurl: '',
+                    start: rangeStart.toISOString(),
+                    end: rangeEnd.toISOString(),
+                    color: '#dc3545'
+                });
+            } else {
+                // Gap before first coverage
+                if (merged[0].start > rangeStart) {
+                    events.push({
+                        id: gapId--,
+                        uid: 0,
+                        title: 'Unscheduled',
+                        imageurl: '',
+                        start: rangeStart.toISOString(),
+                        end: merged[0].start.toISOString(),
+                        color: '#dc3545'
+                    });
+                }
+
+                // Gaps between coverage periods
+                for (let i = 0; i < merged.length - 1; i++) {
+                    if (merged[i].end < merged[i + 1].start) {
+                        events.push({
+                            id: gapId--,
+                            uid: 0,
+                            title: 'Unscheduled',
+                            imageurl: '',
+                            start: merged[i].end.toISOString(),
+                            end: merged[i + 1].start.toISOString(),
+                            color: '#dc3545'
+                        });
+                    }
+                }
+
+                // Gap after last coverage
+                if (merged[merged.length - 1].end < rangeEnd) {
+                    events.push({
+                        id: gapId--,
+                        uid: 0,
+                        title: 'Unscheduled',
+                        imageurl: '',
+                        start: merged[merged.length - 1].end.toISOString(),
+                        end: rangeEnd.toISOString(),
+                        color: '#dc3545'
                     });
                 }
             }

@@ -327,8 +327,8 @@ onMounted(async () => {
                 events = events.concat(shiftEvents.map(e => ({
                     ...e,
                     type: 'event',
-                    backgroundColor: '#206bc4',
-                    borderColor: '#206bc4',
+                    backgroundColor: e.color || '#206bc4',
+                    borderColor: e.color || '#206bc4',
                 })));
 
                 if (showOverrides.value) {
