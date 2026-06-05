@@ -37,7 +37,7 @@ export const OnCallEntry = Type.Object({
 
 type ScheduleRecord = Static<typeof ScheduleResponse>;
 
-async function assertScheduleMember(config: Config, schedule: ScheduleRecord, uid: number): Promise<void> {
+async function assertScheduleMember(config: Config, schedule: { team_id: number }, uid: number): Promise<void> {
     try {
         await config.models.User.augmented_from(sql`
             users.id = ${uid}
@@ -49,7 +49,7 @@ async function assertScheduleMember(config: Config, schedule: ScheduleRecord, ui
     }
 }
 
-async function listScheduleMembers(config: Config, schedule: ScheduleRecord) {
+async function listScheduleMembers(config: Config, schedule: { team_id: number }) {
     return await config.models.User.augmented_list({
         limit: 1000,
         sort: 'id',
@@ -117,7 +117,7 @@ export default async function router(schema: Schema, config: Config) {
 
             const schedule = await config.models.Schedule.generate(req.body);
 
-            res.json(schedule);
+            res.json(await config.models.Schedule.augmented_from(schedule.id));
         } catch (err) {
              Err.respond(err, res);
         }
@@ -145,8 +145,8 @@ export default async function router(schema: Schema, config: Config) {
 
             if (req.body.team_id) await config.models.Team.from(req.body.team_id);
 
-            const schedule = await config.models.Schedule.commit(req.params.scheduleid, req.body);
-            res.json(schedule);
+            await config.models.Schedule.commit(req.params.scheduleid, req.body);
+            res.json(await config.models.Schedule.augmented_from(req.params.scheduleid));
         } catch (err) {
              Err.respond(err, res);
         }
