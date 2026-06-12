@@ -16,7 +16,14 @@
             <div class='container-xl'>
                 <div class='row row-deck row-cards'>
                     <div class='col-lg-12'>
-                        <div class='card'>
+                        <NoAccess
+                            v-if='!is_iam("Oncall:View")'
+                            title='On Call Schedules'
+                        />
+                        <div
+                            v-else
+                            class='card'
+                        >
                             <div class='card-header'>
                                 <h1 class='card-title'>
                                     On Call Schedules
@@ -39,11 +46,7 @@
                                     </TablerIconButton>
                                 </div>
                             </div>
-                            <NoAccess
-                                v-if='!is_iam("Oncall:View")'
-                                title='On Call Schedules'
-                            />
-                            <template v-else-if='loading.list'>
+                            <template v-if='loading.list'>
                                 <TablerLoading desc='Loading Schedules' />
                             </template>
                             <template v-else-if='!list.items.length'>
