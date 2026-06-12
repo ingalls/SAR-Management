@@ -16,7 +16,7 @@
             <div class='container-xl'>
                 <div class='row row-deck row-cards'>
                     <NoAccess
-                        v-if='!is_iam("Oncall:Admin")'
+                        v-if='!is_iam("OnCall:Admin")'
                         title='New Schedule'
                     />
                     <TablerLoading v-if='loading.schedule' />
@@ -104,7 +104,7 @@
                                 <div class='col-12 py-1 pb-4 px-4'>
                                     <div class='d-flex'>
                                         <a
-                                            v-if='$route.params.scheduleid && is_iam("Oncall:Admin")'
+                                            v-if='$route.params.scheduleid && is_iam("OnCall:Admin")'
                                             class='cursor-pointer btn btn-danger'
                                             @click='deleteSchedule'
                                         >
@@ -264,7 +264,7 @@ watch(selectedTeams, () => {
 }, { deep: true });
 
 onMounted(async () => {
-    if (route.params.scheduleid && is_iam('Oncall:Admin')) {
+    if (route.params.scheduleid && is_iam('OnCall:Admin')) {
         await fetch();
     } else {
         loading.schedule = false;

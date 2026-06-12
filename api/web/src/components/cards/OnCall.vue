@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <NoAccess v-if='!is_iam("Oncall:View")' />
+        <NoAccess v-if='!is_iam("OnCall:View")' />
         <template v-else-if='loading'>
             <TablerLoading desc='Loading On-Call' />
         </template>

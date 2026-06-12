@@ -17,7 +17,7 @@
                 <div class='row row-deck row-cards'>
                     <div class='col-lg-12'>
                         <NoAccess
-                            v-if='!is_iam("Oncall:View")'
+                            v-if='!is_iam("OnCall:View")'
                             title='On Call Schedules'
                         />
                         <div
@@ -214,7 +214,7 @@ async function listSchedulesSchema() {
 }
 
 onMounted(async () => {
-    if (!is_iam("Oncall:View")) return;
+    if (!is_iam("OnCall:View")) return;
 
     await listSchedulesSchema();
     await listSchedules();

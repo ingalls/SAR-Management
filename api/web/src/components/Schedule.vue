@@ -18,7 +18,7 @@
                     <div class='col-lg-12'>
                         <div class='card'>
                             <NoAccess
-                                v-if='!is_iam("Oncall:View")'
+                                v-if='!is_iam("OnCall:View")'
                                 title='Schedule'
                             />
                             <TablerLoading
@@ -33,7 +33,7 @@
                                     />
                                     <div class='btn-list ms-auto'>
                                         <TablerIconButton
-                                            v-if='is_iam("Oncall:Admin") && schedule.rotation_type !== "none"'
+                                            v-if='is_iam("OnCall:Admin") && schedule.rotation_type !== "none"'
                                             title='Generate Rotation'
                                             @click='modal.generate = true'
                                         >
@@ -43,7 +43,7 @@
                                             />
                                         </TablerIconButton>
                                         <TablerIconButton
-                                            v-if='is_iam("Oncall:Admin")'
+                                            v-if='is_iam("OnCall:Admin")'
                                             title='Edit Schedule'
                                             @click='$router.push(`/schedule/${$route.params.scheduleid}/edit`)'
                                         >
@@ -61,7 +61,7 @@
                             />
                         </div>
                     </div>
-                    <template v-if='!loading.schedule && is_iam("Oncall:View")'>
+                    <template v-if='!loading.schedule && is_iam("OnCall:View")'>
                         <div
                             v-if='oncall.length'
                             class='col-lg-12'
@@ -219,7 +219,7 @@ function refreshScheduleView() {
 }
 
 onMounted(async () => {
-    if (is_iam('Oncall:View')) {
+    if (is_iam('OnCall:View')) {
         await fetch();
         await fetchOnCall();
     }
