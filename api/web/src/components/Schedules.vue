@@ -39,7 +39,11 @@
                                     </TablerIconButton>
                                 </div>
                             </div>
-                            <template v-if='loading.list'>
+                            <NoAccess
+                                v-if='!is_iam("Oncall:View")'
+                                title='On Call Schedules'
+                            />
+                            <template v-else-if='loading.list'>
                                 <TablerLoading desc='Loading Schedules' />
                             </template>
                             <template v-else-if='!list.items.length'>
@@ -125,6 +129,7 @@ import {
     IconPlus,
     IconPhoneCall
 } from '@tabler/icons-vue';
+import NoAccess from './util/NoAccess.vue';
 import {
     TablerNone,
     TablerLoading,
@@ -210,7 +215,7 @@ onMounted(async () => {
 
     await listSchedulesSchema();
     await listSchedules();
-})
+});
 
 watch(paging, async () => {
     await listSchedules();
