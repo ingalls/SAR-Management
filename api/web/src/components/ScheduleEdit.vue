@@ -103,13 +103,13 @@
 
                                 <div class='col-12 py-1 pb-4 px-4'>
                                     <div class='d-flex'>
-                                        <a
+                                        <TablerDelete
                                             v-if='$route.params.scheduleid && is_iam("OnCall:Admin")'
-                                            class='cursor-pointer btn btn-danger'
-                                            @click='deleteSchedule'
-                                        >
-                                            Delete Schedule
-                                        </a>
+                                            displaytype='button'
+                                            label='Delete Schedule'
+                                            match='Delete Schedule'
+                                            @delete='deleteSchedule'
+                                        />
                                         <div class='ms-auto'>
                                             <a
                                                 v-if='$route.params.scheduleid'
@@ -143,6 +143,7 @@ import NoAccess from './util/NoAccess.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import {
     TablerBreadCrumb,
+    TablerDelete,
     TablerInput,
     TablerLoading
 } from '@tak-ps/vue-tabler';
