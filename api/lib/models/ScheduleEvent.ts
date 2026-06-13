@@ -56,6 +56,10 @@ export default class ScheduleEventModel extends Modeler<typeof ScheduleEvent> {
         }
     }
 
+    async deleteBySchedule(schedule_id: number): Promise<void> {
+        await this.pool.delete(ScheduleEvent).where(eq(ScheduleEvent.schedule_id, schedule_id));
+    }
+
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedScheduleEvent>> {
         const pgres = await this.pool
             .select({

@@ -494,6 +494,33 @@ export default async function router(schema: Schema, config: Config) {
         }
     });
 
+    await schema.delete('/schedule/:scheduleid', {
+        name: 'Delete Schedule',
+        group: 'Schedules',
+        description: 'Delete a schedule and all associated events and overrides',
+        params: Type.Object({
+            scheduleid: Type.Integer(),
+        }),
+        res: StandardResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.ADMIN);
+
+            await config.models.Schedule.from(req.params.scheduleid);
+
+            await config.models.ScheduleEvent.deleteBySchedule(req.params.scheduleid);
+            await config.models.ScheduleOverride.deleteBySchedule(req.params.scheduleid);
+            await config.models.Schedule.delete(req.params.scheduleid);
+
+            res.json({
+                status: 200,
+                message: 'Schedule Deleted'
+            });
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
+
     await schema.get('/schedule/:scheduleid', {
         name: 'Get Schedule',
         group: 'Schedules',

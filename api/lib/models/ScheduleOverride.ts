@@ -71,6 +71,10 @@ export default class ScheduleOverrideModel extends Modeler<typeof ScheduleOverri
         }
     }
 
+    async deleteBySchedule(schedule_id: number): Promise<void> {
+        await this.pool.delete(ScheduleOverride).where(eq(ScheduleOverride.schedule_id, schedule_id));
+    }
+
     async augmented_from(id: unknown | SQL<unknown>): Promise<Static<typeof AugmentedScheduleOverride>> {
         const pgres = await this.pool
             .select({
