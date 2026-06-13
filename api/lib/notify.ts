@@ -45,7 +45,7 @@ export default class Notify {
             }
 
             if (setting.disabled) return;
-            if (!setting.settings) setting.settings = [];
+            if (!setting.settings) setting.settings = {};
             if (setting.settings[type] === undefined) setting.settings[type] = true;
             if (!setting.settings[type]) return;
 
