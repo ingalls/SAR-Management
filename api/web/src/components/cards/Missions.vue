@@ -61,6 +61,7 @@
                         <div
                             class='p-3 row g-2'
                             style='min-width: 500px;'
+                            @click.stop=''
                         >
                             <div class='col-md-6'>
                                 <TablerInput

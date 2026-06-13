@@ -83,7 +83,7 @@
                                                     </div>
                                                 </template>
                                                 <template #dropdown>
-                                                    <div class='p-3'>
+                                                    <div class='p-3' @click.stop=''>
                                                         <TablerInput
                                                             v-model='user_filter'
                                                             icon='search'
@@ -100,7 +100,7 @@
                                                                 v-for='user in user_list.items'
                                                                 :key='user.id'
                                                                 class='py-2 px-2 rounded cursor-pointer hover-light'
-                                                                @click='selectUser(user)'
+                                                                @click.stop='selectUser(user)'
                                                             >
                                                                 <Avatar :user='user' />
                                                             </div>
@@ -156,7 +156,7 @@
                                                             </div>
                                                         </template>
                                                         <template #dropdown>
-                                                            <div class='p-3'>
+                                                            <div class='p-3' @click.stop=''>
                                                                 <TablerInput
                                                                     v-model='mission_filter'
                                                                     icon='search'
@@ -172,7 +172,7 @@
                                                                         v-for='mission in mission_list.items'
                                                                         :key='mission.id'
                                                                         class='py-2 px-2 rounded cursor-pointer hover-light'
-                                                                        @click='selectMission(mission)'
+                                                                        @click.stop='selectMission(mission)'
                                                                         v-text='mission.title'
                                                                     />
                                                                 </template>
@@ -206,7 +206,7 @@
                                                             </div>
                                                         </template>
                                                         <template #dropdown>
-                                                            <div class='p-3'>
+                                                            <div class='p-3' @click.stop=''>
                                                                 <TablerInput
                                                                     v-model='training_filter'
                                                                     icon='search'
@@ -222,7 +222,7 @@
                                                                         v-for='training in training_list.items'
                                                                         :key='training.id'
                                                                         class='py-2 px-2 rounded cursor-pointer hover-light'
-                                                                        @click='selectTraining(training)'
+                                                                        @click.stop='selectTraining(training)'
                                                                         v-text='training.title'
                                                                     />
                                                                 </template>

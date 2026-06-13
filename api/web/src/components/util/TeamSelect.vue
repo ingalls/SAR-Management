@@ -20,7 +20,7 @@
                             />
                         </template>
                         <template #dropdown>
-                            <div class='p-3'>
+                            <div class='p-3' @click.stop=''>
                                 <TablerInput
                                     v-model='filter'
                                     icon='search'
@@ -37,7 +37,7 @@
                                         v-for='team in list.items'
                                         :key='team.id'
                                         class='py-2 px-2 rounded cursor-pointer hover-light'
-                                        @click='push_teams(team)'
+                                        @click.stop='push_teams(team)'
                                     >
                                         <TeamBadge :team='team' />
                                     </div>

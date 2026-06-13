@@ -26,7 +26,7 @@
                     <template #dropdown>
                         <button
                             class='dropdown-item text-danger'
-                            @click='$emit("remove")'
+                            @click.stop='$emit("remove")'
                         >
                             <IconTrash
                                 class='me-1'

@@ -15,7 +15,7 @@
                             stroke='1'
                         />
                         <template #dropdown>
-                            <div class='m-1'>
+                            <div class='m-1' @click.stop=''>
                                 <TablerInput
                                     v-model='filter'
                                     placeholder='Filter Tags'
@@ -24,7 +24,7 @@
                                 <div
                                     v-for='tag in list.items'
                                     class='cursor-pointer hover-light mx-1 my-1 px-2 py-2'
-                                    @click='push_tags(tag)'
+                                    @click.stop='push_tags(tag)'
                                 >
                                     <span v-text='tag.name' />
                                 </div>

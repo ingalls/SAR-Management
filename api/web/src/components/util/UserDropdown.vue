@@ -8,11 +8,11 @@
             />
         </template>
         <template #dropdown>
-            <div class='m-1'>
+            <div class='m-1' @click.stop=''>
                 <div
                     v-for='user in list.items'
                     :key='user.id'
-                    @click='select(user)'
+                    @click.stop='select(user)'
                 >
                     <div class='d-flex align-items-center my-1 cursor-pointer'>
                         <Avatar :user='user' />

@@ -17,12 +17,12 @@
                 :compact='true'
                 :create='false'
             />
-            <div v-else>
+            <div v-else @click.stop=''>
                 <div class='m-1'>
                     <div
                         v-for='loc in list.items'
                         :key='loc.id'
-                        @click='select(loc)'
+                        @click.stop='select(loc)'
                     >
                         <div class='d-flex align-items-center my-1 cursor-pointer'>
                             <span v-text='loc.location' />

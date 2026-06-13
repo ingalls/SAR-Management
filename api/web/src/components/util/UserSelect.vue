@@ -72,7 +72,7 @@
                             </TablerIconButton>
                         </template>
                         <template #dropdown>
-                            <div class='p-3'>
+                            <div class='p-3' @click.stop=''>
                                 <TablerInput
                                     v-model='filter'
                                     icon='search'
@@ -89,7 +89,7 @@
                                         v-for='user in list.items'
                                         :key='user.id'
                                         class='py-2 px-2 rounded cursor-pointer hover-light'
-                                        @click='push_assigned(user)'
+                                        @click.stop='push_assigned(user)'
                                     >
                                         <Avatar :user='user' />
                                     </div>
@@ -191,7 +191,7 @@
                             />
                         </template>
                         <template #dropdown>
-                            <div class='p-3'>
+                            <div class='p-3' @click.stop=''>
                                 <TablerInput
                                     v-model='filter'
                                     icon='search'
@@ -208,7 +208,7 @@
                                         v-for='user in list.items'
                                         :key='user.id'
                                         class='py-2 px-2 rounded cursor-pointer hover-light'
-                                        @click='push_assigned(user)'
+                                        @click.stop='push_assigned(user)'
                                     >
                                         <Avatar :user='user' />
                                     </div>

@@ -279,7 +279,7 @@
                                         <a
                                             v-if='is_iam("Incident:View")'
                                             class='nav-link cursor-pointer'
-                                            @click='navigate("/incident", $event)'
+                                            @click.stop='navigate("/incident", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconMedicalCross
@@ -292,7 +292,7 @@
                                         <a
                                             v-if='is_iam("Statistics:View")'
                                             class='nav-link cursor-pointer'
-                                            @click='navigate("/stats", $event)'
+                                            @click.stop='navigate("/stats", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconChartBar
@@ -304,7 +304,7 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
-                                            @click='navigate("/attendance", $event)'
+                                            @click.stop='navigate("/attendance", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconChecklist
@@ -316,7 +316,7 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
-                                            @click='navigate("/schedule", $event)'
+                                            @click.stop='navigate("/schedule", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconCalendarTime
@@ -328,7 +328,7 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
-                                            @click='navigate("/application", $event)'
+                                            @click.stop='navigate("/application", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconUserPlus
@@ -340,7 +340,7 @@
                                         </a>
                                         <a
                                             class='nav-link cursor-pointer'
-                                            @click='navigate("/rolodex", $event)'
+                                            @click.stop='navigate("/rolodex", $event)'
                                         >
                                             <span class='nav-link-icon'>
                                                 <IconAddressBook

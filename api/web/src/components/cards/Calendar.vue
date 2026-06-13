@@ -40,7 +40,7 @@
                     </TablerIconButton>
 
                     <template #dropdown>
-                        <div class='m-1'>
+                        <div class='m-1' @click.stop=''>
                             <div class='d-flex'>
                                 <IconAmbulance
                                     class='my-1 mx-1'
@@ -104,7 +104,7 @@
                     <template #dropdown>
                         <button
                             class='dropdown-item text-danger'
-                            @click='$emit("remove")'
+                            @click.stop='$emit("remove")'
                         >
                             <IconTrash
                                 class='me-1'
