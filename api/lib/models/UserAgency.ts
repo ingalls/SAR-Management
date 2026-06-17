@@ -7,7 +7,7 @@ export interface UserAgencyAssociation {
     uid: number;
     agency_id: number;
     access: string;
-    agency_name: string;
+    agency_name: string | null;
 }
 
 export default class UserAgencyModel extends Modeler<typeof UserAgency> {
