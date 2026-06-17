@@ -1,71 +1,87 @@
 <template>
-    <div class='card'>
+    <div>
         <div class='card-header'>
-            <h1 class='card-title'>
-                Server Config
-            </h1>
+            <h3 class='card-title'>
+                Server Settings
+            </h3>
         </div>
         <div class='card-body'>
             <TablerLoading v-if='loading' />
             <template v-else>
-                <div class='col-12 pb-3'>
-                    <TablerInput
-                        v-model='keys.name.value'
-                        label='Organisation Name (Public)'
-                        :disabled='auth.access !== "admin"'
-                    />
+                <!-- Organisation Settings -->
+                <div class='mb-4'>
+                    <h4 class='mb-3'>Organisation Settings</h4>
+                    <div class='row'>
+                        <div class='col-12 pb-3'>
+                            <TablerInput
+                                v-model='config.name.value'
+                                label='Organisation Name'
+                                desc='Public display name for your organization'
+                                :disabled='auth.access !== "admin"'
+                            />
+                        </div>
+                        <div class='col-12 pb-3'>
+                            <TablerInput
+                                v-model='config.frontend.value'
+                                label='Frontend URL'
+                                desc='Public URL where users access the application'
+                                :disabled='auth.access !== "admin"'
+                            />
+                        </div>
+                        <div class='col-12 pb-3'>
+                            <TablerTimeZone
+                                v-model='config.timezone.value'
+                                label='Default Timezone'
+                                desc='Default timezone for new users and system operations'
+                                :disabled='auth.access !== "admin"'
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div class='col-12 pb-3'>
-                    <TablerInput
-                        v-model='keys.frontend.value'
-                        label='Frontend URL (Public)'
-                        :disabled='auth.access !== "admin"'
-                    />
-                </div>
-                <div class='col-12 pb-3'>
-                    <TablerTimeZone
-                        v-model='keys.timezone.value'
-                        label='Default Timezone'
-                        :disabled='auth.access !== "admin"'
-                    />
-                </div>
-                <div class='col-12 pb-3'>
-                    <label class='form-label'>Slack Integration</label>
-                    <div class='card'>
-                        <div class='card-body'>
+
+                <!-- Slack Integration -->
+                <div class='mb-4'>
+                    <h4 class='mb-3'>Slack Integration</h4>
+                    <div class='row'>
+                        <div class='col-12 pb-3'>
+                            <TablerToggle
+                                v-model='slackEnabled'
+                                label='Enable Slack Integration'
+                                desc='Enable integration with Slack for notifications and channel management'
+                                :disabled='auth.access !== "admin"'
+                            />
+                        </div>
+                        <template v-if='slackEnabled'>
                             <div class='col-12 pb-3'>
-                                <TablerToggle
-                                    v-model='keys.slack_enabled.value'
-                                    label='Enable Slack Integration'
+                                <TablerInput
+                                    v-model='config.slack_app_id.value'
+                                    label='App ID'
+                                    desc='Slack App ID from your Slack app configuration'
                                     :disabled='auth.access !== "admin"'
                                 />
                             </div>
                             <div class='col-12 pb-3'>
                                 <TablerInput
-                                    v-model='keys.slack_app_id.value'
-                                    label='App ID'
-                                    :disabled='auth.access !== "admin" || !keys.slack_enabled.value'
-                                />
-                            </div>
-                            <div class='col-12 pb-3'>
-                                <TablerInput
-                                    v-model='keys.slack_token.value'
+                                    v-model='config.slack_token.value'
                                     label='Access Token'
                                     type='password'
-                                    :disabled='auth.access !== "admin" || !keys.slack_enabled.value'
+                                    desc='Bot User OAuth Token for Slack API access'
+                                    :disabled='auth.access !== "admin"'
                                 />
                             </div>
                             <div class='col-12 pb-3'>
                                 <TablerInput
-                                    v-model='keys.slack_refresh.value'
+                                    v-model='config.slack_refresh.value'
                                     label='Refresh Token'
                                     type='password'
-                                    :disabled='auth.access !== "admin" || !keys.slack_enabled.value'
+                                    desc='OAuth refresh token for maintaining Slack connection'
+                                    :disabled='auth.access !== "admin"'
                                 />
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
+
                 <div
                     v-if='auth.access === "admin"'
                     class='col-12 pb-3 d-flex'
@@ -73,9 +89,14 @@
                     <div class='ms-auto'>
                         <button
                             class='btn btn-primary'
+                            :disabled='saving'
                             @click='save'
                         >
-                            Update
+                            <span
+                                v-if='saving'
+                                class='spinner-border spinner-border-sm me-2'
+                            />
+                            {{ saving ? 'Saving...' : 'Save Settings' }}
                         </button>
                     </div>
                 </div>
@@ -85,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import {
     TablerLoading,
     TablerTimeZone,
@@ -93,7 +114,7 @@ import {
     TablerToggle,
 } from '@tak-ps/vue-tabler';
 
-defineProps({
+const props = defineProps({
     auth: {
         type: Object,
         required: true
@@ -101,50 +122,81 @@ defineProps({
 });
 
 const loading = ref(true);
-const keys = reactive({});
+const saving = ref(false);
+const config = reactive({});
 
-for (const key of ['name', 'frontend', 'timezone', 'slack_enabled', 'slack_app_id', 'slack_token', 'slack_refresh']) {
-    keys[key] = {
-        key: '',
+// Initialize config keys
+const configKeys = [
+    'name',
+    'frontend',
+    'timezone',
+    'slack_enabled',
+    'slack_app_id',
+    'slack_token',
+    'slack_refresh'
+];
+
+for (const key of configKeys) {
+    config[key] = {
+        key: key,
         value: '',
-        public: false
-    }
+        public: key === 'name' || key === 'frontend'
+    };
 }
 
-const fetch = async (key) => {
+// Computed property for slack enabled state
+const slackEnabled = computed({
+    get: () => config.slack_enabled.value === true || config.slack_enabled.value === 'true',
+    set: (val) => {
+        config.slack_enabled.value = val;
+    }
+});
+
+// Fetch all config values in a single request
+const fetchConfig = async () => {
     try {
-        keys[key] = await window.std(`/api/server/${key}`);
-    } catch (err) {
-        if (err.message === 'server not found' || err.message === 'Item not found' || err.message === 'Item Not Found') {
-            keys[key] = {
-                key: '',
-                value: '',
-                public: false
+        const keys = configKeys.join(',');
+        const result = await window.std(`/api/config?keys=${keys}`);
+        
+        // Update config with fetched values
+        for (const [key, data] of Object.entries(result.config)) {
+            if (config[key]) {
+                config[key].value = data.value;
+                config[key].public = data.public;
             }
-        } else {
-            throw err;
         }
+    } catch (err) {
+        console.error('Failed to fetch config:', err);
     }
 };
 
+// Save all config values in a single request
 const save = async () => {
-    loading.value = true;
-    for (const key in keys) {
-        await window.std(`/api/server`, {
+    saving.value = true;
+    try {
+        const updates = {};
+        for (const key of configKeys) {
+            updates[key] = {
+                value: config[key].value,
+                public: config[key].public
+            };
+        }
+        
+        await window.std('/api/config', {
             method: 'PUT',
-            body: {
-                key,
-                public: keys[key].public,
-                value: keys[key].value,
-            }
+            body: { config: updates }
         });
+    } catch (err) {
+        console.error('Failed to save config:', err);
+        alert('Failed to save settings: ' + err.message);
+    } finally {
+        saving.value = false;
     }
-    loading.value = false;
 };
 
 onMounted(async () => {
     loading.value = true;
-    await Promise.all(Object.keys(keys).map((key) => fetch(key)));
+    await fetchConfig();
     loading.value = false;
 });
 </script>
