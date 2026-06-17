@@ -96,85 +96,15 @@
             label='No Missions'
         />
         <template v-else>
-            <table class='table card-table table-hover table-vcenter'>
-                <TableHeader
-                    v-model:sort='paging.sort'
-                    v-model:order='paging.order'
-                    v-model:header='header'
-                    :allow-export='false'
+            <div class='d-flex flex-column gap-3 p-3'>
+                <StandardItemMission
+                    v-for='mission in list.items'
+                    :key='mission.id'
+                    :mission='mission'
+                    :auth='auth'
+                    :attendance='attendance'
                 />
-                <tbody>
-                    <tr
-                        v-for='mission in list.items'
-                        :key='mission.id'
-                        class='cursor-pointer'
-                        @click='$router.push(`/mission/${mission.id}`)'
-                    >
-                        <template v-for='h in header'>
-                            <template v-if='h.display'>
-                                <td v-if='["updated", "created"].includes(h.name)'>
-                                    <TablerEpoch
-                                        v-if='mission[h.name]'
-                                        :date='mission[h.name]'
-                                    />
-                                    <span v-else>Never</span>
-                                </td>
-                                <td v-else-if='h.name === "dates"'>
-                                    <TablerEpochRange
-                                        :start='mission.start_ts'
-                                        :end='mission.end_ts'
-                                    />
-                                </td>
-                                <td v-else-if='h.name === "title"'>
-                                    <div class='d-flex align-items-center'>
-                                        <span
-                                            v-if='attendance'
-                                            class='me-3'
-                                        >
-                                            <IconUserCheck
-                                                v-if='mission.users.includes(auth.id)'
-                                                v-tooltip='"Attended"'
-                                                size='32'
-                                                stroke='1'
-                                                color='green'
-                                            />
-                                            <IconUserOff
-                                                v-else
-                                                v-tooltip='"Did not attend"'
-                                                size='32'
-                                                stroke='1'
-                                            />
-                                        </span>
-                                        <span v-text='mission.title' />
-                                        <div class='ms-auto btn-list h-25'>
-                                            <template
-                                                v-for='team in mission.teams'
-                                                :key='team.id'
-                                            >
-                                                <TeamBadge
-                                                    :team='team'
-                                                    class='ms-auto'
-                                                />
-                                            </template>
-                                            <TablerBadge
-                                                v-if='mission.required'
-                                                class='ms-auto'
-                                                background-color='#d63939'
-                                                text-color='#ffffff'
-                                            >
-                                                Required
-                                            </TablerBadge>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td v-else>
-                                    <span v-text='mission[h.name]' />
-                                </td>
-                            </template>
-                        </template>
-                    </tr>
-                </tbody>
-            </table>
+            </div>
             <TableFooter
                 v-if='footer'
                 :limit='paging.limit'
@@ -189,9 +119,9 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TeamBadge from '../util/TeamBadge.vue'
+import StandardItemMission from '../util/StandardItemMission.vue'
 import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
-import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerBadge,
@@ -208,9 +138,7 @@ import {
 import {
     IconFilter,
     IconGripVertical,
-    IconPlus,
-    IconUserCheck,
-    IconUserOff
+    IconPlus
 } from '@tabler/icons-vue';
 
 const props = defineProps({

@@ -1,8 +1,12 @@
 <template>
-    <div class='page'>
+    <div
+        class='page'
+        data-bs-theme='light'
+        data-bs-theme-base='neutral'
+        data-bs-theme-primary='blue'
+    >
         <header
             class='navbar navbar-expand-md d-print-none sticky-top'
-            data-bs-theme='dark'
         >
             <div class='container-xl'>
                 <div class='col-auto'>
@@ -93,7 +97,7 @@
 
 
                         <a
-                            class='btn btn-dark'
+                            class='btn btn-outline-secondary'
                             target='_blank'
                             rel='noreferrer'
                             @click='navigate("/notification", $event)'
@@ -114,7 +118,7 @@
                                 type='button'
                                 data-bs-toggle='dropdown'
                                 aria-expanded='false'
-                                class='btn btn-dark'
+                                class='btn btn-outline-secondary'
                             >
                                 <IconUser
                                     size='32'
@@ -278,7 +282,7 @@
                                     <template #dropdown>
                                         <a
                                             v-if='is_iam("Incident:View")'
-                                            class='nav-link cursor-pointer'
+                                            class='dropdown-item cursor-pointer'
                                             @click.stop='navigate("/incident", $event)'
                                         >
                                             <span class='nav-link-icon'>
@@ -291,7 +295,7 @@
                                         </a>
                                         <a
                                             v-if='is_iam("Statistics:View")'
-                                            class='nav-link cursor-pointer'
+                                            class='dropdown-item cursor-pointer'
                                             @click.stop='navigate("/stats", $event)'
                                         >
                                             <span class='nav-link-icon'>
@@ -303,7 +307,7 @@
                                             <span class='nav-link-title'>Statistics</span>
                                         </a>
                                         <a
-                                            class='nav-link cursor-pointer'
+                                            class='dropdown-item cursor-pointer'
                                             @click.stop='navigate("/attendance", $event)'
                                         >
                                             <span class='nav-link-icon'>
@@ -315,7 +319,7 @@
                                             <span class='nav-link-title'>Attendance</span>
                                         </a>
                                         <a
-                                            class='nav-link cursor-pointer'
+                                            class='dropdown-item cursor-pointer'
                                             @click.stop='navigate("/schedule", $event)'
                                         >
                                             <span class='nav-link-icon'>
@@ -327,7 +331,7 @@
                                             <span class='nav-link-title'>On-Call</span>
                                         </a>
                                         <a
-                                            class='nav-link cursor-pointer'
+                                            class='dropdown-item cursor-pointer'
                                             @click.stop='navigate("/application", $event)'
                                         >
                                             <span class='nav-link-icon'>
@@ -339,7 +343,7 @@
                                             <span class='nav-link-title'>Applications</span>
                                         </a>
                                         <a
-                                            class='nav-link cursor-pointer'
+                                            class='dropdown-item cursor-pointer'
                                             @click.stop='navigate("/rolodex", $event)'
                                         >
                                             <span class='nav-link-icon'>
@@ -552,6 +556,15 @@ onMounted(async () => {
 
 .hover-dark:hover {
     background: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+/* Theme-aware styles */
+[data-bs-theme='dark'] .hover-theme:hover {
+    background: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+[data-bs-theme='light'] .hover-theme:hover {
+    background: color-mix(in srgb, currentColor 10%, transparent);
 }
 </style>
 
