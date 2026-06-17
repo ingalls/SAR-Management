@@ -4,7 +4,7 @@ import Auth from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import { GenerateUpsert } from '@openaddresses/batch-generic';
 import Config from '../lib/config.js';
-import { StandardResponse, ServerResponse } from '../lib/types.js';
+import { StandardResponse } from '../lib/types.js';
 
 // Public config keys that don't require authentication
 export const PublicConfigKeys = [
@@ -62,7 +62,7 @@ export default async function router(schema: Schema, config: Config) {
                         value: server.value,
                         public: server.public
                     };
-                } catch (err) {
+                } catch {
                     // Key doesn't exist, use default
                     result[key] = {
                         key: key,

@@ -1,6 +1,6 @@
 import Modeler from '@openaddresses/batch-generic';
 import { UserAgency, Agency } from '../schema.js';
-import { sql, eq, and } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 export interface UserAgencyAssociation {
