@@ -72,7 +72,8 @@ export default async function router(schema: Schema, config: Config) {
             }))),
             teams: Type.Optional(Type.Array(Type.Integer())),
             tags: Type.Optional(Type.Array(Type.Integer())),
-            assets: Type.Optional(Type.Array(Type.Integer()))
+            assets: Type.Optional(Type.Array(Type.Integer())),
+            agencies: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: MissionResponse
     }, async (req, res) => {
@@ -91,6 +92,21 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.tags;
             const assets = req.body.assets;
             delete req.body.assets;
+            const agencies = req.body.agencies;
+            delete req.body.agencies;
+
+            // Validate that at least one agency belongs to the user
+            if (agencies && agencies.length > 0) {
+                const userAgencies = await config.models.UserAgency.listByUser(user.id);
+                const userAgencyIds = userAgencies.items.map(ua => ua.agency_id);
+                const hasOwnAgency = agencies.some(agencyId => userAgencyIds.includes(agencyId));
+                
+                if (!hasOwnAgency) {
+                    throw new Err(400, null, 'At least one agency must belong to you');
+                }
+            } else {
+                throw new Err(400, null, 'At least one agency is required');
+            }
 
             const mission = await config.models.Mission.generate({
                 ...req.body,
@@ -135,6 +151,15 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
+            if (agencies) {
+                for (const a of agencies) {
+                    await config.models.MissionAgency.generate({
+                        mission_id: mission.id,
+                        agency_id: a
+                    });
+                }
+            }
+
             res.json(await config.models.Mission.augmented_from(mission.id));
         } catch (err) {
              Err.respond(err, res);
@@ -155,7 +180,8 @@ export default async function router(schema: Schema, config: Config) {
             location_geom: Type.Optional(Type.Any()),
             teams: Type.Optional(Type.Array(Type.Integer())),
             tags: Type.Optional(Type.Array(Type.Integer())),
-            assets: Type.Optional(Type.Array(Type.Integer()))
+            assets: Type.Optional(Type.Array(Type.Integer())),
+            agencies: Type.Optional(Type.Array(Type.Integer()))
         }),
         params: Type.Object({
             missionid: Type.Integer(),
@@ -163,7 +189,7 @@ export default async function router(schema: Schema, config: Config) {
         res: MissionResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
+            const user = await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.MANAGE);
 
             if (req.body.start_ts || req.body.end_ts) {
                 const mission = await config.models.Mission.from(req.params.missionid);
@@ -179,6 +205,21 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.tags;
             const assets = req.body.assets;
             delete req.body.assets;
+            const agencies = req.body.agencies;
+            delete req.body.agencies;
+
+            // Validate that at least one agency belongs to the user
+            if (agencies && agencies.length > 0) {
+                const userAgencies = await config.models.UserAgency.listByUser(user.id);
+                const userAgencyIds = userAgencies.items.map(ua => ua.agency_id);
+                const hasOwnAgency = agencies.some(agencyId => userAgencyIds.includes(agencyId));
+                
+                if (!hasOwnAgency) {
+                    throw new Err(400, null, 'At least one agency must belong to you');
+                }
+            } else {
+                throw new Err(400, null, 'At least one agency is required');
+            }
 
             const mission = await config.models.Mission.commit(req.params.missionid, req.body);
 
@@ -216,6 +257,17 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
+            if (agencies) {
+                await config.models.MissionAgency.delete(sql`mission_id = ${mission.id}`)
+
+                for (const a of agencies) {
+                    await config.models.MissionAgency.generate({
+                        mission_id: mission.id,
+                        agency_id: a
+                    });
+                }
+            }
+
             res.json(await config.models.Mission.augmented_from(req.params.missionid));
         } catch (err) {
              Err.respond(err, res);
@@ -238,6 +290,7 @@ export default async function router(schema: Schema, config: Config) {
             await config.models.MissionTeam.delete(sql`mission_id = ${req.params.missionid}`);
             await config.models.MissionTagAssigned.delete(sql`mission_id = ${req.params.missionid}`);
             await config.models.MissionAsset.delete(sql`mission_id = ${req.params.missionid}`);
+            await config.models.MissionAgency.delete(sql`mission_id = ${req.params.missionid}`);
 
             await config.models.Mission.delete(req.params.missionid);
 

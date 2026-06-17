@@ -93,7 +93,8 @@ export default async function router(schema: Schema, config: Config) {
             }))),
             teams: Type.Optional(Type.Array(Type.Integer())),
             tags: Type.Optional(Type.Array(Type.Integer())),
-            assets: Type.Optional(Type.Array(Type.Integer()))
+            assets: Type.Optional(Type.Array(Type.Integer())),
+            agencies: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: TrainingResponse
     }, async (req, res) => {
@@ -112,6 +113,21 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.tags;
             const assets = req.body.assets;
             delete req.body.assets;
+            const agencies = req.body.agencies;
+            delete req.body.agencies;
+
+            // Validate that at least one agency belongs to the user
+            if (agencies && agencies.length > 0) {
+                const userAgencies = await config.models.UserAgency.listByUser(user.id);
+                const userAgencyIds = userAgencies.items.map(ua => ua.agency_id);
+                const hasOwnAgency = agencies.some(agencyId => userAgencyIds.includes(agencyId));
+                
+                if (!hasOwnAgency) {
+                    throw new Err(400, null, 'At least one agency must belong to you');
+                }
+            } else {
+                throw new Err(400, null, 'At least one agency is required');
+            }
 
             const training = await config.models.Training.generate({
                 ...req.body,
@@ -157,6 +173,15 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
+            if (agencies) {
+                for (const a of agencies) {
+                    await config.models.TrainingAgency.generate({
+                        training_id: training.id,
+                        agency_id: a
+                    });
+                }
+            }
+
             res.json(await config.models.Training.augmented_from(training.id));
         } catch (err) {
              Err.respond(err, res);
@@ -180,12 +205,13 @@ export default async function router(schema: Schema, config: Config) {
             location_geom: Type.Optional(Type.Any()),
             teams: Type.Optional(Type.Array(Type.Integer())),
             tags: Type.Optional(Type.Array(Type.Integer())),
-            assets: Type.Optional(Type.Array(Type.Integer()))
+            assets: Type.Optional(Type.Array(Type.Integer())),
+            agencies: Type.Optional(Type.Array(Type.Integer()))
         }),
         res: TrainingResponse
     }, async (req, res) => {
         try {
-            await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.MANAGE);
+            const user = await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.MANAGE);
 
             if (req.body.start_ts || req.body.end_ts) {
                 const training = await config.models.Training.from(req.params.trainingid);
@@ -201,6 +227,21 @@ export default async function router(schema: Schema, config: Config) {
             delete req.body.tags;
             const assets = req.body.assets;
             delete req.body.assets;
+            const agencies = req.body.agencies;
+            delete req.body.agencies;
+
+            // Validate that at least one agency belongs to the user
+            if (agencies && agencies.length > 0) {
+                const userAgencies = await config.models.UserAgency.listByUser(user.id);
+                const userAgencyIds = userAgencies.items.map(ua => ua.agency_id);
+                const hasOwnAgency = agencies.some(agencyId => userAgencyIds.includes(agencyId));
+                
+                if (!hasOwnAgency) {
+                    throw new Err(400, null, 'At least one agency must belong to you');
+                }
+            } else {
+                throw new Err(400, null, 'At least one agency is required');
+            }
 
             await config.models.Training.commit(req.params.trainingid, req.body);
 
@@ -238,6 +279,17 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
+            if (agencies) {
+                await config.models.TrainingAgency.delete(sql`training_id = ${req.params.trainingid}`)
+
+                for (const a of agencies) {
+                    await config.models.TrainingAgency.generate({
+                        training_id: req.params.trainingid,
+                        agency_id: a
+                    });
+                }
+            }
+
             res.json(await config.models.Training.augmented_from(req.params.trainingid));
         } catch (err) {
              Err.respond(err, res);
@@ -265,6 +317,10 @@ export default async function router(schema: Schema, config: Config) {
             `);
 
             await config.models.TrainingAsset.delete(sql`
+                training_id = ${req.params.trainingid}
+            `);
+
+            await config.models.TrainingAgency.delete(sql`
                 training_id = ${req.params.trainingid}
             `);
 

@@ -40,6 +40,7 @@ export default class Models {
     MissionTag: Modeler<typeof pgtypes.MissionTag>;
     MissionTagAssigned: Modeler<typeof pgtypes.MissionTagAssigned>;
     MissionAsset: Modeler<typeof pgtypes.MissionAsset>;
+    MissionAgency: Modeler<typeof pgtypes.MissionAgency>;
     MissionRole: Modeler<typeof pgtypes.MissionRole>;
     MissionTeam: Modeler<typeof pgtypes.MissionTeam>;
     MissionPerson: Modeler<typeof pgtypes.MissionPerson>;
@@ -50,6 +51,7 @@ export default class Models {
     TrainingTag: Modeler<typeof pgtypes.TrainingTag>;
     TrainingTagAssigned: Modeler<typeof pgtypes.TrainingTagAssigned>;
     TrainingAsset: Modeler<typeof pgtypes.TrainingAsset>;
+    TrainingAgency: Modeler<typeof pgtypes.TrainingAgency>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
     Rolodex: Modeler<typeof pgtypes.Rolodex>;
     UserIncident: Modeler<typeof pgtypes.UserIncident>;
@@ -113,6 +115,7 @@ export default class Models {
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
         this.MissionTag = new Modeler(pg, pgtypes.MissionTag);
         this.MissionTagAssigned = new Modeler(pg, pgtypes.MissionTagAssigned);
+        this.MissionAgency = new Modeler(pg, pgtypes.MissionAgency);
         this.MissionAsset = new Modeler(pg, pgtypes.MissionAsset);
         this.MissionRole = new Modeler(pg, pgtypes.MissionRole);
         this.MissionTeam = new Modeler(pg, pgtypes.MissionTeam);
@@ -126,6 +129,7 @@ export default class Models {
         this.UserIncident = new Modeler(pg, pgtypes.UserIncident);
         this.EquipmentIncident = new Modeler(pg, pgtypes.EquipmentIncident);
         this.TrainingAsset = new Modeler(pg, pgtypes.TrainingAsset);
+        this.TrainingAgency = new Modeler(pg, pgtypes.TrainingAgency);
         this.TrainingTeam = new Modeler(pg, pgtypes.TrainingTeam);
     }
 }

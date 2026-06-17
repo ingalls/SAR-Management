@@ -359,6 +359,12 @@ export const MissionAsset = pgTable('missions_assets', {
     asset_id: integer().notNull().references(() => Asset.id),
 });
 
+export const MissionAgency = pgTable('missions_to_agencies', {
+    id: serial().primaryKey(),
+    mission_id: integer().notNull().references(() => Mission.id),
+    agency_id: bigint({ mode: "number" }).notNull().references(() => Agency.id),
+});
+
 export const Notification = pgTable('notifications', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
@@ -468,6 +474,12 @@ export const TrainingAsset = pgTable('trainings_assets', {
     id: serial().primaryKey(),
     training_id: integer().notNull().references(() => Training.id),
     asset_id: integer().notNull().references(() => Asset.id),
+});
+
+export const TrainingAgency = pgTable('trainings_to_agencies', {
+    id: serial().primaryKey(),
+    training_id: integer().notNull().references(() => Training.id),
+    agency_id: bigint({ mode: "number" }).notNull().references(() => Agency.id),
 });
 
 export const Rolodex = pgTable('rolodex', {

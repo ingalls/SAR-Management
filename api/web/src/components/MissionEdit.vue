@@ -77,6 +77,10 @@
                                                 v-model='mission.tags'
                                                 label='Tags'
                                             />
+                                            <AgencySelect
+                                                v-model='mission.agencies'
+                                                label='Agencies'
+                                            />
                                         </div>
                                         <div class='col-12 col-md-12'>
                                             <MDEditorShim v-model='mission.body' />
@@ -160,6 +164,7 @@ import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import MissionTagSelect from './util/MissionTagSelect.vue';
+import AgencySelect from './util/AgencySelect.vue';
 import MDEditorShim from './util/MDEditorShim.vue';
 import {
     TablerBreadCrumb,
@@ -202,6 +207,7 @@ const mission = reactive({
     location_geom: null,
     teams: [],
     tags: [],
+    agencies: [],
 });
 
 const assigned = ref([]);
@@ -294,6 +300,7 @@ async function update() {
                 end_ts: moment(mission.end_ts).toISOString(),
                 teams: mission.teams.map((team) => team.id),
                 tags: mission.tags.map((tag) => tag.id),
+                agencies: mission.agencies.map((agency) => agency.id),
             }
         });
 
@@ -318,6 +325,7 @@ async function create() {
             end_ts: moment(mission.end_ts).toISOString(),
             teams: mission.teams.map((team) => team.id),
             tags: mission.tags.map((tag) => tag.id),
+            agencies: mission.agencies.map((agency) => agency.id),
             assigned: assigned.value.map((a) => ({
                 uid: a.id,
                 role: a.role || 'General',

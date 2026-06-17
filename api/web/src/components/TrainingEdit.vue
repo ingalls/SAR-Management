@@ -71,6 +71,10 @@
                                                 v-model='training.tags'
                                                 label='Tags'
                                             />
+                                            <AgencySelect
+                                                v-model='training.agencies'
+                                                label='Agencies'
+                                            />
                                         </div>
                                         <div class='col-md-12'>
                                             <MDEditorShim v-model='training.body' />
@@ -132,6 +136,7 @@ import moment from 'moment';
 import NoAccess from './util/NoAccess.vue';
 import TeamSelect from './util/TeamSelect.vue';
 import TrainingTagSelect from './util/TrainingTagSelect.vue';
+import AgencySelect from './util/AgencySelect.vue';
 import Location from './Mission/Location.vue';
 import LocationDropdown from './util/LocationDropdown.vue';
 import MDEditorShim from './util/MDEditorShim.vue';
@@ -170,7 +175,8 @@ const training = reactive({
     location_geom: null,
     start_ts: '',
     end_ts: '',
-    teams: []
+    teams: [],
+    agencies: []
 });
 
 function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
@@ -196,6 +202,7 @@ async function create() {
     const body = JSON.parse(JSON.stringify(training));
     body.teams = body.teams.map((team) => { return team.id });
     body.tags = body.tags.map((tag) => { return tag.id });
+    body.agencies = body.agencies.map((agency) => { return agency.id });
     body.start_ts = moment(body.start_ts).toISOString();
     body.end_ts = moment(body.end_ts).toISOString();
 
@@ -217,6 +224,7 @@ async function update() {
     const body = JSON.parse(JSON.stringify(training));
     body.teams = body.teams.map((team) => { return team.id });
     body.tags = body.tags.map((tag) => { return tag.id });
+    body.agencies = body.agencies.map((agency) => { return agency.id });
     body.start_ts = moment(body.start_ts).toISOString();
     body.end_ts = moment(body.end_ts).toISOString();
 
