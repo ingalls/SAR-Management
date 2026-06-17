@@ -63,6 +63,12 @@ export const User = pgTable('users', {
     agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
+export const UserAgency = pgTable('users_to_agencies', {
+    uid: integer().notNull().references(() => User.id),
+    agency_id: bigint({ mode: "number" }).notNull().references(() => Agency.id),
+    access: text().notNull().default('user')
+});
+
 export const UserSession = pgTable('users_sessions', {
     sid: text().primaryKey(),
     uid: integer().notNull().references(() => User.id),
