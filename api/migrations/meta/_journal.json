@@ -211,6 +211,13 @@
       "when": 1779848254897,
       "tag": "0029_schedule_subteam",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1781726650487,
+      "tag": "0030_parallel_mojo",
+      "breakpoints": true
     }
   ]
 }
