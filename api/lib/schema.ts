@@ -61,7 +61,6 @@ export const User = pgTable('users', {
     address_state: text().notNull().default(''),
     address_zip: text().notNull().default(''),
     last_login: timestamp({ withTimezone: true, mode: 'string' }),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const UserAgency = pgTable('users_to_agencies', {
@@ -76,7 +75,6 @@ export const UserSession = pgTable('users_sessions', {
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     ip: text().notNull(),
     ua: text().notNull(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const UserDashboard = pgTable('user_dashboard', {
@@ -87,7 +85,6 @@ export const UserDashboard = pgTable('user_dashboard', {
     y: integer().notNull(),
     w: integer().notNull(),
     h: integer().notNull(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const UserSetting = pgTable('user_settings', {
@@ -95,7 +92,6 @@ export const UserSetting = pgTable('user_settings', {
     uid: integer().notNull().references(() => User.id),
     key: text().notNull(),
     value: json().notNull(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const UserReset = pgTable('users_reset', {
@@ -103,14 +99,12 @@ export const UserReset = pgTable('users_reset', {
     expires: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     token: text().notNull(),
     action: text().notNull(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const UserExternal = pgTable('users_external', {
     uid: integer().notNull().references(() => User.id),
     integration: text().notNull(),
     value: text().notNull(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Team = pgTable('teams', {
@@ -171,7 +165,6 @@ export const ApplicationComment = pgTable('application_comments', {
     body: text().notNull(),
     author: integer().notNull().references(() => User.id),
     archived: boolean().notNull().default(false),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 })
 
 export const Asset = pgTable('assets', {
@@ -189,7 +182,6 @@ export const CertKnown = pgTable('certs_known', {
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text().notNull(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Cert = pgTable('certs', {
@@ -201,7 +193,6 @@ export const Cert = pgTable('certs', {
     name: text().notNull(),
     expiry: timestamp({ withTimezone: true, mode: 'string' }),
     asset: integer().notNull().references(() => Asset.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Equipment: any = pgTable('equipment', {
@@ -225,8 +216,8 @@ export const EquipmentAssigned = pgTable('equipment_assigned', {
     id: serial().primaryKey(),
     equip_id: integer().notNull().references(() => Equipment.id),
     uid: integer().notNull().references(() => User.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
+
 export const EquipmentType = pgTable('equipment_types', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
@@ -240,13 +231,11 @@ export const Fieldability = pgTable('fieldability', {
     id: serial().primaryKey(),
     name: text().notNull().default(''),
     team: integer().notNull().references(() => Team.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Poll = pgTable('poll', {
     id: serial().primaryKey(),
     expiry: timestamp({ withTimezone: true, mode: 'string' }),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Issue = pgTable('issues', {
@@ -279,7 +268,6 @@ export const IssueComment = pgTable('issues_comments', {
     body: text().notNull(),
     author: integer().notNull().references(() => User.id),
     archived: boolean().notNull().default(false),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Leadership = pgTable('leadership', {
@@ -295,7 +283,6 @@ export const MissionRole = pgTable('mission_role', {
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text().notNull(),
     icon: text().notNull().default(''),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const MissionTag = pgTable('mission_tag', {
@@ -304,7 +291,6 @@ export const MissionTag = pgTable('mission_tag', {
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text().notNull(),
     icon: text().notNull().default(''),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Mission = pgTable('missions', {
@@ -320,7 +306,6 @@ export const Mission = pgTable('missions', {
     location: text().notNull().default(''),
     location_geom: geometry({ type: GeometryType.Point, srid: 4326 }),
     externalid: text().default(''),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const MissionAssigned = pgTable('missions_assigned', {
@@ -329,7 +314,6 @@ export const MissionAssigned = pgTable('missions_assigned', {
     confirmed: boolean().notNull().default(false),
     role: text().notNull(),
     uid: integer().notNull().references(() => User.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const MissionPatient = pgTable('missions_patients', {
@@ -342,7 +326,6 @@ export const MissionPatient = pgTable('missions_patients', {
     address_state: text(),
     address_postcode: text(),
     address_country: text(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const MissionPerson = pgTable('mission_person', {
@@ -356,28 +339,24 @@ export const MissionPerson = pgTable('mission_person', {
     phone: text(),
     email: text(),
     notes: text(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const MissionTagAssigned = pgTable('missions_tag', {
     id: serial().primaryKey(),
     mission_id: integer().notNull().references(() => Mission.id),
     tag_id: integer().notNull().references(() => MissionTag.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const MissionTeam = pgTable('missions_team', {
     id: serial().primaryKey(),
     mission_id: integer().notNull().references(() => Mission.id),
     team_id: integer().notNull().references(() => Team.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const MissionAsset = pgTable('missions_assets', {
     id: serial().primaryKey(),
     mission_id: integer().notNull().references(() => Mission.id),
     asset_id: integer().notNull().references(() => Asset.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Notification = pgTable('notifications', {
@@ -387,21 +366,18 @@ export const Notification = pgTable('notifications', {
     uid: integer().notNull().references(() => User.id),
     text: text().notNull(),
     url: text(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const PollQuestion = pgTable('poll_questions', {
     id: serial().primaryKey(),
     poll_id: integer().notNull().references(() => Poll.id),
     question: json().notNull(),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const PollVote = pgTable('poll_votes', {
     uid: integer().notNull().references(() => User.id),
     poll_id: integer().notNull().references(() => Poll.id),
     question_id: integer().notNull().references(() => PollQuestion.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Schedule = pgTable('schedule', {
@@ -424,7 +400,6 @@ export const ScheduleEvent = pgTable('schedules_event', {
     start_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     end_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     uid: integer().notNull().references(() => User.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const ScheduleOverride = pgTable('schedules_override', {
@@ -438,14 +413,12 @@ export const ScheduleOverride = pgTable('schedules_override', {
     override_uid: integer().references(() => User.id),
     reason: text().notNull().default(''),
     created_by: integer().notNull().references(() => User.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Server = pgTable('server', {
     key: text().primaryKey(),
     value: text().notNull(),
     public: boolean().notNull().default(false),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const TrainingTag = pgTable('training_tag', {
@@ -454,7 +427,6 @@ export const TrainingTag = pgTable('training_tag', {
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text().notNull(),
     icon: text().notNull().default(''),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Training = pgTable('training', {
@@ -478,28 +450,24 @@ export const TrainingAssigned = pgTable('training_assigned', {
     confirmed: boolean().notNull().default(false),
     role: text().notNull(),
     uid: integer().notNull().references(() => User.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const TrainingTagAssigned = pgTable('trainings_tag', {
     id: serial().primaryKey(),
     training_id: integer().notNull().references(() => Training.id),
     tag_id: integer().notNull().references(() => TrainingTag.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const TrainingTeam = pgTable('trainings_team', {
     id: serial().primaryKey(),
     training_id: integer().notNull().references(() => Training.id),
     team_id: integer().notNull().references(() => Team.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const TrainingAsset = pgTable('trainings_assets', {
     id: serial().primaryKey(),
     training_id: integer().notNull().references(() => Training.id),
     asset_id: integer().notNull().references(() => Asset.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const Rolodex = pgTable('rolodex', {
@@ -529,7 +497,6 @@ export const UserIncident = pgTable('users_incidents', {
     uid: integer().notNull().references(() => User.id),
     mission_id: integer().references(() => Mission.id),
     training_id: integer().references(() => Training.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 export const EquipmentIncident = pgTable('equipment_incidents', {
@@ -542,7 +509,6 @@ export const EquipmentIncident = pgTable('equipment_incidents', {
     equipment_id: integer().notNull().references(() => Equipment.id),
     mission_id: integer().references(() => Mission.id),
     training_id: integer().references(() => Training.id),
-    agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
 
