@@ -18,7 +18,7 @@ export default async function router(schema: Schema, config: Config) {
                 uid: Type.Integer(),
                 agency_id: Type.Integer(),
                 access: Type.String(),
-                agency_name: Type.String()
+                agency_name: Type.Union([Type.String(), Type.Null()])
             }))
         })
     }, async (req, res) => {
