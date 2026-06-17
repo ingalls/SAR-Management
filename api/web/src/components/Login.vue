@@ -1,7 +1,7 @@
 <template>
     <div    
         class='page page-center position-relative'    
-        style='overflow: hidden; height: 100vh; background: linear-gradient(135deg, #ed1c24 0%, #ff6b35 100%);'    
+        style='overflow: hidden; height: 100vh; background: radial-gradient(at left top, #07556D, #023047);'    
     >
         <div class='container container-normal py-4'>
             <div class='row align-items-center g-4'>
