@@ -18,6 +18,7 @@
                     <div class='col-lg-12'>
                         <CardTrainings
                             label='Trainings'
+                            :search='true'
                             :auth='auth'
                             :iam='iam'
                             :limit='20'

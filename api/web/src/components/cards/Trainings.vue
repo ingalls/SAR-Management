@@ -1,11 +1,11 @@
 <template>
-    <div class='card h-100 w-100'>
+    <div class='card'>
         <div class='card-header'>
             <IconGripVertical
                 v-if='dragHandle'
                 class='drag-handle cursor-move'
-                :size='24'
-                :stroke='1'
+                size='24'
+                stroke='1'
             />
             <h3 class='card-title'>
                 <a
@@ -22,165 +22,88 @@
                     @click='$router.push(`/training/new`)'
                 >
                     <IconPlus
-                        :size='32'
-                        :stroke='1'
+                        size='32'
+                        stroke='1'
                     />
                 </TablerIconButton>
                 <TablerRefreshButton
                     v-if='is_iam("Training:View")'
-                    :loading='loading'
                     @click='fetch'
                 />
-                <TablerDropdown
-                    v-if='menu'
-                >
-                    <IconDotsVertical
-                        class='cursor-pointer'
-                        :size='32'
-                        :stroke='1'
-                    />
+            </div>
+        </div>
+
+        <div
+            v-if='search'
+            class='row g-2'
+        >
+            <div
+                class='col-auto'
+                style='width: calc(100% - 48px)'
+            >
+                <TablerInput
+                    v-model='paging.filter'
+                    icon='search'
+                    placeholder='Search…'
+                />
+            </div>
+            <div class='col-auto'>
+                <TablerDropdown>
+                    <TablerIconButton
+                        title='Search Filters'
+                    >
+                        <IconFilter
+                            :size='32'
+                            stroke='1'
+                        />
+                    </TablerIconButton>
                     <template #dropdown>
-                        <button
-                            class='dropdown-item text-danger'
-                            @click.stop='$emit("remove")'
+                        <div
+                            class='p-3 row g-2'
+                            style='min-width: 500px;'
+                            @click.stop=''
                         >
-                            <IconTrash
-                                class='me-1'
-                                :size='20'
-                                :stroke='1'
-                            />
-                            Remove Widget
-                        </button>
+                            <div class='col-md-6'>
+                                <TablerInput
+                                    v-model='paging.start'
+                                    type='date'
+                                    label='Start Date'
+                                />
+                            </div>
+                            <div class='col-md-6'>
+                                <TablerInput
+                                    v-model='paging.end'
+                                    type='date'
+                                    label='End Date'
+                                />
+                            </div>
+                        </div>
                     </template>
                 </TablerDropdown>
             </div>
         </div>
 
-        <NoAccess v-if='!is_iam("Training:View")' />
-        <template v-else-if='loading'>
-            <TablerLoading desc='Loading Trainings' />
-        </template>
-        <template v-else-if='!list.items.length'>
-            <TablerNone
-                :create='false'
-                label='No Trainings'
-            />
-        </template>
+        <NoAccess
+            v-if='!is_iam("Training:View")'
+        />
+        <TablerLoading
+            v-else-if='loading'
+            desc='Loading Trainings'
+        />
+        <TablerNone
+            v-else-if='!list.items.length'
+            :create='false'
+            label='No Trainings'
+        />
         <template v-else>
-            <div
-                v-if='!props.start && !props.end'
-                class='btn-group mx-2 my-2'
-                role='group'
-            >
-                <input
-                    type='radio'
-                    class='btn-check'
-                    name='btn-radio-toolbar'
-                    :checked='range === "past"'
-                    value='past'
-                >
-                <label
-                    class='btn btn-icon px-2'
-                    @click='range = "past"'
-                >
-                    <span class='ms-2'>Past Trainings</span>
-                </label>
-
-                <input
-                    type='radio'
-                    class='btn-check'
-                    name='btn-radio-toolbar'
-                    :checked='range === "future"'
-                    value='future'
-                >
-                <label
-                    class='btn btn-icon px-2'
-                    @click='range = "future"'
-                >
-                    <span class='ms-2'>Upcoming Trainings</span>
-                </label>
-            </div>
-            <div class='overflow-auto'>
-                <table class='table card-table table-hover table-vcenter'>
-                    <TableHeader
-                        v-model:sort='paging.sort'
-                        v-model:order='paging.order'
-                        v-model:header='header'
-                        :allow-export='false'
-                    />
-                    <tbody>
-                        <tr
-                            v-for='training in list.items'
-                            :key='training.id'
-                            class='cursor-pointer'
-                            @click='$router.push(`/training/${training.id}`)'
-                        >
-                            <template v-for='h in header'>
-                                <template v-if='h.display'>
-                                    <td v-if='["updated", "created"].includes(h.name)'>
-                                        <TablerEpoch
-                                            v-if='training[h.name]'
-                                            :date='training[h.name]'
-                                        />
-                                        <span v-else>Never</span>
-                                    </td>
-                                    <td v-else-if='h.name === "dates"'>
-                                        <TablerEpochRange
-                                            :start='training.start_ts'
-                                            :end='training.end_ts'
-                                        />
-                                    </td>
-                                    <td v-else-if='h.name === "title"'>
-                                        <div class='d-flex align-items-center'>
-                                            <span
-                                                v-if='attendance'
-                                                class='me-3'
-                                            >
-                                                <IconUserCheck
-                                                    v-if='training.users.includes(auth.id)'
-                                                    v-tooltip='"Attended"'
-                                                    size='32'
-                                                    stroke='1'
-                                                    color='green'
-                                                />
-                                                <IconUserOff
-                                                    v-else
-                                                    v-tooltip='"Did not attend"'
-                                                    size='32'
-                                                    stroke='1'
-                                                />
-                                            </span>
-
-                                            <span v-text='training.title' />
-                                            <div class='ms-auto btn-list h-25'>
-                                                <template
-                                                    v-for='team in training.teams'
-                                                    :key='team.id'
-                                                >
-                                                    <TeamBadge
-                                                        :team='team'
-                                                        class='ms-auto'
-                                                    />
-                                                </template>
-                                                <TablerBadge
-                                                    v-if='training.required'
-                                                    class='ms-auto'
-                                                    background-color='#d63939'
-                                                    text-color='#ffffff'
-                                                >
-                                                    Required
-                                                </TablerBadge>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td v-else>
-                                        <span v-text='training[h.name]' />
-                                    </td>
-                                </template>
-                            </template>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class='d-flex flex-column gap-3 p-3'>
+                <StandardItemTraining
+                    v-for='training in list.items'
+                    :key='training.id'
+                    :training='training'
+                    :auth='auth'
+                    :attendance='attendance'
+                />
             </div>
             <TableFooter
                 v-if='footer'
@@ -196,50 +119,46 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TeamBadge from '../util/TeamBadge.vue'
+import StandardItemTraining from '../util/StandardItemTraining.vue'
 import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
-import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
 import {
     TablerBadge,
     TablerNone,
     TablerEpoch,
-    TablerIconButton,
     TablerRefreshButton,
     TablerEpochRange,
-    TablerLoading,
-    TablerDropdown
+    TablerIconButton,
+    TablerDropdown,
+    TablerInput,
+    TablerLoading
 } from '@tak-ps/vue-tabler'
 
 import {
+    IconFilter,
     IconGripVertical,
-    IconUserCheck,
-    IconUserOff,
-    IconPlus,
-    IconDotsVertical,
-    IconTrash
+    IconPlus
 } from '@tabler/icons-vue';
-
-const range = ref('future');
 
 const props = defineProps({
     label: {
         type: String,
-        default: 'Upcoming Training'
+        default: 'Recent Trainings'
     },
     iam: {
         type: Object,
         required: true
     },
     start: {
-        type: String
+        type: Number
     },
     order: {
         type: String,
         default: 'desc'
     },
     end: {
-        type: String
+        type: Number
     },
     dragHandle: {
         type: Boolean,
@@ -257,13 +176,13 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
-    menu: {
-        type: Boolean,
-        default: false
-    },
     limit: {
         type: Number,
         default: 10
+    },
+    search: {
+        type: Boolean,
+        default: false
     },
     assigned: {
         type: Number
@@ -280,7 +199,7 @@ const header = ref([])
 const paging = reactive({
     filter: '',
     sort: 'start_ts',
-    order: props.order || 'asc',
+    order: props.order,
     limit: props.limit,
     start: props.start,
     end: props.end,
@@ -289,24 +208,6 @@ const paging = reactive({
 const list = reactive({
     total: 0,
     items: []
-})
-
-watch(range, async (newRange) => {
-    if (!props.start && !props.end) {
-        const now = new Date();
-        if (newRange === 'past') {
-            paging.page = 0;
-            paging.end = now.toISOString();
-            paging.start = '';
-            paging.order = 'desc';
-        } else if (newRange === 'future') {
-            paging.page = 0;
-            paging.start = now.toISOString();
-            paging.end = '';
-            paging.order = 'asc';
-        }
-        await fetch();
-    }
 })
 const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
@@ -358,8 +259,6 @@ watch(paging, async () => {
 
 onMounted(async () => {
     await listSchema();
-    if (is_iam("Training:View")) {
-        await fetch();
-    }
+    await fetch();
 })
 </script>

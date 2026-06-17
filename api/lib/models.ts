@@ -19,10 +19,12 @@ import ApplicationCommentModel from './models/ApplicationComment.js'
 import TeamModel from './models/Team.js'
 import TeamSettingModel from './models/TeamSetting.js'
 import StatsModel from './models/Stats.js'
+import UserAgencyModel from './models/UserAgency.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
     Agency: Modeler<typeof pgtypes.Agency>;
+    UserAgency: UserAgencyModel;
     UserSetting: Modeler<typeof pgtypes.UserSetting>;
     UserReset: Modeler<typeof pgtypes.UserReset>;
     UserExternal: Modeler<typeof pgtypes.UserExternal>;
@@ -75,6 +77,7 @@ export default class Models {
 
     constructor(pg: Pool<typeof pgtypes>) {
         this.Agency = new Modeler(pg, pgtypes.Agency);
+        this.UserAgency = new UserAgencyModel(pg);
         this.Poll = new PollModel(pg);
         this.User = new UserModel(pg);
         this.Notification = new NotificationModel(pg);

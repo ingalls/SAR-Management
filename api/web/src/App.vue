@@ -8,6 +8,7 @@
         <header
             v-if='!route.path.includes("/login")'
             class='navbar navbar-expand-md d-print-none sticky-top'
+            data-bs-theme='dark'
         >
             <div class='container-xl'>
                 <div class='col-auto'>

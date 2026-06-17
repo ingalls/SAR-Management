@@ -179,6 +179,90 @@
                                                     </template>
                                                 </div>
                                             </div>
+                                            
+                                            <!-- Agency Associations Section -->
+                                            <div class='col-md-12 mt-4'>
+                                                <h3 class='mb-3'>Agency Associations</h3>
+                                                
+                                                <!-- Current Associations -->
+                                                <div class='mb-3'>
+                                                    <TablerLoading v-if='loading.agencies' />
+                                                    <template v-else>
+                                                        <TablerNone
+                                                            v-if='!userAgencies.length'
+                                                            label='No agency associations'
+                                                            :create='false'
+                                                        />
+                                                        <div v-else class='table-responsive'>
+                                                            <table class='table table-vcenter card-table'>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Agency</th>
+                                                                        <th>Access Level</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr v-for='assoc in userAgencies' :key='assoc.agency_id'>
+                                                                        <td>{{ assoc.agency_name }}</td>
+                                                                        <td>
+                                                                            <TablerEnum
+                                                                                v-model='assoc.access'
+                                                                                :options='["user", "admin"]'
+                                                                                :disabled='!is_iam("User:Admin")'
+                                                                                @update:modelValue='updateAgencyAccess(assoc)'
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <button
+                                                                                v-if='is_iam("User:Admin")'
+                                                                                class='btn btn-sm btn-outline-danger'
+                                                                                @click='removeAgencyAssociation(assoc.agency_id)'
+                                                                            >
+                                                                                <IconTrash :size='16' />
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </template>
+                                                </div>
+
+                                                <!-- Add New Association -->
+                                                <div v-if='is_iam("User:Admin")' class='card'>
+                                                    <div class='card-body'>
+                                                        <h4 class='card-title mb-3'>Add Agency Association</h4>
+                                                        <div class='row'>
+                                                            <div class='col-md-8'>
+                                                                <TablerSelect
+                                                                    v-model='newAgency.agency_id'
+                                                                    label='Select Agency'
+                                                                    :options='availableAgencies'
+                                                                    placeholder='Choose an agency...'
+                                                                />
+                                                            </div>
+                                                            <div class='col-md-3'>
+                                                                <TablerEnum
+                                                                    v-model='newAgency.access'
+                                                                    label='Access Level'
+                                                                    :options='["user", "admin"]'
+                                                                />
+                                                            </div>
+                                                            <div class='col-md-1 d-flex align-items-end'>
+                                                                <button
+                                                                    class='btn btn-primary'
+                                                                    :disabled='!newAgency.agency_id'
+                                                                    @click='addAgencyAssociation'
+                                                                >
+                                                                    <IconPlus :size='16' />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class='col-md-12 my-4'>
                                                 <div class='d-flex'>
                                                     <a
@@ -224,6 +308,8 @@ import {
     TablerBreadCrumb,
     TablerLoading,
     TablerInput,
+    TablerSelect,
+    TablerEnum,
 } from '@tak-ps/vue-tabler';
 import {
     IconPlus,
@@ -251,7 +337,8 @@ const cache = ref(+new Date());
 const headers = ref({ Authorization: `Bearer ${localStorage.token}` });
 const upload = ref(false);
 const loading = reactive({
-    user: true
+    user: true,
+    agencies: false
 });
 const errors = reactive({
     username: '',
@@ -281,6 +368,13 @@ const user = reactive({
     emergency: []
 });
 
+const userAgencies = ref([]);
+const availableAgencies = ref([]);
+const newAgency = reactive({
+    agency_id: null,
+    access: 'user'
+});
+
 function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
 
 function uploadurl() {
@@ -291,6 +385,85 @@ async function fetch() {
     loading.user = true;
     Object.assign(user, await window.std(`/api/user/${route.params.userid}`));
     loading.user = false;
+}
+
+async function fetchUserAgencies() {
+    loading.agencies = true;
+    try {
+        const response = await window.std(`/api/user/${route.params.userid}/agency`);
+        userAgencies.value = response.items;
+    } catch (err) {
+        console.error('Failed to fetch user agencies:', err);
+    }
+    loading.agencies = false;
+}
+
+async function fetchAvailableAgencies() {
+    try {
+        const response = await window.std('/api/agency');
+        availableAgencies.value = response.items.map(agency => ({
+            value: agency.id,
+            label: agency.name
+        }));
+    } catch (err) {
+        console.error('Failed to fetch agencies:', err);
+    }
+}
+
+async function addAgencyAssociation() {
+    if (!newAgency.agency_id) return;
+    
+    try {
+        await window.std(`/api/user/${route.params.userid}/agency`, {
+            method: 'POST',
+            body: {
+                agency_id: newAgency.agency_id,
+                access: newAgency.access
+            }
+        });
+        
+        // Reset form
+        newAgency.agency_id = null;
+        newAgency.access = 'user';
+        
+        // Refresh list
+        await fetchUserAgencies();
+    } catch (err) {
+        console.error('Failed to add agency association:', err);
+        alert(err.message || 'Failed to add agency association');
+    }
+}
+
+async function updateAgencyAccess(assoc) {
+    try {
+        await window.std(`/api/user/${route.params.userid}/agency/${assoc.agency_id}`, {
+            method: 'PATCH',
+            body: {
+                access: assoc.access
+            }
+        });
+    } catch (err) {
+        console.error('Failed to update agency access:', err);
+        alert(err.message || 'Failed to update agency access');
+        // Revert the change
+        await fetchUserAgencies();
+    }
+}
+
+async function removeAgencyAssociation(agencyId) {
+    if (!confirm('Are you sure you want to remove this agency association?')) return;
+    
+    try {
+        await window.std(`/api/user/${route.params.userid}/agency/${agencyId}`, {
+            method: 'DELETE'
+        });
+        
+        // Refresh list
+        await fetchUserAgencies();
+    } catch (err) {
+        console.error('Failed to remove agency association:', err);
+        alert(err.message || 'Failed to remove agency association');
+    }
 }
 
 async function create() {
@@ -341,5 +514,9 @@ async function deleteUser() {
 
 onMounted(async () => {
     await fetch();
+    await fetchUserAgencies();
+    if (is_iam('User:Admin')) {
+        await fetchAvailableAgencies();
+    }
 });
 </script>
