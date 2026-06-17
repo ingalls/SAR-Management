@@ -33,7 +33,8 @@ export const Agency = pgTable('agency', {
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text().notNull(),
     location_geom: geometry({ type: GeometryType.Point, srid: 4326 }),
-    logo: text().notNull().default('')
+    logo: text().notNull().default(''),
+    archived: boolean().notNull().default(false)
 });
 
 export const User = pgTable('users', {

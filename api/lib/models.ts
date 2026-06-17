@@ -22,6 +22,7 @@ import StatsModel from './models/Stats.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
+    Agency: Modeler<typeof pgtypes.Agency>;
     UserSetting: Modeler<typeof pgtypes.UserSetting>;
     UserReset: Modeler<typeof pgtypes.UserReset>;
     UserExternal: Modeler<typeof pgtypes.UserExternal>;
@@ -73,6 +74,7 @@ export default class Models {
     ScheduleEvent: ScheduleEventModel;
 
     constructor(pg: Pool<typeof pgtypes>) {
+        this.Agency = new Modeler(pg, pgtypes.Agency);
         this.Poll = new PollModel(pg);
         this.User = new UserModel(pg);
         this.Notification = new NotificationModel(pg);

@@ -111,9 +111,9 @@ const router = new VueRouter.createRouter({
         { path: '/user/:userid/cert', name: 'certs', component: () => import('./components/Certs.vue') },
         { path: '/user/:userid/cert/:certid', name: 'cert', component: () => import('./components/Cert.vue') },
 
-        { 
-            path: '/admin', 
-            name: 'admin', 
+        {
+            path: '/admin',
+            name: 'admin',
             component: () => import('./components/Admin.vue'),
             children: [
                 {
@@ -123,40 +123,45 @@ const router = new VueRouter.createRouter({
                         return { name: 'admin-server' };
                     }
                 },
-                { 
-                    path: 'server', 
-                    name: 'admin-server', 
-                    component: () => import('./components/Admin/ServerConfig.vue') 
+                {
+                    path: 'server',
+                    name: 'admin-server',
+                    component: () => import('./components/Admin/ServerConfig.vue')
                 },
-                { 
-                    path: 'roles', 
-                    name: 'admin-roles', 
-                    component: () => import('./components/Admin/Roles.vue') 
+                {
+                    path: 'roles',
+                    name: 'admin-roles',
+                    component: () => import('./components/Admin/Roles.vue')
                 },
-                { 
-                    path: 'tags', 
-                    name: 'admin-tags', 
-                    component: () => import('./components/Admin/Tags.vue') 
+                {
+                    path: 'tags',
+                    name: 'admin-tags',
+                    component: () => import('./components/Admin/Tags.vue')
                 },
-                { 
-                    path: 'training-tags', 
-                    name: 'admin-training-tags', 
-                    component: () => import('./components/Admin/TrainingTags.vue') 
+                {
+                    path: 'training-tags',
+                    name: 'admin-training-tags',
+                    component: () => import('./components/Admin/TrainingTags.vue')
                 },
-                { 
-                    path: 'certs', 
-                    name: 'admin-certs', 
-                    component: () => import('./components/Admin/KnownCerts.vue') 
+                {
+                    path: 'certs',
+                    name: 'admin-certs',
+                    component: () => import('./components/Admin/KnownCerts.vue')
                 },
-                { 
-                    path: 'heartbeat', 
-                    name: 'admin-heartbeat', 
-                    component: () => import('./components/Admin/Heartbeat.vue') 
+                {
+                    path: 'heartbeat',
+                    name: 'admin-heartbeat',
+                    component: () => import('./components/Admin/Heartbeat.vue')
                 },
-                { 
-                    path: 'slack', 
-                    name: 'admin-slack', 
-                    component: () => import('./components/AdminSlack.vue') 
+                {
+                    path: 'agencies',
+                    name: 'admin-agencies',
+                    component: () => import('./components/Admin/Agencies.vue')
+                },
+                {
+                    path: 'slack',
+                    name: 'admin-slack',
+                    component: () => import('./components/AdminSlack.vue')
                 },
             ]
         },

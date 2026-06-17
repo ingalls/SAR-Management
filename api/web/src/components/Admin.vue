@@ -143,6 +143,23 @@
                                                 role='menuitem'
                                                 class='list-group-item list-group-item-action d-flex align-items-center user-select-none'
                                                 :class='{
+                                                    "active": String(route.name) === "admin-agencies",
+                                                    "cursor-pointer": String(route.name) !== "admin-agencies"
+                                                }'
+                                                @keyup.enter='router.push(`/admin/agencies`)'
+                                                @click='router.push(`/admin/agencies`)'
+                                            >
+                                                <IconBuilding
+                                                    :size='32'
+                                                    stroke='1'
+                                                />
+                                                <span class='mx-3'>Agencies</span>
+                                            </span>
+                                            <span
+                                                tabindex='0'
+                                                role='menuitem'
+                                                class='list-group-item list-group-item-action d-flex align-items-center user-select-none'
+                                                :class='{
                                                     "active": String(route.name) === "admin-slack",
                                                     "cursor-pointer": String(route.name) !== "admin-slack"
                                                 }'
@@ -185,6 +202,7 @@ import {
     IconSchool,
     IconCertificate,
     IconHeartbeat,
+    IconBuilding,
     IconBrandSlack,
 } from '@tabler/icons-vue';
 import {

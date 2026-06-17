@@ -177,4 +177,5 @@ export const MissionPersonResponse = createSelectSchema(schemas.MissionPerson);
 export const AgencyResponse = createSelectSchema(schemas.Agency, {
     id: Type.Integer(),
     location_geom: Type.Union([Type.Any(), Type.Null()]),
+    archived: Type.Boolean()
 });
