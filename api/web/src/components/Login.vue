@@ -1,13 +1,13 @@
 <template>
     <div    
         class='page page-center position-relative'    
-        style='overflow: auto;'    
+        style='overflow: hidden; height: 100vh; background: linear-gradient(135deg, #ed1c24 0%, #ff6b35 100%);'    
     >
         <div class='container container-normal py-4'>
             <div class='row align-items-center g-4'>
                 <div class='col-lg'>
                     <div class='container-tight'>
-                        <div class='card card-md'>
+                        <div class='card card-md shadow-lg'>
                             <div class='card-body'>
                                 <div
                                     class='text-center'
@@ -17,6 +17,7 @@
                                         src='/logo.png'
                                         draggable='false'
                                         style='height: 150px;'
+                                        class='user-select-none'
                                     >
                                 </div>
 
@@ -168,19 +169,138 @@
                 </div>
             </div>
         </div>
+
+        <div
+            class='position-absolute bottom-0 start-0 end-0 text-center text-white-50 small py-3'
+            style='z-index: 10;'
+        >
+            <div class='container-xl'>
+                <div class='row text-center align-items-center flex-row-reverse'>
+                    <div class='col-lg-auto ms-lg-auto'>
+                        <ul class='list-inline list-inline-dots mb-0'>
+                            <li class='list-inline-item'>
+                                <a
+                                    href='/docs/'
+                                    class='text-white-50 text-decoration-none'
+                                >Documentation</a>
+                            </li>
+                            <li class='list-inline-item'>
+                                <a
+                                    href='https://github.com/ingalls/SAR-Management'
+                                    target='_blank'
+                                    class='text-white-50 text-decoration-none'
+                                    rel='noopener'
+                                >Source code</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class='col-12 col-lg-auto mt-3 mt-lg-0'>
+                        <ul class='list-inline list-inline-dots mb-0'>
+                            <li class='list-inline-item'>
+                                Copyright © 2026
+                                <a
+                                    href='https://ingalls.ca'
+                                    class='text-white-50 text-decoration-none'
+                                >Nick Ingalls</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class='dropup position-absolute'
+            style='bottom: 24px; right: 24px; z-index: 20;'
+        >
+            <div
+                class='cursor-pointer'
+                @click='showSettings = !showSettings'
+            >
+                <IconSettings class='text-white' />
+            </div>
+
+            <div
+                v-if='showSettings'
+                class='dropdown-menu dropdown-menu-card show dropdown-menu-end p-0 shadow'
+                style='min-width: 300px; bottom: 100% !important; top: auto !important; right: 0 !important; left: auto !important;'
+            >
+                <div class='card'>
+                    <div class='card-header'>
+                        <h3 class='card-title'>
+                            Login Settings
+                        </h3>
+                        <div class='card-actions'>
+                            <button
+                                class='btn-close'
+                                @click.stop='showSettings = false'
+                            />
+                        </div>
+                    </div>
+                    <div class='card-body p-0'>
+                        <div
+                            v-if='workers.length === 0'
+                            class='p-3 text-muted text-center'
+                        >
+                            No Service Workers Found
+                        </div>
+                        <div
+                            v-else
+                            class='list-group list-group-flush'
+                        >
+                            <div
+                                v-for='w in workers'
+                                :key='w.url'
+                                class='list-group-item'
+                            >
+                                <div class='d-flex justify-content-between align-items-center'>
+                                    <div
+                                        class='text-truncate me-2'
+                                        title='Service Worker'
+                                    >
+                                        <div class='fw-bold'>
+                                            {{ w.url }}
+                                        </div>
+                                        <div class='mt-1 d-flex align-items-center gap-2'>
+                                            <TablerBadge
+                                                background-color='rgba(34, 197, 94, 0.2)'
+                                                border-color='rgba(34, 197, 94, 0.5)'
+                                                text-color='#16a34a'
+                                            >
+                                                {{ w.state }}
+                                            </TablerBadge>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class='btn btn-icon btn-ghost-danger btn-sm'
+                                        title='Unregister'
+                                        @click='unregister(w.registration)'
+                                    >
+                                        <IconTrash size='16' />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import {
     TablerInput,
-    TablerLoading
+    TablerLoading,
+    TablerBadge
 } from '@tak-ps/vue-tabler';
 import {
     IconCopy,
-    IconCheck
+    IconCheck,
+    IconSettings,
+    IconTrash
 } from '@tabler/icons-vue';
 
 const emit = defineEmits(['login']);
@@ -197,9 +317,47 @@ const mfa = ref({
 
 const copied = ref(false);
 const loading = ref(false);
+const showSettings = ref(false);
+const workers = ref([]);
+
 const body = ref({
     username: '',
     password: ''
+});
+
+const fetchWorkers = async () => {
+    if (!('serviceWorker' in navigator)) return;
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    workers.value = registrations.map(r => {
+        const worker = r.active || r.waiting || r.installing;
+        const scriptURL = worker?.scriptURL;
+
+        let url = 'Unknown';
+
+        if (scriptURL) {
+            try {
+                const u = new URL(scriptURL);
+                url = u.origin + u.pathname;
+            } catch {
+                url = scriptURL;
+            }
+        }
+
+        return {
+            url,
+            state: worker?.state || 'Unknown',
+            registration: r
+        }
+    });
+}
+
+const unregister = async (r) => {
+    await r.unregister();
+    await fetchWorkers();
+}
+
+watch(showSettings, (val) => {
+    if (val) fetchWorkers();
 });
 
 function copySecret() {

@@ -6,6 +6,7 @@
         data-bs-theme-primary='blue'
     >
         <header
+            v-if='!route.path.includes("/login")'
             class='navbar navbar-expand-md d-print-none sticky-top'
         >
             <div class='container-xl'>
@@ -20,7 +21,7 @@
                 </div>
                 <div class='col mx-2'>
                     <div
-                        class='page-pretitle text-white'
+                        class='page-pretitle'
                         v-text='name'
                     />
                     <h2 class='page-title'>
@@ -404,7 +405,7 @@
             @close='err = null'
         />
 
-        <PageFooter />
+        <PageFooter v-if='!route.path.includes("/login")' />
     </div>
 </template>
 

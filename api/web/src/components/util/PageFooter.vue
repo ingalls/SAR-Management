@@ -1,5 +1,8 @@
 <template>
-    <footer class='footer footer-transparent d-print-none'>
+    <footer
+        class='footer footer-transparent d-print-none'
+        :class='{ "footer-fixed": isLoginPage }'
+    >
         <div class='container-xl'>
             <div class='row text-center align-items-center flex-row-reverse'>
                 <div class='col-lg-auto ms-lg-auto'>
@@ -23,11 +26,11 @@
                 <div class='col-12 col-lg-auto mt-3 mt-lg-0'>
                     <ul class='list-inline list-inline-dots mb-0'>
                         <li class='list-inline-item'>
-                            Copyright © 2025
+                            Copyright © 2026
                             <a
                                 href='https://ingalls.ca'
                                 class='link-secondary'
-                            >Nick Ingalls - Mesa County SAR</a>
+                            >Nick Ingalls</a>
                         </li>
                     </ul>
                 </div>
@@ -37,5 +40,29 @@
 </template>
 
 <script setup>
-// PageFooter - migrated to Composition API
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const isLoginPage = computed(() => route.path.includes('/login'));
 </script>
+
+<style scoped>
+.footer-fixed {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.footer-fixed :deep(.link-secondary) {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.footer-fixed :deep(.link-secondary:hover) {
+    color: rgba(255, 255, 255, 1) !important;
+}
+</style>
