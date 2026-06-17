@@ -3,7 +3,7 @@ CREATE TABLE "agency" (
 	"created" timestamp with time zone DEFAULT Now() NOT NULL,
 	"updated" timestamp with time zone DEFAULT Now() NOT NULL,
 	"name" text NOT NULL,
-	"location_geom" "GEOMETRY(POINT, 4326)",
+	"location_geom" GEOMETRY(POINT, 4326),
 	"logo" text DEFAULT '' NOT NULL
 );
 --> statement-breakpoint
