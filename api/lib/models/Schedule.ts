@@ -2,8 +2,8 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Schedule, ScheduleEvent, ScheduleOverride, User } from '../schema.js';
-import { sql, eq, is, asc, desc, and, lte, gte, SQL } from 'drizzle-orm';
+import { Schedule } from '../schema.js';
+import { sql, eq, is, asc, desc, SQL } from 'drizzle-orm';
 
 export const AugmentedSchedule = Type.Object({
     id: Type.Integer(),
