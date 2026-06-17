@@ -3,7 +3,7 @@
         class='d-flex flex-row gap-3 position-relative p-3'
         @click='$router.push(`/training/${training.id}`)'
     >
-        <div class='icon-wrapper d-flex align-items-center justify-content-center rounded-circle bg-black bg-opacity-25'>
+        <div class='icon-wrapper d-flex align-items-center justify-content-center rounded-circle bg-black bg-opacity-25' style='width: 48px; height: 48px; flex-shrink: 0;'>
             <IconUserCheck
                 v-if='attendance && training.users && training.users.includes(auth.id)'
                 v-tooltip='"Attended"'

@@ -133,21 +133,10 @@
                             required
                         />
                         <div class='mt-3'>
-                            <TablerInput
+                            <UploadLogo
                                 v-model='agencyForm.logo'
-                                label='Logo URL'
-                                placeholder='https://example.com/logo.png'
+                                label='Agency Logo'
                             />
-                        </div>
-                        <div
-                            v-if='agencyForm.logo'
-                            class='mt-2'
-                        >
-                            <img
-                                :src='agencyForm.logo'
-                                alt='Logo preview'
-                                style='max-width: 200px; max-height: 100px; object-fit: contain;'
-                            >
                         </div>
                     </div>
                     <div class='modal-footer'>
@@ -192,6 +181,7 @@ import {
     TablerEpoch
 } from '@tak-ps/vue-tabler';
 import TableFooter from '../util/TableFooter.vue';
+import UploadLogo from '../util/UploadLogo.vue';
 
 const loading = ref(true);
 const saving = ref(false);

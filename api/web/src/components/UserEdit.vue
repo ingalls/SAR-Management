@@ -182,7 +182,17 @@
                                             
                                             <!-- Agency Associations Section -->
                                             <div class='col-md-12 mt-4'>
-                                                <h3 class='mb-3'>Agency Associations</h3>
+                                                <div class='d-flex align-items-center mb-3'>
+                                                    <h3 class='mb-0'>Agency Associations</h3>
+                                                    <TablerIconButton
+                                                        v-if='is_iam("User:Admin")'
+                                                        title='Add Agency Association'
+                                                        class='ms-2'
+                                                        @click='showAddAgencyModal = true'
+                                                    >
+                                                        <IconPlus :size='24' stroke='1' />
+                                                    </TablerIconButton>
+                                                </div>
                                                 
                                                 <!-- Current Associations -->
                                                 <div class='mb-3'>
@@ -228,39 +238,6 @@
                                                         </div>
                                                     </template>
                                                 </div>
-
-                                                <!-- Add New Association -->
-                                                <div v-if='is_iam("User:Admin")' class='card'>
-                                                    <div class='card-body'>
-                                                        <h4 class='card-title mb-3'>Add Agency Association</h4>
-                                                        <div class='row'>
-                                                            <div class='col-md-8'>
-                                                                <TablerSelect
-                                                                    v-model='newAgency.agency_id'
-                                                                    label='Select Agency'
-                                                                    :options='availableAgencies'
-                                                                    placeholder='Choose an agency...'
-                                                                />
-                                                            </div>
-                                                            <div class='col-md-3'>
-                                                                <TablerEnum
-                                                                    v-model='newAgency.access'
-                                                                    label='Access Level'
-                                                                    :options='["user", "admin"]'
-                                                                />
-                                                            </div>
-                                                            <div class='col-md-1 d-flex align-items-end'>
-                                                                <button
-                                                                    class='btn btn-primary'
-                                                                    :disabled='!newAgency.agency_id'
-                                                                    @click='addAgencyAssociation'
-                                                                >
-                                                                    <IconPlus :size='16' />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
 
                                             <div class='col-md-12 my-4'>
@@ -297,12 +274,22 @@
             @close='upload = null'
             @done='upload = null; cache = +new Date()'
         />
+
+        <AddAgencyAssociation
+            v-if='showAddAgencyModal'
+            :show='showAddAgencyModal'
+            :user-id='parseInt(route.params.userid)'
+            :available-agencies='availableAgencies'
+            @close='showAddAgencyModal = false'
+            @added='fetchUserAgencies'
+        />
     </div>
 </template>
 
 <script setup>
 import iamHelper from '../iam.js';
 import Upload from './util/Upload.vue';
+import AddAgencyAssociation from './User/AddAgencyAssociation.vue';
 import {
     TablerNone,
     TablerBreadCrumb,
@@ -310,6 +297,7 @@ import {
     TablerInput,
     TablerSelect,
     TablerEnum,
+    TablerIconButton,
 } from '@tak-ps/vue-tabler';
 import {
     IconPlus,
@@ -370,10 +358,7 @@ const user = reactive({
 
 const userAgencies = ref([]);
 const availableAgencies = ref([]);
-const newAgency = reactive({
-    agency_id: null,
-    access: 'user'
-});
+const showAddAgencyModal = ref(false);
 
 function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
 
@@ -407,30 +392,6 @@ async function fetchAvailableAgencies() {
         }));
     } catch (err) {
         console.error('Failed to fetch agencies:', err);
-    }
-}
-
-async function addAgencyAssociation() {
-    if (!newAgency.agency_id) return;
-    
-    try {
-        await window.std(`/api/user/${route.params.userid}/agency`, {
-            method: 'POST',
-            body: {
-                agency_id: newAgency.agency_id,
-                access: newAgency.access
-            }
-        });
-        
-        // Reset form
-        newAgency.agency_id = null;
-        newAgency.access = 'user';
-        
-        // Refresh list
-        await fetchUserAgencies();
-    } catch (err) {
-        console.error('Failed to add agency association:', err);
-        alert(err.message || 'Failed to add agency association');
     }
 }
 
