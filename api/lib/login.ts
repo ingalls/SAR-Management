@@ -27,7 +27,7 @@ export default class Login {
         const verification = await verify({
             token,
             secret: user.mfa_secret,
-            epochTolerance: [10, 30]
+            epochTolerance: [60, 60]
         });
 
         if (!verification || !verification.valid) throw new Err(403, null, 'Invalid MFA Token');
