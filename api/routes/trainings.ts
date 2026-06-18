@@ -230,8 +230,12 @@ export default async function router(schema: Schema, config: Config) {
             const agencies = req.body.agencies;
             delete req.body.agencies;
 
-            // Validate that at least one agency belongs to the user
-            if (agencies && agencies.length > 0) {
+            // Validate agencies if provided in PATCH request
+            if (agencies !== undefined) {
+                if (!agencies || agencies.length === 0) {
+                    throw new Err(400, null, 'At least one agency is required');
+                }
+                
                 const userAgencies = await config.models.UserAgency.listByUser(user.id);
                 const userAgencyIds = userAgencies.items.map(ua => ua.agency_id);
                 const hasOwnAgency = agencies.some(agencyId => userAgencyIds.includes(agencyId));
@@ -239,8 +243,6 @@ export default async function router(schema: Schema, config: Config) {
                 if (!hasOwnAgency) {
                     throw new Err(400, null, 'At least one agency must belong to you');
                 }
-            } else {
-                throw new Err(400, null, 'At least one agency is required');
             }
 
             await config.models.Training.commit(req.params.trainingid, req.body);

@@ -74,6 +74,7 @@
                                             <AgencySelect
                                                 v-model='training.agencies'
                                                 label='Agencies'
+                                                :user-id='auth.id'
                                             />
                                         </div>
                                         <div class='col-md-12'>

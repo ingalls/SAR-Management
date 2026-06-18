@@ -80,6 +80,7 @@
                                             <AgencySelect
                                                 v-model='mission.agencies'
                                                 label='Agencies'
+                                                :user-id='auth.id'
                                             />
                                         </div>
                                         <div class='col-12 col-md-12'>
