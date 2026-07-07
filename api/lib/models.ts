@@ -94,7 +94,7 @@ export default class Models {
         this.TrainingAssigned = new TrainingAssignedModel(pg);
         this.MissionAssigned = new MissionAssignedModel(pg);
         this.ScheduleOverride = new ScheduleOverrideModel(pg);
-        this.SeamSetting = new TeamSettingModel(pg);
+        this.TeamSetting = new TeamSettingModel(pg);
         this.Team = new TeamModel(pg);
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
