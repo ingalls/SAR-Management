@@ -10,6 +10,7 @@ import IssueCommentModel from './models/IssueComment.js'
 import MissionAssignedModel from './models/MissionAssigned.js'
 import TrainingAssignedModel from './models/TrainingAssigned.js'
 import PollModel from './models/IssuePoll.js'
+import StatsModel from './models/Stats.js'
 import LeadershipModel from './models/Leadership.js'
 import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
@@ -17,7 +18,6 @@ import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
 import TeamModel from './models/Team.js'
 import TeamSettingModel from './models/TeamSetting.js'
-import StatsModel from './models/Stats.js'
 import UserAgencyModel from './models/UserAgency.js'
 import * as pgtypes from './schema.js';
 
@@ -93,9 +93,9 @@ export default class Models {
         this.IssueAssigned = new IssueAssignedModel(pg);
         this.TrainingAssigned = new TrainingAssignedModel(pg);
         this.MissionAssigned = new MissionAssignedModel(pg);
-        this.ScheduleOverride = new ScheduleOverrideModel(pg);
         this.TeamSetting = new TeamSettingModel(pg);
         this.Team = new TeamModel(pg);
+        this.Stats = new StatsModel(pg);
 
         this.UserSetting = new Modeler(pg, pgtypes.UserSetting);
         this.UserReset = new Modeler(pg, pgtypes.UserReset);

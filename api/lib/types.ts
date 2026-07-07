@@ -21,7 +21,6 @@ export const TeamChannelResponse = createSelectSchema(schemas.TeamChannel);
 export const PollQuestionResponse = createSelectSchema(schemas.PollQuestion, {
     id: Type.Integer(),
     poll_id: Type.Integer(),
-    agency_id: Type.Optional(Type.Union([Type.Integer(), Type.Null()])),
 });
 
 export const PollResponse = Type.Object({
