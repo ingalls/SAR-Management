@@ -1,35 +1,35 @@
 {
-    admin off
+	admin off
 }
 
 team.mesacountysar.com {
-    header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options SAMEORIGIN
-        Referrer-Policy strict-origin-when-cross-origin
-        Permissions-Policy "fullscreen=(self), clipboard-read=(self), clipboard-write=(self)"
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    }
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "fullscreen=(self), clipboard-read=(self), clipboard-write=(self)"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+	}
 
-    log {
-        output stdout
-    }
+	log {
+		output stdout
+	}
 
-    route /api* {
-        reverse_proxy localhost:4999
-    }
+	route /api* {
+		reverse_proxy localhost:4999
+	}
 
-    route /docs* {
-        reverse_proxy localhost:4999
-    }
+	route /docs* {
+		reverse_proxy localhost:4999
+	}
 
-    route * {
-        header {
-            Cache-Control "no-store"
-        }
+	route * {
+		header {
+			Cache-Control "no-store"
+		}
 
-        root * /home/eiger/SAR-Management/api/web/dist
-        try_files {path} {path}/ /index.html?{query}
-        file_server
-    }
+		root * /home/eiger/SAR-Management/api/web/dist
+		try_files {path} {path}/ /index.html?{query}
+		file_server
+	}
 }
