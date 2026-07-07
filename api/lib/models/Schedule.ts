@@ -48,58 +48,30 @@ export default class ScheduleModel extends Modeler<typeof Schedule> {
                 rotation_type: Schedule.rotation_type,
                 rotation_period: Schedule.rotation_period,
                 oncall_uid: sql<number | null>`(
-                    SELECT COALESCE(
-                        (SELECT COALESCE(so.override_uid, so.uid)
-                         FROM schedules_override so
-                         WHERE so.schedule_id = "schedule"."id"
-                           AND so.start_ts <= ${now}
-                           AND so.end_ts >= ${now}
-                         LIMIT 1),
-                        (SELECT se.uid
-                         FROM schedules_event se
-                         WHERE se.schedule_id = "schedule"."id"
-                           AND se.start_ts <= ${now}
-                           AND se.end_ts >= ${now}
-                         LIMIT 1)
-                    )
+                    SELECT se.uid
+                    FROM schedules_event se
+                    WHERE se.schedule_id = "schedule"."id"
+                      AND se.start_ts <= ${now}
+                      AND se.end_ts >= ${now}
+                    LIMIT 1
                 )`.as('oncall_uid'),
                 oncall_fname: sql<string | null>`(
-                    SELECT COALESCE(
-                        (SELECT COALESCE(u2.fname, u1.fname)
-                         FROM schedules_override so
-                         LEFT JOIN users u1 ON u1.id = so.uid
-                         LEFT JOIN users u2 ON u2.id = so.override_uid
-                         WHERE so.schedule_id = "schedule"."id"
-                           AND so.start_ts <= ${now}
-                           AND so.end_ts >= ${now}
-                         LIMIT 1),
-                        (SELECT u.fname
-                         FROM schedules_event se
-                         LEFT JOIN users u ON u.id = se.uid
-                         WHERE se.schedule_id = "schedule"."id"
-                           AND se.start_ts <= ${now}
-                           AND se.end_ts >= ${now}
-                         LIMIT 1)
-                    )
+                    SELECT u.fname
+                    FROM schedules_event se
+                    LEFT JOIN users u ON u.id = se.uid
+                    WHERE se.schedule_id = "schedule"."id"
+                      AND se.start_ts <= ${now}
+                      AND se.end_ts >= ${now}
+                    LIMIT 1
                 )`.as('oncall_fname'),
                 oncall_lname: sql<string | null>`(
-                    SELECT COALESCE(
-                        (SELECT COALESCE(u2.lname, u1.lname)
-                         FROM schedules_override so
-                         LEFT JOIN users u1 ON u1.id = so.uid
-                         LEFT JOIN users u2 ON u2.id = so.override_uid
-                         WHERE so.schedule_id = "schedule"."id"
-                           AND so.start_ts <= ${now}
-                           AND so.end_ts >= ${now}
-                         LIMIT 1),
-                        (SELECT u.lname
-                         FROM schedules_event se
-                         LEFT JOIN users u ON u.id = se.uid
-                         WHERE se.schedule_id = "schedule"."id"
-                           AND se.start_ts <= ${now}
-                           AND se.end_ts >= ${now}
-                         LIMIT 1)
-                    )
+                    SELECT u.lname
+                    FROM schedules_event se
+                    LEFT JOIN users u ON u.id = se.uid
+                    WHERE se.schedule_id = "schedule"."id"
+                      AND se.start_ts <= ${now}
+                      AND se.end_ts >= ${now}
+                    LIMIT 1
                 )`.as('oncall_lname')
             })
             .from(Schedule)
@@ -136,58 +108,30 @@ export default class ScheduleModel extends Modeler<typeof Schedule> {
                 rotation_type: Schedule.rotation_type,
                 rotation_period: Schedule.rotation_period,
                 oncall_uid: sql<number | null>`(
-                    SELECT COALESCE(
-                        (SELECT COALESCE(so.override_uid, so.uid)
-                         FROM schedules_override so
-                         WHERE so.schedule_id = "schedule"."id"
-                           AND so.start_ts <= ${now}
-                           AND so.end_ts >= ${now}
-                         LIMIT 1),
-                        (SELECT se.uid
-                         FROM schedules_event se
-                         WHERE se.schedule_id = "schedule"."id"
-                           AND se.start_ts <= ${now}
-                           AND se.end_ts >= ${now}
-                         LIMIT 1)
-                    )
+                    SELECT se.uid
+                    FROM schedules_event se
+                    WHERE se.schedule_id = "schedule"."id"
+                      AND se.start_ts <= ${now}
+                      AND se.end_ts >= ${now}
+                    LIMIT 1
                 )`.as('oncall_uid'),
                 oncall_fname: sql<string | null>`(
-                    SELECT COALESCE(
-                        (SELECT COALESCE(u2.fname, u1.fname)
-                         FROM schedules_override so
-                         LEFT JOIN users u1 ON u1.id = so.uid
-                         LEFT JOIN users u2 ON u2.id = so.override_uid
-                         WHERE so.schedule_id = "schedule"."id"
-                           AND so.start_ts <= ${now}
-                           AND so.end_ts >= ${now}
-                         LIMIT 1),
-                        (SELECT u.fname
-                         FROM schedules_event se
-                         LEFT JOIN users u ON u.id = se.uid
-                         WHERE se.schedule_id = "schedule"."id"
-                           AND se.start_ts <= ${now}
-                           AND se.end_ts >= ${now}
-                         LIMIT 1)
-                    )
+                    SELECT u.fname
+                    FROM schedules_event se
+                    LEFT JOIN users u ON u.id = se.uid
+                    WHERE se.schedule_id = "schedule"."id"
+                      AND se.start_ts <= ${now}
+                      AND se.end_ts >= ${now}
+                    LIMIT 1
                 )`.as('oncall_fname'),
                 oncall_lname: sql<string | null>`(
-                    SELECT COALESCE(
-                        (SELECT COALESCE(u2.lname, u1.lname)
-                         FROM schedules_override so
-                         LEFT JOIN users u1 ON u1.id = so.uid
-                         LEFT JOIN users u2 ON u2.id = so.override_uid
-                         WHERE so.schedule_id = "schedule"."id"
-                           AND so.start_ts <= ${now}
-                           AND so.end_ts >= ${now}
-                         LIMIT 1),
-                        (SELECT u.lname
-                         FROM schedules_event se
-                         LEFT JOIN users u ON u.id = se.uid
-                         WHERE se.schedule_id = "schedule"."id"
-                           AND se.start_ts <= ${now}
-                           AND se.end_ts >= ${now}
-                         LIMIT 1)
-                    )
+                    SELECT u.lname
+                    FROM schedules_event se
+                    LEFT JOIN users u ON u.id = se.uid
+                    WHERE se.schedule_id = "schedule"."id"
+                      AND se.start_ts <= ${now}
+                      AND se.end_ts >= ${now}
+                    LIMIT 1
                 )`.as('oncall_lname')
             })
             .from(Schedule)

@@ -4,20 +4,6 @@
             <h1 class='card-title'>
                 Schedule Calendar
             </h1>
-            <div class='btn-list ms-auto'>
-                <button
-                    class='btn btn-sm'
-                    :class='showOverrides ? "btn-yellow" : "btn-outline-yellow"'
-                    @click='showOverrides = !showOverrides; calendar.refetchEvents()'
-                >
-                    <IconArrowsExchange
-                        :size='16'
-                        :stroke='1.5'
-                        class='me-1'
-                    />
-                    Overrides
-                </button>
-            </div>
         </div>
 
         <div class='card-body'>
@@ -34,51 +20,19 @@
                 aria-label='Close'
                 @click='modal.shown = false'
             />
-            <div
-                class='modal-status'
-                :class='modal.type === "override" ? "bg-orange" : "bg-yellow"'
-            />
+            <div class='modal-status bg-yellow' />
             <div class='modal-header'>
-                <template v-if='modal.type === "override"'>
-                    <div class='modal-title'>
-                        {{ modal.id ? 'Edit Override' : 'Create Override' }}
-                    </div>
-                    <div
+                <div class='modal-title'>
+                    {{ modal.id ? 'Edit Shift' : 'Create Shift' }}
+                </div>
+                <div class='ms-auto btn-list'>
+                    <TablerDelete
                         v-if='modal.id'
-                        class='ms-auto'
-                    >
-                        <TablerDelete
-                            v-tooltip='"Delete Override"'
-                            displaytype='icon'
-                            @delete='deleteOverride'
-                        />
-                    </div>
-                </template>
-                <template v-else>
-                    <div class='modal-title'>
-                        {{ modal.id ? 'Edit Shift' : 'Create Shift' }}
-                    </div>
-                    <div class='ms-auto btn-list'>
-                        <button
-                            v-if='modal.id'
-                            class='btn btn-sm btn-outline-orange'
-                            @click='switchToOverride'
-                        >
-                            <IconArrowsExchange
-                                :size='16'
-                                :stroke='1.5'
-                                class='me-1'
-                            />
-                            Override This Shift
-                        </button>
-                        <TablerDelete
-                            v-if='modal.id'
-                            v-tooltip='"Delete Event"'
-                            displaytype='icon'
-                            @delete='deleteAssignment'
-                        />
-                    </div>
-                </template>
+                        v-tooltip='"Delete Event"'
+                        displaytype='icon'
+                        @delete='deleteAssignment'
+                    />
+                </div>
             </div>
             <div class='modal-body'>
                 <TablerLoading
@@ -99,27 +53,11 @@
                         type='datetime-local'
                         label='End'
                     />
-
-                    <template v-if='modal.type === "override"'>
-                        <UserDropdown
-                            v-model='modal.title'
-                            :url='`/api/schedule/${schedule.id}/members`'
-                            label='Replacement'
-                            @selected='modal.user = $event.id'
-                        />
-                        <TablerInput
-                            v-model='modal.reason'
-                            :rows='3'
-                            label='Reason'
-                        />
-                    </template>
-                    <template v-else>
-                        <UserDropdown
-                            v-model='modal.title'
-                            :url='`/api/schedule/${schedule.id}/members`'
-                            @selected='modal.user = $event.id'
-                        />
-                    </template>
+                    <UserDropdown
+                        v-model='modal.title'
+                        :url='`/api/schedule/${schedule.id}/members`'
+                        @selected='modal.user = $event.id'
+                    />
                 </div>
             </div>
             <div class='modal-footer'>
@@ -148,9 +86,6 @@ import {
     TablerDelete,
     TablerLoading,
 } from '@tak-ps/vue-tabler';
-import {
-    IconArrowsExchange,
-} from '@tabler/icons-vue';
 
 const props = defineProps({
     schedule: {
@@ -160,42 +95,26 @@ const props = defineProps({
 });
 
 const calendar = ref(null);
-const showOverrides = ref(true);
 const modal = reactive({
     loading: false,
     shown: false,
-    type: 'event',
     id: null,
     user: null,
     title: '',
     start: '',
     end: '',
-    reason: '',
-    override_uid: null,
 });
 
 const resetModal = () => {
     Object.assign(modal, {
         loading: false,
         shown: false,
-        type: 'event',
         id: null,
         user: null,
         title: '',
         start: '',
         end: '',
-        reason: '',
-        override_uid: null,
     });
-};
-
-const switchToOverride = () => {
-    modal.type = 'override';
-    modal.id = null;
-    modal.override_uid = modal.user;
-    modal.user = null;
-    modal.title = '';
-    modal.reason = '';
 };
 
 const deleteAssignment = async () => {
@@ -247,36 +166,6 @@ const submitAssignment = async () => {
     resetModal();
 };
 
-const submitOverride = async () => {
-    modal.loading = true;
-
-    const body = {
-        uid: modal.user,
-        start_ts: moment(modal.start).toISOString(),
-        end_ts: moment(modal.end).toISOString(),
-        reason: modal.reason || '',
-    };
-
-    if (modal.override_uid) {
-        body.override_uid = modal.override_uid;
-    }
-
-    if (modal.id) {
-        await window.std(`/api/schedule/${props.schedule.id}/override/${modal.id}`, {
-            method: 'PATCH',
-            body
-        });
-    } else {
-        await window.std(`/api/schedule/${props.schedule.id}/override`, {
-            method: 'POST',
-            body
-        });
-    }
-
-    calendar.value.refetchEvents();
-    resetModal();
-};
-
 onMounted(async () => {
     calendar.value = new Calendar(document.getElementById('calendar'), {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
@@ -291,30 +180,15 @@ onMounted(async () => {
         unselectAuto: true,
         eventClick: async (info) => {
             const event = info.event;
-            if (event.extendedProps.type === 'override') {
-                Object.assign(modal, {
-                    type: 'override',
-                    id: event.extendedProps.overrideId,
-                    user: event.extendedProps.uid,
-                    override_uid: event.extendedProps.override_uid,
-                    title: event.title,
-                    start: moment(event.start).format('YYYY-MM-DDTHH:mm'),
-                    end: moment(event.end).format('YYYY-MM-DDTHH:mm'),
-                    reason: event.extendedProps.reason || '',
-                    shown: true,
-                });
-            } else {
-                Object.assign(modal, {
-                    type: 'event',
-                    id: event.id,
-                    uid: event.extendedProps.uid,
-                    user: event.extendedProps.uid,
-                    title: event.title,
-                    start: moment(event.start).format('YYYY-MM-DDTHH:mm'),
-                    end: moment(event.end).format('YYYY-MM-DDTHH:mm'),
-                    shown: true
-                });
-            }
+            Object.assign(modal, {
+                id: event.id,
+                uid: event.extendedProps.uid,
+                user: event.extendedProps.uid,
+                title: event.title,
+                start: moment(event.start).format('YYYY-MM-DDTHH:mm'),
+                end: moment(event.end).format('YYYY-MM-DDTHH:mm'),
+                shown: true
+            });
         },
         eventSources: async (fetchInfo, resolve, reject) => {
             try {
@@ -326,34 +200,9 @@ onMounted(async () => {
 
                 events = events.concat(shiftEvents.map(e => ({
                     ...e,
-                    type: 'event',
                     backgroundColor: e.color || '#206bc4',
                     borderColor: e.color || '#206bc4',
                 })));
-
-                if (showOverrides.value) {
-                    const overrideUrl = window.stdurl(`/api/schedule/${props.schedule.id}/override`);
-                    overrideUrl.searchParams.append('start', fetchInfo.startStr);
-                    overrideUrl.searchParams.append('end', fetchInfo.endStr);
-                    overrideUrl.searchParams.append('limit', '100');
-
-                    const overrideRes = await window.std(overrideUrl);
-                    for (const o of overrideRes.items) {
-                        events.push({
-                            id: `override-${o.id}`,
-                            title: `↻ ${o.uid_fname} ${o.uid_lname}`,
-                            start: moment(o.start_ts).toISOString(),
-                            end: moment(o.end_ts).toISOString(),
-                            backgroundColor: '#f76707',
-                            borderColor: '#f76707',
-                            type: 'override',
-                            overrideId: o.id,
-                            uid: o.uid,
-                            override_uid: o.override_uid,
-                            reason: o.reason,
-                        });
-                    }
-                }
 
                 return resolve(events);
             } catch (err) {

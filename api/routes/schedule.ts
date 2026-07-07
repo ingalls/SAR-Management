@@ -6,12 +6,11 @@ import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import moment from 'moment';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
-import { Schedule, ScheduleOverride, User } from '../lib/schema.js';
+import { Schedule, User } from '../lib/schema.js';
 import {
     StandardResponse,
     ScheduleResponse,
     ScheduleEventResponse,
-    ScheduleOverrideResponse,
     UserResponse
 } from '../lib/types.js';
 
@@ -392,23 +391,10 @@ export default async function router(schema: Schema, config: Config) {
                 }
             }
 
-            // Fetch overrides to account for coverage gaps
-            const overrides = (await config.models.ScheduleOverride.list({
-                limit: 1000,
-                where: sql`
-                    schedule_id = ${req.params.scheduleid}
-                    AND start_ts >= ${req.query.start}
-                    AND end_ts <= ${req.query.end}
-                `
-            })).items;
-
-            // Combine events and overrides into coverage periods
+            // Build coverage periods from events only
             const coverage: Array<{ start: Date; end: Date }> = [];
             for (const event of events) {
                 coverage.push({ start: new Date(event.start), end: new Date(event.end) });
-            }
-            for (const override of overrides) {
-                coverage.push({ start: new Date(override.start_ts), end: new Date(override.end_ts) });
             }
 
             // Sort coverage periods by start time
@@ -497,7 +483,7 @@ export default async function router(schema: Schema, config: Config) {
     await schema.delete('/schedule/:scheduleid', {
         name: 'Delete Schedule',
         group: 'Schedules',
-        description: 'Delete a schedule and all associated events and overrides',
+        description: 'Delete a schedule and all associated events',
         params: Type.Object({
             scheduleid: Type.Integer(),
         }),
@@ -509,7 +495,6 @@ export default async function router(schema: Schema, config: Config) {
             await config.models.Schedule.from(req.params.scheduleid);
 
             await config.models.ScheduleEvent.deleteBySchedule(req.params.scheduleid);
-            await config.models.ScheduleOverride.deleteBySchedule(req.params.scheduleid);
             await config.models.Schedule.delete(req.params.scheduleid);
 
             res.json({
@@ -605,22 +590,6 @@ export default async function router(schema: Schema, config: Config) {
             });
 
             for (const schedule of schedules.items) {
-                // Get overrides active right now for this schedule
-                const overrides = await config.models.ScheduleOverride.augmented_list({
-                    limit: 100,
-                    where: sql`
-                        schedule_id = ${schedule.id}
-                        AND start_ts <= ${now}
-                        AND end_ts >= ${now}
-                    `
-                });
-
-                const overriddenUids = new Set(
-                    overrides.items
-                        .filter(o => o.override_uid !== null)
-                        .map(o => o.override_uid)
-                );
-
                 // Get events active right now
                 const events = await config.models.ScheduleEvent.augmented_list({
                     limit: 100,
@@ -631,33 +600,17 @@ export default async function router(schema: Schema, config: Config) {
                     `
                 });
 
-                // Add non-overridden events
+                // Add all events
                 for (const event of events.items) {
-                    if (!overriddenUids.has(event.uid)) {
-                        entries.push({
-                            schedule_id: schedule.id,
-                            schedule_name: schedule.name,
-                            uid: event.uid,
-                            fname: event.fname,
-                            lname: event.lname,
-                            start_ts: event.start_ts,
-                            end_ts: event.end_ts,
-                            is_override: false
-                        });
-                    }
-                }
-
-                // Add override replacements
-                for (const override of overrides.items) {
                     entries.push({
                         schedule_id: schedule.id,
                         schedule_name: schedule.name,
-                        uid: override.uid,
-                        fname: override.uid_fname,
-                        lname: override.uid_lname,
-                        start_ts: override.start_ts,
-                        end_ts: override.end_ts,
-                        is_override: true
+                        uid: event.uid,
+                        fname: event.fname,
+                        lname: event.lname,
+                        start_ts: event.start_ts,
+                        end_ts: event.end_ts,
+                        is_override: false
                     });
                 }
             }
@@ -684,21 +637,6 @@ export default async function router(schema: Schema, config: Config) {
             const now = moment().toISOString();
             const entries: Array<Static<typeof OnCallEntry>> = [];
 
-            const overrides = await config.models.ScheduleOverride.augmented_list({
-                limit: 100,
-                where: sql`
-                    schedule_id = ${schedule.id}
-                    AND start_ts <= ${now}
-                    AND end_ts >= ${now}
-                `
-            });
-
-            const overriddenUids = new Set(
-                overrides.items
-                    .filter(o => o.override_uid !== null)
-                    .map(o => o.override_uid)
-            );
-
             const events = await config.models.ScheduleEvent.augmented_list({
                 limit: 100,
                 where: sql`
@@ -709,30 +647,15 @@ export default async function router(schema: Schema, config: Config) {
             });
 
             for (const event of events.items) {
-                if (!overriddenUids.has(event.uid)) {
-                    entries.push({
-                        schedule_id: schedule.id,
-                        schedule_name: schedule.name,
-                        uid: event.uid,
-                        fname: event.fname,
-                        lname: event.lname,
-                        start_ts: event.start_ts,
-                        end_ts: event.end_ts,
-                        is_override: false
-                    });
-                }
-            }
-
-            for (const override of overrides.items) {
                 entries.push({
                     schedule_id: schedule.id,
                     schedule_name: schedule.name,
-                    uid: override.uid,
-                    fname: override.uid_fname,
-                    lname: override.uid_lname,
-                    start_ts: override.start_ts,
-                    end_ts: override.end_ts,
-                    is_override: true
+                    uid: event.uid,
+                    fname: event.fname,
+                    lname: event.lname,
+                    start_ts: event.start_ts,
+                    end_ts: event.end_ts,
+                    is_override: false
                 });
             }
 
@@ -829,152 +752,6 @@ export default async function router(schema: Schema, config: Config) {
                 status: 200,
                 message: `Generated ${eventsCreated} rotation events`,
                 events_created: eventsCreated
-            });
-        } catch (err) {
-            Err.respond(err, res);
-        }
-    });
-
-    await schema.get('/schedule/:scheduleid/override', {
-        name: 'List Overrides',
-        group: 'Schedules',
-        description: 'List overrides for a schedule',
-        params: Type.Object({
-            scheduleid: Type.Integer(),
-        }),
-        query: Type.Object({
-            limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),
-            order: Type.Optional(Type.Enum(GenericListOrder)),
-            sort: Type.Optional(Type.String({ default: 'id', enum: Object.keys(ScheduleOverride) })),
-            start: Type.Optional(Type.String()),
-            end: Type.Optional(Type.String()),
-        }),
-        res: Type.Object({
-            total: Type.Integer(),
-            items: Type.Array(ScheduleOverrideResponse)
-        })
-    }, async (req, res) => {
-        try {
-            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
-
-            let where = sql`schedule_id = ${req.params.scheduleid}`;
-            if (req.query.start && req.query.end) {
-                where = sql`
-                    schedule_id = ${req.params.scheduleid}
-                    AND start_ts >= ${req.query.start}
-                    AND end_ts <= ${req.query.end}
-                `;
-            }
-
-            res.json(await config.models.ScheduleOverride.augmented_list({
-                limit: req.query.limit,
-                page: req.query.page,
-                order: req.query.order,
-                sort: req.query.sort,
-                where
-            }));
-        } catch (err) {
-            Err.respond(err, res);
-        }
-    });
-
-    await schema.post('/schedule/:scheduleid/override', {
-        name: 'Create Override',
-        group: 'Schedules',
-        description: 'Create an on-call override for a schedule',
-        params: Type.Object({
-            scheduleid: Type.Integer(),
-        }),
-        body: Type.Object({
-            start_ts: Type.String(),
-            end_ts: Type.String(),
-            uid: Type.Integer(),
-            override_uid: Type.Optional(Type.Integer()),
-            reason: Type.Optional(Type.String()),
-        }),
-        res: ScheduleOverrideResponse
-    }, async (req, res) => {
-        try {
-            const auth = await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
-
-            const schedule = await config.models.Schedule.from(req.params.scheduleid);
-            await assertScheduleMember(config, schedule, req.body.uid);
-            if (req.body.override_uid) await assertScheduleMember(config, schedule, req.body.override_uid);
-
-            const override = await config.models.ScheduleOverride.generate({
-                schedule_id: req.params.scheduleid,
-                start_ts: req.body.start_ts,
-                end_ts: req.body.end_ts,
-                uid: req.body.uid,
-                override_uid: req.body.override_uid || null,
-                reason: req.body.reason || '',
-                created_by: auth.id,
-            });
-
-            res.json(await config.models.ScheduleOverride.augmented_from(override.id));
-        } catch (err) {
-            Err.respond(err, res);
-        }
-    });
-
-    await schema.patch('/schedule/:scheduleid/override/:overrideid', {
-        name: 'Update Override',
-        group: 'Schedules',
-        description: 'Update an on-call override',
-        params: Type.Object({
-            scheduleid: Type.Integer(),
-            overrideid: Type.Integer(),
-        }),
-        body: Type.Object({
-            start_ts: Type.Optional(Type.String()),
-            end_ts: Type.Optional(Type.String()),
-            uid: Type.Optional(Type.Integer()),
-            override_uid: Type.Optional(Type.Integer()),
-            reason: Type.Optional(Type.String()),
-        }),
-        res: ScheduleOverrideResponse
-    }, async (req, res) => {
-        try {
-            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
-
-            const schedule = await config.models.Schedule.from(req.params.scheduleid);
-            const override = await config.models.ScheduleOverride.from(req.params.overrideid);
-            if (override.schedule_id !== schedule.id) throw new Err(400, null, 'Override is not part of specified schedule');
-
-            if (req.body.uid) await assertScheduleMember(config, schedule, req.body.uid);
-            if (req.body.override_uid) await assertScheduleMember(config, schedule, req.body.override_uid);
-
-            await config.models.ScheduleOverride.commit(req.params.overrideid, req.body);
-
-            res.json(await config.models.ScheduleOverride.augmented_from(req.params.overrideid));
-        } catch (err) {
-            Err.respond(err, res);
-        }
-    });
-
-    await schema.delete('/schedule/:scheduleid/override/:overrideid', {
-        name: 'Delete Override',
-        group: 'Schedules',
-        description: 'Delete an on-call override',
-        params: Type.Object({
-            scheduleid: Type.Integer(),
-            overrideid: Type.Integer(),
-        }),
-        res: StandardResponse
-    }, async (req, res) => {
-        try {
-            await Auth.is_iam(config, req, IamGroup.OnCall, PermissionsLevel.VIEW);
-
-            const schedule = await config.models.Schedule.from(req.params.scheduleid);
-            const override = await config.models.ScheduleOverride.from(req.params.overrideid);
-            if (override.schedule_id !== schedule.id) throw new Err(400, null, 'Override is not part of specified schedule');
-
-            await config.models.ScheduleOverride.delete(req.params.overrideid);
-
-            res.json({
-                status: 200,
-                message: 'Override Deleted'
             });
         } catch (err) {
             Err.respond(err, res);

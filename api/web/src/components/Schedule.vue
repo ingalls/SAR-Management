@@ -89,12 +89,6 @@
                                                     :user='entry'
                                                     :link='true'
                                                 />
-                                                <span
-                                                    v-if='entry.is_override'
-                                                    class='badge bg-yellow-lt ms-2'
-                                                >
-                                                    Override
-                                                </span>
                                             </div>
                                             <small class='text-muted ms-auto'>
                                                 Until {{ formatTime(entry.end_ts) }}
