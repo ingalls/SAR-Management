@@ -27,7 +27,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_admin(config, req);
+            await Auth.is_user(config, req);
 
             res.json(await config.models.Agency.list({
                 limit: req.query.limit,
@@ -54,7 +54,7 @@ export default async function router(schema: Schema, config: Config) {
         res: AgencyResponse
     }, async (req, res) => {
         try {
-            await Auth.is_admin(config, req);
+            await Auth.is_user(config, req);
 
             res.json(await config.models.Agency.from(req.params.agencyid));
         } catch (err) {
