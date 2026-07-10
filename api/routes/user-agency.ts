@@ -23,7 +23,7 @@ export default async function router(schema: Schema, config: Config) {
         })
     }, async (req, res) => {
         try {
-            await Auth.is_user(config, req);
+            await Auth.is_auth(config, req);
 
             const result = await config.models.UserAgency.listByUser(req.params.userid);
 
