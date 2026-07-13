@@ -78,7 +78,10 @@
                                                         <template v-if='h.name === "name"'>
                                                             <div class='d-flex align-items-center justify-content-between'>
                                                                 <span v-text='schedule[h.name]' />
-                                                                <div v-if='schedule.oncall_uid' class='ms-3 text-end'>
+                                                                <div
+                                                                    v-if='schedule.oncall_uid'
+                                                                    class='ms-3 text-end'
+                                                                >
                                                                     <div class='d-flex align-items-center justify-content-end text-muted mb-1'>
                                                                         <IconPhoneCall
                                                                             :size='14'

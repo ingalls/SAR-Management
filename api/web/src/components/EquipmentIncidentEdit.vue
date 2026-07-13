@@ -114,7 +114,10 @@
                                                             </div>
                                                         </template>
                                                         <template #dropdown>
-                                                            <div class='p-3' @click.stop=''>
+                                                            <div
+                                                                class='p-3'
+                                                                @click.stop=''
+                                                            >
                                                                 <TablerInput
                                                                     v-model='mission_filter'
                                                                     icon='search'
@@ -164,7 +167,10 @@
                                                             </div>
                                                         </template>
                                                         <template #dropdown>
-                                                            <div class='p-3' @click.stop=''>
+                                                            <div
+                                                                class='p-3'
+                                                                @click.stop=''
+                                                            >
                                                                 <TablerInput
                                                                     v-model='training_filter'
                                                                     icon='search'

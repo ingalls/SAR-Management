@@ -238,6 +238,11 @@
                         </div>
                     </div>
                     <div class='card-body p-0'>
+                        <div class='px-3 pt-2 pb-1 border-bottom'>
+                            <span class='text-muted small'>Running </span>
+                            <code class='small'>v{{ version }}</code>
+                            <span class='text-muted small'> (build: {{ buildHash }})</span>
+                        </div>
                         <div
                             v-if='workers.length === 0'
                             class='p-3 text-muted text-center'
@@ -269,6 +274,12 @@
                                             >
                                                 {{ w.state }}
                                             </TablerBadge>
+                                            <div
+                                                v-if='w.build'
+                                                class='text-muted small'
+                                            >
+                                                {{ w.build }}
+                                            </div>
                                         </div>
                                     </div>
                                     <button
@@ -290,7 +301,9 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { version } from '../../package.json';
 import { useRouter, useRoute } from 'vue-router';
+import { getCurrentEntryBuildId, supportsServiceWorker } from '../base/service-worker.ts';
 import {
     TablerInput,
     TablerLoading,
@@ -317,6 +330,7 @@ const mfa = ref({
 
 const copied = ref(false);
 const loading = ref(false);
+const buildHash = getCurrentEntryBuildId();
 const showSettings = ref(false);
 const workers = ref([]);
 
@@ -326,18 +340,20 @@ const body = ref({
 });
 
 const fetchWorkers = async () => {
-    if (!('serviceWorker' in navigator)) return;
+    if (!supportsServiceWorker()) return;
     const registrations = await navigator.serviceWorker.getRegistrations();
     workers.value = registrations.map(r => {
         const worker = r.active || r.waiting || r.installing;
         const scriptURL = worker?.scriptURL;
 
         let url = 'Unknown';
+        let build = null;
 
         if (scriptURL) {
             try {
                 const u = new URL(scriptURL);
                 url = u.origin + u.pathname;
+                build = u.searchParams.get('build');
             } catch {
                 url = scriptURL;
             }
@@ -346,6 +362,7 @@ const fetchWorkers = async () => {
         return {
             url,
             state: worker?.state || 'Unknown',
+            build,
             registration: r
         }
     });

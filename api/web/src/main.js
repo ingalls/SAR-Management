@@ -9,18 +9,82 @@ import App from './App.vue'
 import std from './std.ts';
 std();
 
-// @ts-expect-error Virtual Module
-import { registerSW } from 'virtual:pwa-register'
+import { initServiceWorker, supportsServiceWorker } from './base/service-worker.ts';
 
-registerSW({
-    immediate: true,
-    onNeedRefresh() {
-        console.error('App needs refresh');
-    },
-    onOfflineReady() {
-        console.log('App ready to work offline!')
+initServiceWorker();
+
+// Catch failed resource loads (scripts, stylesheets, images) before Vue initialises.
+// In production, the most common root cause is a stale SW serving a reference
+// to an asset that no longer exists on the origin. We take a targeted
+// recovery path: evict the failing URL and the cached shell, ask the SW to
+// check for a newer registration, and reload. Recovery only runs while
+// online (offline, the network cannot supply the asset either — a reload
+// replays the identical failure forever) and at most once per cooldown
+// window, so a reload that fixes nothing cannot loop. We intentionally do
+// NOT `unregister()` or wipe every cache — doing so while offline deletes
+// the only working copy of the app the user has.
+const SW_RECOVERY_ATTEMPTED_KEY = 'sw-cache-recovery-attempted';
+const SW_RECOVERY_COOLDOWN_MS = 60 * 1000;
+
+// Only app build output (Vite emits hashed assets under /assets/) can be left
+// dangling by a stale service worker. Anything else — API responses, docs,
+// user-supplied content — is not part of the build, so its failure must
+// never trigger a cache eviction + reload.
+function isRecoverableAppAsset(url) {
+    try {
+        const parsed = new URL(url, window.location.href);
+        return parsed.origin === window.location.origin
+            && parsed.pathname.startsWith('/assets/');
+    } catch {
+        return false;
     }
-})
+}
+
+window.addEventListener('error', async (e) => {
+    if (!e.target || e.target === window) return;
+
+    const el = e.target;
+    const url = el.src || el.href || '';
+    console.error('Failed to load resource:', el.tagName, url);
+
+    if (import.meta.env.DEV || !supportsServiceWorker()) return;
+    if (!url) return;
+    if (!isRecoverableAppAsset(url)) return;
+
+    // Offline the asset is unreachable no matter what we evict; reloading
+    // just serves the same incomplete cache and fails the same way.
+    if (!navigator.onLine) return;
+
+    const lastAttempt = Number(sessionStorage.getItem(SW_RECOVERY_ATTEMPTED_KEY)) || 0;
+    if (Date.now() - lastAttempt < SW_RECOVERY_COOLDOWN_MS) return;
+    sessionStorage.setItem(SW_RECOVERY_ATTEMPTED_KEY, String(Date.now()));
+
+    console.warn('Attempting targeted SW cache recovery for:', url);
+
+    try {
+        // Evict the failing URL and the cached shell from every cache
+        // bucket we own. Dropping the shell matters: navigations are
+        // cache-first, so without this the post-reload page is the same
+        // stale HTML referencing the same dead asset. With it, the reload
+        // fetches fresh HTML from the network, which references assets the
+        // server can actually supply.
+        const cacheKeys = await caches.keys();
+        await Promise.all(cacheKeys.map(async (key) => {
+            const cache = await caches.open(key);
+            await cache.delete(url);
+            await cache.delete('/');
+        }));
+
+        // Nudge the SW to re-check the registration; if a newer deploy
+        // is out there, it will install and wait for a user prompt.
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((r) => r.update().catch(() => {})));
+    } catch (err) {
+        console.error('Error during targeted SW cache recovery:', err);
+    } finally {
+        window.location.reload();
+    }
+}, true);
 
 
 const router = new VueRouter.createRouter({

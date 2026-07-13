@@ -8,7 +8,10 @@
             />
         </template>
         <template #dropdown>
-            <div class='m-1' @click.stop=''>
+            <div
+                class='m-1'
+                @click.stop=''
+            >
                 <div
                     v-for='user in list.items'
                     :key='user.id'

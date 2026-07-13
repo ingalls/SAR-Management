@@ -40,7 +40,7 @@
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Status</th>
-                                <th class='w-1'></th>
+                                <th class='w-1' />
                             </tr>
                         </thead>
                         <tbody>

@@ -40,7 +40,10 @@
                     </TablerIconButton>
 
                     <template #dropdown>
-                        <div class='m-1' @click.stop=''>
+                        <div
+                            class='m-1'
+                            @click.stop=''
+                        >
                             <div class='d-flex'>
                                 <IconAmbulance
                                     class='my-1 mx-1'

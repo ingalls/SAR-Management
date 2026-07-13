@@ -10,7 +10,9 @@
             <template v-else>
                 <!-- Organisation Settings -->
                 <div class='mb-4'>
-                    <h4 class='mb-3'>Organisation Settings</h4>
+                    <h4 class='mb-3'>
+                        Organisation Settings
+                    </h4>
                     <div class='row'>
                         <div class='col-12 pb-3'>
                             <TablerInput
@@ -41,7 +43,9 @@
 
                 <!-- Slack Integration -->
                 <div class='mb-4'>
-                    <h4 class='mb-3'>Slack Integration</h4>
+                    <h4 class='mb-3'>
+                        Slack Integration
+                    </h4>
                     <div class='row'>
                         <div class='col-12 pb-3'>
                             <TablerToggle

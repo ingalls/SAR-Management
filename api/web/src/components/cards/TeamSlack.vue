@@ -15,14 +15,14 @@
                     />
                 </TablerIconButton>
                 <TablerIconButton
-                title='Add Channel'
-                @click='adding = !adding'
-            >
-                <IconPlus
-                    :size='32'
-                    stroke='1'
-                />
-            </TablerIconButton>
+                    title='Add Channel'
+                    @click='adding = !adding'
+                >
+                    <IconPlus
+                        :size='32'
+                        stroke='1'
+                    />
+                </TablerIconButton>
             </div>
         </div>
         <div

@@ -20,7 +20,10 @@
                             />
                         </template>
                         <template #dropdown>
-                            <div class='p-3' @click.stop=''>
+                            <div
+                                class='p-3'
+                                @click.stop=''
+                            >
                                 <TablerInput
                                     v-model='filter'
                                     icon='search'
@@ -46,7 +49,7 @@
                                                 :alt='agency.name'
                                                 class='rounded me-2'
                                                 style='width: 24px; height: 24px; object-fit: cover;'
-                                            />
+                                            >
                                             <div v-text='agency.name' />
                                         </div>
                                     </div>
@@ -76,7 +79,7 @@
                         :alt='a.name'
                         class='rounded me-2'
                         style='width: 24px; height: 24px; object-fit: cover;'
-                    />
+                    >
                     <div v-text='a.name' />
                     <div class='ms-auto'>
                         <TablerIconButton

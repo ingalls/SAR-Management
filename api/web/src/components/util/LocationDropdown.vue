@@ -17,7 +17,10 @@
                 :compact='true'
                 :create='false'
             />
-            <div v-else @click.stop=''>
+            <div
+                v-else
+                @click.stop=''
+            >
                 <div class='m-1'>
                     <div
                         v-for='loc in list.items'

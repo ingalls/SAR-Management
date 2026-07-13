@@ -183,14 +183,19 @@
                                             <!-- Agency Associations Section -->
                                             <div class='col-md-12 mt-4'>
                                                 <div class='d-flex align-items-center mb-3'>
-                                                    <h3 class='mb-0'>Agency Associations</h3>
+                                                    <h3 class='mb-0'>
+                                                        Agency Associations
+                                                    </h3>
                                                     <TablerIconButton
                                                         v-if='is_iam("User:Admin")'
                                                         title='Add Agency Association'
                                                         class='ms-2'
                                                         @click='showAddAgencyModal = true'
                                                     >
-                                                        <IconPlus :size='24' stroke='1' />
+                                                        <IconPlus
+                                                            :size='24'
+                                                            stroke='1'
+                                                        />
                                                     </TablerIconButton>
                                                 </div>
                                                 
@@ -203,24 +208,30 @@
                                                             label='No agency associations'
                                                             :create='false'
                                                         />
-                                                        <div v-else class='table-responsive'>
+                                                        <div
+                                                            v-else
+                                                            class='table-responsive'
+                                                        >
                                                             <table class='table table-vcenter card-table'>
                                                                 <thead>
                                                                     <tr>
                                                                         <th>Agency</th>
                                                                         <th>Access Level</th>
-                                                                        <th></th>
+                                                                        <th />
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <tr v-for='assoc in userAgencies' :key='assoc.agency_id'>
+                                                                    <tr
+                                                                        v-for='assoc in userAgencies'
+                                                                        :key='assoc.agency_id'
+                                                                    >
                                                                         <td>{{ assoc.agency_name }}</td>
                                                                         <td>
                                                                             <TablerEnum
                                                                                 v-model='assoc.access'
                                                                                 :options='["user", "admin"]'
                                                                                 :disabled='!is_iam("User:Admin")'
-                                                                                @update:modelValue='updateAgencyAccess(assoc)'
+                                                                                @update:model-value='updateAgencyAccess(assoc)'
                                                                             />
                                                                         </td>
                                                                         <td>

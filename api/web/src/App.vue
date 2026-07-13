@@ -5,6 +5,31 @@
         data-bs-theme-base='neutral'
         data-bs-theme-primary='blue'
     >
+        <!-- New-version upgrade banner -->
+        <div
+            v-if='updateAvailable'
+            class='d-flex align-items-center justify-content-center flex-wrap gap-2 px-3 py-2'
+            style='background: rgba(20,20,20,0.88); backdrop-filter: blur(6px);'
+        >
+            <IconRefresh
+                size='16'
+                class='text-success flex-shrink-0'
+            />
+            <span class='text-white small'>
+                A new version of this app is ready
+            </span>
+            <button
+                class='btn btn-sm btn-success py-0'
+                @click='applyUpdate'
+            >
+                Update Now
+            </button>
+            <button
+                class='btn-close btn-close-white'
+                style='font-size: 0.65rem;'
+                @click='updateAvailable = false'
+            />
+        </div>
         <header
             v-if='!route.path.includes("/login")'
             class='navbar navbar-expand-md d-print-none sticky-top'
@@ -411,11 +436,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted, onErrorCaptured } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted, onErrorCaptured } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
 import PageFooter from './components/util/PageFooter.vue';
+import { applyServiceWorkerUpdate, supportsServiceWorker } from './base/service-worker.ts';
 import {
     TablerError,
     TablerDropdown,
@@ -443,6 +469,7 @@ import {
     IconMedicalCross,
     IconAdjustments,
     IconCaretDown,
+    IconRefresh,
 } from '@tabler/icons-vue';
 
 const route = useRoute()
@@ -454,6 +481,18 @@ const name = ref('Search & Rescue')
 const iam = reactive({})
 const user = ref(null)
 const err = ref(false)
+
+const updateAvailable = ref(false)
+const pendingRegistration = ref(null)
+
+const applyUpdate = () => {
+    applyServiceWorkerUpdate(pendingRegistration.value);
+};
+
+const onSwUpdateAvailable = (e) => {
+    pendingRegistration.value = e.detail.registration;
+    updateAvailable.value = true;
+};
 
 const is_iam = (permission) => { return checkIAM(iam, user.value, permission) };
 
@@ -525,6 +564,10 @@ onErrorCaptured((error) => {
 })
 
 onMounted(async () => {
+    if (supportsServiceWorker()) {
+        window.addEventListener('sw:update-available', onSwUpdateAvailable);
+    }
+
     window.addEventListener('error', (evt) => {
         // Cross-origin script errors surface as "Script error." with no details.
         // These contain no actionable information so skip them.
@@ -548,6 +591,10 @@ onMounted(async () => {
     if (localStorage.token) {
         await refetch();
     }
+})
+
+onUnmounted(() => {
+    window.removeEventListener('sw:update-available', onSwUpdateAvailable);
 })
 </script>
 

@@ -72,7 +72,10 @@
                             </TablerIconButton>
                         </template>
                         <template #dropdown>
-                            <div class='p-3' @click.stop=''>
+                            <div
+                                class='p-3'
+                                @click.stop=''
+                            >
                                 <TablerInput
                                     v-model='filter'
                                     icon='search'
@@ -191,7 +194,10 @@
                             />
                         </template>
                         <template #dropdown>
-                            <div class='p-3' @click.stop=''>
+                            <div
+                                class='p-3'
+                                @click.stop=''
+                            >
                                 <TablerInput
                                     v-model='filter'
                                     icon='search'

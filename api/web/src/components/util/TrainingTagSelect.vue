@@ -15,7 +15,10 @@
                             stroke='1'
                         />
                         <template #dropdown>
-                            <div class='m-1' @click.stop=''>
+                            <div
+                                class='m-1'
+                                @click.stop=''
+                            >
                                 <TablerInput
                                     v-model='filter'
                                     placeholder='Filter Tags'
