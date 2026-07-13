@@ -118,13 +118,6 @@ import {
     TablerToggle,
 } from '@tak-ps/vue-tabler';
 
-const props = defineProps({
-    auth: {
-        type: Object,
-        required: true
-    }
-});
-
 const loading = ref(true);
 const saving = ref(false);
 const config = reactive({});

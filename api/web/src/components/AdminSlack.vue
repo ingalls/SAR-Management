@@ -260,17 +260,6 @@ import {
     TablerNone,
 } from '@tak-ps/vue-tabler';
 
-const props = defineProps({
-    iam: {
-        type: Object,
-        required: true
-    },
-    auth: {
-        type: Object,
-        required: true
-    }
-});
-
 const loading = reactive({
     channels: true,
     membership: false,

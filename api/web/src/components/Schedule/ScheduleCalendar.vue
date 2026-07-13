@@ -128,17 +128,6 @@ const deleteAssignment = async () => {
     resetModal();
 };
 
-const deleteOverride = async () => {
-    modal.loading = true;
-
-    await window.std(`/api/schedule/${props.schedule.id}/override/${modal.id}`, {
-        method: 'DELETE',
-    });
-
-    calendar.value.refetchEvents();
-    resetModal();
-};
-
 const submitAssignment = async () => {
     modal.loading = true;
 

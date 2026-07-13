@@ -306,7 +306,6 @@ import {
     TablerBreadCrumb,
     TablerLoading,
     TablerInput,
-    TablerSelect,
     TablerEnum,
     TablerIconButton,
 } from '@tak-ps/vue-tabler';
