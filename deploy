@@ -2,12 +2,12 @@
 set -euo pipefail
 
 git pull
-npm install
+npm ci
 
 cd api
-npm install
+npm ci
 npm run build
 
 cd web
-npm install
+npm ci
 npm run build
