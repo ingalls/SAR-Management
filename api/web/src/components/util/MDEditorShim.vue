@@ -16,13 +16,13 @@
 
 <script setup lang='ts'>
 import { ref } from 'vue';
-import { MdEditor } from 'md-editor-v3';
+import { MdEditor, type ExposeParam } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
 defineProps<{ modelValue: string }>();
 defineEmits<{ (e: 'update:modelValue', value: string): void }>();
 
-const editorRef = ref<InstanceType<typeof MdEditor> | null>(null);
+const editorRef = ref<ExposeParam>();
 
 function handlePaste(e: ClipboardEvent): void {
     const pastedText = e.clipboardData?.getData('text/plain');
