@@ -86,6 +86,90 @@
                     </div>
                 </div>
 
+                <!-- Single Sign-On (OAuth2) -->
+                <div class='mb-4'>
+                    <h4 class='mb-3'>
+                        Single Sign-On (OAuth2)
+                    </h4>
+                    <div class='row'>
+                        <div class='col-12 pb-3'>
+                            <TablerToggle
+                                v-model='oauthEnabled'
+                                label='Enable Single Sign-On'
+                                desc='Show an SSO button on the login page that authenticates users via an external OAuth2 provider. Users are matched to existing accounts by email address.'
+                                :disabled='auth.access !== "admin"'
+                            />
+                        </div>
+                        <template v-if='oauthEnabled'>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='config.oauth_name.value'
+                                    label='Button Label'
+                                    desc='Provider name shown on the login button, e.g. "Google" or "Okta"'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='config.oauth_client_id.value'
+                                    label='Client ID'
+                                    desc='OAuth2 Client ID issued by your identity provider'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='config.oauth_client_secret.value'
+                                    label='Client Secret'
+                                    type='password'
+                                    desc='OAuth2 Client Secret issued by your identity provider'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='config.oauth_authorize_url.value'
+                                    label='Authorization URL'
+                                    desc='Provider endpoint users are redirected to in order to sign in'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='config.oauth_token_url.value'
+                                    label='Token URL'
+                                    desc='Provider endpoint used to exchange the authorization code for an access token'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='config.oauth_userinfo_url.value'
+                                    label='UserInfo URL'
+                                    desc='Provider endpoint returning the signed-in user profile (must include an email address)'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    v-model='config.oauth_scopes.value'
+                                    label='Scopes'
+                                    desc='Space separated scopes to request, e.g. "openid email profile"'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
+                                <TablerInput
+                                    :model-value='redirectURI'
+                                    label='Redirect URI'
+                                    desc='Register this exact URL as an allowed redirect/callback URI with your identity provider'
+                                    disabled
+                                />
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
                 <div
                     v-if='auth.access === "admin"'
                     class='col-12 pb-3 d-flex'
@@ -118,6 +202,13 @@ import {
     TablerToggle,
 } from '@tak-ps/vue-tabler';
 
+defineProps({
+    auth: {
+        type: Object,
+        required: true
+    }
+});
+
 const loading = ref(true);
 const saving = ref(false);
 const config = reactive({});
@@ -130,14 +221,22 @@ const configKeys = [
     'slack_enabled',
     'slack_app_id',
     'slack_token',
-    'slack_refresh'
+    'slack_refresh',
+    'oauth_enabled',
+    'oauth_name',
+    'oauth_client_id',
+    'oauth_client_secret',
+    'oauth_authorize_url',
+    'oauth_token_url',
+    'oauth_userinfo_url',
+    'oauth_scopes'
 ];
 
 for (const key of configKeys) {
     config[key] = {
         key: key,
         value: '',
-        public: key === 'name' || key === 'frontend'
+        public: ['name', 'frontend', 'oauth_enabled', 'oauth_name'].includes(key)
     };
 }
 
@@ -146,6 +245,24 @@ const slackEnabled = computed({
     get: () => config.slack_enabled.value === true || config.slack_enabled.value === 'true',
     set: (val) => {
         config.slack_enabled.value = val;
+    }
+});
+
+// Computed property for SSO enabled state
+const oauthEnabled = computed({
+    get: () => config.oauth_enabled.value === true || config.oauth_enabled.value === 'true',
+    set: (val) => {
+        config.oauth_enabled.value = val;
+    }
+});
+
+// The callback URL the admin must register with the identity provider
+const redirectURI = computed(() => {
+    const base = config.frontend.value || window.location.origin;
+    try {
+        return new URL('/login', base).toString();
+    } catch {
+        return `${base}/login`;
     }
 });
 

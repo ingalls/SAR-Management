@@ -10,6 +10,8 @@ import { StandardResponse } from '../lib/types.js';
 export const PublicConfigKeys = [
     'name',
     'frontend',
+    'oauth_enabled',
+    'oauth_name',
 ];
 
 // Admin-only config keys
@@ -19,6 +21,12 @@ export const AdminConfigKeys = [
     'slack_app_id',
     'slack_token',
     'slack_refresh',
+    'oauth_client_id',
+    'oauth_client_secret',
+    'oauth_authorize_url',
+    'oauth_token_url',
+    'oauth_userinfo_url',
+    'oauth_scopes',
 ];
 
 export default async function router(schema: Schema, config: Config) {

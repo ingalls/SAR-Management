@@ -159,6 +159,23 @@
                                             Sign In
                                         </button>
                                     </div>
+
+                                    <template v-if='sso.enabled'>
+                                        <div class='hr-text'>
+                                            or
+                                        </div>
+                                        <button
+                                            type='button'
+                                            class='btn btn-outline-primary w-100'
+                                            @click='startSSO'
+                                        >
+                                            <IconLogin2
+                                                size='18'
+                                                class='me-2'
+                                            />
+                                            Sign In with {{ sso.name }}
+                                        </button>
+                                    </template>
                                 </template>
                             </div>
                         </div>
@@ -300,7 +317,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { version } from '../../package.json';
 import { useRouter, useRoute } from 'vue-router';
 import { getCurrentEntryBuildId, supportsServiceWorker } from '../base/service-worker.ts';
@@ -313,6 +330,7 @@ import {
     IconCopy,
     IconCheck,
     IconSettings,
+    IconLogin2,
     IconTrash
 } from '@tabler/icons-vue';
 
@@ -338,6 +356,70 @@ const body = ref({
     username: '',
     password: ''
 });
+
+const sso = ref({
+    enabled: false,
+    name: 'Single Sign-On'
+});
+
+onMounted(async () => {
+    // Returning from the OAuth2 provider - complete the login
+    if (route.query.code && route.query.state) {
+        await completeSSO(String(route.query.code), String(route.query.state));
+        return;
+    }
+
+    try {
+        const result = await window.std('/api/config?keys=oauth_enabled,oauth_name');
+        const enabled = result.config.oauth_enabled.value;
+        sso.value.enabled = enabled === true || enabled === 'true';
+        sso.value.name = result.config.oauth_name.value || 'Single Sign-On';
+    } catch (err) {
+        console.error('Failed to fetch SSO config:', err);
+    }
+});
+
+async function startSSO() {
+    loading.value = true;
+
+    try {
+        if (route.query.redirect) sessionStorage.ssoRedirect = String(route.query.redirect);
+        const res = await window.std('/api/login/oauth');
+        window.location.href = res.url;
+    } catch (err) {
+        loading.value = false;
+        throw err;
+    }
+}
+
+async function completeSSO(code, state) {
+    loading.value = true;
+
+    try {
+        const login = await window.std('/api/login/oauth', {
+            method: 'POST',
+            body: { code, state }
+        });
+
+        localStorage.token = login.token;
+
+        const redirect = sessionStorage.ssoRedirect;
+        delete sessionStorage.ssoRedirect;
+
+        emit('login');
+
+        if (redirect && !redirect.includes('/login')) {
+            router.push(redirect);
+        } else {
+            router.push("/");
+        }
+    } catch (err) {
+        loading.value = false;
+        // Strip the consumed code/state from the URL so a refresh shows the login form
+        router.replace({ path: '/login' });
+        throw err;
+    }
+}
 
 const fetchWorkers = async () => {
     if (!supportsServiceWorker()) return;

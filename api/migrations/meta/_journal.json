@@ -232,6 +232,13 @@
       "when": 1781800000000,
       "tag": "0032_mission_training_agencies",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1781900000000,
+      "tag": "0033_oauth_config",
+      "breakpoints": true
     }
   ]
 }
