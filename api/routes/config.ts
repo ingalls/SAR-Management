@@ -12,6 +12,7 @@ export const PublicConfigKeys = [
     'frontend',
     'oauth_enabled',
     'oauth_name',
+    'local_login_enabled',
 ];
 
 // Admin-only config keys

@@ -26,6 +26,13 @@
                         stroke='1'
                     />
                 </TablerIconButton>
+                <Export
+                    v-if='is_iam("Mission:View")'
+                    :formats='["csv"]'
+                    :show-button-text='false'
+                    title='Export Missions'
+                    @export='exportMissions'
+                />
                 <TablerRefreshButton
                     v-if='is_iam("Mission:View")'
                     @click='fetch'
@@ -77,6 +84,12 @@
                                     label='End Date'
                                 />
                             </div>
+                            <div class='col-md-12'>
+                                <TablerToggle
+                                    v-model='paging.attended'
+                                    label='Only Missions I Attended'
+                                />
+                            </div>
                         </div>
                     </template>
                 </TablerDropdown>
@@ -122,12 +135,14 @@ import StandardItemMission from '../util/StandardItemMission.vue'
 import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
 import TableFooter from '../util/TableFooter.vue';
+import Export from '../util/Export.vue';
 import {
     TablerNone,
     TablerRefreshButton,
     TablerIconButton,
     TablerDropdown,
     TablerInput,
+    TablerToggle,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
@@ -199,6 +214,7 @@ const paging = reactive({
     limit: props.limit,
     start: props.start,
     end: props.end,
+    attended: false,
     page: 0
 })
 const list = reactive({
@@ -231,22 +247,45 @@ const listSchema = async () => {
     }));
 }
 
-const fetch = async () => {
-    loading.value = true;
+/**
+ * Build the list URL with the current search filters applied
+ * Shared by fetch & export so the export always matches what is shown
+ */
+const listURL = () => {
     const url = window.stdurl('/api/mission');
-    url.searchParams.append('limit', paging.limit);
-    url.searchParams.append('page', paging.page);
     url.searchParams.append('filter', paging.filter);
     url.searchParams.append('sort', paging.sort);
     url.searchParams.append('order', paging.order);
 
     if (paging.start) url.searchParams.append('start', paging.start);
     if (paging.end) url.searchParams.append('end', paging.end);
-    if (props.assigned) url.searchParams.append('assigned', props.assigned);
+
+    if (paging.attended) url.searchParams.append('assigned', props.auth.id);
+    else if (props.assigned) url.searchParams.append('assigned', props.assigned);
+
+    return url;
+}
+
+const fetch = async () => {
+    loading.value = true;
+    const url = listURL();
+    url.searchParams.append('limit', paging.limit);
+    url.searchParams.append('page', paging.page);
     const result = await window.std(url);
     list.total = result.total;
     list.items = result.items;
     loading.value = false;
+}
+
+const exportMissions = async (format) => {
+    const url = listURL();
+    url.searchParams.append('format', format);
+
+    for (const field of ['title', 'externalid', 'location', 'start_ts', 'end_ts', 'status']) {
+        url.searchParams.append('fields', field);
+    }
+
+    await window.std(url, { download: true });
 }
 
 watch(paging, async () => {

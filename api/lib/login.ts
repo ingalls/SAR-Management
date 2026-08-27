@@ -132,6 +132,18 @@ export default class Login {
         };
     }
 
+    /**
+     * Is traditional username/password login enabled for non-admin users
+     */
+    static async local_enabled(config: Config): Promise<boolean> {
+        try {
+            const setting = await config.models.Server.from('local_login_enabled');
+            return setting.value !== 'false' && (setting.value as unknown) !== false;
+        } catch {
+            return true;
+        }
+    }
+
     static async attempt(config: Config, body: { username?: string; password?: string; token?: string }, secret: string): Promise<{
         id: number;
         username: string;
@@ -161,6 +173,12 @@ export default class Login {
 
         if (!user.validated) {
             throw new Err(403, null, 'User has not confirmed email');
+        }
+
+        // When password login is disabled server-wide, admins may still log in
+        // locally so the server can never be fully locked out if SSO fails
+        if (user.access !== 'admin' && !await Login.local_enabled(config)) {
+            throw new Err(403, null, 'Password login is disabled, please use Single Sign-On');
         }
 
         if (user.disabled) {

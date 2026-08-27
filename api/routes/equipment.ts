@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { Type } from '@sinclair/typebox';
 import { sql } from 'drizzle-orm';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
-import { stringify } from 'csv-stringify/sync';
+import { streamCSV } from '../lib/csv.js';
 import Notify from '../lib/notify.js';
 import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
@@ -53,40 +53,23 @@ export default async function router(schema: Schema, config: Config) {
             `;
 
             if (req.query.format === 'csv') {
-                const fields = req.query.fields || ['name', 'status', 'description', 'quantity'];
-                res.set('Content-Type', 'text/csv');
-                res.set('Content-Disposition', 'attachment; filename="sar-equipment.csv"');
-                res.write(stringify([fields]));
-
-                let total: number;
-                let page = 0;
-                do {
-                    const list = await config.models.Equipment.augmented_list({
-                        page: page,
-                        limit: 100,
+                await streamCSV(
+                    res,
+                    'sar-equipment.csv',
+                    req.query.fields || ['name', 'status', 'description', 'quantity'],
+                    (page, limit) => config.models.Equipment.augmented_list({
+                        page, limit,
                         order: req.query.order,
                         sort: req.query.sort,
                         where: whereClause
-                    });
-
-                    total = list.total;
-
-                    for (const equip of list.items) {
-                        const line: string[] = [];
-                        for (const field of fields) {
-                            if (field === 'assigned') {
-                                line.push((equip.assigned || []).map((a: { fname: string, lname: string}) => `${a.fname} ${a.lname}`).join('; '));
-                            } else {
-                            line.push((equip[field as keyof typeof equip] as any) === undefined || (equip[field as keyof typeof equip] as any) === null ? '' : (equip[field as keyof typeof equip] as any));
-                            }
+                    }),
+                    (equip, field) => {
+                        if (field === 'assigned') {
+                            return (equip.assigned || []).map((a: { fname: string, lname: string}) => `${a.fname} ${a.lname}`).join('; ');
                         }
-                        res.write(stringify([line]));
+                        return equip[field as keyof typeof equip];
                     }
-
-                    page++;
-                } while (total > (page + 1) * 100);
-
-                res.end();
+                );
             } else {
                 const list = await config.models.Equipment.augmented_list({
                     limit: req.query.limit,

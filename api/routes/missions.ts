@@ -10,6 +10,7 @@ import { StandardResponse, MissionResponse } from '../lib/types.js';
 import { PartialAsset } from '../lib/models/Mission.js';
 import Report from '../lib/report.js';
 import API2PDF from 'api2pdf';
+import { streamCSV } from '../lib/csv.js';
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission', {
@@ -17,8 +18,10 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Mission',
         description: 'Get all missions for the Org',
         query: Type.Object({
+            format: Type.String({ enum: ['csv', 'json'], default: 'json' }),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Mission) }))),
             limit: Type.Optional(Type.Integer()),
-            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             start: Type.Optional(Type.String()),
             end: Type.Optional(Type.String()),
@@ -35,19 +38,35 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
-            res.json(await config.models.Mission.augmented_list({
-                limit: req.query.limit,
-                page: req.query.page,
-                order: req.query.order,
-                sort: req.query.sort,
-                where: sql`
-                    (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
-                    AND (${Param(req.query.assigned)}::INT IS NULL OR users @> ARRAY[${Param(req.query.assigned)}::INT])
-                    AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
-                    AND (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
-                    AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts < ${Param(req.query.end)}::TIMESTAMP + INTERVAL '1 day')
-                `
-            }))
+            const whereClause = sql`
+                (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
+                AND (${Param(req.query.assigned)}::INT IS NULL OR users @> ARRAY[${Param(req.query.assigned)}::INT])
+                AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
+                AND (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
+                AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts < ${Param(req.query.end)}::TIMESTAMP + INTERVAL '1 day')
+            `;
+
+            if (req.query.format === 'csv') {
+                await streamCSV(
+                    res,
+                    'sar-missions.csv',
+                    req.query.fields || ['title', 'externalid', 'location', 'start_ts', 'end_ts'],
+                    (page, limit) => config.models.Mission.augmented_list({
+                        page, limit,
+                        order: req.query.order,
+                        sort: req.query.sort,
+                        where: whereClause
+                    })
+                );
+            } else {
+                res.json(await config.models.Mission.augmented_list({
+                    limit: req.query.limit,
+                    page: req.query.page,
+                    order: req.query.order,
+                    sort: req.query.sort,
+                    where: whereClause
+                }));
+            }
         } catch (err) {
              Err.respond(err, res);
         }

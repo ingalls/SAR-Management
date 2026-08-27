@@ -121,47 +121,52 @@
                                     <h2 class='h2 text-center mb-4 user-select-none'>
                                         Login to your account
                                     </h2>
-                                    <div class='mb-3'>
-                                        <TablerInput
-                                            v-model='body.username'
-                                            icon='user'
-                                            label='Username or Email'
-                                            placeholder='your@email.com'
-                                            autocomplete='off'
-                                            @keyup.enter='createLogin'
-                                        />
-                                    </div>
-                                    <div class='mb-2'>
-                                        <label class='form-label'>
-                                            Password
-                                            <span class='form-label-description'>
-                                                <a
-                                                    class='cursor-pointer user-select-none'
-                                                    @click='$router.push("/login/forgot")'
-                                                >Forgot Password</a>
-                                            </span>
-                                        </label>
-                                        <TablerInput
-                                            v-model='body.password'
-                                            icon='lock'
-                                            type='password'
-                                            placeholder='Your password'
-                                            autocomplete='off'
-                                            @keyup.enter='createLogin'
-                                        />
-                                    </div>
-                                    <div class='form-footer'>
-                                        <button
-                                            type='submit'
-                                            class='btn btn-primary w-100'
-                                            @click='createLogin'
-                                        >
-                                            Sign In
-                                        </button>
-                                    </div>
+                                    <template v-if='showLocal'>
+                                        <div class='mb-3'>
+                                            <TablerInput
+                                                v-model='body.username'
+                                                icon='user'
+                                                label='Username or Email'
+                                                placeholder='your@email.com'
+                                                autocomplete='off'
+                                                @keyup.enter='createLogin'
+                                            />
+                                        </div>
+                                        <div class='mb-2'>
+                                            <label class='form-label'>
+                                                Password
+                                                <span class='form-label-description'>
+                                                    <a
+                                                        class='cursor-pointer user-select-none'
+                                                        @click='$router.push("/login/forgot")'
+                                                    >Forgot Password</a>
+                                                </span>
+                                            </label>
+                                            <TablerInput
+                                                v-model='body.password'
+                                                icon='lock'
+                                                type='password'
+                                                placeholder='Your password'
+                                                autocomplete='off'
+                                                @keyup.enter='createLogin'
+                                            />
+                                        </div>
+                                        <div class='form-footer'>
+                                            <button
+                                                type='submit'
+                                                class='btn btn-primary w-100'
+                                                @click='createLogin'
+                                            >
+                                                Sign In
+                                            </button>
+                                        </div>
+                                    </template>
 
-                                    <template v-if='sso.enabled'>
-                                        <div class='hr-text'>
+                                    <template v-if='showSSO'>
+                                        <div
+                                            v-if='showLocal'
+                                            class='hr-text'
+                                        >
                                             or
                                         </div>
                                         <button
@@ -317,7 +322,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { version } from '../../package.json';
 import { useRouter, useRoute } from 'vue-router';
 import { getCurrentEntryBuildId, supportsServiceWorker } from '../base/service-worker.ts';
@@ -362,6 +367,18 @@ const sso = ref({
     name: 'Single Sign-On'
 });
 
+// Server-wide toggle for traditional username/password login
+const local = ref({
+    enabled: true
+});
+
+// ?local=1 forces the password form only (ie: for admins when SSO is down)
+const forceLocal = computed(() => Boolean(route.query.local) && route.query.local !== 'false');
+
+// Always fall back to the password form if SSO isn't available
+const showLocal = computed(() => forceLocal.value || local.value.enabled || !sso.value.enabled);
+const showSSO = computed(() => sso.value.enabled && !forceLocal.value);
+
 onMounted(async () => {
     // Returning from the OAuth2 provider - complete the login
     if (route.query.code && route.query.state) {
@@ -370,12 +387,21 @@ onMounted(async () => {
     }
 
     try {
-        const result = await window.std('/api/config?keys=oauth_enabled,oauth_name');
+        const result = await window.std('/api/config?keys=oauth_enabled,oauth_name,local_login_enabled');
         const enabled = result.config.oauth_enabled.value;
         sso.value.enabled = enabled === true || enabled === 'true';
         sso.value.name = result.config.oauth_name.value || 'Single Sign-On';
+
+        const localEnabled = result.config.local_login_enabled.value;
+        local.value.enabled = localEnabled !== false && localEnabled !== 'false';
     } catch (err) {
         console.error('Failed to fetch SSO config:', err);
+    }
+
+    // Allow an IdP application tile (ie: /login?sso=1) to skip the login form
+    // and start the SSO flow immediately
+    if (showSSO.value && route.query.sso && route.query.sso !== 'false') {
+        await startSSO();
     }
 });
 

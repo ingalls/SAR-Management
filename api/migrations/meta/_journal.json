@@ -239,6 +239,13 @@
       "when": 1781900000000,
       "tag": "0033_oauth_config",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1782000000000,
+      "tag": "0034_local_login_config",
+      "breakpoints": true
     }
   ]
 }

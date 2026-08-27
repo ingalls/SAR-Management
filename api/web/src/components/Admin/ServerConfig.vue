@@ -102,6 +102,14 @@
                         </div>
                         <template v-if='oauthEnabled'>
                             <div class='col-12 pb-3'>
+                                <TablerToggle
+                                    v-model='localLoginEnabled'
+                                    label='Allow Username & Password Login'
+                                    desc='When disabled, only administrators may sign in with a password; all other users must use Single Sign-On. The password form remains reachable at /login?local=1'
+                                    :disabled='auth.access !== "admin"'
+                                />
+                            </div>
+                            <div class='col-12 pb-3'>
                                 <TablerInput
                                     v-model='config.oauth_name.value'
                                     label='Button Label'
@@ -224,6 +232,7 @@ const configKeys = [
     'slack_refresh',
     'oauth_enabled',
     'oauth_name',
+    'local_login_enabled',
     'oauth_client_id',
     'oauth_client_secret',
     'oauth_authorize_url',
@@ -236,7 +245,7 @@ for (const key of configKeys) {
     config[key] = {
         key: key,
         value: '',
-        public: ['name', 'frontend', 'oauth_enabled', 'oauth_name'].includes(key)
+        public: ['name', 'frontend', 'oauth_enabled', 'oauth_name', 'local_login_enabled'].includes(key)
     };
 }
 
@@ -253,6 +262,14 @@ const oauthEnabled = computed({
     get: () => config.oauth_enabled.value === true || config.oauth_enabled.value === 'true',
     set: (val) => {
         config.oauth_enabled.value = val;
+    }
+});
+
+// Computed property for local (username/password) login state - defaults to enabled
+const localLoginEnabled = computed({
+    get: () => config.local_login_enabled.value !== false && config.local_login_enabled.value !== 'false',
+    set: (val) => {
+        config.local_login_enabled.value = val;
     }
 });
 
