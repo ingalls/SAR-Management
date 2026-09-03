@@ -12,6 +12,8 @@
 
 ### Pending Release
 
+- :rocket: `API`: Replace Swagger UI with Scalar API Reference served from the web build at `/docs`, backed by `/api/openapi`
+
 ### v1.1.2
 
 - :bug: `API`: Fix Calendar Token usage

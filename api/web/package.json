@@ -15,6 +15,7 @@
         "@fullcalendar/interaction": "^6.1.21",
         "@fullcalendar/list": "^6.1.21",
         "@mapbox/mapbox-gl-geocoder": "^5.1.2",
+        "@scalar/api-reference": "^1.67.0",
         "@tabler/core": "^1.4.0",
         "@tabler/icons-vue": "^3.46.0",
         "@tak-ps/vue-tabler": "^5.2.1",

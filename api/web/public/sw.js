@@ -56,6 +56,7 @@ function serve() {
     // requests the raw `.html` — those are 302'd away by the nginx config).
     const ENTRY_HTML_TO_PATH = {
         'index.html': '/',
+        'docs.html': '/docs',
     };
 
     /**
@@ -174,7 +175,7 @@ function serve() {
      *   - `/assets/*`  fingerprinted build output, immutable by URL.
      *   - `/logos/*`   PWA icon sets referenced from the web manifest.
      *   - root icons   the favicon/logo set listed above.
-     * Everything else - HTML, API responses, docs - is either precached or
+     * Everything else - HTML, API responses - is either precached or
      * goes straight to the network, so an nginx SPA fallback response cannot
      * be cached under an arbitrary path.
      */
@@ -211,7 +212,6 @@ function serve() {
 
         if (url.origin !== self.location.origin) return;
         if (url.pathname.startsWith('/api')) return;
-        if (url.pathname.startsWith('/docs')) return;
 
         event.respondWith((async () => {
             const cache = await caches.open(CACHE_NAME);

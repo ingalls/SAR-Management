@@ -8,7 +8,18 @@ export default defineConfig(() => {
             'import.meta.env.HASH': JSON.stringify(Math.random().toString(36).substring(2, 15)),
         },
         plugins: [
-            vue()
+            vue(),
+            {
+                name: 'configure-server',
+                configureServer(server) {
+                    server.middlewares.use((req, res, next) => {
+                        if (req.url?.startsWith('/docs') && !path.extname(req.url)) {
+                            req.url = '/docs.html';
+                        }
+                        next();
+                    });
+                }
+            }
         ],
         optimizeDeps: {
             include: ["showdown", "@tak-ps/vue-tabler"],
@@ -18,6 +29,7 @@ export default defineConfig(() => {
             rollupOptions: {
                 input: {
                     main: path.resolve(__dirname, 'index.html'),
+                    docs: path.resolve(__dirname, 'docs.html'),
                 },
             },
         },

@@ -202,7 +202,7 @@
                         <ul class='list-inline list-inline-dots mb-0'>
                             <li class='list-inline-item'>
                                 <a
-                                    href='/docs/'
+                                    href='/docs'
                                     class='text-white-50 text-decoration-none'
                                 >Documentation</a>
                             </li>

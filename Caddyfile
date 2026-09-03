@@ -20,7 +20,13 @@ team.mesacountysar.com {
 	}
 
 	route /docs* {
-		reverse_proxy localhost:4999
+		header {
+			Cache-Control "no-store"
+		}
+
+		root * /home/eiger/SAR-Management/api/web/dist
+		try_files {path} /docs.html
+		file_server
 	}
 
 	route * {

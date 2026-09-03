@@ -6,7 +6,6 @@ import history from 'connect-history-api-fallback';
 import express from 'express';
 import Schema from '@openaddresses/batch-schema';
 import minimist from 'minimist';
-import SwaggerUI from 'swagger-ui-express';
 
 try {
     const dotfile = new URL('.env', import.meta.url);
@@ -54,7 +53,26 @@ export default async function server() {
 
     const schema = new Schema(express.Router(), {
         logging: true,
-        limit: 50
+        limit: 50,
+        openapi: {
+            info: {
+                title: 'SAR Management API',
+                version: pkg.version,
+            },
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                        type: 'http',
+                        scheme: 'bearer',
+                        bearerFormat: 'JWT',
+                        description: 'SAR Management User JWT',
+                    },
+                },
+            },
+            security: [{
+                bearerAuth: [],
+            }],
+        },
     });
 
     app.disable('x-powered-by');
@@ -85,9 +103,6 @@ export default async function server() {
     });
 
     app.use('/api', schema.router);
-    app.use('/docs', express.static('./doc'));
-
-
 
     await schema.api();
 
@@ -99,10 +114,13 @@ export default async function server() {
         }
     );
 
-    app.use('/docs', SwaggerUI.serve, SwaggerUI.setup(schema.docs.base));
-
     app.use(history({
         rewrites: [{
+            // API Docs are a separate Vite entry (web/docs.html) rendered by Scalar
+            // from the OpenAPI document served at /api/openapi
+            from: /^\/docs(\/.*)?$/,
+            to: '/docs.html'
+        },{
             from: /.*\/js\/.*$/,
             to: function(context) {
                 return context.parsedUrl.pathname!.replace(/.*\/js\//, '/js/');
