@@ -23,10 +23,21 @@
                 >
                     <IconPlus
                         :size='32'
-                        :stroke='1'
+                        stroke='1'
                     />
                 </TablerIconButton>
-                
+                <Export
+                    v-if='search && is_iam("Issue:View")'
+                    :formats='["csv"]'
+                    :show-button-text='false'
+                    title='Export Issues'
+                    @export='exportIssues'
+                />
+                <TablerRefreshButton
+                    v-if='search && is_iam("Issue:View")'
+                    @click='fetch'
+                />
+
                 <TablerDropdown
                     v-if='menu'
                 >
@@ -52,95 +63,37 @@
             </div>
         </div>
 
-        <div
+        <IssueFilters
             v-if='search'
-            class='px-2 pb-2'
-        >
-            <div class='row g-2'>
-                <div class='col-8'>
-                    <TablerInput
-                        v-model='paging.filter'
-                        icon='search'
-                        label='Issue Search'
-                    />
-                </div>
-                <div class='col-4'>
-                    <TablerEnum
-                        v-model='paging.status'
-                        label='Issue Status'
-                        :options='["open", "closed"]'
-                    />
-                </div>
-            </div>
-        </div>
+            v-model='filters'
+            :auth='auth'
+            :total='loading ? null : list.total'
+        />
 
         <NoAccess v-if='!is_iam("Issue:View")' />
-        <template v-else-if='loading'>
-            <TablerLoading desc='Loading Issues' />
-        </template>
-        <template v-else-if='!list.items.length'>
-            <TablerNone
-                :create='false'
-                label='No Issues'
-            />
-        </template>
+        <TablerLoading
+            v-else-if='loading'
+            desc='Loading Issues'
+        />
+        <TablerNone
+            v-else-if='!list.items.length'
+            :create='false'
+            label='No Issues'
+        />
         <template v-else>
-            <div class='table-responsive'>
-                <table class='table card-table table-hover table-vcenter datatable'>
-                    <TableHeader
-                        v-model:sort='paging.sort'
-                        v-model:order='paging.order'
-                        v-model:header='header'
-                        :allow-export='true'
-                        @export='exportIssues("csv")'
-                    />
-                    <tbody>
-                        <tr
-                            v-for='issue in list.items'
-                            :key='issue.id'
-                            class='cursor-pointer'
-                            @click='$router.push(`/issue/${issue.id}`)'
-                        >
-                            <template v-for='h in header'>
-                                <template v-if='h.display'>
-                                    <td v-if='["updated", "created"].includes(h.name)'>
-                                        <TablerEpoch
-                                            v-if='issue[h.name]'
-                                            :date='issue[h.name]'
-                                        />
-                                        <span v-else>Never</span>
-                                    </td>
-                                    <td v-if='["status"].includes(h.name)'>
-                                        <TablerBadge
-                                            v-if='issue.status === "closed"'
-                                            background-color='#d63939'
-                                            text-color='#ffffff'
-                                        >
-                                            Closed
-                                        </TablerBadge>
-                                        <TablerBadge
-                                            v-else-if='issue.status === "open"'
-                                            background-color='#2fb344'
-                                            text-color='#ffffff'
-                                        >
-                                            Open
-                                        </TablerBadge>
-                                    </td>
-                                    <td v-else>
-                                        <span v-text='issue[h.name]' />
-                                    </td>
-                                </template>
-                            </template>
-                        </tr>
-                    </tbody>
-                </table>
-                <TableFooter
-                    v-if='footer'
-                    :limit='paging.limit'
-                    :total='list.total'
-                    @page='paging.page = $event'
+            <div class='d-flex flex-column gap-3 p-3'>
+                <StandardItemIssue
+                    v-for='issue in list.items'
+                    :key='issue.id'
+                    :issue='issue'
                 />
             </div>
+            <TableFooter
+                v-if='footer'
+                :limit='paging.limit'
+                :total='list.total'
+                @page='paging.page = $event'
+            />
         </template>
     </div>
 </template>
@@ -149,17 +102,17 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
-import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
+import Export from '../util/Export.vue';
+import StandardItemIssue from '../util/StandardItemIssue.vue';
+import IssueFilters from '../Issue/IssueFilters.vue';
+import { defaultFilters, applyFilters, toQuery } from '../../base/issue-filters.js';
 import {
-    TablerBadge,
-    TablerEnum,
     TablerNone,
-    TablerEpoch,
-    TablerInput,
     TablerLoading,
     TablerDropdown,
-    TablerIconButton
+    TablerIconButton,
+    TablerRefreshButton
 } from '@tak-ps/vue-tabler'
 import {
     IconGripVertical,
@@ -205,57 +158,45 @@ const props = defineProps({
         type: Object,
         required: true
     },
+    // Scope an embedded card to issues assigned to a fixed user
     assigned: {
         type: Number,
+        default: null
+    },
+    // Initial filter state (see base/issue-filters.js) - the Issues page
+    // restores this from the URL
+    initial: {
+        type: Object,
         default: null
     }
 })
 
+const emit = defineEmits(['remove', 'query'])
+
 const loading = ref(true)
-const header = ref([])
 const paging = reactive({
-    filter: '',
-    sort: 'id',
-    order: 'desc',
     limit: props.limit,
-    status: 'open',
     page: 0
 })
+const filters = ref(defaultFilters(props.initial || {}))
 const list = reactive({
     total: 0,
     items: []
 })
 const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
-const listSchema = async () => {
-    const schema = await window.std('/api/schema?method=GET&url=/issue');
-    header.value = ['title', 'status'].map((h) => {
-        return { name: h, display: true };
-    });
-
-    header.value.push(...schema.query.properties.sort.enum.map((h) => {
-        return {
-            name: h,
-            display: false
-        }
-    }).filter((h) => {
-        for (const hknown of header.value) {
-            if (hknown.name === h.name) return false;
-        }
-        return true;
-    }));
+const listURL = () => {
+    const url = window.stdurl('/api/issue');
+    applyFilters(url, filters.value, props.auth);
+    if (props.assigned && !filters.value.assigned) url.searchParams.set('assigned', props.assigned);
+    return url;
 }
 
 const fetch = async () => {
     loading.value = true;
-    const url = window.stdurl('/api/issue');
-    url.searchParams.append('limit', paging.limit);
-    url.searchParams.append('page', paging.page);
-    url.searchParams.append('order', paging.order);
-    url.searchParams.append('sort', paging.sort);
-    url.searchParams.append('filter', paging.filter);
-    url.searchParams.append('status', paging.status);
-    if (props.assigned) url.searchParams.append('assigned', props.assigned);
+    const url = listURL();
+    url.searchParams.set('limit', paging.limit);
+    url.searchParams.set('page', paging.page);
     const result = await window.std(url);
     list.total = result.total;
     list.items = result.items;
@@ -263,50 +204,32 @@ const fetch = async () => {
 }
 
 const exportIssues = async (format) => {
-    const url = window.stdurl('/api/issue');
-    url.searchParams.append('filter', paging.filter);
-    url.searchParams.append('format', format);
-    url.searchParams.append('status', paging.status);
-    url.searchParams.append('order', paging.order);
-    url.searchParams.append('sort', paging.sort);
-
-    if (format === 'csv') {
-        const fields = [];
-        header.value.filter((h) => {
-            return h.display;
-        }).forEach((h) => {
-            if (h.name === 'name') {
-                fields.push('fname', 'lname');
-            } else {
-                fields.push(h.name);
-            }
-        });
-
-        for (const field of fields) {
-            url.searchParams.append('fields', field)
-        }
+    const url = listURL();
+    url.searchParams.set('format', format);
+    for (const field of ['id', 'title', 'status', 'created', 'updated', 'author']) {
+        url.searchParams.append('fields', field);
     }
-
-    const res = await window.std(url);
-    const blob = await res.blob()
-
-    const durl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = durl;
-    a.download = `sar-issues.${format}`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    await window.std(url, { download: true });
 }
 
-watch(paging, async () => {
-    await fetch();
-}, { deep: true })
+watch(paging, fetch, { deep: true })
+
+let searchTimeout;
+watch(filters, (next, prev) => {
+    emit('query', toQuery(next));
+    paging.page = 0;
+
+    const textOnly = prev && Object.keys(next).every((k) => k === 'filter' || JSON.stringify(next[k]) === JSON.stringify(prev[k]));
+
+    clearTimeout(searchTimeout);
+    if (textOnly) {
+        searchTimeout = setTimeout(fetch, 300);
+    } else {
+        fetch();
+    }
+})
 
 onMounted(async () => {
-    await listSchema();
-    if (is_iam("Issue:View")) {
-        await fetch();
-    }
+    if (is_iam("Issue:View")) await fetch();
 })
 </script>

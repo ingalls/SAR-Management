@@ -23,6 +23,8 @@
                             :auth='auth'
                             :search='true'
                             :limit='20'
+                            :initial='initial'
+                            @query='onQuery'
                         />
                     </div>
                 </div>
@@ -32,7 +34,9 @@
 </template>
 
 <script setup>
+import { useRoute, useRouter } from 'vue-router';
 import CardIssues from './cards/Issues.vue';
+import { fromQuery } from '../base/issue-filters.js';
 import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler';
@@ -47,4 +51,14 @@ defineProps({
         required: true
     }
 })
+
+const route = useRoute();
+const router = useRouter();
+
+// Filters restored from the URL so filtered views are shareable links
+const initial = fromQuery(route.query);
+
+function onQuery(query) {
+    router.replace({ query });
+}
 </script>
