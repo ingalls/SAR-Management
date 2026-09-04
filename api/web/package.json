@@ -25,6 +25,7 @@
         "core-js": "^3.50.0",
         "dropzone": "^6.0.0-beta.2",
         "floating-vue": "^5.2.2",
+        "grid-layout-plus": "^1.1.1",
         "gridstack": "^13.2.0",
         "imask": "^7.6.1",
         "mapbox-gl": "^3.29.0",

@@ -20,176 +20,243 @@
                             v-if='!is_iam("Equipment:Manage")'
                             title='Equipment Editing'
                         />
-                        <Alert
-                            v-if='equipment.archived'
-                            label='Cannot Edit Archived Equipment'
-                        />
-                        <div
-                            v-else
-                            class='card'
-                        >
-                            <TablerLoading v-if='loading.equipment' />
-                            <template v-else>
-                                <div class='card-header'>
-                                    <div class='card-title'>
-                                        Equipment Editor
+                        <template v-else>
+                            <Alert
+                                v-if='equipment.archived'
+                                label='Cannot Edit Archived Equipment'
+                            />
+                            <div
+                                v-else
+                                class='card'
+                            >
+                                <TablerLoading v-if='loading.equipment' />
+                                <template v-else>
+                                    <div class='card-header'>
+                                        <div class='card-title'>
+                                            Equipment Editor
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class='row row-0'>
-                                    <div
-                                        class='col-12'
-                                        :class='{
-                                            "col-md-9": $route.params.equipid
-                                        }'
-                                    >
-                                        <div class='card-body'>
-                                            <div class='row row-cards'>
-                                                <div class='col-md-8 pb-2'>
-                                                    <TablerInput
-                                                        v-model='equipment.name'
-                                                        label='Equipment Name'
-                                                    />
-                                                </div>
-                                                <div class='col-md-4 pb-2'>
-                                                    <label class='form-label'>Equipment Type</label>
-                                                    <select
-                                                        v-model='equipment.type_id'
-                                                        class='form-select'
-                                                    >
-                                                        <option
-                                                            :value='null'
-                                                            disabled
-                                                        >
-                                                            Select Equipment Type
-                                                        </option>
-                                                        <option
-                                                            v-for='t in equipmentTypes'
-                                                            :key='t.id'
-                                                            :value='t.id'
-                                                            v-text='t.type'
+                                    <div class='row row-0'>
+                                        <div
+                                            class='col-12'
+                                            :class='{
+                                                "col-md-9": $route.params.equipid
+                                            }'
+                                        >
+                                            <div class='card-body'>
+                                                <div class='row row-cards'>
+                                                    <div class='col-md-8 pb-2'>
+                                                        <TablerInput
+                                                            v-model='equipment.name'
+                                                            label='Equipment Name'
+                                                            :required='true'
+                                                            :error='errors.name'
                                                         />
-                                                    </select>
-                                                </div>
-                                                <div class='col-md-12 pb-2'>
-                                                    <TablerInput
-                                                        v-model='equipment.description'
-                                                        :rows='5'
-                                                        label='Equipment Description'
-                                                    />
-                                                </div>
-                                                <div class='col-md-6 pb-2'>
-                                                    <TablerInput
-                                                        v-model='equipment.quantity'
-                                                        type='number'
-                                                        label='Quantity'
-                                                    />
-                                                </div>
-                                                <div class='col-md-6 pb-2'>
-                                                    <TablerInput
-                                                        v-model='equipment.value'
-                                                        label='Per Item Value ($)'
-                                                    />
-                                                </div>
-                                                <div class='col-md-6 pb-2'>
-                                                    <label class='form-label'>Equipment Heiarchy</label>
-                                                    <div
-                                                        class='row border rounded px-2 py-2'
-                                                        style='margin-left: 0px; margin-right: 0px;'
-                                                    >
-                                                        <TablerToggle
-                                                            v-model='equipment.container'
-                                                            label='Equipment Container?'
-                                                        />
-
-                                                        <label class='form-label'>Parent Container</label>
+                                                    </div>
+                                                    <div class='col-md-4 pb-2'>
+                                                        <label class='form-label'>Equipment Type</label>
                                                         <select
-                                                            v-model='equipment.parent'
+                                                            v-model='equipment.type_id'
                                                             class='form-select'
                                                         >
                                                             <option
                                                                 :value='null'
+                                                                disabled
                                                             >
-                                                                None
+                                                                Select Equipment Type
                                                             </option>
                                                             <option
-                                                                v-for='c in containers'
-                                                                :key='c.id'
-                                                                :value='c.id'
-                                                                v-text='c.name'
+                                                                v-for='t in equipmentTypes'
+                                                                :key='t.id'
+                                                                :value='t.id'
+                                                                v-text='t.type'
                                                             />
                                                         </select>
                                                     </div>
-                                                </div>
-                                                <div class='col-md-6 pb-2'>
-                                                    <label class='form-label'>Assigned Equipment</label>
-                                                    <div
-                                                        class='row border rounded px-2 py-2'
-                                                        style='margin-left: 0px; margin-right: 0px;'
-                                                    >
-                                                        <UserSelect
-                                                            v-model='assigned'
-                                                            label=''
+                                                    <div class='col-md-12 pb-2'>
+                                                        <TablerInput
+                                                            v-model='equipment.description'
+                                                            :rows='5'
+                                                            label='Equipment Description'
                                                         />
+                                                    </div>
+                                                    <div class='col-md-6 pb-2'>
+                                                        <TablerInput
+                                                            v-model='equipment.quantity'
+                                                            type='number'
+                                                            label='Quantity'
+                                                            :required='true'
+                                                            :error='errors.quantity'
+                                                        />
+                                                    </div>
+                                                    <div class='col-md-6 pb-2'>
+                                                        <TablerInput
+                                                            v-model='equipment.value'
+                                                            type='number'
+                                                            label='Per Item Value (whole $)'
+                                                            description='Rounded to the nearest dollar'
+                                                            :error='errors.value'
+                                                        />
+                                                    </div>
+                                                    <div class='col-md-6 pb-2'>
+                                                        <label class='form-label'>Equipment Hierarchy</label>
+                                                        <div
+                                                            class='row border rounded px-2 py-2'
+                                                            style='margin-left: 0px; margin-right: 0px;'
+                                                        >
+                                                            <TablerToggle
+                                                                v-model='equipment.container'
+                                                                label='Equipment Container?'
+                                                            />
+
+                                                            <label class='form-label'>Parent Container</label>
+                                                            <select
+                                                                v-model='equipment.parent'
+                                                                class='form-select'
+                                                            >
+                                                                <option :value='null'>
+                                                                    None
+                                                                </option>
+                                                                <option
+                                                                    v-for='c in parentOptions'
+                                                                    :key='c.id'
+                                                                    :value='c.id'
+                                                                    v-text='c.name'
+                                                                />
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class='col-md-6 pb-2'>
+                                                        <label class='form-label'>Assigned Members</label>
+                                                        <div
+                                                            class='row border rounded px-2 py-2'
+                                                            style='margin-left: 0px; margin-right: 0px;'
+                                                        >
+                                                            <UserSelect
+                                                                v-model='assigned'
+                                                                label=''
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div
+                                            v-if='$route.params.equipid'
+                                            class='col-12 col-md-3'
+                                        >
+                                            <EquipmentProfile
+                                                bgstyle='cover'
+                                                :equipmentid='equipment.id'
+                                                :cache='cache'
+                                            />
+
+                                            <div class='card-body d-flex justify-content-center'>
+                                                <a
+                                                    class='cursor-pointer btn btn-secondary'
+                                                    @click='upload = true'
+                                                >Update Photo</a>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div
-                                        v-if='$route.params.equipid'
-                                        class='col-12 col-md-3'
+                                        v-if='type.schema && type.schema.properties'
+                                        class='col-md-12'
                                     >
-                                        <EquipmentProfile
-                                            bgstyle='cover'
-                                            :equipmentid='equipment.id'
-                                            :cache='cache'
+                                        <EquipmentMeta
+                                            v-model='equipment.meta'
+                                            :schema='type.schema'
                                         />
-
-                                        <div class='card-body d-flex justify-content-center'>
-                                            <a
-                                                class='cursor-pointer btn btn-secondary'
-                                                @click='upload = true'
-                                            >Update Photo</a>
-                                        </div>
                                     </div>
-                                </div>
-                                <div
-                                    v-if='type.schema.properties'
-                                    class='col-md-12'
-                                >
-                                    <EquipmentMeta
-                                        v-model='equipment.meta'
-                                        :schema='type.schema'
-                                    />
-                                </div>
 
-                                <div class='card-body col-md-12'>
-                                    <div class='d-flex'>
-                                        <a
-                                            v-if='$route.params.equipid'
-                                            class='cursor-pointer btn btn-danger'
-                                            @click='archive'
-                                        >
-                                            Archive Equipment
-                                        </a>
-
-                                        <div class='ms-auto'>
-                                            <a
-                                                class='cursor-pointer btn btn-primary'
-                                                @click='save'
+                                    <div class='card-body col-md-12'>
+                                        <div class='d-flex'>
+                                            <button
+                                                v-if='$route.params.equipid'
+                                                class='btn btn-danger'
+                                                :disabled='loading.save'
+                                                @click='archiveModal = true'
                                             >
-                                                <span v-text='$route.params.equipid ? "Update Equipment" : "Create Equipment"' />
-                                            </a>
+                                                Archive Equipment
+                                            </button>
+
+                                            <div class='ms-auto'>
+                                                <button
+                                                    class='btn btn-primary'
+                                                    :disabled='loading.save'
+                                                    @click='save'
+                                                >
+                                                    <TablerLoading
+                                                        v-if='loading.save'
+                                                        :inline='true'
+                                                    />
+                                                    <span
+                                                        v-else
+                                                        v-text='$route.params.equipid ? "Update Equipment" : "Create Equipment"'
+                                                    />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </template>
-                        </div>
+                                </template>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
         </div>
+
+        <TablerModal v-if='archiveModal'>
+            <button
+                type='button'
+                class='btn-close'
+                aria-label='Close'
+                @click='archiveModal = false'
+            />
+            <div class='modal-status bg-red' />
+            <div class='modal-header text-center py-4'>
+                Archive Equipment
+            </div>
+            <div class='modal-body text-center py-4'>
+                <div>
+                    Archive <span
+                        class='fw-bold'
+                        v-text='equipment.name'
+                    />?
+                </div>
+                <div class='text-secondary mt-2'>
+                    Archived equipment is hidden from the equipment list and can no longer be edited or assigned.
+                    A manager can restore it later from the equipment page.
+                </div>
+            </div>
+            <div class='modal-footer'>
+                <button
+                    class='btn'
+                    :disabled='loading.archive'
+                    @click='archiveModal = false'
+                >
+                    Cancel
+                </button>
+                <button
+                    class='btn btn-danger ms-auto'
+                    :disabled='loading.archive'
+                    @click='archive'
+                >
+                    <TablerLoading
+                        v-if='loading.archive'
+                        :inline='true'
+                    />
+                    <span v-else>Archive</span>
+                </button>
+            </div>
+        </TablerModal>
+
+        <TablerError
+            v-if='err'
+            :err='err'
+            @close='err = null'
+        />
 
         <Upload
             v-if='upload'
@@ -208,6 +275,8 @@ import {
     TablerLoading,
     TablerToggle,
     TablerInput,
+    TablerModal,
+    TablerError,
 } from '@tak-ps/vue-tabler'
 import UserSelect from './util/UserSelect.vue';
 import NoAccess from './util/NoAccess.vue';
@@ -216,7 +285,7 @@ import EquipmentMeta from './util/EquipmentMeta.vue';
 import EquipmentProfile from './Equipment/Profile.vue';
 import Upload from './util/Upload.vue';
 import iamHelper from '../iam.js';
-import { reactive, ref, watch, onMounted } from 'vue';
+import { reactive, ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps({
@@ -233,16 +302,25 @@ const props = defineProps({
 const route = useRoute();
 const router = useRouter();
 
+const err = ref(null);
 const upload = ref(false);
+const archiveModal = ref(false);
 const cache = ref(+new Date());
 const headers = reactive({
     Authorization: `Bearer ${localStorage.token}`
 });
 const loading = reactive({
     equipment: true,
+    save: false,
+    archive: false
 });
 const type = reactive({
     schema: {}
+});
+const errors = reactive({
+    name: '',
+    quantity: '',
+    value: ''
 });
 const assigned = ref([]);
 const equipmentTypes = ref([]);
@@ -254,15 +332,55 @@ const equipment = reactive({
     value: '',
     quantity: 1,
     parent: null,
-    type: null,
+    type_id: null,
     meta: {}
 });
 
+// Set once the form is populated so later type changes are known to be user
+// edits (which reset metadata) rather than the initial load
+let ready = false;
+
 function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
 
-watch(() => equipment.type_id, async () => {
-    Object.assign(type, await window.std(`/api/equipment-type/${equipment.type_id}`));
+// Containers that may be chosen as a parent: everything except this item and
+// anything already stored inside it (which would create a cycle)
+const parentOptions = computed(() => {
+    const self = equipment.id;
+    if (!self) return containers.value;
+
+    const excluded = new Set([self]);
+    let grew = true;
+    while (grew) {
+        grew = false;
+        for (const c of containers.value) {
+            if (!excluded.has(c.id) && excluded.has(c.parent)) {
+                excluded.add(c.id);
+                grew = true;
+            }
+        }
+    }
+
+    return containers.value.filter((c) => !excluded.has(c.id));
 });
+
+watch(() => equipment.type_id, async () => {
+    // During the initial load onMounted fetches the type itself
+    if (!ready) return;
+
+    // Metadata belongs to the type schema; a new type starts fresh
+    equipment.meta = {};
+    await fetchType();
+});
+
+async function fetchType() {
+    for (const key of Object.keys(type)) delete type[key];
+    type.schema = {};
+
+    if (equipment.type_id) {
+        Object.assign(type, await window.std(`/api/equipment-type/${equipment.type_id}`));
+        if (!type.schema) type.schema = {};
+    }
+}
 
 async function fetchTypes() {
     const res = await window.std('/api/equipment-type?limit=100');
@@ -275,7 +393,7 @@ async function fetchTypes() {
 }
 
 async function fetchContainers() {
-    const res = await window.std('/api/equipment?container=true&limit=100');
+    const res = await window.std('/api/equipment?container=true&limit=100&sort=name&order=asc');
     containers.value = res.items;
 }
 
@@ -284,79 +402,106 @@ function uploadurl() {
 }
 
 async function fetch() {
-    loading.equipment = true;
     Object.assign(equipment, await window.std(`/api/equipment/${route.params.equipid}`));
+    assigned.value = (await window.std(`/api/equipment/${equipment.id}/assigned`)).items;
+}
 
-    if (equipment.type_id) {
-        Object.assign(type, await window.std(`/api/equipment-type/${equipment.type_id}`));
+function validate() {
+    errors.name = equipment.name.trim() ? '' : 'Equipment name is required';
+
+    const quantity = Number(equipment.quantity);
+    errors.quantity = (Number.isInteger(quantity) && quantity >= 0)
+        ? '' : 'Quantity must be a whole number of 0 or more';
+
+    if (equipment.value === '' || equipment.value === null || equipment.value === undefined) {
+        errors.value = '';
+    } else {
+        const value = Number(equipment.value);
+        errors.value = (Number.isFinite(value) && value >= 0) ? '' : 'Value must be a number of 0 or more';
     }
 
-    assigned.value = (await window.std(`/api/equipment/${equipment.id}/assigned`)).items;
+    return !errors.name && !errors.quantity && !errors.value;
+}
 
-    loading.equipment = false;
+// Only send the fields the API accepts; the fetched object also carries
+// read-only columns like id, created, status and assigned
+function body() {
+    const hasValue = !(equipment.value === '' || equipment.value === null || equipment.value === undefined);
+
+    return {
+        name: equipment.name.trim(),
+        description: equipment.description,
+        type_id: equipment.type_id || undefined,
+        container: !!equipment.container,
+        parent: equipment.parent || null,
+        quantity: parseInt(equipment.quantity),
+        value: hasValue ? Math.round(Number(equipment.value)) : null,
+        meta: equipment.meta,
+        assigned: assigned.value.map((a) => a.uid || a.id)
+    };
 }
 
 async function archive() {
-    loading.equipment = true;
+    loading.archive = true;
 
-    await window.std(`/api/equipment/${route.params.equipid}`, {
-        method: 'PATCH',
-        body: {
-            archived: true
-        }
-    });
+    try {
+        await window.std(`/api/equipment/${route.params.equipid}`, {
+            method: 'PATCH',
+            body: { archived: true }
+        });
 
-    loading.equipment = false;
-    router.push(`/equipment/${route.params.equipid}`);
+        archiveModal.value = false;
+        router.push(`/equipment/${route.params.equipid}`);
+    } finally {
+        loading.archive = false;
+    }
 }
 
 async function save() {
-    loading.equipment = true;
+    if (!validate()) return;
 
-    if (route.params.equipid) {
-        await window.std(`/api/equipment/${route.params.equipid}`, {
-            method: 'PATCH',
-            body: {
-                ...equipment,
-                parent: equipment.parent || null,
-                value: equipment.value ? Number(equipment.value) : null,
-                quantity: equipment.quantity ? parseInt(equipment.quantity) : null,
-                assigned: assigned.value.map((a) => { return a.uid || a.id })
-            }
-        });
+    loading.save = true;
 
-        loading.equipment = false;
-        router.push(`/equipment/${route.params.equipid}`);
-    } else {
-        const equip = await window.std('/api/equipment', {
-            method: 'POST',
-            body: {
-                ...equipment,
-                parent: equipment.parent || null,
-                value: equipment.value ? Number(equipment.value) : null,
-                quantity: equipment.quantity ? parseInt(equipment.quantity) : null,
-                assigned: assigned.value.map((a) => { return a.uid || a.id })
-            }
-        });
+    try {
+        if (route.params.equipid) {
+            await window.std(`/api/equipment/${route.params.equipid}`, {
+                method: 'PATCH',
+                body: body()
+            });
 
-        loading.equipment = false;
-        router.push(`/equipment/${equip.id}`);
+            router.push(`/equipment/${route.params.equipid}`);
+        } else {
+            const equip = await window.std('/api/equipment', {
+                method: 'POST',
+                body: body()
+            });
+
+            router.push(`/equipment/${equip.id}`);
+        }
+    } finally {
+        loading.save = false;
     }
 }
 
 onMounted(async () => {
-    await fetchTypes();
-    await fetchContainers();
+    if (!is_iam("Equipment:Manage")) return;
 
-    if (is_iam("Equipment:Manage") && route.params.equipid) {
-        await fetch();
-    } else if (!route.params.equipid) {
-        const url = new URL(window.location);
-        if (url.searchParams.has('parent')) {
-            const parentEquip = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
-            equipment.parent = parentEquip.id;
+    try {
+        await Promise.all([fetchTypes(), fetchContainers()]);
+
+        if (route.params.equipid) {
+            await fetch();
+        } else {
+            const url = new URL(window.location);
+            if (url.searchParams.has('parent')) {
+                const parentEquip = await window.std(`/api/equipment/${url.searchParams.get('parent')}`);
+                equipment.parent = parentEquip.id;
+            }
         }
 
+        await fetchType();
+    } finally {
+        ready = true;
         loading.equipment = false;
     }
 });

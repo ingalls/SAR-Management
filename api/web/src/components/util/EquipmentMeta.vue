@@ -21,7 +21,13 @@
                 >
                     <template v-if='schema.properties[key].enum'>
                         <div class='row round px-2 py-2'>
-                            SELECT
+                            <TablerEnum
+                                v-model='meta[key]'
+                                :label='key'
+                                :description='schema.properties[key].description'
+                                :options='schema.properties[key].enum.map((e) => String(e))'
+                                :disabled='disabled'
+                            />
                         </div>
                     </template>
                     <template v-else-if='schema.properties[key].type === "string"'>
@@ -29,7 +35,20 @@
                             <TablerInput
                                 v-model='meta[key]'
                                 :label='key'
+                                :description='schema.properties[key].description'
                                 :disabled='disabled'
+                            />
+                        </div>
+                    </template>
+                    <template v-else-if='schema.properties[key].type === "number" || schema.properties[key].type === "integer"'>
+                        <div class='row round px-2 py-2'>
+                            <TablerInput
+                                :model-value='meta[key] ?? ""'
+                                type='number'
+                                :label='key'
+                                :description='schema.properties[key].description'
+                                :disabled='disabled'
+                                @update:model-value='setNumber(key, $event, schema.properties[key].type === "integer")'
                             />
                         </div>
                     </template>
@@ -42,7 +61,7 @@
                             />
                         </div>
                     </template>
-                    <template v-else-if='schema.properties[key].type === "array" && schema.properties[key].items.type === "string"'>
+                    <template v-else-if='schema.properties[key].type === "array" && schema.properties[key].items && schema.properties[key].items.type === "string"'>
                         <div class='row round px-2 py-2'>
                             <div class='d-flex'>
                                 <label
@@ -63,11 +82,19 @@
                             <div
                                 v-for='(arr, i) of meta[key]'
                                 :key='i'
-                                class='my-1'
+                                class='my-1 d-flex align-items-center'
                             >
                                 <TablerInput
                                     v-model='meta[key][i]'
+                                    class='flex-grow-1'
                                     :disabled='disabled'
+                                />
+                                <IconTrash
+                                    v-if='!disabled'
+                                    stroke='1'
+                                    :size='24'
+                                    class='cursor-pointer ms-2'
+                                    @click='meta[key].splice(i, 1)'
                                 />
                             </div>
                         </div>
@@ -91,11 +118,13 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import {
+    TablerEnum,
     TablerToggle,
     TablerInput,
 } from '@tak-ps/vue-tabler';
 import {
-    IconPlus
+    IconPlus,
+    IconTrash
 } from '@tabler/icons-vue'
 
 const props = defineProps({
@@ -117,6 +146,15 @@ const emit = defineEmits(['update:modelValue']);
 
 const meta = ref(props.modelValue);
 
+// The parent may swap in a fresh object (e.g. when the equipment type
+// changes); pick it up rather than keep editing the stale one
+watch(() => props.modelValue, (value) => {
+    if (value !== meta.value) {
+        meta.value = value;
+        format();
+    }
+});
+
 watch(() => props.schema, () => {
     format();
 }, { deep: true });
@@ -125,16 +163,32 @@ watch(meta, () => {
     emit('update:modelValue', meta.value);
 }, { deep: true });
 
-const format = () => {
-    if (props.schema && props.schema.type === 'object' && props.schema.properties) {
-        for (const key in props.schema.properties) {
-            if (!meta.value[key] && props.schema.properties[key].type === 'array') {
-                meta.value[key] = [];
-            }
+const setNumber = (key, raw, integer) => {
+    if (raw === '' || raw === null || raw === undefined) {
+        meta.value[key] = null;
+        return;
+    }
 
-            if (!meta.value[key] && props.schema.properties[key].type === 'boolean') {
-                meta.value[key] = props.schema.properties[key].default || false;
-            }
+    const num = integer ? parseInt(raw) : Number(raw);
+    meta.value[key] = Number.isNaN(num) ? null : num;
+};
+
+// Seed missing keys with sensible defaults so inputs bind to a real value
+const format = () => {
+    if (!props.schema || props.schema.type !== 'object' || !props.schema.properties) return;
+
+    for (const key in props.schema.properties) {
+        const prop = props.schema.properties[key];
+        const missing = meta.value[key] === undefined || meta.value[key] === null;
+
+        if (prop.type === 'array') {
+            if (!Array.isArray(meta.value[key])) meta.value[key] = [];
+        } else if (prop.type === 'boolean') {
+            if (typeof meta.value[key] !== 'boolean') meta.value[key] = prop.default || false;
+        } else if (missing && prop.default !== undefined) {
+            meta.value[key] = prop.default;
+        } else if (missing && prop.enum && prop.enum.length && !props.disabled) {
+            meta.value[key] = String(prop.enum[0]);
         }
     }
 };

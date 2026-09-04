@@ -38,30 +38,34 @@
             class='row g-2 mx-2 mt-1 mb-2 align-items-center'
         >
             <div
-                v-if='search && userFilter'
-                class='col-auto'
-                style='width: calc(100% - 48px)'
+                v-if='search'
+                class='col'
             >
                 <TablerInput
                     v-model='paging.filter'
                     icon='search'
-                    placeholder='Search…'
-                />
-            </div>
-            <div
-                v-else-if='search'
-                class='col-12'
-            >
-                <TablerInput
-                    v-model='paging.filter'
-                    icon='search'
-                    placeholder='Search…'
+                    :placeholder='parent === 0 ? "Search all equipment…" : "Search…"'
                 />
             </div>
             <div
                 v-if='userFilter'
-                class='col-auto'
+                class='col-auto d-flex align-items-center'
             >
+                <TablerBadge
+                    v-if='assignedUser'
+                    class='me-2 d-flex align-items-center'
+                    background-color='#206bc4'
+                    text-color='#ffffff'
+                >
+                    <span v-text='`${assignedUser.fname} ${assignedUser.lname}`' />
+                    <IconX
+                        :size='16'
+                        :stroke='2'
+                        class='ms-1 cursor-pointer'
+                        title='Clear user filter'
+                        @click='selectUser(null)'
+                    />
+                </TablerBadge>
                 <UserSelect
                     mode='icon'
                     title='Filter by User'
@@ -69,57 +73,150 @@
                     @selected='selectUser($event)'
                 />
             </div>
+            <div class='col-auto'>
+                <TablerDropdown>
+                    <TablerIconButton
+                        title='Filter Options'
+                        :style='{ height: "40px", width: "40px", display: "flex", alignItems: "center", justifyContent: "center" }'
+                    >
+                        <IconFilter
+                            :size='24'
+                            :stroke='1'
+                        />
+                    </TablerIconButton>
+                    <template #dropdown>
+                        <div
+                            style='min-width: 260px;'
+                            @click.stop=''
+                        >
+                            <div class='px-3 pt-3 pb-1 fw-bold'>
+                                Filter Options
+                            </div>
+                            <div class='px-3 pb-3 row g-2'>
+                                <div class='col-12'>
+                                    <label class='form-label'>Equipment Type</label>
+                                    <select
+                                        v-model='paging.type_id'
+                                        class='form-select'
+                                    >
+                                        <option :value='null'>
+                                            All Types
+                                        </option>
+                                        <option
+                                            v-for='t in types.list'
+                                            :key='t.id'
+                                            :value='t.id'
+                                            v-text='t.type'
+                                        />
+                                    </select>
+                                </div>
+                                <div class='col-12'>
+                                    <TablerToggle
+                                        v-model='paging.archived'
+                                        label='Show Archived'
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </TablerDropdown>
+            </div>
         </div>
+
         <template v-if='loading.list'>
             <TablerLoading />
         </template>
         <template v-else-if='!list.items.length'>
             <TablerNone
                 :create='false'
-                label='No Equipment'
+                :label='paging.archived ? "No Archived Equipment" : "No Equipment"'
                 :compact='true'
             />
         </template>
         <template v-else>
-            <table class='table card-table table-hover table-vcenter'>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Assigned</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for='equip in list.items'
-                        :key='equip.id'
-                    >
-                        <td>
-                            <a
-                                class='cursor-pointer'
-                                @click='$router.push(`/equipment/${equip.id}`)'
-                                v-text='equip.name'
-                            />
-                        </td>
-                        <td>
-                            <template v-if='equip.assigned.length'>
-                                <Avatar
-                                    :link='true'
-                                    :user='equip.assigned[0]'
-                                />
-                                <span
-                                    v-if='equip.assigned.length > 1'
-                                    v-text='` + equip.assigned.length - 1`'
-                                />
+            <div class='table-responsive'>
+                <table class='table card-table table-hover table-vcenter'>
+                    <TableHeader
+                        v-model:sort='paging.sort'
+                        v-model:order='paging.order'
+                        v-model:header='header'
+                        :allow-export='true'
+                        @export='exportEquipment'
+                    />
+                    <tbody>
+                        <tr
+                            v-for='equip in list.items'
+                            :key='equip.id'
+                        >
+                            <template v-for='h in header'>
+                                <template v-if='h.display'>
+                                    <td v-if='h.name === "name"'>
+                                        <div class='d-flex align-items-center'>
+                                            <IconBox
+                                                v-if='equip.container'
+                                                :size='20'
+                                                :stroke='1'
+                                                class='me-2 text-secondary'
+                                                title='Container'
+                                            />
+                                            <a
+                                                class='cursor-pointer'
+                                                @click='$router.push(`/equipment/${equip.id}`)'
+                                                v-text='equip.name'
+                                            />
+                                            <TablerBadge
+                                                v-if='equip.archived'
+                                                class='ms-2'
+                                                background-color='#d63939'
+                                                text-color='#ffffff'
+                                            >
+                                                Archived
+                                            </TablerBadge>
+                                        </div>
+                                    </td>
+                                    <td
+                                        v-else-if='h.name === "type"'
+                                        v-text='typeName(equip.type_id)'
+                                    />
+                                    <td
+                                        v-else-if='h.name === "quantity"'
+                                        v-text='equip.quantity'
+                                    />
+                                    <td v-else-if='h.name === "assigned"'>
+                                        <template v-if='equip.assigned.length'>
+                                            <div class='d-flex align-items-center'>
+                                                <Avatar
+                                                    :link='true'
+                                                    :user='equip.assigned[0]'
+                                                />
+                                                <span
+                                                    v-if='equip.assigned.length > 1'
+                                                    class='ms-2 text-secondary'
+                                                    v-text='`+${equip.assigned.length - 1}`'
+                                                />
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <span class='text-secondary'>None</span>
+                                        </template>
+                                    </td>
+                                    <td
+                                        v-else-if='h.name === "value"'
+                                        v-text='formatValue(equip.value)'
+                                    />
+                                    <td v-else-if='h.name === "updated" || h.name === "created"'>
+                                        <TablerEpoch :date='equip[h.name]' />
+                                    </td>
+                                    <td
+                                        v-else
+                                        v-text='equip[h.name]'
+                                    />
+                                </template>
                             </template>
-                            <template v-else>
-                                None
-                            </template>
-                        </td>
-                        <td v-text='equip.status' />
-                    </tr>
-                </tbody>
-            </table>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </template>
 
         <TableFooter
@@ -132,15 +229,23 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
 
 import TableFooter from '../util/TableFooter.vue';
+import TableHeader from '../util/TableHeader.vue';
 import UserSelect from '../util/UserSelect.vue';
 import {
+    IconX,
+    IconBox,
     IconPlus,
+    IconFilter,
     IconDownload,
 } from '@tabler/icons-vue';
 import {
+    TablerBadge,
+    TablerEpoch,
+    TablerToggle,
+    TablerDropdown,
     TablerIconButton,
     TablerInput,
     TablerLoading,
@@ -179,29 +284,111 @@ const props = defineProps({
     }
 })
 
-const assignedUser = ref(null)
+// Columns map to fields the API accepts for `sort`; `type` and `assigned`
+// are display-only names translated in sortField()
+const SORTABLE = new Set(['name', 'quantity', 'value', 'created', 'updated', 'type']);
 
-const selectUser = (user) => {
-    assignedUser.value = user.id
-    fetch()
+const header = ref([
+    { name: 'name', display: true },
+    { name: 'type', display: true },
+    { name: 'quantity', display: true },
+    { name: 'assigned', display: true },
+    { name: 'updated', display: true },
+    { name: 'value', display: false },
+    { name: 'created', display: false },
+]);
+
+const assignedUser = ref(null)
+const types = reactive({
+    list: [],
+    byId: {}
+})
+
+const loading = reactive({
+    list: true
+})
+const paging = reactive({
+    filter: '',
+    sort: 'name',
+    order: 'asc',
+    type_id: null,
+    archived: false,
+    limit: 25,
+    page: 0
+})
+const list = reactive({
+    total: 0,
+    items: []
+})
+
+// Return to the first page and refetch. When the page is already 0 the
+// page watcher won't fire, so fetch explicitly in that case.
+const resetAndFetch = (fetcher = fetch) => {
+    if (paging.page === 0) fetcher();
+    else paging.page = 0;
 }
 
-const exportEquipment = async () => {
+const selectUser = (user) => {
+    assignedUser.value = user;
+    resetAndFetch();
+}
+
+const typeName = (type_id) => {
+    return types.byId[type_id] || '';
+}
+
+const formatValue = (value) => {
+    if (value === null || value === undefined) return '';
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+    }).format(value);
+}
+
+const sortField = () => {
+    if (!SORTABLE.has(paging.sort)) return 'name';
+    if (paging.sort === 'type') return 'type_id';
+    return paging.sort;
+}
+
+// Build the query shared by the list request and the CSV export
+const baseUrl = () => {
     const url = window.stdurl('/api/equipment');
-    url.searchParams.append('format', 'csv');
     url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('archived', paging.archived);
+    url.searchParams.append('sort', sortField());
+    url.searchParams.append('order', paging.order);
 
-    const fields = ['name', 'status', 'description', 'quantity'];
-    for (const field of fields) {
-        url.searchParams.append('fields', field);
-    }
+    if (paging.type_id) url.searchParams.append('type_id', paging.type_id);
 
-    if (typeof assignedUser.value === 'number') {
-        url.searchParams.append('assigned', assignedUser.value);
+    if (assignedUser.value) {
+        url.searchParams.append('assigned', assignedUser.value.id);
     } else if (typeof props.assigned === 'number') {
         url.searchParams.append('assigned', props.assigned);
     }
-    if (typeof props.parent === 'number') url.searchParams.append('parent', props.parent);
+
+    // The root list is scoped to top-level items so users can drill into
+    // containers. Once they start searching, look across the whole hierarchy
+    // so gear stored inside a container is still found.
+    const searching = paging.filter.trim().length > 0;
+    const rootList = props.parent === 0;
+    if (typeof props.parent === 'number' && !(searching && rootList)) {
+        url.searchParams.append('parent', props.parent);
+    }
+
+    return url;
+}
+
+const exportEquipment = async () => {
+    const url = baseUrl();
+    url.searchParams.append('format', 'csv');
+
+    const fields = header.value.filter((h) => h.display && h.name !== 'type').map((h) => h.name);
+    if (!fields.includes('name')) fields.unshift('name');
+    for (const field of fields) {
+        url.searchParams.append('fields', field);
+    }
 
     const res = await window.std(url);
     const blob = await res.blob();
@@ -212,49 +399,63 @@ const exportEquipment = async () => {
     document.body.appendChild(a);
     a.click();
     a.remove();
+    URL.revokeObjectURL(durl);
 }
 
-const loading = reactive({
-    list: true
-})
-const paging = reactive({
-    filter: '',
-    limit: 25,
-    page: 0
-})
-const list = reactive({
-    total: 0,
-    items: []
-})
+const fetchTypes = async () => {
+    const res = await window.std('/api/equipment-type?limit=100');
+    types.list = res.items;
+    types.byId = Object.fromEntries(res.items.map((t) => [t.id, t.type]));
+}
+
+// Track the latest request so a slow earlier response can't overwrite a
+// newer one when the user types quickly
+let requestId = 0;
 
 const fetch = async () => {
+    const id = ++requestId;
     loading.list = true;
-    const url = window.stdurl('/api/equipment');
+
+    const url = baseUrl();
     url.searchParams.append('limit', paging.limit);
     url.searchParams.append('page', paging.page);
-    url.searchParams.append('filter', paging.filter);
 
-    if (typeof assignedUser.value === 'number') {
-        url.searchParams.append('assigned', assignedUser.value);
-    } else if (typeof props.assigned === 'number') {
-        url.searchParams.append('assigned', props.assigned);
+    try {
+        const result = await window.std(url);
+        if (id !== requestId) return;
+        list.total = result.total;
+        list.items = result.items;
+    } finally {
+        if (id === requestId) loading.list = false;
     }
-    if (typeof props.parent === 'number') url.searchParams.append('parent', props.parent);
-    const result = await window.std(url);
-    list.total = result.total;
-    list.items = result.items;
-    loading.list = false;
 }
+
+let debounce = null;
+const debouncedFetch = () => {
+    if (debounce) clearTimeout(debounce);
+    debounce = setTimeout(() => {
+        debounce = null;
+        fetch();
+    }, 250);
+}
+
+onUnmounted(() => {
+    if (debounce) clearTimeout(debounce);
+});
 
 watch(() => paging.page, async () => {
     await fetch();
 })
 
-watch(() => paging.filter, async () => {
-    await fetch();
+watch(() => paging.filter, () => {
+    resetAndFetch(debouncedFetch);
+})
+
+watch(() => [paging.sort, paging.order, paging.type_id, paging.archived], () => {
+    resetAndFetch();
 })
 
 onMounted(async () => {
-    await fetch();
+    await Promise.all([fetchTypes(), fetch()]);
 })
 </script>

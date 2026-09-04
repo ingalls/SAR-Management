@@ -44,6 +44,26 @@
                                             Archived
                                         </TablerBadge>
 
+                                        <button
+                                            v-if='is_iam("Equipment:Manage") && equipment.archived'
+                                            class='btn btn-secondary'
+                                            :disabled='loading.restore'
+                                            @click='restore'
+                                        >
+                                            <TablerLoading
+                                                v-if='loading.restore'
+                                                :inline='true'
+                                            />
+                                            <template v-else>
+                                                <IconArchiveOff
+                                                    :stroke='1'
+                                                    :size='20'
+                                                    class='me-1'
+                                                />
+                                                Restore
+                                            </template>
+                                        </button>
+
                                         <TablerIconButton
                                             v-if='is_iam("Equipment:Manage") && !equipment.archived'
                                             title='Edit Equipment'
@@ -66,18 +86,27 @@
                                             <div class='col-md-8'>
                                                 <div class='datagrid'>
                                                     <div
-                                                        v-if='parent.id'
+                                                        v-if='ancestors.length'
                                                         class='datagrid-item'
                                                     >
                                                         <div class='datagrid-title'>
-                                                            Parent Container
+                                                            Location
                                                         </div>
                                                         <div class='datagrid-content'>
-                                                            <a
-                                                                class='cursor-pointer'
-                                                                @click='$router.push(`/equipment/${parent.id}`)'
-                                                                v-text='parent.name'
-                                                            />
+                                                            <template
+                                                                v-for='(a, i) in ancestors'
+                                                                :key='a.id'
+                                                            >
+                                                                <span
+                                                                    v-if='i > 0'
+                                                                    class='mx-1 text-secondary'
+                                                                >/</span>
+                                                                <a
+                                                                    class='cursor-pointer'
+                                                                    @click='$router.push(`/equipment/${a.id}`)'
+                                                                    v-text='a.name'
+                                                                />
+                                                            </template>
                                                         </div>
                                                     </div>
                                                     <div class='datagrid-item'>
@@ -108,10 +137,21 @@
                                                         </div>
                                                         <div class='datagrid-content'>
                                                             <span
-                                                                v-if='equipment.value'
-                                                                v-text='equipment.value'
+                                                                v-if='typeof equipment.value === "number"'
+                                                                v-text='formatValue(equipment.value)'
                                                             />
                                                             <span v-else>Unknown</span>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        v-if='typeof equipment.value === "number" && equipment.quantity > 1'
+                                                        class='datagrid-item'
+                                                    >
+                                                        <div class='datagrid-title'>
+                                                            Total Value
+                                                        </div>
+                                                        <div class='datagrid-content'>
+                                                            <span v-text='formatValue(equipment.value * equipment.quantity)' />
                                                         </div>
                                                     </div>
                                                     <div
@@ -124,11 +164,19 @@
                                                         <div class='datagrid-content'>
                                                             <Avatar
                                                                 v-for='a in equipment.assigned'
-                                                                :key='a.uid'
+                                                                :key='a.id'
                                                                 :user='a'
                                                                 class='my-1'
                                                                 :link='true'
                                                             />
+                                                        </div>
+                                                    </div>
+                                                    <div class='datagrid-item'>
+                                                        <div class='datagrid-title'>
+                                                            Last Updated
+                                                        </div>
+                                                        <div class='datagrid-content'>
+                                                            <TablerEpoch :date='equipment.updated' />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -161,7 +209,7 @@
                             class='col-lg-12'
                         >
                             <CardEquipment
-                                :create='is_iam("Equipment:Manage")'
+                                :create='is_iam("Equipment:Manage") && !equipment.archived'
                                 label='Contained Equipment'
                                 :parent='equipment.id'
                                 :user-filter='true'
@@ -175,18 +223,20 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import NoAccess from './util/NoAccess.vue';
 import iamHelper from '../iam.js';
 import {
     TablerBadge,
+    TablerEpoch,
     TablerLoading,
     TablerBreadCrumb,
     TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
-    IconPencil
+    IconPencil,
+    IconArchiveOff
 } from '@tabler/icons-vue';
 import CardEquipment from './cards/Equipment.vue';
 import EquipmentIncidentsCard from './util/EquipmentIncidentsCard.vue';
@@ -208,32 +258,76 @@ const props = defineProps({
 })
 
 const loading = reactive({
-    equipment: true
+    equipment: true,
+    restore: false
 })
 
 const type = reactive({})
-const parent = reactive({})
 const equipment = reactive({})
 
-function is_iam(permission) { 
-    return iamHelper(props.iam, props.auth, permission) 
+// Chain of containers from the root down to the immediate parent
+const ancestors = ref([])
+
+function is_iam(permission) {
+    return iamHelper(props.iam, props.auth, permission)
+}
+
+function formatValue(value) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+    }).format(value);
+}
+
+async function fetchAncestors(parentId) {
+    const chain = [];
+    const seen = new Set();
+    let current = parentId;
+
+    // Bounded walk so a malformed hierarchy can't loop forever
+    while (current && !seen.has(current) && chain.length < 25) {
+        seen.add(current);
+        const ancestor = await window.std(`/api/equipment/${current}`);
+        chain.unshift({ id: ancestor.id, name: ancestor.name });
+        current = ancestor.parent;
+    }
+
+    return chain;
 }
 
 async function fetch() {
     loading.equipment = true;
-    const equipResult = await window.std(`/api/equipment/${route.params.equipid}`);
-    Object.assign(equipment, equipResult);
 
-    if (equipment.type_id) {
-        const typeResult = await window.std(`/api/equipment-type/${equipment.type_id}`);
-        Object.assign(type, typeResult);
-    }
-    if (equipment.parent) {
-        const parentResult = await window.std(`/api/equipment/${equipment.parent}`);
-        Object.assign(parent, parentResult);
-    }
+    try {
+        const equipResult = await window.std(`/api/equipment/${route.params.equipid}`);
+        Object.assign(equipment, equipResult);
 
-    loading.equipment = false;
+        const [typeResult, chain] = await Promise.all([
+            equipment.type_id ? window.std(`/api/equipment-type/${equipment.type_id}`) : null,
+            equipment.parent ? fetchAncestors(equipment.parent) : []
+        ]);
+
+        for (const key of Object.keys(type)) delete type[key];
+        if (typeResult) Object.assign(type, typeResult);
+        ancestors.value = chain;
+    } finally {
+        loading.equipment = false;
+    }
+}
+
+async function restore() {
+    loading.restore = true;
+
+    try {
+        const updated = await window.std(`/api/equipment/${route.params.equipid}`, {
+            method: 'PATCH',
+            body: { archived: false }
+        });
+        Object.assign(equipment, updated);
+    } finally {
+        loading.restore = false;
+    }
 }
 
 onMounted(async () => {

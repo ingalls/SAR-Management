@@ -10,6 +10,33 @@ import Config from '../lib/config.js';
 import { EquipmentResponse } from '../lib/types.js';
 import { Equipment } from '../lib/schema.js';
 
+function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Ensure a proposed parent exists and would not create a cycle in the
+ * container hierarchy (an item cannot be its own ancestor)
+ */
+async function validateParent(config: Config, parent: number, self?: number): Promise<void> {
+    const seen = new Set<number>();
+    let current: number | null = parent;
+
+    while (current) {
+        if (self !== undefined && current === self) {
+            throw new Err(400, null, 'Equipment cannot be placed inside itself or one of its own containers');
+        }
+
+        if (seen.has(current)) {
+            throw new Err(400, null, 'Equipment hierarchy contains a cycle');
+        }
+        seen.add(current);
+
+        const ancestor = await config.models.Equipment.from(current);
+        current = ancestor.parent;
+    }
+}
+
 export default async function router(schema: Schema, config: Config) {
     const notify = new Notify(config);
 
@@ -24,10 +51,11 @@ export default async function router(schema: Schema, config: Config) {
             fields: Type.Optional(Type.Array(Type.String({ enum: Array.from(equipFields) }))),
             limit: Type.Optional(Type.Integer()),
             assigned: Type.Optional(Type.Integer()),
+            type_id: Type.Optional(Type.Integer()),
             container: Type.Optional(Type.Boolean()),
             archived: Type.Boolean({ default: false }),
             parent: Type.Optional(Type.Integer({ "description": "By default all equipment regardless of container status is returned. Set to 0 for root containers or to the parent ID for items in a specific container" })),
-            page: Type.Optional(Type.Integer()),rder: Type.Optional(Type.Enum(GenericListOrder)),
+            page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Equipment)})),
             filter: Type.Optional(Type.String({ default: '' }))
@@ -40,6 +68,10 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.VIEW);
 
+            // User input is matched with ~* so escape regex metacharacters to
+            // avoid a Postgres error on input like "(" or "["
+            const filter = req.query.filter ? escapeRegex(req.query.filter) : null;
+
             const whereClause = sql`
                 (
                     (${Param(req.query.parent)}::BIGINT IS NULL)
@@ -48,7 +80,8 @@ export default async function router(schema: Schema, config: Config) {
                 )
                 AND (${Param(req.query.container)}::BOOLEAN IS NULL OR container = ${Param(req.query.container)})
                 AND (${Param(req.query.archived)}::BOOLEAN IS NULL OR archived = ${Param(req.query.archived)})
-                AND (${Param(req.query.filter)}::TEXT IS NULL OR name ~* ${Param(req.query.filter)})
+                AND (${Param(req.query.type_id)}::INT IS NULL OR type_id = ${Param(req.query.type_id)}::INT)
+                AND (${Param(filter)}::TEXT IS NULL OR name ~* ${Param(filter)})
                 AND (${Param(req.query.assigned)}::INT IS NULL OR assigned_ids @> ARRAY[${Param(req.query.assigned)}::INT])
             `;
 
@@ -124,6 +157,8 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.Equipment, PermissionsLevel.MANAGE);
 
+            if (req.body.parent) await validateParent(config, req.body.parent);
+
             const assigned = req.body.assigned;
             delete req.body.assigned;
 
@@ -172,8 +207,14 @@ export default async function router(schema: Schema, config: Config) {
             const equipment = await config.models.Equipment.from(req.params.equipmentid);
 
             if (equipment.archived) {
-                throw new Err(400, null, 'Cannot modify archived equipment');
+                // The only change permitted on archived equipment is restoring it
+                const keys = Object.keys(req.body);
+                if (keys.length !== 1 || req.body.archived !== false) {
+                    throw new Err(400, null, 'Cannot modify archived equipment');
+                }
             }
+
+            if (req.body.parent) await validateParent(config, req.body.parent, equipment.id);
 
             const assigned = req.body.assigned;
             delete req.body.assigned;
