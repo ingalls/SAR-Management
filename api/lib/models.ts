@@ -19,6 +19,7 @@ import ApplicationCommentModel from './models/ApplicationComment.js'
 import TeamModel from './models/Team.js'
 import TeamSettingModel from './models/TeamSetting.js'
 import UserAgencyModel from './models/UserAgency.js'
+import RolodexModel from './models/Rolodex.js'
 import * as pgtypes from './schema.js';
 
 export default class Models {
@@ -52,7 +53,8 @@ export default class Models {
     TrainingAsset: Modeler<typeof pgtypes.TrainingAsset>;
     TrainingAgency: Modeler<typeof pgtypes.TrainingAgency>;
     TrainingTeam: Modeler<typeof pgtypes.TrainingTeam>;
-    Rolodex: Modeler<typeof pgtypes.Rolodex>;
+    Rolodex: RolodexModel;
+    RolodexAgency: Modeler<typeof pgtypes.RolodexAgency>;
     UserIncident: Modeler<typeof pgtypes.UserIncident>;
     EquipmentIncident: Modeler<typeof pgtypes.EquipmentIncident>;
 
@@ -105,7 +107,8 @@ export default class Models {
         this.TeamChannel = new Modeler(pg, pgtypes.TeamChannel);
         this.Application = new Modeler(pg, pgtypes.Application);
         this.Asset = new Modeler(pg, pgtypes.Asset);
-        this.Rolodex = new Modeler(pg, pgtypes.Rolodex);
+        this.Rolodex = new RolodexModel(pg);
+        this.RolodexAgency = new Modeler(pg, pgtypes.RolodexAgency);
         this.CertKnown = new Modeler(pg, pgtypes.CertKnown);
         this.Cert = new Modeler(pg, pgtypes.Cert);
         this.EquipmentType = new Modeler(pg, pgtypes.EquipmentType);

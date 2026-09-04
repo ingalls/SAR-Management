@@ -13,6 +13,7 @@ import { AugmentedEquipment } from './models/Equipment.js';
 import { AugmentedUser } from './models/User.js';
 import { AugmentedTraining } from './models/Training.js';
 import { AugmentedMission } from './models/Mission.js';
+import { AugmentedRolodex } from './models/Rolodex.js';
 import { Type } from '@sinclair/typebox'
 import * as schemas from './schema.js';
 
@@ -98,10 +99,7 @@ export const CertKnownResponse = createSelectSchema(schemas.CertKnown, {
     id: Type.Integer(),
 });
 
-export const RolodexResponse = createSelectSchema(schemas.Rolodex, {
-    id: Type.Integer(),
-    location_geom: Type.Union([Type.Any(), Type.Null()]),
-});
+export const RolodexResponse = AugmentedRolodex;
 
 export const CertResponse = createSelectSchema(schemas.Cert, {
     id: Type.Integer(),

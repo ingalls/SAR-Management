@@ -246,6 +246,13 @@
       "when": 1782000000000,
       "tag": "0034_local_login_config",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1782100000000,
+      "tag": "0035_rolodex_robust",
+      "breakpoints": true
     }
   ]
 }

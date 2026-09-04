@@ -482,6 +482,12 @@ export const TrainingAgency = pgTable('trainings_to_agencies', {
     agency_id: bigint({ mode: "number" }).notNull().references(() => Agency.id),
 });
 
+export enum RolodexType {
+    PERSON = 'person',
+    PLACE = 'place',
+    THING = 'thing'
+}
+
 export const Rolodex = pgTable('rolodex', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
@@ -490,12 +496,26 @@ export const Rolodex = pgTable('rolodex', {
     archived: boolean().notNull().default(false),
     protected: boolean().notNull().default(false),
 
+    type: text().$type<RolodexType>().notNull().default(RolodexType.PERSON),
     name: text().notNull(),
+    title: text().notNull().default(''),
+    organization: text().notNull().default(''),
     phone: text(),
     email: text(),
+    website: text().notNull().default(''),
+    address: text().notNull().default(''),
     location_geom: geometry({ type: GeometryType.Point, srid: 4326 }),
     remarks: text().notNull().default(''),
+    tags: json().$type<Array<string>>().notNull().default([]),
+    photo: boolean().notNull().default(false),
+    author: integer().references(() => User.id),
     agency_id: bigint({ mode: "number" }).references(() => Agency.id)
+});
+
+export const RolodexAgency = pgTable('rolodex_to_agencies', {
+    id: serial().primaryKey(),
+    rolodex_id: integer().notNull().references(() => Rolodex.id),
+    agency_id: bigint({ mode: "number" }).notNull().references(() => Agency.id),
 });
 
 export const UserIncident = pgTable('users_incidents', {

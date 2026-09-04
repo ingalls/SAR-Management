@@ -169,7 +169,7 @@ const router = new VueRouter.createRouter({
 
         { path: '/rolodex', name: 'rolodexes', component: () => import('./components/Rolodex.vue') },
         { path: '/rolodex/new', name: 'rolodex-new', component: () => import('./components/RolodexEdit.vue') },
-        { path: '/rolodex/:rolodexid', name: 'rolodex', component: () => import('./components/RolodexEdit.vue') },
+        { path: '/rolodex/:rolodexid', name: 'rolodex', component: () => import('./components/RolodexItem.vue') },
         { path: '/rolodex/:rolodexid/edit', name: 'rolodex-edit', component: () => import('./components/RolodexEdit.vue') },
 
         { path: '/user/:userid/cert', name: 'certs', component: () => import('./components/Certs.vue') },
