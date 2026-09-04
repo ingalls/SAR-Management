@@ -100,7 +100,7 @@
 <script setup>
 import StandardItem from './StandardItem.vue';
 import TagBadge from './TagBadge.vue';
-import moment from 'moment';
+import { fromNow } from '../../base/time.js';
 import {
     IconCircleDot,
     IconCircleCheck,
@@ -117,8 +117,6 @@ defineProps({
         required: true
     }
 });
-
-const fromNow = (ts) => moment(ts).fromNow();
 
 const profile = (id) => {
     const url = window.stdurl(`/api/user/${id}/profile`);

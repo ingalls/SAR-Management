@@ -1,8 +1,53 @@
 <template>
-    <div class='card'>
-        <div class='card-body'>
+    <div class='card h-100 w-100'>
+        <div
+            v-if='dragHandle || menu'
+            class='card-header'
+        >
+            <IconGripVertical
+                v-if='dragHandle'
+                class='drag-handle cursor-move'
+                :size='24'
+                :stroke='1'
+            />
+            <h3
+                class='card-title'
+                v-text='label'
+            />
+            <div class='btn-list ms-auto'>
+                <TablerDropdown v-if='menu'>
+                    <IconDotsVertical
+                        class='cursor-pointer'
+                        :size='32'
+                        :stroke='1'
+                    />
+                    <template #dropdown>
+                        <button
+                            class='dropdown-item text-danger'
+                            @click.stop='$emit("remove")'
+                        >
+                            <IconTrash
+                                class='me-1'
+                                :size='20'
+                                :stroke='1'
+                            />
+                            Remove Widget
+                        </button>
+                    </template>
+                </TablerDropdown>
+            </div>
+        </div>
+        <NoAccess
+            v-if='iam && auth && !is_iam("Training:View")'
+            :compact='true'
+        />
+        <div
+            v-else
+            class='card-body'
+        >
             <div class='d-flex'>
                 <h3
+                    v-if='!dragHandle && !menu'
                     class='subheader'
                     v-text='label'
                 />
@@ -42,8 +87,16 @@ import { ref, watch, onMounted } from 'vue'
 import {
     TablerSelect,
     TablerLoading,
-    TablerProgress
+    TablerProgress,
+    TablerDropdown
 } from '@tak-ps/vue-tabler';
+import {
+    IconGripVertical,
+    IconDotsVertical,
+    IconTrash
+} from '@tabler/icons-vue';
+import iamHelper from '../../iam.js';
+import NoAccess from '../util/NoAccess.vue';
 import moment from 'moment';
 
 const props = defineProps({
@@ -55,7 +108,27 @@ const props = defineProps({
         type: Number,
         default: null
     },
+    dragHandle: {
+        type: Boolean,
+        default: false
+    },
+    menu: {
+        type: Boolean,
+        default: false
+    },
+    iam: {
+        type: Object,
+        default: null
+    },
+    auth: {
+        type: Object,
+        default: null
+    }
 })
+
+defineEmits(['remove']);
+
+const is_iam = (permission) => iamHelper(props.iam, props.auth, permission);
 
 const range = ref('Current Year')
 const loading = ref(true)

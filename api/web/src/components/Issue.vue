@@ -147,56 +147,58 @@
                         </div>
 
                         <div class='col-md-9'>
-                            <div class='d-flex align-items-center mb-2'>
-                                <h3 class='m-0 subheader'>
-                                    Comments
-                                </h3>
-                                <span
-                                    class='badge bg-secondary-lt ms-2'
-                                    v-text='comments.items.length'
-                                />
-                            </div>
+                            <div class='w-100 d-flex flex-column gap-3'>
+                                <div class='d-flex align-items-center'>
+                                    <h3 class='m-0 subheader'>
+                                        Comments
+                                    </h3>
+                                    <span
+                                        class='badge bg-secondary-lt ms-2'
+                                        v-text='comments.items.length'
+                                    />
+                                </div>
 
-                            <TablerNone
-                                v-if='!comments.items.length'
-                                label='No Comments Yet'
-                                :create='false'
-                                :compact='true'
-                            />
-                            <div class='d-flex flex-column gap-3'>
-                                <Comment
-                                    v-for='comment in comments.items'
-                                    :key='comment.id'
-                                    :can-edit='comment.author === auth.id || is_iam("Issue:Admin")'
-                                    :comment='comment'
-                                    @delete='deleteComment($event)'
-                                    @update='updateComment($event)'
+                                <TablerNone
+                                    v-if='!comments.items.length'
+                                    label='No Comments Yet'
+                                    :create='false'
+                                    :compact='true'
                                 />
+                                <div class='d-flex flex-column gap-3'>
+                                    <Comment
+                                        v-for='comment in comments.items'
+                                        :key='comment.id'
+                                        :can-edit='comment.author === auth.id || is_iam("Issue:Admin")'
+                                        :comment='comment'
+                                        @delete='deleteComment($event)'
+                                        @update='updateComment($event)'
+                                    />
 
-                                <CreateComment
-                                    v-if='issue.status === "open" && is_iam("Issue:Manage")'
-                                    @comment='fetchComments'
-                                    @close='update("closed")'
-                                />
-                                <div
-                                    v-else-if='issue.status === "closed"'
-                                    class='card'
-                                >
-                                    <div class='card-body d-flex align-items-center text-muted'>
-                                        <IconLock
-                                            :size='20'
-                                            stroke='1.5'
-                                            class='me-2'
-                                        />
-                                        This issue is closed. Re-open it to continue the discussion.
-                                        <button
-                                            v-if='is_iam("Issue:Manage")'
-                                            type='button'
-                                            class='btn btn-sm btn-outline-success ms-auto'
-                                            @click='update("open")'
-                                        >
-                                            Re-Open
-                                        </button>
+                                    <CreateComment
+                                        v-if='issue.status === "open" && is_iam("Issue:Manage")'
+                                        @comment='fetchComments'
+                                        @close='update("closed")'
+                                    />
+                                    <div
+                                        v-else-if='issue.status === "closed"'
+                                        class='card'
+                                    >
+                                        <div class='card-body d-flex align-items-center text-muted'>
+                                            <IconLock
+                                                :size='20'
+                                                stroke='1.5'
+                                                class='me-2'
+                                            />
+                                            This issue is closed. Re-open it to continue the discussion.
+                                            <button
+                                                v-if='is_iam("Issue:Manage")'
+                                                type='button'
+                                                class='btn btn-sm btn-outline-success ms-auto'
+                                                @click='update("open")'
+                                            >
+                                                Re-Open
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +234,7 @@ import {
 import Avatar from './util/Avatar.vue';
 import IssuePoll from './Issue/Poll.vue';
 import UserSelect from './util/UserSelect.vue';
-import moment from 'moment';
+import { fromNow as relative } from '../base/time.js';
 import { reactive, ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -267,7 +269,7 @@ const comments = reactive({
     items: []
 });
 
-const fromNow = computed(() => moment(issue.created).fromNow());
+const fromNow = computed(() => relative(issue.created));
 
 function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
 

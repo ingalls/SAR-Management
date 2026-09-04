@@ -11,74 +11,39 @@
                     <h1 class='mb-3'>
                         Welcome to your Dashboard
                     </h1>
-                    <p class='lead text-muted mb-5'>
-                        Select a widget below to add it to your personal dashboard view.
+                    <p class='lead text-muted mb-4'>
+                        Your dashboard is empty. Browse the widget explorer to build your personal view.
                     </p>
-
-                    <div class='row justify-content-center'>
-                        <div
-                            v-for='widget in availableWidgets'
-                            :key='widget.name'
-                            class='col-md-3 mb-4'
-                        >
-                            <div
-                                class='card h-100 widget-preview'
-                                @click='addCard(widget.name)'
-                            >
-                                <div class='card-body text-center'>
-                                    <component
-                                        :is='widget.icon'
-                                        :size='48'
-                                        stroke='1.5'
-                                        class='mb-3 text-muted'
-                                    />
-                                    <h3 class='card-title'>
-                                        {{ widget.label }}
-                                    </h3>
-                                    <p>{{ widget.description }}</p>
-                                    <button class='btn btn-primary w-100'>
-                                        Add Widget
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <button
+                        class='btn btn-primary btn-lg'
+                        @click='explorer = true'
+                    >
+                        <IconLayoutGridAdd
+                            class='me-2'
+                            :size='24'
+                            :stroke='1.5'
+                        />
+                        Browse Widgets
+                    </button>
                 </div>
 
                 <div
-                    v-if='!loading && cards.length > 0 && missingWidgets.length > 0'
+                    v-if='!loading && cards.length > 0'
                     class='d-flex justify-content-end mb-3'
                 >
-                    <div class='dropdown'>
-                        <button
-                            class='btn btn-outline-primary dropdown-toggle'
-                            type='button'
-                            data-bs-toggle='dropdown'
-                            aria-expanded='false'
-                        >
-                            <i class='fa-solid fa-plus me-2' />Add Widget
-                        </button>
-                        <ul class='dropdown-menu'>
-                            <li
-                                v-for='widget in missingWidgets'
-                                :key='widget.name'
-                            >
-                                <a
-                                    class='dropdown-item d-flex align-items-center'
-                                    href='#'
-                                    @click.prevent='addCard(widget.name)'
-                                >
-                                    <component
-                                        :is='widget.icon'
-                                        :size='20'
-                                        stroke='1.5'
-                                        class='me-2'
-                                    />
-                                    {{ widget.label }}
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <button
+                        class='btn btn-outline-primary'
+                        type='button'
+                        :disabled='!missingWidgets.length'
+                        @click='explorer = true'
+                    >
+                        <IconLayoutGridAdd
+                            class='me-2'
+                            :size='20'
+                            :stroke='1.5'
+                        />
+                        Add Widget
+                    </button>
                 </div>
 
                 <div
@@ -143,11 +108,40 @@
                                     @remove='removeCard(card.id)'
                                 />
                             </template>
+                            <template v-else-if='card.name === "MissionRate"'>
+                                <MissionMiniCard
+                                    :iam='props.iam'
+                                    :auth='props.auth'
+                                    :assigned='props.auth.id'
+                                    label='My Mission Rate'
+                                    :drag-handle='true'
+                                    :menu='true'
+                                    @remove='removeCard(card.id)'
+                                />
+                            </template>
+                            <template v-else-if='card.name === "TrainingRate"'>
+                                <TrainingMiniCard
+                                    :iam='props.iam'
+                                    :auth='props.auth'
+                                    :assigned='props.auth.id'
+                                    label='My Training Rate'
+                                    :drag-handle='true'
+                                    :menu='true'
+                                    @remove='removeCard(card.id)'
+                                />
+                            </template>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <WidgetExplorer
+            v-if='explorer'
+            :added='cards.map(c => c.name)'
+            @add='addCard($event)'
+            @close='explorer = false'
+        />
     </div>
 </template>
 
@@ -158,14 +152,13 @@ import IssuesCard from './cards/Issues.vue';
 import TrainingsCard from './cards/Trainings.vue';
 import CalendarCard from './cards/Calendar.vue';
 import OnCallCard from './cards/OnCall.vue';
+import MissionMiniCard from './cards/MissionsMini.vue';
+import TrainingMiniCard from './cards/TrainingMini.vue';
+import WidgetExplorer from './Home/WidgetExplorer.vue';
+import widgets from './Home/widgets.js';
 import { GridStack } from 'gridstack';
 import moment from 'moment';
-import { 
-    IconChecklist,
-    IconSchool,
-    IconCalendar,
-    IconPhoneCall
-} from '@tabler/icons-vue';
+import { IconLayoutGridAdd } from '@tabler/icons-vue';
 
 const props = defineProps({
     iam: {
@@ -181,50 +174,26 @@ const props = defineProps({
 const gridstack = useTemplateRef('gridstack');
 
 const loading = ref(true);
+const explorer = ref(false);
 const cards = ref([]);
 let grid = null;
 
-const availableWidgets = [
-    { 
-        name: 'Issues', 
-        label: 'Issues', 
-        icon: IconChecklist,
-        description: 'Track active missions and tasks.'
-    },
-    { 
-        name: 'Trainings', 
-        label: 'Trainings', 
-        icon: IconSchool,
-        description: 'View upcoming training events.'
-    },
-    { 
-        name: 'Calendar', 
-        label: 'Calendar', 
-        icon: IconCalendar,
-        description: 'View upcoming events on a calendar.'
-    },
-    {
-        name: 'OnCall',
-        label: 'On-Call',
-        icon: IconPhoneCall,
-        description: 'See who is currently on-call.'
-    }
-];
-
 const missingWidgets = computed(() => {
     const currentNames = cards.value.map(c => c.name);
-    return availableWidgets.filter(w => !currentNames.includes(w.name));
+    return widgets.filter(w => !currentNames.includes(w.name));
 });
 
-const addCard = async (name) => {
+const addCard = async (widget) => {
+    const w = widget.w || 6;
+    const h = widget.h || 4;
     let x = 0;
     let y = 0;
 
     if (grid) {
         let found = false;
         for (let checkY = 0; checkY < 100; checkY++) {
-            for (let checkX = 0; checkX <= 6; checkX++) {
-                if (grid.isAreaEmpty(checkX, checkY, 6, 4)) {
+            for (let checkX = 0; checkX <= 12 - w; checkX++) {
+                if (grid.isAreaEmpty(checkX, checkY, w, h)) {
                     x = checkX;
                     y = checkY;
                     found = true;
@@ -238,11 +207,11 @@ const addCard = async (name) => {
     await window.std(`/api/user/${props.auth.id}/dashboard`, {
         method: 'POST',
         body: {
-            name: name,
+            name: widget.name,
             x: x,
             y: y,
-            w: 6,
-            h: 4
+            w: w,
+            h: h
         }
     });
 
@@ -302,14 +271,3 @@ onMounted(async () => {
     loading.value = false;
 });
 </script>
-
-<style>
-.widget-preview {
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.widget-preview:hover {
-    transform: translateY(-5px);
-    border-color: #0d6efd;
-}
-</style>

@@ -8,11 +8,11 @@
                 />
                 <span
                     class='text-muted small ms-2'
-                    v-text='`commented ${fromNow}`'
+                    v-text='`commented ${commented}`'
                 />
                 <span
                     v-if='edited'
-                    v-tooltip='`Edited ${moment(comment.updated).fromNow()}`'
+                    v-tooltip='`Edited ${fromNow(comment.updated)}`'
                     class='badge bg-secondary-lt ms-2'
                 >
                     edited
@@ -33,6 +33,7 @@
                     </TablerIconButton>
                     <TablerDelete
                         displaytype='icon'
+                        title='Delete Comment'
                         :size='20'
                         @delete='$emit("delete", comment)'
                     />
@@ -75,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import {
     TablerMarkdown,
     TablerLoading,
@@ -84,7 +85,7 @@ import {
 } from '@tak-ps/vue-tabler'
 import { IconPencil } from '@tabler/icons-vue';
 import Avatar from './Avatar.vue';
-import moment from 'moment';
+import { parseTimestamp, fromNow } from '../../base/time.js';
 import MDEditorShim from './MDEditorShim.vue';
 
 const props = defineProps({
@@ -104,11 +105,19 @@ const loading = ref(false);
 const edit = ref(false);
 const body = ref(props.comment.body);
 
-const fromNow = computed(() => moment(props.comment.created).fromNow());
+const commented = computed(() => fromNow(props.comment.created));
 
 // Comments are stamped with created === updated on insert
 const edited = computed(() => {
-    return props.comment.updated && moment(props.comment.updated).diff(moment(props.comment.created), 'seconds') > 5;
+    return props.comment.updated && parseTimestamp(props.comment.updated).diff(parseTimestamp(props.comment.created), 'seconds') > 5;
+});
+
+// The parent refetches comments after an update - once the new body arrives
+// leave edit mode and clear the spinner
+watch(() => props.comment.updated, () => {
+    loading.value = false;
+    edit.value = false;
+    body.value = props.comment.body;
 });
 
 function startEdit() {
