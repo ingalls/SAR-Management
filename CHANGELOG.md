@@ -12,6 +12,10 @@
 
 ### Pending Release
 
+- :tada: `API`: Add Issue Tags (`/issue-tag`) with the same SVG logo & badge colours as Mission/Training Tags; issues carry `tags`, `tags_id`, `assigned_ids` & a `comments` count and accept `tags` on create/update
+- :tada: `API`: `GET /issue` gains `tag`, `author` & `poll` filters, `status=all`, and text search across title & body
+- :tada: `UI`: Add an Issue Tags admin section, tag pickers on the new/edit issue pages and inline tag management on the issue page
+- :rocket: `UI`: Redesign the Issues list as filterable cards with status, tag, assignee & author filters synced to the URL, and restyle the issue page & comments to match Missions
 - :tada: `API`: `GET /mission` gains rich filtering - text search across title, body, location & mission number, plus `tag`, `team`, `agency`, `user` (attendees), `status`, `geom`, `incidents`, `people`, `users_min` & `users_max`. `team` now accepts a comma separated list
 - :tada: `UI`: New Missions search & filter panel with quick filters, date presets, tag/team/agency badge pickers, attendee search, personnel range, map-location filter, sort options and removable filter chips
 - :rocket: `UI`: Mission filters are synced to the URL for shareable links and drive the Mission Heat Map so map and list always agree

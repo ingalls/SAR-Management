@@ -109,6 +109,23 @@
                                                 role='menuitem'
                                                 class='list-group-item list-group-item-action d-flex align-items-center user-select-none'
                                                 :class='{
+                                                    "active": String(route.name) === "admin-issue-tags",
+                                                    "cursor-pointer": String(route.name) !== "admin-issue-tags"
+                                                }'
+                                                @keyup.enter='router.push(`/admin/issue-tags`)'
+                                                @click='router.push(`/admin/issue-tags`)'
+                                            >
+                                                <IconBug
+                                                    :size='32'
+                                                    stroke='1'
+                                                />
+                                                <span class='mx-3'>Issue Tags</span>
+                                            </span>
+                                            <span
+                                                tabindex='0'
+                                                role='menuitem'
+                                                class='list-group-item list-group-item-action d-flex align-items-center user-select-none'
+                                                :class='{
                                                     "active": String(route.name) === "admin-certs",
                                                     "cursor-pointer": String(route.name) !== "admin-certs"
                                                 }'
@@ -200,6 +217,7 @@ import {
     IconShield,
     IconTags,
     IconSchool,
+    IconBug,
     IconCertificate,
     IconHeartbeat,
     IconBuilding,

@@ -208,6 +208,11 @@ const router = new VueRouter.createRouter({
                     component: () => import('./components/Admin/TrainingTags.vue')
                 },
                 {
+                    path: 'issue-tags',
+                    name: 'admin-issue-tags',
+                    component: () => import('./components/Admin/IssueTags.vue')
+                },
+                {
                     path: 'certs',
                     name: 'admin-certs',
                     component: () => import('./components/Admin/KnownCerts.vue')

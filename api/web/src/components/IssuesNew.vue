@@ -40,7 +40,10 @@
                                             label='Assigned'
                                         />
 
-                                        <label class='form-label'>Labels</label>
+                                        <IssueTagSelect
+                                            v-model='issue.tags'
+                                            label='Tags'
+                                        />
                                     </div>
                                     <div
                                         v-if='poll.shown'
@@ -132,6 +135,7 @@
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import UserSelect from './util/UserSelect.vue';
+import IssueTagSelect from './util/IssueTagSelect.vue';
 import MDEditorShim from './util/MDEditorShim.vue';
 import {
     TablerBreadCrumb,
@@ -178,7 +182,8 @@ const errors = reactive({
 const issue = reactive({
     title: '',
     body: '',
-    assigned: []
+    assigned: [],
+    tags: []
 });
 
 function is_iam(permission) { return iamHelper(props.iam, props.auth, permission); }
@@ -198,7 +203,8 @@ async function create() {
         body: issue.body,
         assigned: issue.assigned.map((a) => {
             return a.id;
-        })
+        }),
+        tags: issue.tags.map((t) => t.id)
     }
 
     if (poll.shown) {

@@ -31,13 +31,19 @@
                                 />
                                 <template v-else>
                                     <div class='row row-cards'>
-                                        <div class='col-md-12'>
+                                        <div class='col-md-10'>
                                             <TablerInput
                                                 v-model='issue.title'
                                                 label='Issue Title'
                                                 :error='errors.title'
                                             />
                                             <MDEditorShim v-model='issue.body' />
+                                        </div>
+                                        <div class='col-md-2'>
+                                            <IssueTagSelect
+                                                v-model='issue.tags'
+                                                label='Tags'
+                                            />
                                         </div>
                                         <div class='col-md-12 d-flex'>
                                             <div class='ms-auto'>
@@ -66,6 +72,7 @@ import { useRoute, useRouter } from 'vue-router';
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import MDEditorShim from './util/MDEditorShim.vue';
+import IssueTagSelect from './util/IssueTagSelect.vue';
 import {
     TablerBreadCrumb,
     TablerLoading,
@@ -96,7 +103,8 @@ const errors = reactive({
 const issue = reactive({
     title: '',
     body: '',
-    assigned: []
+    assigned: [],
+    tags: []
 })
 
 function is_iam(permission) { 
@@ -123,6 +131,7 @@ async function update() {
     const body = {
         title: issue.title,
         body: issue.body,
+        tags: issue.tags.map((t) => t.id)
     }
 
     await window.std(`/api/issue/${issue.id}`, {
