@@ -12,6 +12,12 @@
 
 ### Pending Release
 
+- :tada: `API`: Rolodex items now carry a type (person, place or thing), title, organization, website, address, tags, map location and author
+- :tada: `API`: Rolodex items can have a photo attached via `POST /rolodex/:id/profile` (stored in Spaces alongside equipment & user photos)
+- :tada: `API`: Rolodex items can be shared with one or more agencies; members only see items shared with their agencies (or shared org-wide)
+- :tada: `API`: Add `DELETE /rolodex/:id`, `GET /rolodex/tags`, and type/tag/agency/archived filters on `GET /rolodex`
+- :tada: `UI`: Rolodex list gains a grid view with photos, plus type, agency, tag and archived filters
+- :tada: `UI`: Dedicated Rolodex view page and a fuller edit page with photo upload, tags, agency sharing and a map location picker
 - :rocket: `API`: Replace Swagger UI with Scalar API Reference served from the web build at `/docs`, backed by `/api/openapi`
 
 ### v1.1.2

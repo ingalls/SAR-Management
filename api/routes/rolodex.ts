@@ -58,7 +58,7 @@ export default async function router(schema: Schema, config: Config) {
                     )
                     AND archived = ${req.query.archived}
                     AND (${Param(req.query.type)}::TEXT IS NULL OR type = ${Param(req.query.type)}::TEXT)
-                    AND (${Param(req.query.tag)}::TEXT IS NULL OR tags::JSONB ? ${Param(req.query.tag)}::TEXT)
+                    AND (${Param(req.query.tag)}::TEXT IS NULL OR ${Param(req.query.tag)}::TEXT = ANY(ARRAY(SELECT json_array_elements_text(tags))))
                     AND (${Param(req.query.agency)}::INT IS NULL OR agencies_id @> ARRAY[${Param(req.query.agency)}::INT])
                     AND ${visible}
                 `
