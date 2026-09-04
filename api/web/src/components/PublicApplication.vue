@@ -11,8 +11,9 @@
                                     style='margin-bottom: 24px;'
                                 >
                                     <img
-                                        src='/logo.png'
+                                        :src='brand.logo || DefaultLogo'
                                         height='150'
+                                        alt='Logo'
                                     >
                                 </div>
                                 <h2 class='h2 text-center mb-4'>
@@ -68,6 +69,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import { brand, loadBrand, DefaultLogo } from '../base/brand.ts';
 import {
     TablerSchema,
     TablerLoading
@@ -109,6 +111,8 @@ async function submit() {
 }
 
 onMounted(async () => {
+    loadBrand();
+
     await getSchema();
 })
 

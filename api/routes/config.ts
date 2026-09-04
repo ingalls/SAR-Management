@@ -13,6 +13,16 @@ export const PublicConfigKeys = [
     'oauth_enabled',
     'oauth_name',
     'local_login_enabled',
+
+    // Branding - consumed by the login page, public application form & app header
+    'brand_title',
+    'brand_logo',
+    'login_brand_enabled',
+    'login_brand_logo',
+    'login_background_enabled',
+    'login_background_color',
+    'login_username_label',
+    'login_contact',
 ];
 
 // Admin-only config keys
@@ -30,7 +40,92 @@ export const AdminConfigKeys = [
     'oauth_scopes',
 ];
 
+export const BrandDefaults = {
+    name: 'Search & Rescue',
+    title: 'Team Management',
+    username: 'Username or Email',
+};
+
+export const BrandResponse = Type.Object({
+    name: Type.String({ description: 'Organisation Name' }),
+    title: Type.String({ description: 'Application Title shown in the header' }),
+    logo: Type.Optional(Type.String({ description: 'Base64 encoded PNG/SVG Logo' })),
+    login: Type.Object({
+        username: Type.String({ description: 'Label for the username field on the login page' }),
+        contact: Type.Optional(Type.String({ description: 'Email address or URL for new account requests' })),
+        brand: Type.Object({
+            enabled: Type.String({
+                description: 'Show or hide the large brand logo on the login page',
+                enum: ['default', 'enabled', 'disabled']
+            }),
+            logo: Type.Optional(Type.String({ description: 'Base64 encoded PNG/SVG Large Brand Logo' })),
+        }),
+        background: Type.Object({
+            enabled: Type.Boolean({ description: 'Enable a custom login page background colour' }),
+            color: Type.Optional(Type.String()),
+        }),
+    }),
+});
+
+function isTrue(value: unknown): boolean {
+    return value === true || value === 'true';
+}
+
 export default async function router(schema: Schema, config: Config) {
+    await schema.get('/config/brand', {
+        name: 'Get Branding',
+        group: 'Config',
+        description: 'Return the public branding configuration applied across the application',
+        res: BrandResponse
+    }, async (req, res) => {
+        try {
+            const keys = [
+                'name',
+                'brand_title',
+                'brand_logo',
+                'login_brand_enabled',
+                'login_brand_logo',
+                'login_background_enabled',
+                'login_background_color',
+                'login_username_label',
+                'login_contact',
+            ];
+
+            const final: Record<string, string> = {};
+            (await Promise.allSettled(keys.map((key) => {
+                return config.models.Server.from(key);
+            }))).forEach((k) => {
+                if (k.status === 'rejected') return;
+                if (k.value.value === null || k.value.value === undefined) return;
+                final[k.value.key] = String(k.value.value);
+            });
+
+            const brandEnabled = ['default', 'enabled', 'disabled'].includes(final.login_brand_enabled)
+                ? final.login_brand_enabled
+                : 'default';
+
+            res.json({
+                name: final.name || BrandDefaults.name,
+                title: final.brand_title || BrandDefaults.title,
+                logo: final.brand_logo || undefined,
+                login: {
+                    username: final.login_username_label || BrandDefaults.username,
+                    contact: final.login_contact || undefined,
+                    brand: {
+                        enabled: brandEnabled,
+                        logo: final.login_brand_logo || undefined,
+                    },
+                    background: {
+                        enabled: isTrue(final.login_background_enabled),
+                        color: final.login_background_color || undefined,
+                    },
+                },
+            });
+        } catch (err) {
+            Err.respond(err, res);
+        }
+    });
+
     await schema.get('/config', {
         name: 'Get Config',
         group: 'Config',

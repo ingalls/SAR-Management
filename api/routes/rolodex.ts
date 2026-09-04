@@ -10,6 +10,10 @@ import Config from '../lib/config.js';
 import { GenericListOrder, Param } from '@openaddresses/batch-generic';
 import Schema from '@openaddresses/batch-schema';
 
+// The postgres driver JSON-encodes json parameters a second time, so a json column
+// written through the ORM lands as a JSON string rather than an array; unwrap either shape
+const tagsArray = sql.raw(`CASE WHEN json_typeof(tags) = 'string' THEN (tags #>> '{}')::json ELSE tags END`);
+
 const sortable = Object.keys(Rolodex).filter((k) => !['location_geom', 'tags', 'agency_id', 'enableRLS'].includes(k));
 
 export default async function router(schema: Schema, config: Config) {
@@ -58,7 +62,7 @@ export default async function router(schema: Schema, config: Config) {
                     )
                     AND archived = ${req.query.archived}
                     AND (${Param(req.query.type)}::TEXT IS NULL OR type = ${Param(req.query.type)}::TEXT)
-                    AND (${Param(req.query.tag)}::TEXT IS NULL OR ${Param(req.query.tag)}::TEXT = ANY(ARRAY(SELECT json_array_elements_text(tags))))
+                    AND (${Param(req.query.tag)}::TEXT IS NULL OR ${Param(req.query.tag)}::TEXT = ANY(ARRAY(SELECT json_array_elements_text(${tagsArray}))))
                     AND (${Param(req.query.agency)}::INT IS NULL OR agencies_id @> ARRAY[${Param(req.query.agency)}::INT])
                     AND ${visible}
                 `
@@ -284,14 +288,16 @@ export default async function router(schema: Schema, config: Config) {
     });
 }
 
-function normalizeTags(tags?: Array<string>): Array<string> {
-    if (!tags) return [];
-
+/**
+ * Dedupe & trim tags and hand them to the database as a real JSON array,
+ * bypassing the driver's double encoding of json parameters
+ */
+function normalizeTags(tags?: Array<string>) {
     const seen = new Set<string>();
-    for (const tag of tags) {
+    for (const tag of tags || []) {
         const clean = tag.trim();
         if (clean.length) seen.add(clean);
     }
 
-    return Array.from(seen);
+    return sql`${JSON.stringify(Array.from(seen))}::TEXT::JSON`;
 }

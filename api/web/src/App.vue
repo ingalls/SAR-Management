@@ -41,18 +41,20 @@
                         class='cursor-pointer'
                         height='50'
                         width='50'
-                        src='/logo.png'
+                        :src='brand.logo || DefaultLogo'
+                        alt='Logo'
                         @click='navigate("/", $event)'
                     >
                 </div>
                 <div class='col mx-2'>
                     <div
                         class='page-pretitle'
-                        v-text='name'
+                        v-text='brand.name'
                     />
-                    <h2 class='page-title'>
-                        Team Management
-                    </h2>
+                    <h2
+                        class='page-title'
+                        v-text='brand.title'
+                    />
                 </div>
 
                 <div
@@ -442,6 +444,7 @@ import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
 import PageFooter from './components/util/PageFooter.vue';
 import { applyServiceWorkerUpdate, supportsServiceWorker } from './base/service-worker.ts';
+import { brand, loadBrand, DefaultLogo } from './base/brand.ts';
 import {
     TablerError,
     TablerDropdown,
@@ -477,7 +480,6 @@ const router = useRouter()
 
 const loading = ref(false)
 const notifications = ref(false)
-const name = ref('Search & Rescue')
 const iam = reactive({})
 const user = ref(null)
 const err = ref(false)
@@ -514,10 +516,6 @@ const refetch = async () => {
     await getIAM();
     await fetchNotify();
     await getUser();
-}
-
-const fetchName = async () => {
-    name.value = (await window.std('/api/server/name')).value;
 }
 
 const fetchNotify = async () => {
@@ -586,7 +584,7 @@ onMounted(async () => {
             : new Error(String(evt.reason) || 'Unhandled promise rejection');
     });
 
-    await fetchName();
+    await loadBrand();
 
     if (localStorage.token) {
         await refetch();

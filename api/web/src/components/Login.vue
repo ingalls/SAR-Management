@@ -1,8 +1,27 @@
 <template>
-    <div    
-        class='page page-center position-relative'    
-        style='overflow: hidden; height: 100vh; background: radial-gradient(at left top, #07556D, #023047);'    
+    <div
+        class='page page-center position-relative'
+        style='overflow: hidden; height: 100vh; background: radial-gradient(at left top, #07556D, #023047);'
+        :style='customBackgroundColor ? { background: customBackgroundColor } : undefined'
     >
+        <img
+            v-if='brand.loaded && footerLogo'
+            class='position-absolute d-none d-md-inline user-select-none'
+            :class='{ "logo-visible": footerLogoLoaded }'
+            draggable='false'
+            style='
+                height: 48px;
+                bottom: 24px;
+                left: 24px;
+                opacity: 0;
+                transition: opacity 0.8s ease-in-out;
+                z-index: 1;
+            '
+            :src='footerLogo'
+            alt='Brand Logo'
+            @load='footerLogoLoaded = true'
+        >
+
         <div class='container container-normal py-4'>
             <div class='row align-items-center g-4'>
                 <div class='col-lg'>
@@ -14,10 +33,11 @@
                                     style='margin-bottom: 24px;'
                                 >
                                     <img
-                                        src='/logo.png'
+                                        :src='brand.logo || DefaultLogo'
                                         draggable='false'
                                         style='height: 150px;'
                                         class='user-select-none'
+                                        alt='Logo'
                                     >
                                 </div>
 
@@ -126,7 +146,7 @@
                                             <TablerInput
                                                 v-model='body.username'
                                                 icon='user'
-                                                label='Username or Email'
+                                                :label='brand.login.username'
                                                 placeholder='your@email.com'
                                                 autocomplete='off'
                                                 @keyup.enter='createLogin'
@@ -184,8 +204,15 @@
                                 </template>
                             </div>
                         </div>
-                        <div class='text-center text-muted mt-3 user-select-none'>
-                            Don't have account yet? <a href='mailto:rescue@ingalls.ca'>Contact Us</a>
+                        <div
+                            v-if='contactLink'
+                            class='text-center text-muted mt-3 user-select-none'
+                        >
+                            Don't have account yet? <a
+                                :href='contactLink'
+                                target='_blank'
+                                rel='noopener'
+                            >Contact Us</a>
                         </div>
                     </div>
                 </div>
@@ -326,6 +353,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { version } from '../../package.json';
 import { useRouter, useRoute } from 'vue-router';
 import { getCurrentEntryBuildId, supportsServiceWorker } from '../base/service-worker.ts';
+import { brand, loadBrand, contactHref, DefaultLogo } from '../base/brand.ts';
 import {
     TablerInput,
     TablerLoading,
@@ -356,6 +384,30 @@ const loading = ref(false);
 const buildHash = getCurrentEntryBuildId();
 const showSettings = ref(false);
 const workers = ref([]);
+const footerLogoLoaded = ref(false);
+
+const customBackgroundColor = computed(() => {
+    if (brand.login.background.enabled && brand.login.background.color) {
+        return brand.login.background.color;
+    }
+    return null;
+});
+
+// Large brand logo in the corner of the page - "default" only shows a logo
+// once an admin has uploaded one, "enabled" falls back to the standard logo
+const footerLogo = computed(() => {
+    if (brand.login.brand.enabled === 'disabled') {
+        return undefined;
+    } else if (brand.login.brand.logo) {
+        return brand.login.brand.logo;
+    } else if (brand.login.brand.enabled === 'enabled') {
+        return brand.logo || DefaultLogo;
+    } else {
+        return undefined;
+    }
+});
+
+const contactLink = computed(() => contactHref(brand.login.contact));
 
 const body = ref({
     username: '',
@@ -380,6 +432,9 @@ const showLocal = computed(() => forceLocal.value || local.value.enabled || !sso
 const showSSO = computed(() => sso.value.enabled && !forceLocal.value);
 
 onMounted(async () => {
+    // Branding never blocks login - defaults are shown until it resolves
+    loadBrand();
+
     // Returning from the OAuth2 provider - complete the login
     if (route.query.code && route.query.state) {
         await completeSSO(String(route.query.code), String(route.query.state));
@@ -550,3 +605,9 @@ async function createLogin() {
     }
 }
 </script>
+
+<style scoped>
+.logo-visible {
+    opacity: 1 !important;
+}
+</style>
