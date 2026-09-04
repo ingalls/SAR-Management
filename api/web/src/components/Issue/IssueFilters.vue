@@ -156,9 +156,15 @@
                         :value='modelValue.poll === null ? "" : String(modelValue.poll)'
                         @change='update({ poll: $event.target.value === "" ? null : $event.target.value === "true" })'
                     >
-                        <option value=''>Any</option>
-                        <option value='true'>With poll</option>
-                        <option value='false'>Without poll</option>
+                        <option value=''>
+                            Any
+                        </option>
+                        <option value='true'>
+                            With poll
+                        </option>
+                        <option value='false'>
+                            Without poll
+                        </option>
                     </select>
                 </div>
             </div>
