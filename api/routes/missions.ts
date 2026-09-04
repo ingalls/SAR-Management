@@ -2,7 +2,7 @@ import Err from '@openaddresses/batch-error';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { Type } from '@sinclair/typebox';
 import { Mission } from '../lib/schema.js';
-import { sql } from 'drizzle-orm';
+import { sql, SQL } from 'drizzle-orm';
 import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
@@ -11,6 +11,103 @@ import { PartialAsset } from '../lib/models/Mission.js';
 import Report from '../lib/report.js';
 import API2PDF from 'api2pdf';
 import { streamCSV } from '../lib/csv.js';
+
+/**
+ * Parse a comma separated list of IDs from a query param
+ */
+function parseIds(name: string, value?: string): number[] {
+    if (!value) return [];
+
+    return value.split(',').map((v) => v.trim()).filter((v) => v.length).map((v) => {
+        const id = Number(v);
+        if (!Number.isInteger(id)) throw new Err(400, null, `${name} must be a comma separated list of integer IDs`);
+        return id;
+    });
+}
+
+/**
+ * Escape a user supplied search string for use in an ILIKE pattern
+ */
+function likePattern(filter: string): string {
+    return `%${filter.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+}
+
+function idArray(ids: number[]): SQL {
+    return sql`ARRAY[${sql.join(ids.map((id) => sql`${Param(id)}::INT`), sql`, `)}]`;
+}
+
+/**
+ * Build the WHERE clause for the mission list from the filter query params.
+ * Operates on the augmented mission row so array & JSON aggregates
+ * (users, teams_id, tags_id, agencies_id, incidents, people) are available
+ */
+export function missionFilter(query: {
+    filter?: string;
+    assigned?: number;
+    user?: string;
+    team?: string;
+    tag?: string;
+    agency?: string;
+    status?: string;
+    geom?: boolean;
+    incidents?: boolean;
+    people?: boolean;
+    users_min?: number;
+    users_max?: number;
+    start?: string;
+    end?: string;
+}): SQL {
+    const conditions: SQL[] = [];
+
+    if (query.filter && query.filter.trim().length) {
+        const pattern = likePattern(query.filter.trim());
+        conditions.push(sql`(
+            title ILIKE ${pattern}
+            OR body ILIKE ${pattern}
+            OR location ILIKE ${pattern}
+            OR externalid ILIKE ${pattern}
+        )`);
+    }
+
+    if (query.assigned !== undefined) {
+        conditions.push(sql`users @> ARRAY[${Param(query.assigned)}::INT]`);
+    }
+
+    // Attendees: every listed user must have attended
+    const users = parseIds('user', query.user);
+    if (users.length) conditions.push(sql`users @> ${idArray(users)}`);
+
+    // Teams, Tags & Agencies: any match
+    const teams = parseIds('team', query.team);
+    if (teams.length) conditions.push(sql`teams_id && ${idArray(teams)}`);
+
+    const tags = parseIds('tag', query.tag);
+    if (tags.length) conditions.push(sql`tags_id && ${idArray(tags)}`);
+
+    const agencies = parseIds('agency', query.agency);
+    if (agencies.length) conditions.push(sql`agencies_id && ${idArray(agencies)}`);
+
+    if (query.status) conditions.push(sql`status = ${query.status}`);
+
+    if (query.geom === true) conditions.push(sql`location_geom IS NOT NULL`);
+    else if (query.geom === false) conditions.push(sql`location_geom IS NULL`);
+
+    if (query.incidents === true) conditions.push(sql`(incidents IS NOT NULL AND json_array_length(incidents) > 0)`);
+    else if (query.incidents === false) conditions.push(sql`(incidents IS NULL OR json_array_length(incidents) = 0)`);
+
+    if (query.people === true) conditions.push(sql`(people IS NOT NULL AND json_array_length(people) > 0)`);
+    else if (query.people === false) conditions.push(sql`(people IS NULL OR json_array_length(people) = 0)`);
+
+    if (query.users_min !== undefined) conditions.push(sql`coalesce(array_length(users, 1), 0) >= ${Param(query.users_min)}::INT`);
+    if (query.users_max !== undefined) conditions.push(sql`coalesce(array_length(users, 1), 0) <= ${Param(query.users_max)}::INT`);
+
+    if (query.start) conditions.push(sql`start_ts >= ${Param(query.start)}::TIMESTAMP`);
+    if (query.end) conditions.push(sql`end_ts < ${Param(query.end)}::TIMESTAMP + INTERVAL '1 day'`);
+
+    if (!conditions.length) return sql`TRUE`;
+
+    return sql.join(conditions, sql` AND `);
+}
 
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/mission', {
@@ -23,12 +120,21 @@ export default async function router(schema: Schema, config: Config) {
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
-            start: Type.Optional(Type.String()),
-            end: Type.Optional(Type.String()),
-            assigned: Type.Optional(Type.Integer()),
-            team: Type.Optional(Type.Integer()),
+            start: Type.Optional(Type.String({ description: 'Only missions starting on or after this date' })),
+            end: Type.Optional(Type.String({ description: 'Only missions ending on or before this date' })),
+            assigned: Type.Optional(Type.Integer({ description: 'Only missions attended by this User ID' })),
+            user: Type.Optional(Type.String({ description: 'Comma separated User IDs - only missions attended by all of these users' })),
+            team: Type.Optional(Type.String({ description: 'Comma separated Team IDs - only missions assigned to any of these teams' })),
+            tag: Type.Optional(Type.String({ description: 'Comma separated Tag IDs - only missions with any of these tags' })),
+            agency: Type.Optional(Type.String({ description: 'Comma separated Agency IDs - only missions shared with any of these agencies' })),
+            status: Type.Optional(Type.String({ description: 'Only missions with this status' })),
+            geom: Type.Optional(Type.Boolean({ description: 'true: only missions with a map location, false: only missions without' })),
+            incidents: Type.Optional(Type.Boolean({ description: 'true: only missions with related incidents, false: only missions without' })),
+            people: Type.Optional(Type.Boolean({ description: 'true: only missions with recorded subjects, false: only missions without' })),
+            users_min: Type.Optional(Type.Integer({ description: 'Only missions with at least this many attendees' })),
+            users_max: Type.Optional(Type.Integer({ description: 'Only missions with at most this many attendees' })),
             sort: Type.Optional(Type.String({default: 'created', enum: Object.keys(Mission)})),
-            filter: Type.Optional(Type.String({ default: '' }))
+            filter: Type.Optional(Type.String({ default: '', description: 'Case insensitive search across title, body, location & mission number' }))
         }),
         res: Type.Object({
             total: Type.Integer(),
@@ -38,13 +144,7 @@ export default async function router(schema: Schema, config: Config) {
         try {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
 
-            const whereClause = sql`
-                (${req.query.filter}::TEXT IS NULL OR title ~* ${req.query.filter})
-                AND (${Param(req.query.assigned)}::INT IS NULL OR users @> ARRAY[${Param(req.query.assigned)}::INT])
-                AND (${Param(req.query.team)}::INT IS NULL OR teams_id @> ARRAY[${Param(req.query.team)}::INT])
-                AND (${Param(req.query.start)}::TIMESTAMP IS NULL OR start_ts >= ${Param(req.query.start)}::TIMESTAMP)
-                AND (${Param(req.query.end)}::TIMESTAMP IS NULL OR end_ts < ${Param(req.query.end)}::TIMESTAMP + INTERVAL '1 day')
-            `;
+            const whereClause = missionFilter(req.query);
 
             if (req.query.format === 'csv') {
                 await streamCSV(

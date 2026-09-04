@@ -34,6 +34,8 @@
                                 :auth='auth'
                                 :iam='iam'
                                 :limit='20'
+                                :initial='initial'
+                                @query='onQuery'
                             />
                         </div>
                     </template>
@@ -44,18 +46,20 @@
 </template>
 
 <script setup>
-import { reactive, watch, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { reactive, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
 import CardMissions from './cards/Missions.vue';
 import HeatMap from './Mission/HeatMap.vue';
+import { fromQuery, applyFilters } from '../base/mission-filters.js';
 
 import {
     TablerBreadCrumb,
 } from '@tak-ps/vue-tabler';
 
 const route = useRoute();
+const router = useRouter();
 
 const props = defineProps({
     iam: {
@@ -73,35 +77,28 @@ const loading = reactive({
     list: true
 })
 
-const header = reactive([])
-
-const paging = reactive({
-    filter: '',
-    assigned: null,
-    limit: 100,
-    sort: 'start_ts',
-    order: 'desc',
-    page: 0
-})
+// Filters restored from the URL so filtered views are shareable links
+const initial = fromQuery(route.query);
 
 const list = reactive({
     total: 0,
     items: []
 })
 
-function is_iam(permission) { 
-    return iamHelper(props.iam, props.auth, permission) 
+function is_iam(permission) {
+    return iamHelper(props.iam, props.auth, permission)
 }
 
-async function listMissions() {
+/**
+ * The heat map shows every mission matching the current filters (not just
+ * the current page of the list) so the map and list always agree
+ */
+async function listMissions(filters) {
     loading.list = true;
     const url = window.stdurl('/api/mission');
-    url.searchParams.append('limit', paging.limit);
-    url.searchParams.append('page', paging.page);
-    url.searchParams.append('filter', paging.filter);
-    url.searchParams.append('order', paging.order);
-    url.searchParams.append('sort', paging.sort);
-    if (paging.assigned) url.searchParams.append('assigned', paging.assigned);
+    applyFilters(url, filters, props.auth);
+    url.searchParams.set('limit', '500');
+    url.searchParams.set('page', '0');
     const result = await window.std(url)
     list.total = result.total;
     list.items = result.items;
@@ -109,36 +106,12 @@ async function listMissions() {
     loading.initial = false;
 }
 
-async function listMissionsSchema() {
-    const schema = await window.std('/api/schema?method=GET&url=/mission');
-    const baseHeaders = ['title', 'externalid', 'location', 'date'].map((h) => {
-        return { name: h, display: true };
-    });
-    
-    header.splice(0, header.length, ...baseHeaders);
-
-    header.push(...schema.query.properties.sort.enum.map((h) => {
-        return {
-            name: h,
-            display: false
-        }
-    }).filter((h) => {
-        for (const hknown of header) {
-            if (hknown.name === h.name) return false;
-        }
-        return true;
-    }));
+async function onQuery(query) {
+    await router.replace({ query });
+    await listMissions(fromQuery(query));
 }
 
-watch(paging, async () => {
-    route.query = paging;
-    await listMissions();
-}, { deep: true })
-
 onMounted(async () => {
-    Object.assign(paging, route.query);
-
-    await listMissionsSchema();
-    if (is_iam('Mission:View')) await listMissions();
+    if (is_iam('Mission:View')) await listMissions(initial);
 })
 </script>

@@ -40,61 +40,12 @@
             </div>
         </div>
 
-        <div
+        <MissionFilters
             v-if='search'
-            class='row g-2'
-        >
-            <div
-                class='col-auto'
-                style='width: calc(100% - 48px)'
-            >
-                <TablerInput
-                    v-model='paging.filter'
-                    icon='search'
-                    placeholder='Search…'
-                />
-            </div>
-            <div class='col-auto'>
-                <TablerDropdown>
-                    <TablerIconButton
-                        title='Search Filters'
-                    >
-                        <IconFilter
-                            :size='32'
-                            stroke='1'
-                        />
-                    </TablerIconButton>
-                    <template #dropdown>
-                        <div
-                            class='p-3 row g-2'
-                            style='min-width: 500px;'
-                            @click.stop=''
-                        >
-                            <div class='col-md-6'>
-                                <TablerInput
-                                    v-model='paging.start'
-                                    type='date'
-                                    label='Start Date'
-                                />
-                            </div>
-                            <div class='col-md-6'>
-                                <TablerInput
-                                    v-model='paging.end'
-                                    type='date'
-                                    label='End Date'
-                                />
-                            </div>
-                            <div class='col-md-12'>
-                                <TablerToggle
-                                    v-model='paging.attended'
-                                    label='Only Missions I Attended'
-                                />
-                            </div>
-                        </div>
-                    </template>
-                </TablerDropdown>
-            </div>
-        </div>
+            v-model='filters'
+            :auth='auth'
+            :total='loading ? null : list.total'
+        />
 
         <NoAccess
             v-if='!is_iam("Mission:View")'
@@ -132,6 +83,8 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import StandardItemMission from '../util/StandardItemMission.vue'
+import MissionFilters from '../Mission/MissionFilters.vue'
+import { defaultFilters, applyFilters, toQuery } from '../../base/mission-filters.js'
 import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
 import TableFooter from '../util/TableFooter.vue';
@@ -140,14 +93,10 @@ import {
     TablerNone,
     TablerRefreshButton,
     TablerIconButton,
-    TablerDropdown,
-    TablerInput,
-    TablerToggle,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
 import {
-    IconFilter,
     IconGripVertical,
     IconPlus
 } from '@tabler/icons-vue';
@@ -201,22 +150,32 @@ const props = defineProps({
     attendance: {
         type: Boolean,
         default: true
+    },
+    // Initial filter state (see base/mission-filters.js) - used by the
+    // Missions page to restore filters from the URL
+    initial: {
+        type: Object,
+        default: null
     }
 })
+
+const emit = defineEmits(['query'])
 
 const router = useRouter()
 const loading = ref(true)
 const header = ref([])
 const paging = reactive({
-    filter: '',
-    sort: 'start_ts',
-    order: props.order,
     limit: props.limit,
-    start: props.start,
-    end: props.end,
-    attended: false,
     page: 0
 })
+
+const filters = ref(defaultFilters({
+    order: props.order,
+    start: props.start ? String(props.start) : '',
+    end: props.end ? String(props.end) : '',
+    ...(props.initial || {})
+}))
+
 const list = reactive({
     total: 0,
     items: []
@@ -253,15 +212,10 @@ const listSchema = async () => {
  */
 const listURL = () => {
     const url = window.stdurl('/api/mission');
-    url.searchParams.append('filter', paging.filter);
-    url.searchParams.append('sort', paging.sort);
-    url.searchParams.append('order', paging.order);
+    applyFilters(url, filters.value, props.auth);
 
-    if (paging.start) url.searchParams.append('start', paging.start);
-    if (paging.end) url.searchParams.append('end', paging.end);
-
-    if (paging.attended) url.searchParams.append('assigned', props.auth.id);
-    else if (props.assigned) url.searchParams.append('assigned', props.assigned);
+    // Cards embedded on other pages are scoped to a fixed user
+    if (props.assigned && !filters.value.attended) url.searchParams.set('assigned', props.assigned);
 
     return url;
 }
@@ -291,6 +245,22 @@ const exportMissions = async (format) => {
 watch(paging, async () => {
     await fetch();
 }, { deep: true })
+
+// Text search is debounced; every other filter refetches immediately
+let searchTimeout;
+watch(filters, (next, prev) => {
+    emit('query', toQuery(next));
+    paging.page = 0;
+
+    const textOnly = prev && Object.keys(next).every((k) => k === 'filter' || JSON.stringify(next[k]) === JSON.stringify(prev[k]));
+
+    clearTimeout(searchTimeout);
+    if (textOnly) {
+        searchTimeout = setTimeout(fetch, 300);
+    } else {
+        fetch();
+    }
+})
 
 onMounted(async () => {
     await listSchema();

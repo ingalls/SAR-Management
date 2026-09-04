@@ -12,6 +12,9 @@
 
 ### Pending Release
 
+- :tada: `API`: `GET /mission` gains rich filtering - text search across title, body, location & mission number, plus `tag`, `team`, `agency`, `user` (attendees), `status`, `geom`, `incidents`, `people`, `users_min` & `users_max`. `team` now accepts a comma separated list
+- :tada: `UI`: New Missions search & filter panel with quick filters, date presets, tag/team/agency badge pickers, attendee search, personnel range, map-location filter, sort options and removable filter chips
+- :rocket: `UI`: Mission filters are synced to the URL for shareable links and drive the Mission Heat Map so map and list always agree
 - :tada: `API`: Mission & Training Tags gain an SVG logo (`icon`) and badge colours (`colour_bg`, `colour_txt`), returned inline on Mission & Training `tags`
 - :tada: `UI`: Redesigned Mission & Training Tag admin pages - tags are listed as the badges they render as and edited in a modal with name, SVG logo upload, colour pickers, a swatch palette and live preview
 - :rocket: `UI`: Tags render as coloured badges with their logo on Mission & Training pages, list items and the tag pickers on the edit pages

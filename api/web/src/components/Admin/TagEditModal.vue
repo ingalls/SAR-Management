@@ -77,49 +77,19 @@
             </div>
 
             <div class='mt-3'>
-                <label class='form-label'>SVG Logo</label>
-                <div class='d-flex align-items-center gap-3'>
-                    <div
-                        class='d-flex align-items-center justify-content-center rounded border'
-                        style='width: 56px; height: 56px; flex-shrink: 0;'
-                        :style='{ backgroundColor: edit.colour_bg }'
-                    >
-                        <img
-                            v-if='edit.icon'
-                            :src='edit.icon'
-                            alt='Tag Logo'
-                            draggable='false'
-                            style='width: 32px; height: 32px;'
-                        >
-                        <IconPhotoOff
-                            v-else
-                            :size='24'
-                            stroke='1'
-                            class='text-muted'
-                        />
-                    </div>
+                <div class='d-flex align-items-start gap-2'>
                     <div class='flex-grow-1'>
-                        <input
-                            ref='fileInput'
-                            type='file'
-                            class='form-control'
-                            accept='image/svg+xml,.svg'
-                            @change='onFile'
-                        >
-                        <div
-                            v-if='errors.icon'
-                            class='text-danger small mt-1'
-                            v-text='errors.icon'
+                        <TablerUploadLogo
+                            :key='iconKey'
+                            :model-value='edit.icon'
+                            input-id='tagLogo'
+                            label='SVG Logo'
+                            @update:model-value='onIcon'
                         />
-                        <div
-                            v-else
-                            class='text-muted small mt-1'
-                        >
-                            Optional. A square SVG works best - it is shown inline before the tag name.
-                        </div>
                     </div>
                     <TablerIconButton
                         v-if='edit.icon'
+                        class='mt-4'
                         title='Remove Logo'
                         @click='removeIcon'
                     >
@@ -128,6 +98,17 @@
                             stroke='1'
                         />
                     </TablerIconButton>
+                </div>
+                <div
+                    v-if='errors.icon'
+                    class='text-danger small'
+                    v-text='errors.icon'
+                />
+                <div
+                    v-else
+                    class='text-muted small'
+                >
+                    Optional. A square SVG works best - it is shown inline before the tag name.
                 </div>
             </div>
         </div>
@@ -169,12 +150,10 @@ import {
     TablerInput,
     TablerAlert,
     TablerDelete,
-    TablerIconButton
+    TablerIconButton,
+    TablerUploadLogo
 } from '@tak-ps/vue-tabler';
-import {
-    IconPhotoOff,
-    IconX
-} from '@tabler/icons-vue';
+import { IconX } from '@tabler/icons-vue';
 import TagBadge from '../util/TagBadge.vue';
 
 const props = defineProps({
@@ -225,44 +204,43 @@ const errors = reactive({
 
 const err = ref(null);
 const saving = ref(false);
-const fileInput = ref(null);
+// Bumped to remount the upload component so its native file input resets
+const iconKey = ref(0);
 
 const preview = computed(() => ({
     ...edit,
     name: edit.name || 'Tag Preview'
 }));
 
-function onFile(event) {
+// TablerUploadLogo accepts PNG or SVG - the API only stores SVG so
+// reject anything else here rather than surfacing a server error on save
+function onIcon(value) {
     errors.icon = '';
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
+    const icon = value || '';
 
-    if (file.type !== 'image/svg+xml' && !file.name.toLowerCase().endsWith('.svg')) {
+    if (!icon) {
+        edit.icon = '';
+        return;
+    }
+
+    if (!icon.startsWith('data:image/svg+xml')) {
         errors.icon = 'Logo must be an SVG file';
+        removeIcon();
         return;
     }
 
-    if (file.size > 256 * 1024) {
+    if (icon.length > 256 * 1024) {
         errors.icon = 'SVG must be smaller than 256KB';
+        removeIcon();
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const result = String(e.target.result || '');
-        // Browsers may report .svg files without a MIME type - normalise so
-        // the server always receives a data:image/svg+xml URI
-        edit.icon = result.replace(/^data:[^;]*;/, 'data:image/svg+xml;');
-    };
-    reader.onerror = () => {
-        errors.icon = 'Failed to read file';
-    };
-    reader.readAsDataURL(file);
+    edit.icon = icon;
 }
 
 function removeIcon() {
     edit.icon = '';
-    if (fileInput.value) fileInput.value.value = '';
+    iconKey.value++;
 }
 
 async function save() {
