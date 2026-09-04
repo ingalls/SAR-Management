@@ -6,6 +6,7 @@ import Config from '../lib/config.js';
 import { sql } from 'drizzle-orm';
 import { MissionTag } from '../lib/schema.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
+import { TagVisualFields, validateTagVisuals } from '../lib/tag.js';
 import { StandardResponse, MissionTagResponse } from '../lib/types.js';
 
 export default async function router(schema: Schema, config: Config) {
@@ -65,12 +66,15 @@ export default async function router(schema: Schema, config: Config) {
         group: 'MissionTag',
         description: 'Create a new mission tag',
         body: Type.Object({
-            name: Type.String()
+            name: Type.String(),
+            ...TagVisualFields
         }),
         res: MissionTagResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
+
+            validateTagVisuals(req.body);
 
             const tag = await config.models.MissionTag.generate(req.body);
 
@@ -88,12 +92,15 @@ export default async function router(schema: Schema, config: Config) {
             tagid: Type.Integer(),
         }),
         body: Type.Object({
-            name: Type.Optional(Type.String())
+            name: Type.Optional(Type.String()),
+            ...TagVisualFields
         }),
         res: MissionTagResponse
     }, async (req, res) => {
         try {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.ADMIN);
+
+            validateTagVisuals(req.body);
 
             const tag = await config.models.MissionTag.commit(req.params.tagid, req.body);
             res.json(tag);

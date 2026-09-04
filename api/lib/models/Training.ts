@@ -27,6 +27,9 @@ export const PartialTeam = Type.Object({
 export const PartialTag = Type.Object({
     id: Type.Integer(),
     name: Type.String(),
+    icon: Type.String(),
+    colour_bg: Type.String(),
+    colour_txt: Type.String(),
     created: Type.String(),
     updated: Type.String()
 });
@@ -127,6 +130,9 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
                     'id', training_tag.id,
                     'name', training_tag.name,
+                    'icon', training_tag.icon,
+                    'colour_bg', training_tag.colour_bg,
+                    'colour_txt', training_tag.colour_txt,
                     'created', training_tag.created,
                     'updated', training_tag.updated
                 )), '[]'::JSON)`.as('tags'),
@@ -309,6 +315,9 @@ export default class TrainingModel extends Modeler<typeof Training> {
                 tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
                     'id', training_tag.id,
                     'name', training_tag.name,
+                    'icon', training_tag.icon,
+                    'colour_bg', training_tag.colour_bg,
+                    'colour_txt', training_tag.colour_txt,
                     'created', training_tag.created,
                     'updated', training_tag.updated
                 )), '[]'::JSON)`.as('tags'),

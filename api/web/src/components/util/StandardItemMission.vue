@@ -37,6 +37,15 @@
                             class='ms-auto'
                         />
                     </template>
+                    <template
+                        v-for='tag in (mission.tags || [])'
+                        :key='`tag-${tag.id}`'
+                    >
+                        <TagBadge
+                            :tag='tag'
+                            class='ms-auto'
+                        />
+                    </template>
                     <TablerBadge
                         v-if='mission.required'
                         class='ms-auto'
@@ -84,6 +93,7 @@
 <script setup>
 import StandardItem from './StandardItem.vue';
 import TeamBadge from './TeamBadge.vue';
+import TagBadge from './TagBadge.vue';
 import {
     TablerBadge,
     TablerEpochRange

@@ -54,6 +54,9 @@ export const PartialIncident = Type.Object({
 export const PartialTag = Type.Object({
     id: Type.Integer(),
     name: Type.String(),
+    icon: Type.String(),
+    colour_bg: Type.String(),
+    colour_txt: Type.String(),
     created: Type.String(),
     updated: Type.String()
 });
@@ -172,6 +175,9 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
                     'id', mission_tag.id,
                     'name', mission_tag.name,
+                    'icon', mission_tag.icon,
+                    'colour_bg', mission_tag.colour_bg,
+                    'colour_txt', mission_tag.colour_txt,
                     'created', mission_tag.created,
                     'updated', mission_tag.updated
                 )), '[]'::JSON)`.as('tags'),
@@ -381,6 +387,9 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 tags: sql<Array<Static<typeof PartialTag>>>`coalesce(json_agg(json_build_object(
                     'id', mission_tag.id,
                     'name', mission_tag.name,
+                    'icon', mission_tag.icon,
+                    'colour_bg', mission_tag.colour_bg,
+                    'colour_txt', mission_tag.colour_txt,
                     'created', mission_tag.created,
                     'updated', mission_tag.updated
                 )), '[]'::JSON)`.as('tags'),

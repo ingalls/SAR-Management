@@ -12,6 +12,10 @@
 
 ### Pending Release
 
+- :tada: `API`: Mission & Training Tags gain an SVG logo (`icon`) and badge colours (`colour_bg`, `colour_txt`), returned inline on Mission & Training `tags`
+- :tada: `UI`: Redesigned Mission & Training Tag admin pages - tags are listed as the badges they render as and edited in a modal with name, SVG logo upload, colour pickers, a swatch palette and live preview
+- :rocket: `UI`: Tags render as coloured badges with their logo on Mission & Training pages, list items and the tag pickers on the edit pages
+- :rocket: `UI`: Equipment Type schemas are now edited with the visual TablerSchemaBuilder, with a raw JSON mode retained for advanced schemas. Existing schemas load unchanged and unknown keys are preserved on save
 - :tada: `API`: Server branding can now be configured at the server level - application title, logo, large login-page brand logo, login background colour, username label and account request contact are stored as public server config
 - :tada: `API`: Add `GET /config/brand` returning the resolved branding (with defaults) for unauthenticated consumers
 - :tada: `UI`: Branding is applied across the application header, the login page and the public application form

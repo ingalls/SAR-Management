@@ -291,6 +291,8 @@ export const MissionTag = pgTable('mission_tag', {
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text().notNull(),
     icon: text().notNull().default(''),
+    colour_bg: text().notNull().default('#808080'),
+    colour_txt: text().notNull().default('#000000'),
 });
 
 export const Mission = pgTable('missions', {
@@ -433,6 +435,8 @@ export const TrainingTag = pgTable('training_tag', {
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     name: text().notNull(),
     icon: text().notNull().default(''),
+    colour_bg: text().notNull().default('#808080'),
+    colour_txt: text().notNull().default('#000000'),
 });
 
 export const Training = pgTable('training', {

@@ -100,6 +100,16 @@
                                                 />
                                             </template>
                                         </div>
+                                        <div
+                                            v-if='training.tags && training.tags.length'
+                                            class='col-12 mt-2 d-flex flex-wrap gap-1'
+                                        >
+                                            <TagBadge
+                                                v-for='tag in training.tags'
+                                                :key='tag.id'
+                                                :tag='tag'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                                 <div class='card-body'>
@@ -196,6 +206,7 @@ import IncidentsCard from './util/IncidentsCard.vue';
 import TrainingAssets from './Training/Assets.vue';
 import UserSelect from './util/UserSelect.vue';
 import TeamBadge from './util/TeamBadge.vue';
+import TagBadge from './util/TagBadge.vue';
 import {
     IconPencil
 } from '@tabler/icons-vue';
