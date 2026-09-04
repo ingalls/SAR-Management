@@ -260,6 +260,22 @@ export const IssueAssigned = pgTable('issues_assigned', {
     agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
 
+export const IssueTag = pgTable('issue_tag', {
+    id: serial().primaryKey(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    name: text().notNull(),
+    icon: text().notNull().default(''),
+    colour_bg: text().notNull().default('#808080'),
+    colour_txt: text().notNull().default('#000000'),
+});
+
+export const IssueTagAssigned = pgTable('issues_tag', {
+    id: serial().primaryKey(),
+    issue_id: integer().notNull().references(() => Issue.id),
+    tag_id: integer().notNull().references(() => IssueTag.id),
+});
+
 export const IssueComment = pgTable('issues_comments', {
     id: serial().primaryKey(),
     issue: integer().notNull().references(() => Issue.id),

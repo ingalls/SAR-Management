@@ -38,6 +38,8 @@ export default class Models {
     EquipmentType: Modeler<typeof pgtypes.EquipmentType>;
     Fieldability: Modeler<typeof pgtypes.Fieldability>;
     MissionTag: Modeler<typeof pgtypes.MissionTag>;
+    IssueTag: Modeler<typeof pgtypes.IssueTag>;
+    IssueTagAssigned: Modeler<typeof pgtypes.IssueTagAssigned>;
     MissionTagAssigned: Modeler<typeof pgtypes.MissionTagAssigned>;
     MissionAsset: Modeler<typeof pgtypes.MissionAsset>;
     MissionAgency: Modeler<typeof pgtypes.MissionAgency>;
@@ -114,6 +116,8 @@ export default class Models {
         this.EquipmentType = new Modeler(pg, pgtypes.EquipmentType);
         this.Fieldability = new Modeler(pg, pgtypes.Fieldability);
         this.MissionTag = new Modeler(pg, pgtypes.MissionTag);
+        this.IssueTag = new Modeler(pg, pgtypes.IssueTag);
+        this.IssueTagAssigned = new Modeler(pg, pgtypes.IssueTagAssigned);
         this.MissionTagAssigned = new Modeler(pg, pgtypes.MissionTagAssigned);
         this.MissionAgency = new Modeler(pg, pgtypes.MissionAgency);
         this.MissionAsset = new Modeler(pg, pgtypes.MissionAsset);
