@@ -46,6 +46,7 @@ export default async function router(schema: Schema, config: Config) {
 
                 const raw = await spaces.get({ Key });
                 const body = raw.Body as Readable;
+                res.set('Cache-Control', 'private, max-age=604800');
 
                 res.writeHead(200, {
                     'Content-Type': 'image/jpeg'
@@ -55,7 +56,8 @@ export default async function router(schema: Schema, config: Config) {
                 // @ts-expect-error AWS Code
                 if (err.Code === 'NoSuchKey' || (err.original && err.original.Code === 'NoSuchKey')) {
                     res.writeHead(200, {
-                        'Content-Type': 'image/webp'
+                        'Content-Type': 'image/webp',
+                        'Cache-Control': 'private, max-age=604800'
                     });
                     res.write(generic);
                     res.end();
