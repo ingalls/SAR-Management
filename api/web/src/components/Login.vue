@@ -22,7 +22,13 @@
             @load='footerLogoLoaded = true'
         >
 
-        <div class='container container-normal py-4'>
+        <!-- Stacked above the absolutely positioned footer (z-index 10) so it
+             can never overlap the card on short viewports, but below the
+             settings dropup (z-index 20) so its menu still opens over the card -->
+        <div
+            class='container container-normal position-relative py-4'
+            style='z-index: 15;'
+        >
             <div class='row align-items-center g-4'>
                 <div class='col-lg'>
                     <div class='container-tight'>

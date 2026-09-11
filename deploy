@@ -1,13 +1,219 @@
-#! /bin/bash
+#!/usr/bin/env bash
+#
+# SAR Management - server deploy
+#
+# Targets an empty Ubuntu DigitalOcean droplet, but every step is idempotent so
+# the same command is also the routine "pull and redeploy" for an existing one.
+#
+#   First time, on the droplet as root:
+#     apt-get install -y git
+#     git clone https://github.com/ingalls/SAR-Management.git /opt/sar
+#     cd /opt/sar && ./deploy team.example.com
+#
+#   Afterwards:
+#     cd /opt/sar && ./deploy
+#
+# What it does
+#   1. Installs Docker Engine + the compose plugin from Docker's apt repo
+#   2. Installs Caddy from its apt repo and renders deploy.d/Caddyfile into
+#      /etc/caddy/Caddyfile for the DNS name (Caddy obtains TLS certificates)
+#   3. Creates deploy.d/.env from deploy.d/.env.example, generating secrets;
+#      stops and tells you what to fill in if required values are missing
+#   4. Pulls the latest code and (re)builds + (re)starts the stack defined in
+#      deploy.d/docker-compose.yml, seeding a brand new database first
+#
+# The DNS name comes from, in order: the first argument, $DOMAIN, the DOMAIN
+# saved in deploy.d/.env from a previous run, or an interactive prompt.
+
 set -euo pipefail
 
-git pull
-npm ci
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEPLOY_DIR="$REPO_DIR/deploy.d"
+ENV_FILE="$DEPLOY_DIR/.env"
+COMPOSE_FILE="$DEPLOY_DIR/docker-compose.yml"
+CADDYFILE=/etc/caddy/Caddyfile
 
-cd api
-npm ci
-npm run build
+REQUIRED_ENV=(StackName SigningSecret MailGun SPACES_KEY SPACES_SECRET SPACES_BUCKET SPACES_BUCKET_PUBLIC)
 
-cd web
-npm ci
-npm run build
+log()  { printf '\n==> %s\n' "$*"; }
+die()  { printf 'error: %s\n' "$*" >&2; exit 1; }
+
+compose() { docker compose -f "$COMPOSE_FILE" "$@"; }
+
+# read_env KEY -> value of KEY in deploy.d/.env (empty if unset)
+read_env() {
+    [[ -f "$ENV_FILE" ]] || return 0
+    sed -n "s/^$1=//p" "$ENV_FILE" | tail -n 1
+}
+
+# set_env KEY VALUE -> replace or append KEY=VALUE in deploy.d/.env
+set_env() {
+    if grep -q "^$1=" "$ENV_FILE"; then
+        sed -i "s|^$1=.*|$1=$2|" "$ENV_FILE"
+    else
+        printf '%s=%s\n' "$1" "$2" >> "$ENV_FILE"
+    fi
+}
+
+resolve_domain() {
+    DOMAIN="${1:-${DOMAIN:-}}"
+    [[ -n "$DOMAIN" ]] || DOMAIN="$(read_env DOMAIN)"
+
+    if [[ -z "$DOMAIN" ]]; then
+        [[ -t 0 ]] || die "no DNS name: pass it as the first argument or set DOMAIN"
+        read -r -p "DNS name for this server (A record pointing at this droplet, e.g. team.example.com): " DOMAIN
+    fi
+
+    [[ "$DOMAIN" =~ ^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$ ]] || die "invalid DNS name: $DOMAIN"
+}
+
+install_base() {
+    log "Installing base packages"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get install -y -qq ca-certificates curl git gnupg openssl
+}
+
+install_docker() {
+    if docker compose version >/dev/null 2>&1; then
+        log "Docker already installed: $(docker --version)"
+    else
+        log "Installing Docker Engine"
+        install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+        chmod a+r /etc/apt/keyrings/docker.asc
+
+        # shellcheck disable=SC1091
+        codename="$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")"
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $codename stable" \
+            > /etc/apt/sources.list.d/docker.list
+
+        apt-get update -qq
+        apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    fi
+
+    systemctl enable --now docker >/dev/null
+}
+
+install_caddy() {
+    if command -v caddy >/dev/null 2>&1; then
+        log "Caddy already installed: $(caddy version)"
+    else
+        log "Installing Caddy"
+        apt-get install -y -qq debian-keyring debian-archive-keyring apt-transport-https
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
+            | gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
+            > /etc/apt/sources.list.d/caddy-stable.list
+        chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg /etc/apt/sources.list.d/caddy-stable.list
+
+        apt-get update -qq
+        apt-get install -y -qq caddy
+    fi
+}
+
+configure_caddy() {
+    log "Configuring Caddy for https://$DOMAIN"
+
+    local rendered
+    rendered="$(sed "s/__DOMAIN__/$DOMAIN/g" "$DEPLOY_DIR/Caddyfile")"
+
+    if [[ -f "$CADDYFILE" ]] && [[ "$(cat "$CADDYFILE")" == "$rendered" ]]; then
+        echo "Caddyfile unchanged"
+        systemctl enable --now caddy >/dev/null
+        return
+    fi
+
+    local tmp
+    tmp="$(mktemp)"
+    printf '%s\n' "$rendered" > "$tmp"
+    caddy validate --config "$tmp" --adapter caddyfile >/dev/null
+    install -m 0644 "$tmp" "$CADDYFILE"
+    rm -f "$tmp"
+
+    # The admin API is disabled in the Caddyfile, so a reload isn't possible
+    systemctl enable caddy >/dev/null
+    systemctl restart caddy
+    echo "Caddyfile updated and Caddy restarted"
+}
+
+ensure_env() {
+    log "Checking $ENV_FILE"
+
+    if [[ ! -f "$ENV_FILE" ]]; then
+        install -m 0600 "$DEPLOY_DIR/.env.example" "$ENV_FILE"
+        echo "Created from .env.example"
+    fi
+
+    set_env DOMAIN "$DOMAIN"
+    [[ -n "$(read_env POSTGRES_PASSWORD)" ]] || set_env POSTGRES_PASSWORD "$(openssl rand -hex 24)"
+    [[ -n "$(read_env SigningSecret)" ]]     || set_env SigningSecret "$(openssl rand -hex 32)"
+
+    local missing=()
+    for key in "${REQUIRED_ENV[@]}"; do
+        [[ -n "$(read_env "$key")" ]] || missing+=("$key")
+    done
+
+    if (( ${#missing[@]} )); then
+        printf '\nThe following values must be set in %s:\n' "$ENV_FILE"
+        printf '  %s\n' "${missing[@]}"
+        printf '\nEdit the file, then re-run: %s\n' "$0"
+        exit 1
+    fi
+}
+
+update_repo() {
+    if git -C "$REPO_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        log "Updating $REPO_DIR"
+        git -C "$REPO_DIR" pull --ff-only
+    fi
+}
+
+# The API reads server.name and server.frontend at boot and exits if they are
+# missing, so a brand new bundled database needs them before the API starts.
+# Restoring an existing dump (see README) makes this a no-op.
+seed_database() {
+    [[ -z "$(read_env POSTGRES)" ]] || return 0
+
+    log "Starting Postgres"
+    compose up -d --wait postgis
+
+    compose exec -T postgis psql -q -v ON_ERROR_STOP=1 -U sar -d sar <<SQL
+SET client_min_messages = warning;
+CREATE TABLE IF NOT EXISTS "server" (
+    "key" text PRIMARY KEY,
+    "value" text NOT NULL,
+    "public" boolean DEFAULT false NOT NULL
+);
+INSERT INTO "server" ("key", "value", "public") VALUES
+    ('name', 'Search and Rescue', true),
+    ('frontend', 'https://$DOMAIN/', true)
+ON CONFLICT ("key") DO NOTHING;
+SQL
+}
+
+start_stack() {
+    log "Building and starting the stack"
+    compose up -d --build --remove-orphans --wait
+    docker image prune -f >/dev/null
+
+    log "Deployed"
+    compose ps
+    printf '\n  https://%s\n\n' "$DOMAIN"
+}
+
+main() {
+    [[ "$(id -u)" -eq 0 ]] || exec sudo -E "$0" "$@"
+
+    resolve_domain "$@"
+    install_base
+    install_docker
+    install_caddy
+    ensure_env
+    configure_caddy
+    update_repo
+    seed_database
+    start_stack
+}
+
+main "$@"

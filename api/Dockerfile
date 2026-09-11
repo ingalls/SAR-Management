@@ -1,32 +1,30 @@
-FROM ubuntu:22.04
+# API + built web UI. Built by deploy.d/docker-compose.yml (see ../deploy).
 
-EXPOSE 5000
+FROM node:22-bookworm-slim AS build
+WORKDIR /home/sar/api
 
-ENV HOME=/home/sar
-WORKDIR $HOME
+# Install dependencies in their own layers so source edits don't re-run npm ci
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY web/package.json web/package-lock.json web/.npmrc ./web/
+RUN npm ci --prefix web
 
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils tzdata \
-    && apt-get install -y nginx curl python3 build-essential postgresql-client-common postgresql-client-14
+COPY . .
+RUN npm run build \
+    && npm run build --prefix web \
+    && npm prune --omit=dev
 
-RUN export NODEV='22.9.0' \
-    && curl "https://nodejs.org/dist/v${NODEV}/node-v${NODEV}-linux-x64.tar.gz" | tar -xzv > /dev/null \
-    && cp ./node-v${NODEV}-linux-x64/bin/node /usr/bin/ \
-    && ./node-v${NODEV}-linux-x64/bin/npm install -g npm
+FROM node:22-bookworm-slim
+ENV NODE_ENV=production
+WORKDIR /home/sar/api
 
-COPY ./ $HOME/api
-WORKDIR $HOME/api
+COPY --from=build /home/sar/api/node_modules ./node_modules
+# dist/ carries package.json, migrations/ and lib/user.webp (see "npm run build")
+COPY --from=build /home/sar/api/dist ./dist
+COPY --from=build /home/sar/api/web/dist ./web/dist
+# lib/report.ts reads web/public/logo.png from source-relative paths
+COPY --from=build /home/sar/api/web/public ./web/public
 
-RUN cp ./nginx.conf /etc/nginx/sites-enabled/default
-
-RUN npm install \
-    && npm run doc
-
-RUN cd web \
-    && npm install \
-    && npm install -g yarn \
-    && yarn prod \
-    && cd ..
-
-CMD service nginx restart \
-    && npm run prod
+USER node
+EXPOSE 4999
+CMD ["node", "dist/index.js", "--heartbeat"]

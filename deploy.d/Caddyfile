@@ -1,0 +1,33 @@
+# Rendered into /etc/caddy/Caddyfile by ../deploy, which replaces __DOMAIN__
+# with the server's DNS name. Caddy terminates TLS (automatic Let's Encrypt
+# certificates) and proxies everything to the API container, which serves both
+# the JSON API under /api and the built web UI.
+{
+	admin off
+}
+
+__DOMAIN__ {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "fullscreen=(self), clipboard-read=(self), clipboard-write=(self)"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+	}
+
+	# Vite fingerprints everything under /assets, so only the HTML shell and
+	# other unversioned files need to bypass browser caches after a deploy.
+	@nocache not path /api* /assets/*
+	header @nocache {
+		Cache-Control "no-store"
+		defer
+	}
+
+	log {
+		output stdout
+	}
+
+	reverse_proxy 127.0.0.1:4999
+}
