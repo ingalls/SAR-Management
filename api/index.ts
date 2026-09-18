@@ -23,7 +23,7 @@ import Heartbeat from './lib/heartbeat.js';
 const pkg = JSON.parse(String(fs.readFileSync(new URL('./package.json', import.meta.url))));
 
 const args = minimist(process.argv, {
-    boolean: ['help', 'silent', 'heartbeat'],
+    boolean: ['help', 'silent', 'heartbeat', 'email'],
     string: ['postgres']
 });
 

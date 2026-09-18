@@ -27,4 +27,4 @@ COPY --from=build /home/sar/api/web/public ./web/public
 
 USER node
 EXPOSE 4999
-CMD ["node", "dist/index.js", "--heartbeat"]
+CMD ["node", "dist/index.js", "--heartbeat", "--email"]
