@@ -1,6 +1,6 @@
 # API + built web UI. Built by deploy.d/docker-compose.yml (see ../deploy).
 
-FROM node:22-bookworm-slim AS build
+FROM node:26-bookworm-slim AS build
 WORKDIR /home/sar/api
 
 # Install dependencies in their own layers so source edits don't re-run npm ci
@@ -14,7 +14,7 @@ RUN npm run build \
     && npm run build --prefix web \
     && npm prune --omit=dev
 
-FROM node:22-bookworm-slim
+FROM node:26-bookworm-slim
 ENV NODE_ENV=production
 WORKDIR /home/sar/api
 

@@ -12,6 +12,8 @@
 
 ### Pending Release
 
+- :bug: `API`: Remove the `express-minify` runtime minifier. Its clean-css pass stripped the empty `--lightningcss-dark` custom properties that Vite emits for Tabler's `light-dark()` colours, turning every card & surface transparent in production. Vite already minifies the build
+- :arrow_up: `API`: Production image now builds and runs on Node.js 26
 - :rocket: `API`: Drop the `username` paradigm - users are identified by `email` alone. `POST /login` & `POST /login/forgot` take `email`, `username` is removed from user create/update bodies & all user/assignment responses, and the `login_username_label` branding key becomes `login_email_label` (migrated in place)
 - :rocket: `UI`: Remove the Username field from the new/edit user forms & profile page; the login and forgot-password forms ask for an email
 - :tada: `API`: Add Issue Tags (`/issue-tag`) with the same SVG logo & badge colours as Mission/Training Tags; issues carry `tags`, `tags_id`, `assigned_ids` & a `comments` count and accept `tags` on create/update

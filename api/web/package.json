@@ -9,6 +9,9 @@
         "build": "vite build",
         "lint": "eslint ./src/"
     },
+    "engines": {
+        "node": ">=26"
+    },
     "dependencies": {
         "@fullcalendar/core": "^6.1.21",
         "@fullcalendar/daygrid": "^6.1.21",

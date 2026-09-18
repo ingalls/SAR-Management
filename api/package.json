@@ -15,6 +15,9 @@
         "prod": "node dist/index.js --heartbeat --email",
         "dev": "StackName=test tsx watch --ignore web/ index.ts"
     },
+    "engines": {
+        "node": ">=26"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/ingalls/SAR-Management.git"
@@ -48,7 +51,6 @@
         "drizzle-orm": "^0.45.2",
         "drizzle-typebox": "^0.3.3",
         "express": "^5.2.1",
-        "express-minify": "^1.0.0",
         "form-data": "^4.0.6",
         "ical-generator": "^11.1.1",
         "jsonwebtoken": "^9.0.3",
@@ -72,10 +74,10 @@
         "@types/connect-history-api-fallback": "^1.5.4",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
-        "@types/express-minify": "^0.1.39",
         "@types/geojson": "^7946.0.16",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/minimist": "^1.2.5",
+        "@types/node": "^26.6.1",
         "@types/node-cron": "^3.0.11",
         "@types/qrcode": "^1.5.6",
         "eslint": "^10.9.1",

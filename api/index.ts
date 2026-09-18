@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
-import minify from 'express-minify';
 import history from 'connect-history-api-fallback';
 import express from 'express';
 import Schema from '@openaddresses/batch-schema';
@@ -81,8 +80,6 @@ export default async function server() {
         allowedHeaders: ['Content-Type', 'Content-Length', 'Authorization', 'x-requested-with'],
         credentials: true
     }));
-
-    app.use(minify());
 
     /**
      * @api {get} /api Get Metadata
