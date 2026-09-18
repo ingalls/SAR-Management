@@ -26,6 +26,11 @@ export default defineConfig(() => {
         },
         build: {
             manifest: true,
+            // @tabler/core >= 1.5 themes with CSS light-dark(). The default CSS target
+            // makes lightningcss transpile it into a var() fallback that resolves at
+            // :root (light), which breaks nested data-bs-theme='dark' areas like the header.
+            // Target browsers with native light-dark() support so it is left as-is.
+            cssTarget: ['chrome123', 'edge123', 'firefox120', 'safari17.5', 'ios17.5'],
             rollupOptions: {
                 input: {
                     main: path.resolve(import.meta.dirname, 'index.html'),
