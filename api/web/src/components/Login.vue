@@ -150,9 +150,9 @@
                                     <template v-if='showLocal'>
                                         <div class='mb-3'>
                                             <TablerInput
-                                                v-model='body.username'
+                                                v-model='body.email'
                                                 icon='user'
-                                                :label='brand.login.username'
+                                                :label='brand.login.email'
                                                 placeholder='your@email.com'
                                                 autocomplete='off'
                                                 @keyup.enter='createLogin'
@@ -416,7 +416,7 @@ const footerLogo = computed(() => {
 const contactLink = computed(() => contactHref(brand.login.contact));
 
 const body = ref({
-    username: '',
+    email: '',
     password: ''
 });
 
@@ -425,7 +425,7 @@ const sso = ref({
     name: 'Single Sign-On'
 });
 
-// Server-wide toggle for traditional username/password login
+// Server-wide toggle for traditional email/password login
 const local = ref({
     enabled: true
 });

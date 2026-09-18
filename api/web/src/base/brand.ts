@@ -10,7 +10,7 @@ export interface Brand {
     title: string;
     logo?: string;
     login: {
-        username: string;
+        email: string;
         contact?: string;
         brand: {
             enabled: 'default' | 'enabled' | 'disabled';
@@ -31,7 +31,7 @@ export const brand = reactive<Brand & { loaded: boolean }>({
     title: 'Team Management',
     logo: undefined,
     login: {
-        username: 'Username or Email',
+        email: 'Email',
         contact: undefined,
         brand: {
             enabled: 'default',

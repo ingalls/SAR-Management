@@ -226,20 +226,22 @@ export default class Flight {
      * Create a new user and return an API token for that user
      *
      * @param {Object} test Tape runner
-     * @param {String} username Username for user to create
+     * @param {String} name Name for user to create - the email is `${name}@example.com`
      * @param {Boolean} [admin=false] Should the created user be an admin
      */
-    user(test, username, admin = false) {
-        test.test(`Create Token: ${username}`, async (t) => {
+    user(test, name, admin = false) {
+        test.test(`Create Token: ${name}`, async (t) => {
             const new_user_res = await fetch(new URL('/api/user', this.base), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username,
                     password: 'testing123',
-                    email: `${username}@example.com`
+                    email: `${name}@example.com`,
+                    fname: name,
+                    lname: 'Test',
+                    phone: '555-555-5555'
                 })
             });
 
@@ -263,7 +265,7 @@ export default class Flight {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username,
+                    email: `${name}@example.com`,
                     password: 'testing123'
                 })
             });
@@ -271,7 +273,7 @@ export default class Flight {
             const new_login = new FlightResponse(new_login_res, await new_login_res.json());
             if (new_login.status !== 200) throw new Error(JSON.stringify(new_login.body));
 
-            this.token[username] = (new_login.body).token;
+            this.token[name] = (new_login.body).token;
             t.end();
         });
     }

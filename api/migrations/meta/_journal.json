@@ -267,6 +267,13 @@
       "when": 1782300000000,
       "tag": "0037_issue_tags",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1782300100000,
+      "tag": "0038_drop_username",
+      "breakpoints": true
     }
   ]
 }

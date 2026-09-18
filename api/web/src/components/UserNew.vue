@@ -49,13 +49,6 @@
                                     </div>
                                     <div class='col-md-6'>
                                         <TablerInput
-                                            v-model='user.username'
-                                            label='Username'
-                                            :error='errors.username'
-                                        />
-                                    </div>
-                                    <div class='col-md-6'>
-                                        <TablerInput
                                             v-model='user.email'
                                             label='Email'
                                             :error='errors.email'
@@ -101,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
@@ -126,7 +119,6 @@ const props = defineProps({
 });
 
 const errors = reactive({
-    username: false,
     email: false,
     fname: false,
     lname: false,
@@ -136,7 +128,6 @@ const errors = reactive({
 const loading = ref(false);
 
 const user = reactive({
-    username: '',
     email: '',
     fname: '',
     lname: '',
@@ -144,17 +135,10 @@ const user = reactive({
     teams: []
 });
 
-watch(() => user.fname, () => {
-    user.username = `${user.fname.toLowerCase()}.${user.lname.toLowerCase()}`;
-});
-
-watch(() => user.lname, () => {
-    user.username = `${user.fname.toLowerCase()}.${user.lname.toLowerCase()}`;
-});
 const is_iam = (permission) => iamHelper(props.iam, props.auth, permission);
 
 const create = async () => {
-    for (const field of ['username', 'email', 'fname', 'lname', 'phone']) {
+    for (const field of ['email', 'fname', 'lname', 'phone']) {
         if (!user[field]) errors[field] = 'Cannot be empty';
         else errors[field] = false;
     }

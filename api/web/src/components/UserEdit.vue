@@ -55,13 +55,6 @@
                                                 </div>
                                                 <div class='col-md-6'>
                                                     <TablerInput
-                                                        v-model='user.username'
-                                                        label='Username'
-                                                        :error='errors.username'
-                                                    />
-                                                </div>
-                                                <div class='col-md-6'>
-                                                    <TablerInput
                                                         v-model='user.email'
                                                         label='Email'
                                                         :error='errors.email'
@@ -339,7 +332,6 @@ const loading = reactive({
     agencies: false
 });
 const errors = reactive({
-    username: '',
     email: '',
     fname: '',
     lname: '',
@@ -352,7 +344,6 @@ const errors = reactive({
     start_year: ''
 });
 const user = reactive({
-    username: '',
     email: '',
     fname: '',
     lname: '',
@@ -438,7 +429,7 @@ async function removeAgencyAssociation(agencyId) {
 }
 
 async function create() {
-    for (const field of ['username', 'email', 'fname', 'lname']) {
+    for (const field of ['email', 'fname', 'lname']) {
         if (!user[field]) errors[field] = 'Cannot be empty';
         else errors[field] = '';
     }
@@ -455,7 +446,6 @@ async function create() {
     const updated = await window.std(`/api/user/${route.params.userid}`, {
         method: 'PATCH',
         body: {
-            username: user.username,
             email: user.email,
             fname: user.fname,
             lname: user.lname,

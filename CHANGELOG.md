@@ -12,6 +12,8 @@
 
 ### Pending Release
 
+- :rocket: `API`: Drop the `username` paradigm - users are identified by `email` alone. `POST /login` & `POST /login/forgot` take `email`, `username` is removed from user create/update bodies & all user/assignment responses, and the `login_username_label` branding key becomes `login_email_label` (migrated in place)
+- :rocket: `UI`: Remove the Username field from the new/edit user forms & profile page; the login and forgot-password forms ask for an email
 - :tada: `API`: Add Issue Tags (`/issue-tag`) with the same SVG logo & badge colours as Mission/Training Tags; issues carry `tags`, `tags_id`, `assigned_ids` & a `comments` count and accept `tags` on create/update
 - :tada: `API`: `GET /issue` gains `tag`, `author` & `poll` filters, `status=all`, and text search across title & body
 - :tada: `UI`: Add an Issue Tags admin section, tag pickers on the new/edit issue pages and inline tag management on the issue page

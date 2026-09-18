@@ -35,10 +35,10 @@
                                 </template>
                                 <template v-else>
                                     <div class='mb-3'>
-                                        <label class='form-label'>Username or Email</label>
+                                        <label class='form-label'>Email</label>
                                         <input
-                                            v-model='username'
-                                            type='text'
+                                            v-model='email'
+                                            type='email'
                                             class='form-control'
                                             placeholder='your@email.com'
                                             autocomplete='off'
@@ -78,16 +78,16 @@ import {
 
 const submitted = ref(false)
 const loading = ref(false)
-const username = ref('')
+const email = ref('')
 
 const reset = async () => {
-    if (!username.value.length) return;
+    if (!email.value.length) return;
     loading.value = true;
 
     await window.std('/api/login/forgot', {
         method: 'POST',
         body: {
-            username: username.value
+            email: email.value
         }
     }, false);
 

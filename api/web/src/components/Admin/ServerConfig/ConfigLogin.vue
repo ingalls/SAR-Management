@@ -19,7 +19,7 @@
             <TablerToggle
                 v-model='config.local_login_enabled'
                 :disabled='!edit'
-                label='Allow Username &amp; Password Login'
+                label='Allow Email &amp; Password Login'
                 description='When disabled, only administrators may sign in with a password; all other users must use Single Sign-On. The password form remains reachable at /login?local=1'
             />
 

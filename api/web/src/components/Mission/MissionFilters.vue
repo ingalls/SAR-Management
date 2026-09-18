@@ -459,7 +459,7 @@ function clearAll() {
 
 function userName(id) {
     const user = userCache.value[id];
-    return user ? `${user.fname} ${user.lname}`.trim() || user.username : `User #${id}`;
+    return user ? `${user.fname} ${user.lname}`.trim() || user.email : `User #${id}`;
 }
 
 function addUser(user) {

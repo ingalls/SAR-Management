@@ -103,15 +103,6 @@
                                             <div class='datagrid'>
                                                 <div class='datagrid-item'>
                                                     <div class='datagrid-title'>
-                                                        Username
-                                                    </div>
-                                                    <div
-                                                        class='datagrid-content'
-                                                        v-text='user.username'
-                                                    />
-                                                </div>
-                                                <div class='datagrid-item'>
-                                                    <div class='datagrid-title'>
                                                         Email
                                                     </div>
                                                     <div class='datagrid-content'>

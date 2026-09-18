@@ -35,11 +35,11 @@
         </div>
 
         <TablerInput
-            v-model='config.login_username_label'
+            v-model='config.login_email_label'
             :disabled='!edit'
-            label='Username Label'
-            placeholder='Username or Email'
-            description='Label for the username field on the login page ie: Email, Callsign, etc.'
+            label='Email Label'
+            placeholder='Email'
+            description='Label for the email field on the login page ie: Email, Work Email, etc.'
         />
 
         <TablerInput
@@ -101,7 +101,7 @@ import {
 const keys = [
     'brand_title',
     'brand_logo',
-    'login_username_label',
+    'login_email_label',
     'login_contact',
     'login_brand_enabled',
     'login_brand_logo',
@@ -113,7 +113,7 @@ const { isOpen, loading, edit, err, config, save, cancel } = useConfig({
     defaults: {
         brand_title: '',
         brand_logo: '',
-        login_username_label: '',
+        login_email_label: '',
         login_contact: '',
         login_brand_enabled: 'default',
         login_brand_logo: '',
