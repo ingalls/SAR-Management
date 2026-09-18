@@ -268,6 +268,35 @@ export default class Email {
         }
     }
 
+    /**
+     * Confirm to an applicant that their application was received
+     */
+    async application_received(application: {
+        name: string;
+        email: string;
+    }): Promise<void> {
+        if (!application.email?.trim()) {
+            throw new EmailError('Email is required for application email', EmailErrorType.VALIDATION);
+        }
+
+        const email = {
+            body: {
+                name: application.name || application.email,
+                intro: [
+                    `Thank you for applying to ${this.config.OrgName}, we have received your application.`,
+                    'Our membership team reviews every application and will contact you about next steps.'
+                ],
+                outro: 'There is no need to reply to this email.'
+            }
+        };
+
+        try {
+            await this.send(application.email, `${this.config.OrgName} Application Received`, this.mailGenerator.generate(email));
+        } catch (err) {
+            throw new Err(500, err instanceof Error ? err : new Error(String(err)), 'Internal Application Received Error');
+        }
+    }
+
     async send(to: string, subject: string, body: string): Promise<void> {
         // Input validation
         if (!to) throw new EmailError('Recipient email address is required', EmailErrorType.VALIDATION);

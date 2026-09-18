@@ -120,11 +120,17 @@ export default async function router(schema: Schema, config: Config) {
         try {
             const user = await Auth.is_iam(config, req, IamGroup.Application, PermissionsLevel.MANAGE);
 
+            // Ensures the application exists before a comment is attached to it
+            const app = await config.models.Application.from(req.params.applicationid);
+
             const comment = await config.models.ApplicationComment.generate({
-                application: req.params.applicationid,
+                application: app.id,
                 author: user.id,
                 ...req.body
             });
+
+            // A comment counts as activity on the application
+            await config.models.Application.commit(app.id, { updated: sql`Now()` });
 
             res.json(await config.models.ApplicationComment.augmented_from(comment.id));
         } catch (err) {

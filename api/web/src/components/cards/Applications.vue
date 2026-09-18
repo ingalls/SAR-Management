@@ -40,18 +40,42 @@
 
         <NoAccess v-if='!is_iam("Application:View")' />
         <template v-else>
+            <div class='px-2 pt-2 d-flex flex-wrap gap-1'>
+                <button
+                    v-for='tab in tabs'
+                    :key='tab.value'
+                    type='button'
+                    class='btn btn-sm'
+                    :class='paging.status === tab.value ? "btn-primary" : "btn-ghost-secondary"'
+                    :title='tab.description'
+                    @click='paging.status = tab.value'
+                >
+                    <span v-text='tab.label' />
+                    <span
+                        class='badge ms-2'
+                        :class='paging.status === tab.value ? "bg-white text-primary" : `bg-${tab.colour}-lt`'
+                        v-text='tab.count'
+                    />
+                </button>
+            </div>
             <div class='px-2 py-2 row g-2'>
-                <div class='col-12 col-md-8'>
+                <div class='col-12 col-md-6'>
                     <TablerInput
                         v-model='paging.filter'
-                        placeholder='Filter Applications'
+                        placeholder='Filter by name, email or phone'
                         icon='search'
                     />
                 </div>
-                <div class='col-12 col-md-4'>
+                <div class='col-6 col-md-3'>
                     <TablerEnum
-                        v-model='paging.status'
-                        :options='["all", "archived", "active"]'
+                        v-model='paging.cohort'
+                        :options='cohortOptions'
+                    />
+                </div>
+                <div class='col-6 col-md-3'>
+                    <TablerEnum
+                        v-model='paging.reviewer'
+                        :options='["Any Reviewer", "Assigned to Me"]'
                     />
                 </div>
             </div>
@@ -65,60 +89,80 @@
                 :create='false'
                 label='No Applications'
             />
-            <table
+            <div
                 v-else
-                class='table card-table table-hover table-vcenter'
+                class='table-responsive'
             >
-                <TableHeader
-                    v-model:sort='paging.sort'
-                    v-model:order='paging.order'
-                    v-model:header='header'
-                    :allow-export='false'
-                />
-                <tbody>
-                    <tr
-                        v-for='application in list.items'
-                        :key='application.id'
-                        class='cursor-pointer'
-                        @click='stdclick(router, $event, `/application/${application.id}`)'
-                    >
-                        <template v-for='h in header'>
-                            <template v-if='h.display'>
-                                <td v-if='["archived"].includes(h.name)'>
-                                    <TablerBadge
-                                        v-if='application.archived'
-                                        background-color='#d63939'
-                                        text-color='#ffffff'
-                                    >
-                                        Archived
-                                    </TablerBadge>
-                                    <TablerBadge
-                                        v-else
-                                        background-color='#2fb344'
-                                        text-color='#ffffff'
-                                    >
-                                        Active
-                                    </TablerBadge>
-                                </td>
-                                <td v-else-if='["updated", "created"].includes(h.name)'>
-                                    <TablerEpoch
-                                        v-if='application[h.name]'
-                                        :date='application[h.name]'
-                                    />
-                                    <span v-else>Never</span>
-                                </td>
-                                <td v-else>
-                                    <span v-text='application[h.name]' />
-                                </td>
+                <table class='table card-table table-hover table-vcenter'>
+                    <TableHeader
+                        v-model:sort='paging.sort'
+                        v-model:order='paging.order'
+                        v-model:header='header'
+                        :allow-export='false'
+                    />
+                    <tbody>
+                        <tr
+                            v-for='application in list.items'
+                            :key='application.id'
+                            class='cursor-pointer'
+                            @click='stdclick(router, $event, `/application/${application.id}`)'
+                        >
+                            <template v-for='h in header'>
+                                <template v-if='h.display'>
+                                    <td v-if='h.name === "status"'>
+                                        <StatusBadge :status='application.status' />
+                                    </td>
+                                    <td v-else-if='h.name === "name"'>
+                                        <div class='d-flex align-items-center'>
+                                            <span v-text='application.name' />
+                                            <span
+                                                v-if='application.comments'
+                                                class='ms-2 text-muted d-flex align-items-center'
+                                                :title='`${application.comments} comments`'
+                                            >
+                                                <IconMessage
+                                                    size='16'
+                                                    stroke='1'
+                                                />
+                                                <span
+                                                    class='ms-1'
+                                                    v-text='application.comments'
+                                                />
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td v-else-if='h.name === "assigned"'>
+                                        <Avatar
+                                            v-if='application.assigned_user'
+                                            :user='application.assigned_user'
+                                            :link='false'
+                                        />
+                                        <span
+                                            v-else
+                                            class='text-muted'
+                                        >Unassigned</span>
+                                    </td>
+                                    <td v-else-if='["updated", "created"].includes(h.name)'>
+                                        <TablerEpoch
+                                            v-if='application[h.name]'
+                                            :date='application[h.name]'
+                                        />
+                                        <span v-else>Never</span>
+                                    </td>
+                                    <td v-else>
+                                        <span v-text='application[h.name]' />
+                                    </td>
+                                </template>
                             </template>
-                        </template>
-                    </tr>
-                </tbody>
-            </table>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <TableFooter
                 v-if='footer'
                 :limit='paging.limit'
                 :total='list.total'
+                :page='paging.page'
                 @page='paging.page = $event'
             />
         </template>
@@ -126,7 +170,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { stdclick } from '../../std.ts';
 import { phone as phoneFormat } from 'phone';
@@ -134,8 +178,10 @@ import iamHelper from '../../iam.js';
 import NoAccess from '../util/NoAccess.vue';
 import TableHeader from '../util/TableHeader.vue';
 import TableFooter from '../util/TableFooter.vue';
+import Avatar from '../util/Avatar.vue';
+import StatusBadge from '../Application/StatusBadge.vue';
+import { Statuses, StatusOrder } from '../Application/status.ts';
 import {
-    TablerBadge,
     TablerNone,
     TablerEnum,
     TablerInput,
@@ -146,6 +192,7 @@ import {
 
 import {
     IconGripVertical,
+    IconMessage,
     IconPlus,
     IconPencil
 } from '@tabler/icons-vue';
@@ -161,15 +208,9 @@ const props = defineProps({
         type: Object,
         required: true
     },
-    start: {
-        type: Number
-    },
     order: {
         type: String,
         default: 'desc'
-    },
-    end: {
-        type: Number
     },
     dragHandle: {
         type: Boolean,
@@ -191,6 +232,7 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
+    // Start with the list limited to the applications a given user is reviewing
     assigned: {
         type: Number
     }
@@ -203,21 +245,54 @@ const paging = reactive({
     sort: 'created',
     order: props.order,
     limit: props.limit,
-    start: props.start,
     status: 'active',
-    end: props.end,
+    cohort: 'All Cohorts',
+    reviewer: props.assigned ? 'Assigned to Me' : 'Any Reviewer',
     page: 0
 })
 const list = reactive({
     total: 0,
+    counts: {},
+    cohorts: [],
     items: []
 })
+
+const cohortOptions = computed(() => ['All Cohorts', ...list.cohorts]);
+
+// Groupings first, then each status in lifecycle order
+const tabs = computed(() => {
+    const count = (active) => StatusOrder
+        .filter((status) => Statuses[status].active === active)
+        .reduce((total, status) => total + (list.counts[status] || 0), 0);
+
+    return [{
+        value: 'active',
+        label: 'Active',
+        description: 'Applications that are still in progress',
+        colour: 'blue',
+        count: count(true)
+    }, ...StatusOrder.map((status) => {
+        return {
+            value: status,
+            label: Statuses[status].label,
+            description: Statuses[status].description,
+            colour: Statuses[status].colour,
+            count: list.counts[status] || 0
+        };
+    }), {
+        value: 'all',
+        label: 'All',
+        description: 'Every application',
+        colour: 'secondary',
+        count: count(true) + count(false)
+    }];
+});
 
 const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
 const listSchema = async () => {
     const schema = await window.std('/api/schema?method=GET&url=/application');
-    header.value = ['archived', 'name', 'created', 'phone', 'email', 'group'].map((h) => {
+    header.value = ['status', 'name', 'cohort', 'assigned', 'created', 'updated'].map((h) => {
         return { name: h, display: true };
     });
 
@@ -227,6 +302,9 @@ const listSchema = async () => {
             display: false
         }
     }).filter((h) => {
+        // Not meaningful as a table column
+        if (['id', 'answers', 'schema', 'user_id', 'agency_id'].includes(h.name)) return false;
+
         for (const hknown of header.value) {
             if (hknown.name === h.name) return false;
         }
@@ -246,35 +324,52 @@ const format = (number) => {
     }
 }
 
+// Only the most recent request is allowed to update the list
+let request = 0;
+
 const fetch = async () => {
+    const current = ++request;
     loading.value = true;
-    const url = window.stdurl('/api/application');
-    url.searchParams.append('limit', paging.limit);
-    url.searchParams.append('page', paging.page);
-    url.searchParams.append('filter', paging.filter);
-    url.searchParams.append('sort', paging.sort);
-    url.searchParams.append('order', paging.order);
-    if (paging.status !== 'all') {
+
+    try {
+        const url = window.stdurl('/api/application');
+        url.searchParams.append('limit', paging.limit);
+        url.searchParams.append('page', paging.page);
+        url.searchParams.append('filter', paging.filter);
+        url.searchParams.append('sort', paging.sort);
+        url.searchParams.append('order', paging.order);
         url.searchParams.append('status', paging.status);
+        if (paging.cohort !== 'All Cohorts') url.searchParams.append('cohort', paging.cohort);
+        if (paging.reviewer === 'Assigned to Me') url.searchParams.append('assigned', props.assigned || props.auth.id);
+
+        const result = await window.std(url);
+        if (current !== request) return;
+
+        result.items.map((i) => {
+            i.phone = format(i.phone);
+        })
+
+        list.total = result.total;
+        list.counts = result.counts;
+        list.cohorts = result.cohorts;
+        list.items = result.items;
+    } finally {
+        if (current === request) loading.value = false;
     }
-
-    if (paging.start) url.searchParams.append('start', paging.start);
-    if (paging.end) url.searchParams.append('end', paging.end);
-    const result = await window.std(url);
-
-    result.items.map((i) => {
-        i.phone = format(i.phone);
-    })
-
-    list.total = result.total;
-    list.items = result.items;
-
-    loading.value = false;
 }
 
-watch(paging, async () => {
+// Any change to what is being listed invalidates the current page
+watch(() => [paging.filter, paging.status, paging.cohort, paging.reviewer, paging.sort, paging.order], async () => {
+    if (paging.page !== 0) {
+        paging.page = 0;
+    } else {
+        await fetch();
+    }
+})
+
+watch(() => paging.page, async () => {
     await fetch();
-}, { deep: true })
+})
 
 onMounted(async () => {
     await listSchema();

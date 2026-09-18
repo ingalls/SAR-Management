@@ -21,6 +21,7 @@
             >
                 <div class='ms-auto'>
                     <TablerPager
+                        :page='page'
                         :total='total'
                         :limit='limit'
                         @page='page = $event'
@@ -37,7 +38,12 @@ import {
     TablerPager
 } from '@tak-ps/vue-tabler'
 
-defineProps({
+const props = defineProps({
+    // Current zero-indexed page. Pass it so the parent can reset paging when filters change
+    page: {
+        type: Number,
+        default: 0
+    },
     limit: {
         type: Number,
         required: true
@@ -50,9 +56,13 @@ defineProps({
 
 const emit = defineEmits(['page'])
 
-const page = ref(0)
+const page = ref(props.page)
+
+watch(() => props.page, () => {
+    page.value = props.page;
+})
 
 watch(page, () => {
-    emit('page', page.value)
+    if (page.value !== props.page) emit('page', page.value)
 })
 </script>

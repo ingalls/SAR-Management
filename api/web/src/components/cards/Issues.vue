@@ -92,6 +92,7 @@
                 v-if='footer'
                 :limit='paging.limit'
                 :total='list.total'
+                :page='paging.page'
                 @page='paging.page = $event'
             />
         </template>

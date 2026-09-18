@@ -91,6 +91,7 @@
             v-if='!loading'
             :limit='limit'
             :total='list.total'
+            :page='page'
             @page='page = $event'
         />
 

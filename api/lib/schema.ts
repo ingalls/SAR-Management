@@ -146,14 +146,33 @@ export const Application = pgTable('applications', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
     updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
-    group: text().notNull().default('unassigned'),
+    // Lifecycle status - see lib/application-status.ts for the allowed values
+    status: text().notNull().default('submitted'),
+    // Intake class the applicant is being considered for (ie: 2026) - only set by reviewers
+    cohort: text().notNull().default('unassigned'),
     name: text().notNull(),
     phone: text().notNull(),
     email: text().notNull(),
-    meta: json().notNull().default({}),
+    // Form answers that are not first class columns, validated against `schema`
+    answers: json().notNull().default({}),
+    // Snapshot of the application form at the time of submission
     schema: json().notNull(),
-    archived: boolean().notNull().default(false),
+    // Reviewer responsible for moving the application forward
+    assigned: integer().references(() => User.id),
+    // Set once an accepted applicant has been converted into a member
+    user_id: integer().references(() => User.id),
     agency_id: bigint({ mode: "number" }).references(() => Agency.id)
+});
+
+export const ApplicationEvent = pgTable('application_events', {
+    id: serial().primaryKey(),
+    application: integer().notNull().references(() => Application.id),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    // NULL when the event was caused by the applicant or the system
+    author: integer().references(() => User.id),
+    type: text().notNull(),
+    body: text().notNull().default(''),
+    meta: json().notNull().default({}),
 });
 
 export const ApplicationComment = pgTable('application_comments', {

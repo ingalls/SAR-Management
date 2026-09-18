@@ -102,6 +102,7 @@
                     v-if='!loading && agencies.total > limit'
                     :total='agencies.total'
                     :limit='limit'
+                    :page='page'
                     @page='page = $event'
                 />
             </div>

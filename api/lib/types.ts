@@ -4,6 +4,8 @@ import { AugmentedIssue } from './models/Issue.js';
 import { AugmentedSchedule } from './models/Schedule.js';
 import { AugmentedScheduleEvent } from './models/ScheduleEvent.js';
 import { AugmentedApplicationComment } from './models/ApplicationComment.js';
+import { AugmentedApplication } from './models/Application.js';
+import { AugmentedApplicationEvent } from './models/ApplicationEvent.js';
 import { AugmentedIssueComment } from './models/IssueComment.js';
 import { AugmentedEquipmentAssigned } from './models/EquipmentAssigned.js';
 import { AugmentedMissionAssigned } from './models/MissionAssigned.js';
@@ -165,10 +167,8 @@ export const UserResponse = AugmentedUser;
 export const IssueCommentResponse = AugmentedIssueComment;
 export const ApplicationCommentResponse = AugmentedApplicationComment;
 
-export const ApplicationResponse = createSelectSchema(schemas.Application, {
-    id: Type.Integer(),
-    archived: Type.Boolean()
-});
+export const ApplicationResponse = AugmentedApplication;
+export const ApplicationEventResponse = AugmentedApplicationEvent;
 
 export const MissionPersonResponse = createSelectSchema(schemas.MissionPerson);
 

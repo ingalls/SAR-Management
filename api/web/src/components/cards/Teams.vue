@@ -132,6 +132,7 @@
         <TableFooter
             :limit='paging.limit'
             :total='teams.total'
+            :page='paging.page'
             @page='paging.page = $event'
         />
     </div>

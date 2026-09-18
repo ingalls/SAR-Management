@@ -12,6 +12,15 @@
 
 ### Pending Release
 
+- :bug: `API`: `PATCH /application/:applicationid` was missing its permission check and could be called without logging in. It now requires `Application:Manage`
+- :bug: `UI`: Paging was broken on every list after the `@tak-ps/vue-tabler` upgrade - `TablerPager` is now a controlled component and `TableFooter` never passed it the current page, so the highlight never moved, the first page could not be returned to and later pages were unreachable. Lists also return to the first page when their filters change
+- :tada: `API`: Application lifecycle - applications carry a `status` (submitted, reviewing, interview, accepted, onboarded, declined, withdrawn, closed) in place of `archived`, a `cohort` in place of `group`, an `assigned` reviewer and the `user_id` of the member they became. Form answers move from `meta` to `answers` and are returned nested instead of being flattened onto the application
+- :tada: `API`: Add `GET /application/:applicationid/event` - status, reviewer, cohort, member link & edit changes are recorded as timeline events, and the assigned reviewer is notified of status changes
+- :rocket: `API`: `POST /application` remains the only public application route. Applicants can no longer set their own `group`, lifecycle fields are ignored, applicants are emailed a confirmation and applications sharing an email or phone are flagged as possible duplicates
+- :rocket: `API`: `GET /application` filters by `status` (or the `active`, `inactive` & `all` groupings), `cohort` & `assigned`, searches name, email & phone without treating the filter as a regular expression, and returns per status `counts`
+- :rocket: `API`: Migration `0039` unwraps string encoded answers & form snapshots, strips NULL bytes, removes `group` from the application form, and backfills `status` - archived applications matching exactly one member by email or phone become `onboarded` and are linked, the rest become `closed`
+- :tada: `UI`: Applications list gains status tabs with counts, cohort & reviewer filters and reviewer, comment count & last activity columns
+- :tada: `UI`: Application page gains a lifecycle panel (next step actions with an optional note, reviewer, cohort, linked member, possible duplicates), a single timeline of comments & events, and a `Create Member` action that prefills the new user form and marks the application onboarded
 - :bug: `API`: Remove the `express-minify` runtime minifier. Its clean-css pass stripped the empty `--lightningcss-dark` custom properties that Vite emits for Tabler's `light-dark()` colours, turning every card & surface transparent in production. Vite already minifies the build
 - :arrow_up: `API`: Production image now builds and runs on Node.js 26
 - :rocket: `API`: Drop the `username` paradigm - users are identified by `email` alone. `POST /login` & `POST /login/forgot` take `email`, `username` is removed from user create/update bodies & all user/assignment responses, and the `login_username_label` branding key becomes `login_email_label` (migrated in place)

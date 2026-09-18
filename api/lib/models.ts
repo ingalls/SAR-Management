@@ -16,6 +16,8 @@ import MissionModel from './models/Mission.js'
 import TrainingModel from './models/Training.js'
 import UserModel from './models/User.js'
 import ApplicationCommentModel from './models/ApplicationComment.js'
+import ApplicationEventModel from './models/ApplicationEvent.js'
+import ApplicationModel from './models/Application.js'
 import TeamModel from './models/Team.js'
 import TeamSettingModel from './models/TeamSetting.js'
 import UserAgencyModel from './models/UserAgency.js'
@@ -31,7 +33,8 @@ export default class Models {
     UserDashboard: Modeler<typeof pgtypes.UserDashboard>;
     UserTeam: Modeler<typeof pgtypes.UserTeam>;
     TeamChannel: Modeler<typeof pgtypes.TeamChannel>;
-    Application: Modeler<typeof pgtypes.Application>;
+    Application: ApplicationModel;
+    ApplicationEvent: ApplicationEventModel;
     Asset: Modeler<typeof pgtypes.Asset>;
     CertKnown: Modeler<typeof pgtypes.CertKnown>;
     Cert: Modeler<typeof pgtypes.Cert>;
@@ -107,7 +110,8 @@ export default class Models {
         this.UserDashboard = new Modeler(pg, pgtypes.UserDashboard);
         this.UserTeam = new Modeler(pg, pgtypes.UserTeam);
         this.TeamChannel = new Modeler(pg, pgtypes.TeamChannel);
-        this.Application = new Modeler(pg, pgtypes.Application);
+        this.Application = new ApplicationModel(pg);
+        this.ApplicationEvent = new ApplicationEventModel(pg);
         this.Asset = new Modeler(pg, pgtypes.Asset);
         this.Rolodex = new RolodexModel(pg);
         this.RolodexAgency = new Modeler(pg, pgtypes.RolodexAgency);
