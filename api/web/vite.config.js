@@ -28,8 +28,8 @@ export default defineConfig(() => {
             manifest: true,
             rollupOptions: {
                 input: {
-                    main: path.resolve(__dirname, 'index.html'),
-                    docs: path.resolve(__dirname, 'docs.html'),
+                    main: path.resolve(import.meta.dirname, 'index.html'),
+                    docs: path.resolve(import.meta.dirname, 'docs.html'),
                 },
             },
         },
