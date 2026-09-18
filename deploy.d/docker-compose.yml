@@ -1,44 +1,17 @@
 # SAR Management production stack. Started by ../deploy - do not run by hand
 # on a fresh server until deploy.d/.env exists (see .env.example).
+#
+# The database is external (e.g. a DigitalOcean Managed Database with the
+# PostGIS extension available) and reached via POSTGRES in deploy.d/.env.
 name: sar
 
 services:
-  postgis:
-    image: postgis/postgis:17-3.5
-    restart: unless-stopped
-    # Outside local development the API insists on a TLS connection to
-    # Postgres, so serve TLS with the self-signed certificate that ships in the
-    # image (the postgres user is a member of ssl-cert).
-    command:
-      - postgres
-      - -c
-      - ssl=on
-      - -c
-      - ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
-      - -c
-      - ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
-    environment:
-      POSTGRES_DB: sar
-      POSTGRES_USER: sar
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy.d/.env}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sar -d sar"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-
   api:
     build: ../api
     restart: unless-stopped
-    depends_on:
-      postgis:
-        condition: service_healthy
     env_file: .env
     environment:
-      # Bundled database unless POSTGRES is set in .env (e.g. a managed DB)
-      POSTGRES: ${POSTGRES:-postgres://sar:${POSTGRES_PASSWORD}@postgis:5432/sar}
+      POSTGRES: ${POSTGRES:?set POSTGRES in deploy.d/.env}
     ports:
       # Only reachable from Caddy on the host; Caddy handles TLS and the public port
       - "127.0.0.1:4999:4999"
@@ -49,6 +22,3 @@ services:
       retries: 5
       # Migrations run on boot
       start_period: 120s
-
-volumes:
-  pgdata:

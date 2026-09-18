@@ -84,8 +84,9 @@ Update to the frontend or backend code will cause the corresponding server to au
 
 Production runs on a single Ubuntu server: Caddy on the host terminates TLS and
 proxies to the API container, which serves the web UI and the API and talks to
-a PostGIS container. Everything is driven by [`./deploy`](deploy), which is
-safe to re-run and doubles as the update command.
+an external Postgres database (e.g. a DigitalOcean Managed Database) that
+allows the PostGIS extension. Everything is driven by [`./deploy`](deploy),
+which is safe to re-run and doubles as the update command.
 
 On an empty droplet, as root:
 
@@ -96,13 +97,14 @@ cd /opt/sar && ./deploy team.example.com
 ```
 
 The first run creates `deploy.d/.env` and stops so you can fill in the
-MailGun and Spaces credentials (see [`deploy.d/.env.example`](deploy.d/.env.example)),
-then run `./deploy` again. Later deploys are just `./deploy`.
+database connection string plus the MailGun and Spaces credentials (see
+[`deploy.d/.env.example`](deploy.d/.env.example)), then run `./deploy` again.
+Later deploys are just `./deploy`.
 
 To bring over an existing database instead of starting empty:
 
 ```sh
-docker compose -f deploy.d/docker-compose.yml exec -T postgis \
-    pg_restore -U sar -d sar --clean --if-exists --no-owner --no-privileges < sar-latest.dump
+docker run --rm -i postgres:17-alpine \
+    pg_restore -d "$(sed -n 's/^POSTGRES=//p' deploy.d/.env)" --clean --if-exists --no-owner --no-privileges < sar-latest.dump
 docker compose -f deploy.d/docker-compose.yml restart api
 ```

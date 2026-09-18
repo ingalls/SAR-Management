@@ -23,6 +23,10 @@
 #   4. Pulls the latest code and (re)builds + (re)starts the stack defined in
 #      deploy.d/docker-compose.yml, seeding a brand new database first
 #
+# The database is not part of the stack: POSTGRES in deploy.d/.env must point
+# at an external Postgres (e.g. a DigitalOcean Managed Database) that allows
+# the PostGIS extension.
+#
 # The DNS name comes from, in order: the first argument, $DOMAIN, the DOMAIN
 # saved in deploy.d/.env from a previous run, or an interactive prompt.
 
@@ -34,7 +38,7 @@ ENV_FILE="$DEPLOY_DIR/.env"
 COMPOSE_FILE="$DEPLOY_DIR/docker-compose.yml"
 CADDYFILE=/etc/caddy/Caddyfile
 
-REQUIRED_ENV=(StackName SigningSecret MailGun SPACES_KEY SPACES_SECRET SPACES_BUCKET SPACES_BUCKET_PUBLIC)
+REQUIRED_ENV=(POSTGRES StackName SigningSecret MailGun SPACES_KEY SPACES_SECRET SPACES_BUCKET SPACES_BUCKET_PUBLIC)
 
 # Swap file created when the droplet has none (override with SWAP_SIZE=8G ./deploy)
 SWAP_FILE=/swapfile
@@ -174,8 +178,7 @@ ensure_env() {
     fi
 
     set_env DOMAIN "$DOMAIN"
-    [[ -n "$(read_env POSTGRES_PASSWORD)" ]] || set_env POSTGRES_PASSWORD "$(openssl rand -hex 24)"
-    [[ -n "$(read_env SigningSecret)" ]]     || set_env SigningSecret "$(openssl rand -hex 32)"
+    [[ -n "$(read_env SigningSecret)" ]] || set_env SigningSecret "$(openssl rand -hex 32)"
 
     local missing=()
     for key in "${REQUIRED_ENV[@]}"; do
@@ -198,15 +201,12 @@ update_repo() {
 }
 
 # The API reads server.name and server.frontend at boot and exits if they are
-# missing, so a brand new bundled database needs them before the API starts.
-# Restoring an existing dump (see README) makes this a no-op.
+# missing, so a brand new database needs them before the API starts. Runs psql
+# from a throwaway container so nothing is installed on the host. Restoring an
+# existing dump (see README) makes this a no-op.
 seed_database() {
-    [[ -z "$(read_env POSTGRES)" ]] || return 0
-
-    log "Starting Postgres"
-    compose up -d --wait postgis
-
-    compose exec -T postgis psql -q -v ON_ERROR_STOP=1 -U sar -d sar <<SQL
+    log "Seeding database"
+    docker run --rm -i postgres:17-alpine psql -q -v ON_ERROR_STOP=1 "$(read_env POSTGRES)" <<SQL
 SET client_min_messages = warning;
 CREATE TABLE IF NOT EXISTS "server" (
     "key" text PRIMARY KEY,
