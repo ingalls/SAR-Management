@@ -44,7 +44,6 @@ export const User = pgTable('users', {
     disabled: boolean().notNull().default(false),
     disabled_date: timestamp({ withTimezone: true, mode: 'string' }),
     access: text().notNull().default('user'),
-    username: text().notNull(),
     email: text().notNull(),
     password: text().notNull(),
     fname: text().notNull(),

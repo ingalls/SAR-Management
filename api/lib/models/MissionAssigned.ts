@@ -12,8 +12,7 @@ export const AugmentedMissionAssigned = Type.Object({
     confirmed: Type.Boolean(),
     role: Type.String(),
     fname: Type.String(),
-    lname: Type.String(),
-    username: Type.String()
+    lname: Type.String()
 })
 
 export default class MissionAssignedModel extends Modeler<typeof MissionAssigned> {
@@ -36,8 +35,7 @@ export default class MissionAssignedModel extends Modeler<typeof MissionAssigned
                 role: MissionAssigned.role,
                 uid: MissionAssigned.uid,
                 fname: User.fname,
-                lname: User.lname,
-                username: User.username
+                lname: User.lname
             })
             .from(MissionAssigned)
             .leftJoin(User, eq(MissionAssigned.uid, User.id))
@@ -67,8 +65,7 @@ export default class MissionAssignedModel extends Modeler<typeof MissionAssigned
                 role: MissionAssigned.role,
                 uid: MissionAssigned.uid,
                 fname: User.fname,
-                lname: User.lname,
-                username: User.username
+                lname: User.lname
             })
             .from(MissionAssigned)
             .leftJoin(User, eq(MissionAssigned.uid, User.id))

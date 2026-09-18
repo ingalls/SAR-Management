@@ -7,7 +7,6 @@ export type UserList = {
     total: number;
     items: Array<{
         id: number;
-        username: string;
         email: string;
         fname: string;
         lname: string;
@@ -33,7 +32,6 @@ export default class NotificationModel extends Modeler<typeof Notification> {
 
         const pgres = await this.pool.select({
             id: SubTable.id,
-            username: User.username,
             email: User.email,
             fname: User.fname,
             lname: User.lname,

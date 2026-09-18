@@ -151,18 +151,18 @@ export default class Email {
      * Send an email verification to the user
      *
      * @param {Object} user
-     * @param {String} user.username
+     * @param {String} user.fname
      * @param {String} user.email
      * @param {String} user.token
      */
     async verify(user: {
-        username: string;
+        fname: string;
         email: string;
         token: string;
     }): Promise<void> {
         // Validate input parameters
-        if (!user.username?.trim()) {
-            throw new EmailError('Username is required for verification email', EmailErrorType.VALIDATION);
+        if (!user.fname?.trim()) {
+            throw new EmailError('First name is required for verification email', EmailErrorType.VALIDATION);
         }
         if (!user.email?.trim()) {
             throw new EmailError('Email is required for verification email', EmailErrorType.VALIDATION);
@@ -176,7 +176,7 @@ export default class Email {
                 name: user.email,
                 intro: 'SAR Email Confirmation',
                 action: {
-                    instructions: `Hello ${user.username}, to finish creating your account, please click here:`,
+                    instructions: `Hello ${user.fname}, to finish creating your account, please click here:`,
                     button: {
                         color: 'green',
                         text: 'Verify Email',
@@ -195,13 +195,13 @@ export default class Email {
     }
 
     async forgot(user: {
-        username: string;
+        fname: string;
         email: string;
         token: string;
     }): Promise<void> {
         // Validate input parameters
-        if (!user.username?.trim()) {
-            throw new EmailError('Username is required for password reset email', EmailErrorType.VALIDATION);
+        if (!user.fname?.trim()) {
+            throw new EmailError('First name is required for password reset email', EmailErrorType.VALIDATION);
         }
         if (!user.email?.trim()) {
             throw new EmailError('Email is required for password reset email', EmailErrorType.VALIDATION);
@@ -215,7 +215,7 @@ export default class Email {
                 name: user.email,
                 intro: 'SAR Password Reset',
                 action: {
-                    instructions: `Hello ${user.username}, to reset your password, please click here:`,
+                    instructions: `Hello ${user.fname}, to reset your password, please click here:`,
                     button: {
                         color: 'green',
                         text: 'Password Reset',

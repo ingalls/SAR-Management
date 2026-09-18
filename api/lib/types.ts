@@ -151,7 +151,6 @@ export const LeadershipResponse = Type.Object({
 
 export const LoginResponse = Type.Object({
     id: Type.Integer(),
-    username: Type.String(),
     email: Type.String(),
     access: Type.String(),
     iam: Type.Any(),

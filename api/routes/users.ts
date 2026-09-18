@@ -157,7 +157,6 @@ export default async function router(schema: Schema, config: Config) {
         group: 'User',
         description: 'Create a new user',
         body: Type.Object({
-            username: Type.String(),
             email: Type.String(),
             password: Type.Optional(Type.String()),
             phone: Type.String(),
@@ -178,7 +177,6 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, IamGroup.User, PermissionsLevel.ADMIN);
 
             req.body.email = req.body.email.toLowerCase();
-            req.body.username = req.body.username.toLowerCase();
 
             const teams = req.body.teams;
             delete req.body.teams;
@@ -211,7 +209,6 @@ export default async function router(schema: Schema, config: Config) {
             userid: Type.Integer(),
         }),
         body: Type.Object({
-            username: Type.Optional(Type.String()),
             access: Type.Optional(Type.String()),
             email: Type.Optional(Type.String()),
             phone: Type.Optional(Type.String()),

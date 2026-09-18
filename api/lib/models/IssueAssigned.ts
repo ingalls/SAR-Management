@@ -9,8 +9,7 @@ export const AugmentedIssueAssigned = Type.Object({
     issue_id: Type.Integer(),
     uid: Type.Integer(),
     fname: Type.String(),
-    lname: Type.String(),
-    username: Type.String()
+    lname: Type.String()
 })
 
 export default class IssueAssignedModel extends Modeler<typeof IssueAssigned> {
@@ -31,8 +30,7 @@ export default class IssueAssignedModel extends Modeler<typeof IssueAssigned> {
                 issue_id: IssueAssigned.issue_id,
                 uid: IssueAssigned.uid,
                 fname: User.fname,
-                lname: User.lname,
-                username: User.username
+                lname: User.lname
             })
             .from(IssueAssigned)
             .leftJoin(User, eq(IssueAssigned.uid, User.id))

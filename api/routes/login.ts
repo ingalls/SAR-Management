@@ -22,7 +22,6 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json({
                 id: auth.id,
-                username: auth.username,
                 email: auth.email,
                 access: auth.access,
                 validated: auth.validated,
@@ -38,10 +37,10 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Login',
         description: 'Log a user into the service and create an auth cookie',
         body: Type.Object({
-            username: Type.String({
-                "minLength": 2,
-                "maxLength": 40,
-                "description": "username"
+            email: Type.String({
+                "minLength": 3,
+                "maxLength": 254,
+                "description": "email"
             }),
             password: Type.String({
                 "minLength": 8,
@@ -52,7 +51,7 @@ export default async function router(schema: Schema, config: Config) {
     }, async (req, res) => {
         try {
             const auth = await Login.attempt(config, {
-                username: req.body.username.toLowerCase(),
+                email: req.body.email.toLowerCase(),
                 password: req.body.password
             }, config.SigningSecret);
 
@@ -62,7 +61,6 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json({
                 id: auth.id,
-                username: auth.username,
                 email: auth.email,
                 access: auth.access,
                 token: auth.token,
@@ -92,7 +90,6 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json({
                 id: user.id,
-                username: user.username,
                 email: user.email,
                 access: user.access,
                 token: auth.token,
@@ -129,12 +126,12 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Login',
         description: 'If a user has forgotten their password, send a password reset link to their email',
         body: Type.Object({
-            username: Type.String({ "description": "username or email to reset password of" })
+            email: Type.String({ "description": "email of the account to reset the password of" })
         }),
         res: StandardResponse
     }, async (req, res) => {
         try {
-            const reset = await Login.forgot(config, req.body.username); // Username or email
+            const reset = await Login.forgot(config, req.body.email);
 
             if (config.email) {
                 await email.forgot(reset);

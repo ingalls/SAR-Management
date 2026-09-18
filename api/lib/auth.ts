@@ -28,7 +28,6 @@ export type AuthUser = {
     disabled: boolean;
     fname: string;
     lname: string;
-    username: string;
     email: string;
     validated: boolean;
     incomplete?: boolean;
@@ -246,7 +245,6 @@ export default class Auth {
 
                     return {
                         id: user.id,
-                        username: user.username,
                         disabled: user.disabled,
                         access: user.access,
                         email: user.email,
@@ -268,7 +266,6 @@ export default class Auth {
                 const user = await config.models.User.from(decoded.u)
                 return {
                     id: user.id,
-                    username: user.username,
                     disabled: user.disabled,
                     access: user.access,
                     email: user.email,

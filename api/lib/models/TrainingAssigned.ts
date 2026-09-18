@@ -12,8 +12,7 @@ export const AugmentedTrainingAssigned = Type.Object({
     confirmed: Type.Boolean(),
     role: Type.String(),
     fname: Type.String(),
-    lname: Type.String(),
-    username: Type.String()
+    lname: Type.String()
 })
 
 export default class TrainingAssignedModel extends Modeler<typeof TrainingAssigned> {
@@ -36,8 +35,7 @@ export default class TrainingAssignedModel extends Modeler<typeof TrainingAssign
                 role: TrainingAssigned.role,
                 uid: TrainingAssigned.uid,
                 fname: User.fname,
-                lname: User.lname,
-                username: User.username
+                lname: User.lname
             })
             .from(TrainingAssigned)
             .leftJoin(User, eq(TrainingAssigned.uid, User.id))
@@ -67,8 +65,7 @@ export default class TrainingAssignedModel extends Modeler<typeof TrainingAssign
                 role: TrainingAssigned.role,
                 uid: TrainingAssigned.uid,
                 fname: User.fname,
-                lname: User.lname,
-                username: User.username
+                lname: User.lname
             })
             .from(TrainingAssigned)
             .leftJoin(User, eq(TrainingAssigned.uid, User.id))

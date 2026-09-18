@@ -87,7 +87,6 @@ export default class OAuth {
      */
     static async callback(config: Config, body: { code: string; state: string }): Promise<{
         id: number;
-        username: string;
         access: string;
         email: string;
         token: string;
@@ -166,7 +165,6 @@ export default class OAuth {
 
         return {
             id: user.id,
-            username: user.username,
             access: user.access,
             email: user.email,
             token

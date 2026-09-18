@@ -42,7 +42,6 @@ export default async function router(schema: Schema, config: Config) {
 
             res.json({
                 id: auth.id,
-                username: auth.username,
                 email: auth.email,
                 access: auth.access,
                 token: auth.token,

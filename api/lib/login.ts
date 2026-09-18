@@ -95,22 +95,21 @@ export default class Login {
     }
 
     /**
-     * Given a username or email, generate a password reset or validation email
+     * Given an email, generate a password reset or validation email
      *
-     * @param {string}  username        username or email to reset
+     * @param {string}  email           email of the account to reset
      * @param {string}  [action=reset]  'reset' or 'verify'
      */
-    static async forgot(config: Config, username: string, action = 'reset'): Promise<{
+    static async forgot(config: Config, email: string, action = 'reset'): Promise<{
         uid: number;
-        username: string;
+        fname: string;
         email: string;
         token: string;
     }> {
-        if (!username || !username.length) throw new Err(400, null, 'username must not be empty');
+        if (!email || !email.length) throw new Err(400, null, 'email must not be empty');
 
         const u = await config.models.User.from(sql`
-            Lower(username) = ${username.toLowerCase()}
-            OR Lower(email) = ${username.toLowerCase()}
+            Lower(email) = ${email.toLowerCase()}
         `);
 
         await config.models.UserReset.delete(sql`uid = ${u.id}`);
@@ -126,14 +125,14 @@ export default class Login {
 
         return {
             uid: u.id,
-            username: u.username,
+            fname: u.fname,
             email: u.email,
             token: reset.token
         };
     }
 
     /**
-     * Is traditional username/password login enabled for non-admin users
+     * Is traditional email/password login enabled for non-admin users
      */
     static async local_enabled(config: Config): Promise<boolean> {
         try {
@@ -144,9 +143,8 @@ export default class Login {
         }
     }
 
-    static async attempt(config: Config, body: { username?: string; password?: string; token?: string }, secret: string): Promise<{
+    static async attempt(config: Config, body: { email?: string; password?: string; token?: string }, secret: string): Promise<{
         id: number;
-        username: string;
         access: string;
         email: string;
         token: string;
@@ -154,21 +152,20 @@ export default class Login {
         secret?: string;
         qr?: string;
     }> {
-        if (!body.username) throw new Err(400, null, 'username required');
+        if (!body.email) throw new Err(400, null, 'email required');
         if (!body.password) throw new Err(400, null, 'password required');
 
         let user;
         try {
             user = await config.models.User.from(sql`
-                Lower(username) = ${body.username.toLowerCase()}
-                OR Lower(email) = ${body.username.toLowerCase()}
+                Lower(email) = ${body.email.toLowerCase()}
             `);
         } catch (err) {
-            throw new Err(403, err instanceof Error ? err : new Error(String(err)), 'Invalid Username or Pass');
+            throw new Err(403, err instanceof Error ? err : new Error(String(err)), 'Invalid Email or Pass');
         }
 
         if (!await bcrypt.compare(body.password, user.password)) {
-            throw new Err(403, null, 'Invalid Username or Pass');
+            throw new Err(403, null, 'Invalid Email or Pass');
         }
 
         if (!user.validated) {
@@ -204,17 +201,15 @@ export default class Login {
         if (!user.mfa_enabled) {
             return {
                 id: user.id,
-                username: user.username,
                 access: user.access,
                 email: user.email,
                 secret: user.mfa_secret,
-                qr: await QRCode.toDataURL(`otpauth://totp/${encodeURIComponent('SAR Management')}:${encodeURIComponent(user.username)}?secret=${user.mfa_secret}&issuer=${encodeURIComponent('SAR Management')}`),
+                qr: await QRCode.toDataURL(`otpauth://totp/${encodeURIComponent('SAR Management')}:${encodeURIComponent(user.email)}?secret=${user.mfa_secret}&issuer=${encodeURIComponent('SAR Management')}`),
                 token
             };
         } else {
             return {
                 id: user.id,
-                username: user.username,
                 access: user.access,
                 email: user.email,
                 mfa: true,

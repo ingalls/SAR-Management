@@ -21,7 +21,7 @@ export const PublicConfigKeys = [
     'login_brand_logo',
     'login_background_enabled',
     'login_background_color',
-    'login_username_label',
+    'login_email_label',
     'login_contact',
 ];
 
@@ -43,7 +43,7 @@ export const AdminConfigKeys = [
 export const BrandDefaults = {
     name: 'Search & Rescue',
     title: 'Team Management',
-    username: 'Username or Email',
+    email: 'Email',
 };
 
 export const BrandResponse = Type.Object({
@@ -51,7 +51,7 @@ export const BrandResponse = Type.Object({
     title: Type.String({ description: 'Application Title shown in the header' }),
     logo: Type.Optional(Type.String({ description: 'Base64 encoded PNG/SVG Logo' })),
     login: Type.Object({
-        username: Type.String({ description: 'Label for the username field on the login page' }),
+        email: Type.String({ description: 'Label for the email field on the login page' }),
         contact: Type.Optional(Type.String({ description: 'Email address or URL for new account requests' })),
         brand: Type.Object({
             enabled: Type.String({
@@ -87,7 +87,7 @@ export default async function router(schema: Schema, config: Config) {
                 'login_brand_logo',
                 'login_background_enabled',
                 'login_background_color',
-                'login_username_label',
+                'login_email_label',
                 'login_contact',
             ];
 
@@ -109,7 +109,7 @@ export default async function router(schema: Schema, config: Config) {
                 title: final.brand_title || BrandDefaults.title,
                 logo: final.brand_logo || undefined,
                 login: {
-                    username: final.login_username_label || BrandDefaults.username,
+                    email: final.login_email_label || BrandDefaults.email,
                     contact: final.login_contact || undefined,
                     brand: {
                         enabled: brandEnabled,

@@ -27,7 +27,6 @@ export const AugmentedUser = Type.Object({
     access: Type.String(),
     teams: Type.Array(PartialTeam),
     disabled: Type.Boolean(),
-    username: Type.String(),
     created: Type.String(),
     updated: Type.String(),
     bday: Type.Optional(Type.String()),

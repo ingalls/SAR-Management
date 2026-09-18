@@ -9,8 +9,7 @@ export const AugmentedEquipmentAssigned = Type.Object({
     equip_id: Type.Integer(),
     uid: Type.Integer(),
     fname: Type.String(),
-    lname: Type.String(),
-    username: Type.String()
+    lname: Type.String()
 })
 
 export default class EquipmentAssignedModel extends Modeler<typeof EquipmentAssigned> {
@@ -31,8 +30,7 @@ export default class EquipmentAssignedModel extends Modeler<typeof EquipmentAssi
                 equip_id: EquipmentAssigned.equip_id,
                 uid: EquipmentAssigned.uid,
                 fname: User.fname,
-                lname: User.lname,
-                username: User.username
+                lname: User.lname
             })
             .from(EquipmentAssigned)
             .leftJoin(User, eq(EquipmentAssigned.uid, User.id))
