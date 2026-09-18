@@ -128,7 +128,7 @@ export default async function server() {
         },{
             from: /.*$/,
             to: function(context) {
-                const parse = path.parse(context.parsedUrl.path!);
+                const parse = path.parse(context.parsedUrl.pathname!);
                 if (parse.ext) {
                     return context.parsedUrl.pathname!;
                 } else {
