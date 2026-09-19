@@ -41,7 +41,7 @@ import {
 } from '@tak-ps/vue-tabler';
 
 const props = defineProps({
-    prefix: {
+    path: {
         type: String,
         required: true
     }
@@ -56,16 +56,17 @@ const close = () => {
 };
 
 const createFolder = async () => {
-    if (name.value.includes('.')) throw new Error('Name cannot contain "."');
+    if (!name.value.trim()) throw new Error('Name cannot be empty');
     if (name.value.includes('/')) throw new Error('Name cannot contain "/"');
 
-    const url = window.stdurl('/api/doc/folder');
-    url.searchParams.append('prefix', props.prefix + name.value + '/');
-
-    await window.std(url, {
-        method: 'POST'
+    const folder = await window.std('/api/doc/folder', {
+        method: 'POST',
+        body: {
+            path: props.path,
+            name: name.value
+        }
     });
 
-    emit('done');
+    emit('done', folder);
 };
 </script>

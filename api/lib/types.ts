@@ -88,10 +88,18 @@ export const AssetResponse = Type.Object({
 });
 
 export const DocResponse = Type.Object({
-    key: Type.String(),
-    last_modified: Type.String(),
+    id: Type.String(),
+    created: Type.String(),
+    updated: Type.String(),
+    uid: Type.Union([Type.Null(), Type.Integer()]),
+    type: Type.String({ enum: ["dir", "file" ] }),
+    path: Type.String(),
+    name: Type.String(),
     size: Type.Integer(),
-    type: Type.String({ enum: ["dir", "file" ] })
+    artifacts: Type.Array(Type.Object({
+        ext: Type.String(),
+        size: Type.Integer()
+    }))
 });
 
 export const TrainingResponse = AugmentedTraining;

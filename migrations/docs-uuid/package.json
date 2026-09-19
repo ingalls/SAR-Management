@@ -1,0 +1,12 @@
+{
+    "name": "migration-docs-uuid",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Migrate documents to a flat UUID structure on S3",
+    "license": "ISC",
+    "type": "module",
+    "main": "index.ts",
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.1120.0"
+    }
+}

@@ -36,6 +36,7 @@ export default class Models {
     Application: ApplicationModel;
     ApplicationEvent: ApplicationEventModel;
     Asset: Modeler<typeof pgtypes.Asset>;
+    Doc: Modeler<typeof pgtypes.Doc>;
     CertKnown: Modeler<typeof pgtypes.CertKnown>;
     Cert: Modeler<typeof pgtypes.Cert>;
     EquipmentType: Modeler<typeof pgtypes.EquipmentType>;
@@ -113,6 +114,7 @@ export default class Models {
         this.Application = new ApplicationModel(pg);
         this.ApplicationEvent = new ApplicationEventModel(pg);
         this.Asset = new Modeler(pg, pgtypes.Asset);
+        this.Doc = new Modeler(pg, pgtypes.Doc);
         this.Rolodex = new RolodexModel(pg);
         this.RolodexAgency = new Modeler(pg, pgtypes.RolodexAgency);
         this.CertKnown = new Modeler(pg, pgtypes.CertKnown);

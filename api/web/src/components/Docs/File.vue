@@ -3,12 +3,33 @@
         <TablerLoading v-if='loading.main' />
         <template v-else>
             <div class='card-header'>
-                <div class='col d-flex'>
-                    <h1
-                        class='card-title'
-                        v-text='file'
+                <div class='col d-flex align-items-center'>
+                    <IconCircleArrowLeft
+                        v-tooltip='"Back to Folder"'
+                        class='cursor-pointer me-2'
+                        :stroke='1'
+                        :size='32'
+                        @click='emit("close")'
                     />
+                    <div>
+                        <h1
+                            class='card-title'
+                            v-text='doc.name'
+                        />
+                        <div
+                            class='text-muted small'
+                            v-text='doc.path'
+                        />
+                    </div>
                     <div class='ms-auto btn-list'>
+                        <IconFolderSymlink
+                            v-if='manage'
+                            v-tooltip='"Rename or Move File"'
+                            class='cursor-pointer'
+                            :stroke='1'
+                            :size='32'
+                            @click='move = true'
+                        />
                         <TablerDelete
                             v-if='manage'
                             v-tooltip='"Delete File"'
@@ -38,7 +59,7 @@
                     height='1000px'
                 >
             </div>
-            <div v-else-if='preview === null'>
+            <div v-else>
                 <div class='d-flex justify-content-center mt-4 mb-2'>
                     <IconEyeOff
                         :size='48'
@@ -68,88 +89,86 @@
                 </div>
             </div>
         </template>
+
+        <Move
+            v-if='move'
+            :doc='doc'
+            @close='move = false'
+            @done='move = false; emit("move", $event)'
+        />
     </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import Move from './Move.vue';
 import {
     TablerDelete,
     TablerLoading
 } from '@tak-ps/vue-tabler';
 import {
     IconEyeOff,
-    IconDownload
+    IconDownload,
+    IconFolderSymlink,
+    IconCircleArrowLeft
 } from '@tabler/icons-vue';
 
+const PreviewExt = '.preview.pdf';
+
 const props = defineProps({
-    prefix: {
+    docid: {
         type: String,
         required: true
     },
     manage: {
         type: Boolean,
         default: false
-    },
-    file: {
-        type: String,
-        required: true
     }
 });
 
-const emit = defineEmits(['delete']);
+const emit = defineEmits(['delete', 'close', 'move']);
 
 const loading = ref({
-    main: false,
+    main: true,
     generate: false,
     preview: true
 });
+const move = ref(false);
 const preview = ref(null);
+const doc = ref({
+    id: props.docid,
+    path: '/',
+    name: '',
+    artifacts: []
+});
 
 const is_img = computed(() => {
-    for (const format of ['.jpg', '.jpeg', 'png', '.webp']) {
-        if (props.file.endsWith(format)) return true;
-    }
-    return false;
+    const name = doc.value.name.toLowerCase();
+    return ['.jpg', '.jpeg', '.png', '.webp', '.gif'].some((format) => name.endsWith(format));
 });
 
 const is_pdf = computed(() => {
-    return props.file.endsWith('.pdf')
+    return doc.value.name.toLowerCase().endsWith('.pdf');
 });
 
-const loadPreview = async () => {
+const loadPreview = () => {
     loading.value.preview = true;
 
     if (is_pdf.value) {
         preview.value = url(false);
-        loading.value.preview = false;
-        return;
-    }
-
-    const req_url = window.stdurl('/api/doc');
-    req_url.searchParams.append('prefix', props.prefix + props.file + '/');
-    const res = await window.std(req_url)
-
-    for (const doc of res.items) {
-        if (doc.key === 'preview.pdf') {
-            const dl_url = window.stdurl('/api/doc/download');
-            dl_url.searchParams.append('prefix', props.prefix + props.file);
-            dl_url.searchParams.append('file', 'preview.pdf');
-            dl_url.searchParams.append('download', 'false');
-            dl_url.searchParams.append('token', localStorage.token);
-            preview.value = String(dl_url);
-            break;
-        }
+    } else if (doc.value.artifacts.some((artifact) => artifact.ext === PreviewExt)) {
+        preview.value = url(false, PreviewExt);
+    } else {
+        preview.value = null;
     }
 
     loading.value.preview = false;
 };
 
-const url = (download = true) => {
-    const url = window.stdurl('/api/doc/download');
-    url.searchParams.append('prefix', props.prefix);
-    url.searchParams.append('file', props.file);
+const url = (download = true, artifact) => {
+    const url = window.stdurl(`/api/doc/${doc.value.id}/raw`);
     url.searchParams.append('download', download);
+    if (artifact) url.searchParams.append('artifact', artifact);
     url.searchParams.append('token', localStorage.token);
     return String(url);
 };
@@ -160,28 +179,41 @@ const download = () => {
 
 const generate = async () => {
     loading.value.generate = true;
-    const url = window.stdurl('/api/doc/convert');
-    url.searchParams.append('prefix', props.prefix);
-    url.searchParams.append('file', props.file);
-    await window.std(url);
-    loading.value.generate = false;
 
-    await loadPreview();
+    try {
+        doc.value = await window.std(`/api/doc/${doc.value.id}/convert`, {
+            method: 'POST'
+        });
+    } finally {
+        loading.value.generate = false;
+    }
+
+    loadPreview();
 };
 
 const deleteFile = async () => {
     loading.value.main = true;
-    const url = window.stdurl('/api/doc');
-    url.searchParams.append('file', props.prefix + props.file);
-    await window.std(url, {
-        method: 'DELETE'
-    });
 
-    loading.value.main = false;
-    emit('delete');
+    try {
+        await window.std(`/api/doc/${doc.value.id}`, {
+            method: 'DELETE'
+        });
+
+        emit('delete');
+    } finally {
+        loading.value.main = false;
+    }
 };
 
 onMounted(async () => {
-    await loadPreview();
+    try {
+        doc.value = await window.std(`/api/doc/${props.docid}`);
+    } catch (err) {
+        emit('close');
+        throw err;
+    }
+
+    loading.value.main = false;
+    loadPreview();
 });
 </script>

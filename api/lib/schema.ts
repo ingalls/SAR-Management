@@ -5,6 +5,10 @@ import { Iam } from './auth.js';
 
 import {
     json,
+    jsonb,
+    uuid,
+    index,
+    uniqueIndex,
     boolean,
     integer,
     bigint,
@@ -194,6 +198,26 @@ export const Asset = pgTable('assets', {
     storage: boolean().notNull().default(false),
     agency_id: bigint({ mode: "number" }).references(() => Agency.id)
 });
+
+export const Doc = pgTable('docs', {
+    id: uuid().primaryKey().default(sql`gen_random_uuid()`),
+    created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    updated: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
+    uid: integer().references(() => User.id),
+    // 'file' rows reference the S3 object docs/<id><ext>, 'dir' rows exist only in the database
+    type: text().notNull().default('file'),
+    // Absolute path of the containing folder, always starting and ending with '/'
+    path: text().notNull().default('/'),
+    name: text().notNull(),
+    size: bigint({ mode: 'number' }).notNull().default(0),
+    artifacts: jsonb().$type<Array<{
+        ext: string;
+        size: number;
+    }>>().notNull().default([])
+}, (table) => [
+    uniqueIndex('docs_path_name_idx').on(table.path, table.name),
+    index('docs_path_idx').on(table.path)
+]);
 
 export const CertKnown = pgTable('certs_known', {
     id: serial().primaryKey(),
