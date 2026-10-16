@@ -14,6 +14,7 @@ import Auth, { PermissionsLevel, IamGroup, AuthUser } from '../lib/auth.js';
 import Notify from '../lib/notify.js';
 import Email from '../lib/email.js';
 import Config from '../lib/config.js';
+import { streamCSV } from '../lib/csv.js';
 import { GenericListOrder } from '@openaddresses/batch-generic';
 import Schema from '@openaddresses/batch-schema';
 import Ajv, { ErrorObject } from 'ajv';
@@ -88,6 +89,8 @@ export default async function router(schema: Schema, config: Config) {
         group: 'Applications',
         description: 'Get all applications',
         query: Type.Object({
+            format: Type.String({ enum: ['csv', 'json'], default: 'json' }),
+            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Application) }))),
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
@@ -126,12 +129,38 @@ export default async function router(schema: Schema, config: Config) {
                 AND (${req.query.assigned ?? null}::INT IS NULL OR assigned = ${req.query.assigned ?? null}::INT)
             `;
 
+            const where = sql`${base} AND status IN ${statuses}`;
+
+            if (req.query.format === 'csv') {
+                return await streamCSV(
+                    res,
+                    'sar-applications.csv',
+                    req.query.fields || ['name', 'email', 'phone', 'status', 'cohort', 'created'],
+                    (page, limit) => config.models.Application.augmented_list({
+                        page, limit,
+                        order: req.query.order,
+                        sort: req.query.sort,
+                        where
+                    }),
+                    (application, field) => {
+                        if (field === 'assigned') {
+                            return application.assigned_user ? fullname(application.assigned_user) : '';
+                        } else if (field === 'user_id') {
+                            return application.user ? fullname(application.user) : '';
+                        } else if (field === 'answers' || field === 'schema') {
+                            return JSON.stringify(application[field]);
+                        }
+                        return application[field as keyof typeof application];
+                    }
+                );
+            }
+
             const list = await config.models.Application.augmented_list({
                 limit: req.query.limit,
                 page: req.query.page,
                 order: req.query.order,
                 sort: req.query.sort,
-                where: sql`${base} AND status IN ${statuses}`
+                where
             });
 
             const cohorts = await config.pool

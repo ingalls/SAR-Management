@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { Static } from '@sinclair/typebox';
+import { Static, Type } from '@sinclair/typebox';
 import { geometry, GeometryType } from '@openaddresses/batch-generic';
 import { Iam } from './auth.js';
 
@@ -14,6 +14,7 @@ import {
     bigint,
     timestamp,
     pgTable,
+    pgEnum,
     serial,
     varchar,
     text,
@@ -353,6 +354,15 @@ export const MissionTag = pgTable('mission_tag', {
     colour_txt: text().notNull().default('#000000'),
 });
 
+/**
+ * Publication state of a mission
+ *
+ * triage    => a mission that has been recorded but not yet reviewed for release
+ * published => a mission that has been reviewed and is visible as part of the record
+ */
+export const MissionState = pgEnum('mission_state', ['triage', 'published']);
+export const MissionStateSchema = Type.Union(MissionState.enumValues.map((state) => Type.Literal(state)));
+
 export const Mission = pgTable('missions', {
     id: serial().primaryKey(),
     created: timestamp({ withTimezone: true, mode: 'string' }).notNull().default(sql`Now()`),
@@ -360,6 +370,7 @@ export const Mission = pgTable('missions', {
     start_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     end_ts: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
     status: text().notNull().default('open'),
+    state: MissionState().notNull().default('published'),
     title: text().notNull(),
     body: text().notNull(),
     author: integer().notNull().references(() => User.id),

@@ -1,7 +1,7 @@
 import Err from '@openaddresses/batch-error';
 import { Param, GenericListOrder } from '@openaddresses/batch-generic';
 import { Type } from '@sinclair/typebox';
-import { Mission } from '../lib/schema.js';
+import { Mission, MissionState, MissionStateSchema } from '../lib/schema.js';
 import { sql, SQL } from 'drizzle-orm';
 import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 import Schema from '@openaddresses/batch-schema';
@@ -49,6 +49,7 @@ export function missionFilter(query: {
     tag?: string;
     agency?: string;
     status?: string;
+    state?: string;
     geom?: boolean;
     incidents?: boolean;
     people?: boolean;
@@ -88,6 +89,7 @@ export function missionFilter(query: {
     if (agencies.length) conditions.push(sql`agencies_id && ${idArray(agencies)}`);
 
     if (query.status) conditions.push(sql`status = ${query.status}`);
+    if (query.state) conditions.push(sql`state = ${query.state}`);
 
     if (query.geom === true) conditions.push(sql`location_geom IS NOT NULL`);
     else if (query.geom === false) conditions.push(sql`location_geom IS NULL`);
@@ -128,6 +130,7 @@ export default async function router(schema: Schema, config: Config) {
             tag: Type.Optional(Type.String({ description: 'Comma separated Tag IDs - only missions with any of these tags' })),
             agency: Type.Optional(Type.String({ description: 'Comma separated Agency IDs - only missions shared with any of these agencies' })),
             status: Type.Optional(Type.String({ description: 'Only missions with this status' })),
+            state: Type.Optional(Type.String({ enum: MissionState.enumValues, description: 'Only missions in this state' })),
             geom: Type.Optional(Type.Boolean({ description: 'true: only missions with a map location, false: only missions without' })),
             incidents: Type.Optional(Type.Boolean({ description: 'true: only missions with related incidents, false: only missions without' })),
             people: Type.Optional(Type.Boolean({ description: 'true: only missions with recorded subjects, false: only missions without' })),
@@ -179,6 +182,7 @@ export default async function router(schema: Schema, config: Config) {
         body: Type.Object({
             title: Type.String(),
             externalid: Type.Optional(Type.String()),
+            state: Type.Optional(MissionStateSchema),
             body: Type.String(),
             start_ts: Type.String(),
             end_ts: Type.String(),
@@ -292,6 +296,7 @@ export default async function router(schema: Schema, config: Config) {
         body: Type.Object({
             title: Type.Optional(Type.String()),
             externalid: Type.Optional(Type.String()),
+            state: Type.Optional(MissionStateSchema),
             body: Type.Optional(Type.String()),
             start_ts: Type.Optional(Type.String()),
             end_ts: Type.Optional(Type.String()),

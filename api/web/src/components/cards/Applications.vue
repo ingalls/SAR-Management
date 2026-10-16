@@ -98,7 +98,8 @@
                         v-model:sort='paging.sort'
                         v-model:order='paging.order'
                         v-model:header='header'
-                        :allow-export='false'
+                        :allow-export='true'
+                        @export='exportApplications'
                     />
                     <tbody>
                         <tr
@@ -324,6 +325,30 @@ const format = (number) => {
     }
 }
 
+// Build the list URL with the current filters applied
+// Shared by fetch & export so the export always matches what is shown
+const listURL = () => {
+    const url = window.stdurl('/api/application');
+    url.searchParams.append('filter', paging.filter);
+    url.searchParams.append('sort', paging.sort);
+    url.searchParams.append('order', paging.order);
+    url.searchParams.append('status', paging.status);
+    if (paging.cohort !== 'All Cohorts') url.searchParams.append('cohort', paging.cohort);
+    if (paging.reviewer === 'Assigned to Me') url.searchParams.append('assigned', props.assigned || props.auth.id);
+    return url;
+}
+
+const exportApplications = async () => {
+    const url = listURL();
+    url.searchParams.append('format', 'csv');
+
+    for (const h of header.value.filter((h) => h.display)) {
+        url.searchParams.append('fields', h.name);
+    }
+
+    await window.std(url, { download: true });
+}
+
 // Only the most recent request is allowed to update the list
 let request = 0;
 
@@ -332,15 +357,9 @@ const fetch = async () => {
     loading.value = true;
 
     try {
-        const url = window.stdurl('/api/application');
+        const url = listURL();
         url.searchParams.append('limit', paging.limit);
         url.searchParams.append('page', paging.page);
-        url.searchParams.append('filter', paging.filter);
-        url.searchParams.append('sort', paging.sort);
-        url.searchParams.append('order', paging.order);
-        url.searchParams.append('status', paging.status);
-        if (paging.cohort !== 'All Cohorts') url.searchParams.append('cohort', paging.cohort);
-        if (paging.reviewer === 'Assigned to Me') url.searchParams.append('assigned', props.assigned || props.auth.id);
 
         const result = await window.std(url);
         if (current !== request) return;

@@ -2,7 +2,7 @@ import Modeler, { GenericList, GenericListInput } from '@openaddresses/batch-gen
 import Err from '@openaddresses/batch-error';
 import { Static, Type } from '@sinclair/typebox'
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { Mission, MissionTeam, MissionAssigned, MissionTag, MissionTagAssigned, Team, Asset, MissionAsset, UserIncident, MissionPerson, MissionAgency, Agency } from '../schema.js';
+import { Mission, MissionStateSchema, MissionTeam, MissionAssigned, MissionTag, MissionTagAssigned, Team, Asset, MissionAsset, UserIncident, MissionPerson, MissionAgency, Agency } from '../schema.js';
 import { sql, eq, is, asc, desc, max, SQL } from 'drizzle-orm';
 
 export const PartialTeam = Type.Object({
@@ -68,6 +68,7 @@ export const AugmentedMission = Type.Object({
     start_ts: Type.String(),
     end_ts: Type.String(),
     status: Type.String(),
+    state: MissionStateSchema,
     title: Type.String(),
     body: Type.String(),
     author: Type.Integer(),
@@ -237,6 +238,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 start_ts: Mission.start_ts,
                 end_ts: Mission.end_ts,
                 status: Mission.status,
+                state: Mission.state,
                 title: Mission.title,
                 body: Mission.body,
                 author: Mission.author,
@@ -274,6 +276,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
             start_ts: Root.start_ts,
             end_ts: Root.end_ts,
             status: Root.status,
+            state: Root.state,
             title: Root.title,
             body: Root.body,
             author: Root.author,
@@ -449,6 +452,7 @@ export default class MissionModel extends Modeler<typeof Mission> {
                 start_ts: Mission.start_ts,
                 end_ts: Mission.end_ts,
                 status: Mission.status,
+                state: Mission.state,
                 title: Mission.title,
                 body: Mission.body,
                 author: Mission.author,
