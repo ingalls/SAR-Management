@@ -90,7 +90,10 @@ export default async function router(schema: Schema, config: Config) {
         description: 'Get all applications',
         query: Type.Object({
             format: Type.String({ enum: ['csv', 'json'], default: 'json' }),
-            fields: Type.Optional(Type.Array(Type.String({ enum: Object.keys(Application) }))),
+            fields: Type.Optional(Type.Union([
+                Type.String({ enum: Object.keys(Application) }),
+                Type.Array(Type.String({ enum: Object.keys(Application) }))
+            ], { description: 'Columns to include in a CSV export, a single value or an array' })),
             limit: Type.Optional(Type.Integer()),
             page: Type.Optional(Type.Integer()),
             order: Type.Optional(Type.Enum(GenericListOrder)),
@@ -132,10 +135,14 @@ export default async function router(schema: Schema, config: Config) {
             const where = sql`${base} AND status IN ${statuses}`;
 
             if (req.query.format === 'csv') {
+                let fields = ['name', 'email', 'phone', 'status', 'cohort', 'created'];
+                if (Array.isArray(req.query.fields)) fields = req.query.fields;
+                else if (req.query.fields) fields = [req.query.fields];
+
                 return await streamCSV(
                     res,
                     'sar-applications.csv',
-                    req.query.fields || ['name', 'email', 'phone', 'status', 'cohort', 'created'],
+                    fields,
                     (page, limit) => config.models.Application.augmented_list({
                         page, limit,
                         order: req.query.order,
