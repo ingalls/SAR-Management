@@ -136,6 +136,11 @@ export default async function router(schema: Schema, config: Config) {
         let asset: Static<typeof AssetResponse>;
         bb.on('file', (fieldname, file, blob) => {
             assets.push((async () => {
+                if (!blob.filename) {
+                    file.resume();
+                    throw new Err(400, null, 'Asset filename is required');
+                }
+
                 const a = await config.models.Asset.generate({
                     uid: user.id,
                     name: blob.filename
