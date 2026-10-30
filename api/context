@@ -1,13 +1,19 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
-ssh "sar" -t "./dump.sh"
-scp "sar:~/sar-latest.dump" .
+read -r -s -p "Password for all users: " PASSWORD
+echo
+[ -n "$PASSWORD" ] || { echo "password is required" >&2; exit 1; }
 
-echo "DROP DATABASE sar;" | psql
-echo "CREATE DATABASE sar;" | psql
+ssh sar 'pg_dump -Fc "$(sed -n "s/^POSTGRES=//p" /opt/sar/deploy.d/.env)"' > sar-latest.dump
+
+psql -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS sar;"
+psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE sar;"
 
 pg_restore -d postgresql://localhost:5432/sar -Fc sar-latest.dump
 
-echo "UPDATE users SET email = username || '@ingalls.ca'" | psql sar
+HASH="$(node -e 'process.stdout.write(require("bcrypt").hashSync(process.argv[1], 10))' "$PASSWORD")"
+
+psql -v ON_ERROR_STOP=1 sar -c "UPDATE users SET email = split_part(email, '@', 1) || '@ingalls.ca', password = '$HASH';"
 
 npm run dev

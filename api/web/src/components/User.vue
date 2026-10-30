@@ -90,6 +90,12 @@
                                                     class='dropdown-item cursor-pointer'
                                                     @click='$router.push(`/user/${userid}/edit`)'
                                                 >Edit</a>
+                                                <TablerDelete
+                                                    v-if='auth.access === "admin" && user.mfa_enabled'
+                                                    displaytype='menu'
+                                                    label='Remove MFA'
+                                                    @delete='removeMFA'
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -314,6 +320,7 @@ import {
     TablerBadge,
     TablerEpoch,
     TablerBreadCrumb,
+    TablerDelete,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
@@ -353,6 +360,14 @@ const googleMaps = () => {
 const fetch = async () => {
     loading.user = true;
     user.value = await window.std(`/api/user/${userid.value}`);
+    loading.user = false;
+}
+
+const removeMFA = async () => {
+    loading.user = true;
+    user.value = await window.std(`/api/user/${userid.value}/mfa`, {
+        method: 'DELETE'
+    });
     loading.user = false;
 }
 

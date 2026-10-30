@@ -318,5 +318,10 @@
         "body": false,
         "query": false,
         "res": true
+    },
+    "DELETE /user/:userid/mfa": {
+        "body": false,
+        "query": false,
+        "res": true
     }
 }

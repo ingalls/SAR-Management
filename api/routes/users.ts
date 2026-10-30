@@ -280,4 +280,27 @@ export default async function router(schema: Schema, config: Config) {
              Err.respond(err, res);
         }
     });
+
+    await schema.delete('/user/:userid/mfa', {
+        name: 'Reset User MFA',
+        group: 'User',
+        params: Type.Object({
+            userid: Type.Integer(),
+        }),
+        description: 'Remove the MFA seed from a user so they are prompted to enroll a new authenticator on their next login',
+        res: UserResponse
+    }, async (req, res) => {
+        try {
+            await Auth.is_admin(config, req);
+
+            await config.models.User.commit(req.params.userid, {
+                mfa_secret: null,
+                mfa_enabled: false
+            });
+
+            res.json(userFormat(await config.models.User.augmented_from(req.params.userid)));
+        } catch (err) {
+             Err.respond(err, res);
+        }
+    });
 }

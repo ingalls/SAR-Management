@@ -4,6 +4,16 @@ import Schema from '@openaddresses/batch-schema';
 import Config from '../lib/config.js';
 import Auth, { PermissionsLevel, IamGroup } from '../lib/auth.js';
 
+const TagStats = Type.Array(Type.Object({
+    id: Type.Integer(),
+    name: Type.String(),
+    icon: Type.String(),
+    colour_bg: Type.String(),
+    colour_txt: Type.String(),
+    count: Type.Integer(),
+    hours: Type.Integer()
+}));
+
 export default async function router(schema: Schema, config: Config) {
     await schema.get('/stats/mission', {
         name: 'Get Mission Stats',
@@ -21,7 +31,8 @@ export default async function router(schema: Schema, config: Config) {
                 name: Type.String(),
                 hours: Type.Integer()
             })),
-            average: Type.Integer()
+            average: Type.Integer(),
+            tags: TagStats
         })
     }, async (req, res) => {
         try {
@@ -43,7 +54,8 @@ export default async function router(schema: Schema, config: Config) {
         }),
         res: Type.Object({
             count: Type.Integer(),
-            hours: Type.Integer()
+            hours: Type.Integer(),
+            tags: TagStats
         })
     }, async (req, res) => {
         try {

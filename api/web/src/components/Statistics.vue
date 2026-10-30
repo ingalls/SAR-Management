@@ -165,6 +165,40 @@
                             <TablerLoading v-else />
                         </div>
                     </div>
+                    <div class='col-lg-6'>
+                        <div class='card'>
+                            <div
+                                v-if='!loading.missions'
+                                class='card-body'
+                            >
+                                <div class='subheader mb-3'>
+                                    Missions by Tag
+                                </div>
+                                <TagStatsList
+                                    :tags='stats.mission_tags'
+                                    empty='No tagged missions in this period'
+                                />
+                            </div>
+                            <TablerLoading v-else />
+                        </div>
+                    </div>
+                    <div class='col-lg-6'>
+                        <div class='card'>
+                            <div
+                                v-if='!loading.trainings'
+                                class='card-body'
+                            >
+                                <div class='subheader mb-3'>
+                                    Trainings by Tag
+                                </div>
+                                <TagStatsList
+                                    :tags='stats.training_tags'
+                                    empty='No tagged trainings in this period'
+                                />
+                            </div>
+                            <TablerLoading v-else />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -174,6 +208,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import NoAccess from './util/NoAccess.vue';
+import TagStatsList from './Statistics/TagStatsList.vue';
 import {
     IconAmbulance,
     IconTruck
@@ -219,7 +254,9 @@ const stats = ref({
     mission_longest: null,
     mission_average: 0,
     trainings: 0,
-    training_hours: 0
+    training_hours: 0,
+    mission_tags: [],
+    training_tags: []
 });
 
 watch(mode, () => {
@@ -260,12 +297,14 @@ const fetch = async () => {
         stats.value.missions = res.count;
         stats.value.mission_longest = res.longest_mission;
         stats.value.mission_average = res.average;
+        stats.value.mission_tags = res.tags;
         loading.value.missions = false;  
     });
 
     window.std(`/api/stats/training?start=${start.toISOString()}&end=${end.toISOString()}`).then((res) => {
         stats.value.trainings = res.count;
         stats.value.training_hours = res.hours;
+        stats.value.training_tags = res.tags;
         loading.value.trainings = false;
     })
 }
