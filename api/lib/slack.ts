@@ -1,8 +1,15 @@
-import { WebClient } from '@slack/web-api';
+import { WebClient, type ChatPostMessageArguments } from '@slack/web-api';
 import Config from './config.js';
 import { PromisePool } from '@supercharge/promise-pool';
 import { sql } from 'drizzle-orm';
 import Err from '@openaddresses/batch-error';
+
+export type SlackBlocks = NonNullable<Extract<ChatPostMessageArguments, { blocks?: unknown }>['blocks']>;
+
+export interface SlackMessage {
+    text: string;
+    blocks?: SlackBlocks;
+}
 
 export interface SlackUser {
     id: string;
@@ -270,11 +277,13 @@ export default class Slack {
         }
     }
 
-    async postMessage(channel: string, text: string): Promise<void> {
+    async postMessage(channel: string, message: string | SlackMessage): Promise<void> {
         await this.check();
 
+        const body = typeof message === 'string' ? { text: message } : message;
+
         try {
-            await this.withTokenRefresh(() => this.client.chat.postMessage({ channel, text }));
+            await this.withTokenRefresh(() => this.client.chat.postMessage({ channel, ...body }));
         } catch (err: any) {
             if (err.code === 'slack_webapi_platform_error') {
                 switch (err.data?.error) {

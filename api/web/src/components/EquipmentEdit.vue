@@ -258,13 +258,14 @@
             @close='err = null'
         />
 
-        <Upload
+        <PhotoUpload
             v-if='upload'
+            title='Update Equipment Photo'
+            filename='profile.jpg'
             :url='uploadurl()'
             :headers='headers'
-            @err='upload = null; err = $event'
-            @close='upload = null'
-            @done='upload = null; cache = +new Date()'
+            @close='upload = false'
+            @done='upload = false; cache = +new Date()'
         />
     </div>
 </template>
@@ -283,7 +284,7 @@ import NoAccess from './util/NoAccess.vue';
 import Alert from './util/Alert.vue';
 import EquipmentMeta from './util/EquipmentMeta.vue';
 import EquipmentProfile from './Equipment/Profile.vue';
-import Upload from './util/Upload.vue';
+import PhotoUpload from './util/PhotoUpload.vue';
 import iamHelper from '../iam.js';
 import { reactive, ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

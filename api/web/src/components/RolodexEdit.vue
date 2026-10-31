@@ -276,12 +276,13 @@
             @close='err = null'
         />
 
-        <Upload
+        <PhotoUpload
             v-if='upload'
+            title='Update Contact Photo'
+            filename='profile.jpg'
             :url='uploadurl()'
             :headers='headers'
-            @err='upload = null; err = $event'
-            @close='upload = null'
+            @close='upload = false'
             @done='photoUploaded'
         />
     </div>
@@ -290,7 +291,7 @@
 <script setup>
 import iamHelper from '../iam.js';
 import NoAccess from './util/NoAccess.vue';
-import Upload from './util/Upload.vue';
+import PhotoUpload from './util/PhotoUpload.vue';
 import AgencySelect from './util/AgencySelect.vue';
 import Location from './Mission/Location.vue';
 import RolodexProfile from './Rolodex/Profile.vue';
@@ -452,7 +453,7 @@ async function deleteRolodex() {
 }
 
 async function photoUploaded() {
-    upload.value = null;
+    upload.value = false;
     rolodex.photo = true;
     cache.value = +new Date();
 }

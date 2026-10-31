@@ -1,5 +1,5 @@
 import Config from './config.js';
-import Slack, { SlackUser } from './slack.js';
+import Slack, { SlackUser, SlackMessage, SlackBlocks } from './slack.js';
 import { and, gte, lt } from 'drizzle-orm';
 import { Training } from './schema.js';
 import { PromisePool } from '@supercharge/promise-pool';
@@ -9,6 +9,94 @@ import cron from 'node-cron';
 interface PointGeometry {
     type: 'Point';
     coordinates: [number, number];
+}
+
+type TrainingRow = typeof Training.$inferSelect;
+
+const DETAILS_LIMIT = 1500;
+
+function escape(text: string): string {
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function mrkdwn(markdown: string): string {
+    return escape(markdown)
+        .replace(/^#{1,6}\s+(.+)$/gm, '*$1*')
+        .replace(/\*\*(.+?)\*\*/g, '*$1*')
+        .replace(/__(.+?)__/g, '*$1*')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<$2|$1>')
+        .replace(/^\s*[-*]\s+/gm, '• ')
+        .trim();
+}
+
+export function trainingMessage(training: TrainingRow, tz: string, base: URL): SlackMessage {
+    const url = new URL(`/training/${training.id}`, base).toString();
+    const start = moment(training.start_ts).tz(tz);
+    const end = moment(training.end_ts).tz(tz);
+    const when = `${start.format('ddd, MMM D')} · ${start.format('h:mm A')} – ${end.format('h:mm A z')}`;
+
+    const geom = training.location_geom as unknown as PointGeometry | null;
+    const map = geom?.coordinates
+        ? `https://www.google.com/maps/search/?api=1&query=${geom.coordinates[1]},${geom.coordinates[0]}`
+        : null;
+
+    let location = training.location ? escape(training.location) : '_Not set_';
+    if (map) location = `<${map}|${location}>`;
+
+    let details = mrkdwn(training.body);
+    if (details.length > DETAILS_LIMIT) details = details.slice(0, DETAILS_LIMIT).trimEnd() + '…';
+
+    const blocks: SlackBlocks = [{
+        type: 'header',
+        text: { type: 'plain_text', text: ':runner: Upcoming Training', emoji: true }
+    }, {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*<${url}|${escape(training.title)}>*` }
+    }, {
+        type: 'section',
+        fields: [
+            { type: 'mrkdwn', text: `*When*\n${when}` },
+            { type: 'mrkdwn', text: `*Where*\n${location}` }
+        ]
+    }];
+
+    if (details) {
+        blocks.push({
+            type: 'section',
+            text: { type: 'mrkdwn', text: details }
+        });
+    }
+
+    const buttons: Extract<SlackBlocks[number], { type: 'actions' }>['elements'] = [{
+        type: 'button',
+        text: { type: 'plain_text', text: 'View Training', emoji: true },
+        url,
+        style: 'primary',
+        action_id: 'training_view'
+    }];
+
+    if (map) {
+        buttons.push({
+            type: 'button',
+            text: { type: 'plain_text', text: 'Open Map', emoji: true },
+            url: map,
+            action_id: 'training_map'
+        });
+    }
+
+    blocks.push({ type: 'actions', elements: buttons });
+
+    if (training.required) {
+        blocks.push({
+            type: 'context',
+            elements: [{ type: 'mrkdwn', text: ':warning: Attendance at this training is *required*.' }]
+        });
+    }
+
+    return {
+        text: `Upcoming Training: ${training.title} — ${when}`,
+        blocks
+    };
 }
 
 export default class Heartbeat {
@@ -173,24 +261,7 @@ export default class Heartbeat {
             console.log(`ok - Found ${trainings.total} trainings starting between ${windowStart.toISOString()} and ${windowEnd.toISOString()}`);
 
             for (const training of trainings.items) {
-                const startStr = moment(training.start_ts).tz(tz).format('MMM D, YYYY HH:mm');
-                const endStr = moment(training.end_ts).tz(tz).format('HH:mm');
-
-                let location = training.location || '_Not Set_';
-                const geom = training.location_geom as unknown as PointGeometry;
-                if (geom && geom.coordinates) {
-                    location += ` (<https://www.google.com/maps/search/?api=1&query=${geom.coordinates[1]},${geom.coordinates[0]}|Map>)`;
-                }
-
-                const message = [
-                    ':runner: *Upcoming Training:*',
-                    `<https://team.mesacountysar.com/training/${training.id}|${training.title}>`,
-                    `*Location:* ${location}`,
-                    `*Date:* ${startStr} - ${endStr}`,
-                    `*Details:* ${training.body}`
-                ].join('\n');
-
-                await slack.postMessage('general', message);
+                await slack.postMessage('general', trainingMessage(training, tz, this.config.APIURL));
             }
 
         } catch (err) {
