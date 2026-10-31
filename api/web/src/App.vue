@@ -61,7 +61,7 @@
                     v-if='user'
                     class='ms-auto'
                 >
-                    <div class='btn-list'>
+                    <div class='btn-list align-items-center'>
                         <button
                             class='btn btn-dark dropdown-toggle d-md-none'
                             type='button'
@@ -125,49 +125,8 @@
                         </div>
 
 
-                        <a
-                            class='btn btn-outline-secondary'
-                            target='_blank'
-                            rel='noreferrer'
-                            @click='navigate("/notification", $event)'
-                        >
-                            <IconBell
-                                size='32'
-                                stroke='1'
-                            />
-                            <span
-                                v-if='notifications'
-                                class='badge bg-red'
-                            />
-                        </a>
-
-                        <div class='dropdown'>
-                            <div
-                                id='userProfileButton'
-                                type='button'
-                                data-bs-toggle='dropdown'
-                                aria-expanded='false'
-                                class='btn btn-outline-secondary'
-                            >
-                                <IconUser
-                                    size='32'
-                                    stroke='1'
-                                />
-                            </div>
-                            <ul
-                                class='dropdown-menu'
-                                aria-labelledby='userProfileButton'
-                            >
-                                <a
-                                    class='cursor-pointer dropdown-item'
-                                    @click='navigate("/profile", $event)'
-                                >Profile</a>
-                                <a
-                                    class='cursor-pointer dropdown-item'
-                                    @click='navigate("/logout", $event)'
-                                >Logout</a>
-                            </ul>
-                        </div>
+                        <NavNotifications ref='notify' />
+                        <NavProfile :user='user' />
                     </div>
                 </div>
             </div>
@@ -423,7 +382,7 @@
                 :iam='iam'
                 :auth='user'
                 @login='refetch'
-                @notifications='notifications = $event'
+                @notifications='notify?.refresh()'
             />
         </template>
 
@@ -443,6 +402,8 @@ import { useRoute, useRouter } from 'vue-router'
 import '@tabler/core/dist/js/tabler.min.js';
 import '@tabler/core/dist/css/tabler.min.css';
 import PageFooter from './components/util/PageFooter.vue';
+import NavNotifications from './components/util/NavNotifications.vue';
+import NavProfile from './components/util/NavProfile.vue';
 import { applyServiceWorkerUpdate, supportsServiceWorker } from './base/service-worker.ts';
 import { brand, loadBrand, DefaultLogo } from './base/brand.ts';
 import {
@@ -460,8 +421,6 @@ import {
     IconUserPlus,
     IconMenu,
     IconUsers,
-    IconUser,
-    IconBell,
     IconShovel,
     IconNotebook,
     IconCalendar,
@@ -479,7 +438,7 @@ const route = useRoute()
 const router = useRouter()
 
 const loading = ref(false)
-const notifications = ref(false)
+const notify = ref(null)
 const iam = reactive({})
 const user = ref(null)
 const err = ref(false)
@@ -514,12 +473,7 @@ const enableNav = computed(() => {
 const refetch = async () => {
     loading.value = true;
     await getIAM();
-    await fetchNotify();
     await getUser();
-}
-
-const fetchNotify = async () => {
-    notifications.value = !!(await window.std('/api/notification')).total;
 }
 
 const getIAM = async () => {
