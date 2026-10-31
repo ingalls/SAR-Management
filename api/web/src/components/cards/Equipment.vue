@@ -16,7 +16,7 @@
                         @click='$router.push(`/equipment/new?parent=${parent}`)'
                     >
                         <IconPlus
-                            :size='24'
+                            :size='32'
                             :stroke='1'
                         />
                     </TablerIconButton>
@@ -25,7 +25,7 @@
                         @click='exportEquipment'
                     >
                         <IconDownload
-                            :size='24'
+                            :size='32'
                             :stroke='1'
                         />
                     </TablerIconButton>

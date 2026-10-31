@@ -15,13 +15,13 @@
                                 placeholder='Search…'
                             />
 
-                            <TablerDropdown>
-                                <button class='btn px-2 py-1 ms-2'>
+                            <TablerDropdown class='ms-2'>
+                                <TablerIconButton title='Filter Options'>
                                     <IconFilter
                                         :size='32'
                                         stroke='1'
                                     />
-                                </button>
+                                </TablerIconButton>
 
                                 <template #dropdown>
                                     <div
@@ -149,7 +149,8 @@ import {
     TablerInput,
     TablerToggle,
     TablerDropdown,
-    TablerLoading
+    TablerLoading,
+    TablerIconButton
 } from '@tak-ps/vue-tabler'
 import TableFooter from '../util/TableFooter.vue'
 

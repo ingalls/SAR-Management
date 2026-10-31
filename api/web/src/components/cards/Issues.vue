@@ -41,11 +41,12 @@
                 <TablerDropdown
                     v-if='menu'
                 >
-                    <IconDotsVertical
-                        class='cursor-pointer'
-                        :size='32'
-                        :stroke='1'
-                    />
+                    <TablerIconButton title='Widget Options'>
+                        <IconDotsVertical
+                            :size='32'
+                            :stroke='1'
+                        />
+                    </TablerIconButton>
                     <template #dropdown>
                         <button
                             class='dropdown-item text-danger'

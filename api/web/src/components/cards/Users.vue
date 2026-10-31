@@ -15,12 +15,12 @@
                         />
 
                         <TablerDropdown>
-                            <button class='btn px-2 py-1'>
+                            <TablerIconButton title='Filter Options'>
                                 <IconFilter
                                     :size='32'
                                     stroke='1'
                                 />
-                            </button>
+                            </TablerIconButton>
 
                             <template #dropdown>
                                 <div
@@ -64,7 +64,7 @@
                                     class='btn btn-icon'
                                     @click='mode="list"'
                                 ><IconList
-                                    size='32'
+                                    size='24'
                                     stroke='1'
                                 /></label>
                                 <input
@@ -78,7 +78,7 @@
                                     class='btn btn-icon'
                                     @click='mode="gallery"'
                                 ><IconPolaroid
-                                    size='32'
+                                    size='24'
                                     stroke='1'
                                 /></label>
                             </div>
@@ -100,7 +100,6 @@
                                 <UserSelect
                                     v-else
                                     mode='icon'
-                                    :button='true'
                                     :icon-size='32'
                                     @selected='addUser($event)'
                                 />

@@ -551,6 +551,16 @@ onUnmounted(() => {
 </script>
 
 <style>
+.card-header .btn-list {
+    align-items: center;
+}
+
+.card-header .rounded[role='button'] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .hover-light:hover {
     background: color-mix(in srgb, currentColor 10%, transparent);
 }

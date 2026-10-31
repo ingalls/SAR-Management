@@ -18,11 +18,12 @@
 
             <div class='btn-list ms-auto'>
                 <TablerDropdown v-if='menu'>
-                    <IconDotsVertical
-                        class='cursor-pointer'
-                        :size='32'
-                        :stroke='1'
-                    />
+                    <TablerIconButton title='Widget Options'>
+                        <IconDotsVertical
+                            :size='32'
+                            :stroke='1'
+                        />
+                    </TablerIconButton>
                     <template #dropdown>
                         <button
                             class='dropdown-item text-danger'
@@ -105,7 +106,8 @@ import NoAccess from '../util/NoAccess.vue';
 import {
     TablerNone,
     TablerLoading,
-    TablerDropdown
+    TablerDropdown,
+    TablerIconButton
 } from '@tak-ps/vue-tabler';
 import {
     IconGripVertical,
