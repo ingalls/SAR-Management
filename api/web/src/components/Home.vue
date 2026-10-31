@@ -245,6 +245,9 @@ const loadCards = async () => {
             float: true,
             cellHeight: 200,
             disableOneColumnMode: true,
+            draggable: {
+                handle: '.drag-handle'
+            },
             resizable: {
                 handles: 'e, se, s, sw, w'
             }

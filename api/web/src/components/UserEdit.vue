@@ -22,7 +22,7 @@
                             </template>
                             <template v-else>
                                 <div class='row'>
-                                    <div class='col-3'>
+                                    <div class='col-12 col-md-4 col-lg-3'>
                                         <UserProfile
                                             bgstyle='cover'
                                             :userid='user.id'
@@ -36,7 +36,7 @@
                                             >Update Photo</a>
                                         </div>
                                     </div>
-                                    <div class='col'>
+                                    <div class='col-12 col-md'>
                                         <div class='card-body'>
                                             <div class='row row-cards'>
                                                 <div class='col-md-6'>
@@ -270,13 +270,14 @@
             </div>
         </div>
 
-        <Upload
+        <PhotoUpload
             v-if='upload'
+            title='Update Profile Photo'
+            filename='profile.jpg'
             :url='uploadurl()'
             :headers='headers'
-            @err='upload = null; err = $event'
-            @close='upload = null'
-            @done='upload = null; cache = +new Date()'
+            @close='upload = false'
+            @done='upload = false; cache = +new Date()'
         />
 
         <AddAgencyAssociation
@@ -292,7 +293,7 @@
 
 <script setup>
 import iamHelper from '../iam.js';
-import Upload from './util/Upload.vue';
+import PhotoUpload from './util/PhotoUpload.vue';
 import AddAgencyAssociation from './User/AddAgencyAssociation.vue';
 import {
     TablerNone,

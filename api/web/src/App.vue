@@ -561,6 +561,14 @@ onUnmounted(() => {
     justify-content: center;
 }
 
+.card-header .drag-handle {
+    flex-shrink: 0;
+    box-sizing: content-box;
+    padding: 6px;
+    margin: -6px 0 -6px -6px;
+    touch-action: none;
+}
+
 .hover-light:hover {
     background: color-mix(in srgb, currentColor 10%, transparent);
 }
