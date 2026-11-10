@@ -236,19 +236,59 @@ const props = defineProps({
     // Start with the list limited to the applications a given user is reviewing
     assigned: {
         type: Number
+    },
+    // Filter state restored from a URL query
+    initial: {
+        type: Object,
+        default: null
     }
 })
+
+const emit = defineEmits(['query'])
+
+const defaults = {
+    filter: '',
+    sort: 'created',
+    order: props.order,
+    status: 'active',
+    cohort: 'All Cohorts',
+    reviewer: props.assigned ? 'Assigned to Me' : 'Any Reviewer'
+}
+
+const fromQuery = (query) => {
+    const filters = { ...defaults };
+    if (!query) return filters;
+
+    if (typeof query.filter === 'string') filters.filter = query.filter;
+    if (typeof query.sort === 'string') filters.sort = query.sort;
+    if (query.order === 'asc' || query.order === 'desc') filters.order = query.order;
+    if (['active', 'all', ...StatusOrder].includes(query.status)) filters.status = query.status;
+    if (typeof query.cohort === 'string' && query.cohort) filters.cohort = query.cohort;
+    if (query.reviewer === 'me') filters.reviewer = 'Assigned to Me';
+    if (query.reviewer === 'any') filters.reviewer = 'Any Reviewer';
+
+    return filters;
+}
+
+const toQuery = () => {
+    const query = {};
+
+    for (const key of ['filter', 'sort', 'order', 'status', 'cohort']) {
+        if (paging[key] !== defaults[key]) query[key] = paging[key];
+    }
+
+    if (paging.reviewer !== defaults.reviewer) {
+        query.reviewer = paging.reviewer === 'Assigned to Me' ? 'me' : 'any';
+    }
+
+    return query;
+}
 
 const loading = ref(true)
 const header = ref([])
 const paging = reactive({
-    filter: '',
-    sort: 'created',
-    order: props.order,
+    ...fromQuery(props.initial),
     limit: props.limit,
-    status: 'active',
-    cohort: 'All Cohorts',
-    reviewer: props.assigned ? 'Assigned to Me' : 'Any Reviewer',
     page: 0
 })
 const list = reactive({
@@ -293,6 +333,7 @@ const is_iam = (permission) => iamHelper(props.iam, props.auth, permission)
 
 const listSchema = async () => {
     const schema = await window.std('/api/schema?method=GET&url=/application');
+    if (!schema.query.properties.sort.enum.includes(paging.sort)) paging.sort = defaults.sort;
     header.value = ['status', 'name', 'cohort', 'assigned', 'created', 'updated'].map((h) => {
         return { name: h, display: true };
     });
@@ -379,6 +420,8 @@ const fetch = async () => {
 
 // Any change to what is being listed invalidates the current page
 watch(() => [paging.filter, paging.status, paging.cohort, paging.reviewer, paging.sort, paging.order], async () => {
+    emit('query', toQuery());
+
     if (paging.page !== 0) {
         paging.page = 0;
     } else {

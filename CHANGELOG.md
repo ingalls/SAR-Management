@@ -12,6 +12,9 @@
 
 ### Pending Release
 
+- :tada: `UI`: The Mission editor keeps unsaved values on the device, so a refresh, an expired session or a failed save no longer loses the form. Restored changes are announced with the option to discard them, and are removed once the mission is saved
+- :rocket: `UI`: Mission editor fields that are empty or invalid are highlighted once visited or when saving, including the description, map position and an end time before the start. Saving lists the fields needing attention and scrolls to the first
+- :bug: `UI`: A failed Mission create left the editor on a loading spinner, and a failed update was silently ignored. The error is now shown above the save button with the form intact
 - :rocket: `UI`: The Mapbox token is no longer committed to the source, it is read from `VITE_MAPBOX_TOKEN` when the web UI is built. DEPLOY NOTE: `VITE_MAPBOX_TOKEN` must be added to `deploy.d/.env` before deploying, and to `api/web/.env.local` for development
 - :tada: `UI`: Mission, Training & Rolodex locations can be entered as coordinates - decimal degrees, degrees & minutes, degrees minutes seconds or UTM are accepted and the position can be shown & copied in any of those formats. The device's current location can also be used
 - :tada: `UI`: Location maps open in a large modal that zooms on scroll, where the pin is only applied once confirmed. The inline map requires ctrl/⌘ + scroll so it no longer traps page scrolling

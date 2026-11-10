@@ -20,6 +20,8 @@
                             :auth='auth'
                             :iam='iam'
                             :limit='20'
+                            :initial='route.query'
+                            @query='router.replace({ query: $event })'
                         />
                     </div>
                 </div>
@@ -29,6 +31,7 @@
 </template>
 
 <script setup>
+import { useRoute, useRouter } from 'vue-router';
 import CardApplications from './cards/Applications.vue';
 import {
     TablerBreadCrumb,
@@ -44,4 +47,7 @@ defineProps({
         required: true
     }
 })
+
+const route = useRoute();
+const router = useRouter();
 </script>

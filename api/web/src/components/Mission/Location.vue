@@ -4,10 +4,15 @@
             v-if='!disabled'
             class='mb-2'
             :model-value='modelValue'
+            :required='required'
+            :invalid='!!error'
             @update:model-value='emit("update:modelValue", $event)'
         />
 
-        <div class='location-inline-map'>
+        <div
+            class='location-inline-map'
+            :class='{ "location-inline-map-invalid": error }'
+        >
             <LocationMap
                 ref='inline'
                 :model-value='modelValue'
@@ -19,6 +24,11 @@
             />
         </div>
 
+        <div
+            v-if='error'
+            class='invalid-feedback d-block'
+            v-text='error'
+        />
         <small
             v-if='!disabled'
             class='form-hint mt-1'
@@ -64,6 +74,14 @@ defineProps({
     disabled: {
         type: Boolean,
         default: true
+    },
+    required: {
+        type: Boolean,
+        default: false
+    },
+    error: {
+        type: String,
+        default: ''
     }
 });
 
@@ -82,5 +100,10 @@ function expand() {
 <style scoped>
 .location-inline-map {
     height: 350px;
+}
+
+.location-inline-map-invalid {
+    outline: 2px solid var(--tblr-danger);
+    outline-offset: 1px;
 }
 </style>

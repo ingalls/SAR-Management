@@ -4,8 +4,13 @@
             v-if='label'
             class='form-label'
             :for='id'
-            v-text='label'
-        />
+        >
+            <span v-text='label' />
+            <span
+                v-if='required'
+                class='text-red mx-1'
+            >*</span>
+        </label>
         <div class='coordinate-row'>
             <div class='input-group coordinate-text'>
                 <span class='input-group-text'>
@@ -19,9 +24,9 @@
                     v-model='text'
                     type='text'
                     class='form-control'
-                    :class='{ "is-invalid": error }'
+                    :class='{ "is-invalid": error || invalid }'
                     :readonly='readonly'
-                    :placeholder='readonly ? "No coordinates" : example'
+                    :placeholder='readonly ? "No coordinates" : `eg: ${example}`'
                     autocomplete='off'
                     spellcheck='false'
                     @keydown.enter.prevent='commit'
@@ -141,6 +146,15 @@ const props = defineProps({
         default: 'Coordinates'
     },
     readonly: {
+        type: Boolean,
+        default: false
+    },
+    required: {
+        type: Boolean,
+        default: false
+    },
+    // Highlight the input for an error that is reported by the parent
+    invalid: {
         type: Boolean,
         default: false
     }
