@@ -22,13 +22,15 @@ export default async function router(schema: Schema, config: Config) {
             await Auth.is_iam(config, req, IamGroup.Mission, PermissionsLevel.VIEW);
             await Auth.is_iam(config, req, IamGroup.Training, PermissionsLevel.VIEW);
 
+            const pattern = `%${(req.query.filter || '').trim().replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+
             const pgres = await config.pool
                 .select({
                     location: Training.location,
                     location_geom: Training.location_geom
                 })
                 .from(Training)
-                .where(sql`location ~* ${req.query.filter}`)
+                .where(sql`location <> '' AND location ILIKE ${pattern}`)
                 .union(
                     config.pool
                     .select({
@@ -36,7 +38,7 @@ export default async function router(schema: Schema, config: Config) {
                         location_geom: Mission.location_geom
                     })
                     .from(Mission)
-                    .where(sql`location ~* ${req.query.filter}`)
+                    .where(sql`location <> '' AND location ILIKE ${pattern}`)
                 )
                 .limit(req.query.limit || 10)
                 .offset((req.query.page || 0) * (req.query.limit || 10))

@@ -64,6 +64,7 @@
 <script setup>
 import { ref, reactive, watch, onMounted, nextTick } from 'vue';
 import mapboxgl from 'mapbox-gl'
+import { mapboxToken } from '../../base/mapbox.ts';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import bbox from '@turf/bbox';
 import ApexCharts from 'apexcharts';
@@ -209,7 +210,7 @@ const mountMap = () => {
         opts.bounds = bbox(fc)
     }
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJjbGt3eWx3bDUxNWY3M2NwZnJ5d3hjdXljIn0.J6HGVg8chm6rMsBQLRRxGw';
+    mapboxToken();
     map = new mapboxgl.Map(opts);
     map.scrollZoom.disable();
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');

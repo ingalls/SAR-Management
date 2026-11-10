@@ -10,6 +10,9 @@ COPY web/package.json web/package-lock.json web/.npmrc ./web/
 RUN npm ci --prefix web
 
 COPY . .
+# Public Mapbox token, compiled into the web UI by Vite
+ARG VITE_MAPBOX_TOKEN
+ENV VITE_MAPBOX_TOKEN=$VITE_MAPBOX_TOKEN
 RUN npm run build \
     && npm run build --prefix web \
     && npm prune --omit=dev

@@ -216,9 +216,6 @@
                                                     @click='rolodex.location_geom = null'
                                                 >Clear Location</a>
                                             </div>
-                                            <div class='text-secondary small mb-2'>
-                                                Search or click the map to pin a location for this item
-                                            </div>
                                             <Location
                                                 v-model='rolodex.location_geom'
                                                 :disabled='false'

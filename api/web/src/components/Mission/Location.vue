@@ -1,21 +1,61 @@
 <template>
-    <div
-        id='map'
-        style='height: 350px;'
-    />
+    <div>
+        <CoordinateInput
+            v-if='!disabled'
+            class='mb-2'
+            :model-value='modelValue'
+            @update:model-value='emit("update:modelValue", $event)'
+        />
+
+        <div class='location-inline-map'>
+            <LocationMap
+                ref='inline'
+                :model-value='modelValue'
+                :editable='!disabled'
+                :search='search'
+                :expandable='true'
+                @update:model-value='emit("update:modelValue", $event)'
+                @expand='expand'
+            />
+        </div>
+
+        <small
+            v-if='!disabled'
+            class='form-hint mt-1'
+        >Click the map to drop the pin and drag it to fine tune. Hold ctrl or ⌘ while scrolling to zoom, or open the large map.</small>
+        <div
+            v-else-if='modelValue'
+            class='p-2'
+        >
+            <CoordinateInput
+                :model-value='modelValue'
+                label=''
+                :readonly='true'
+            />
+        </div>
+
+        <LocationModal
+            v-if='expanded'
+            :model-value='modelValue'
+            :editable='!disabled'
+            :search='true'
+            :camera='camera'
+            @update:model-value='emit("update:modelValue", $event)'
+            @close='expanded = false'
+        />
+    </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, nextTick } from 'vue';
-import { bbox } from '@turf/bbox';
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { ref } from 'vue';
+import LocationMap from '../Location/LocationMap.vue';
+import LocationModal from '../Location/LocationModal.vue';
+import CoordinateInput from '../Location/CoordinateInput.vue';
 
-const props = defineProps({
+defineProps({
     modelValue: {
         type: Object,
+        default: null
     },
     search: {
         type: Boolean,
@@ -29,113 +69,18 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-let map = null;
-const loaded = ref(false);
+const inline = ref(null);
+const expanded = ref(false);
+const camera = ref(null);
 
-watch(() => props.modelValue, () => {
-    if (!loaded.value || !map || !map.getSource('point')) return;
-
-    map.getSource('point').setData({
-        type: 'FeatureCollection',
-        features: [{
-            type: 'Feature',
-            properties: {},
-            geometry: props.modelValue
-        }]
-    });
-});
-
-const mountMap = () => {
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJjbGt3eWx3bDUxNWY3M2NwZnJ5d3hjdXljIn0.J6HGVg8chm6rMsBQLRRxGw';
-    map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/satellite-streets-v11',
-        center: [ -105.477959, 39.116007 ],
-        zoom: 5.5,
-        projection: 'globe'
-    });
-    map.scrollZoom.disable();
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    if (props.search) {
-        const geocoder = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: map
-        });
-
-        map.addControl(geocoder, 'top-left');
-    }
-
-    map.once('load', () => {
-        const source = map.getSource('point');
-
-        const fc = {
-            type: 'FeatureCollection',
-            features: props.modelValue ? [{
-                type: 'Feature',
-                properties: {},
-                geometry: props.modelValue
-            }] : []
-        };
-
-        if (source) {
-            source.setData(fc)
-        } else {
-            map.addSource('point', {
-                type: 'geojson',
-                data: fc
-            });
-        }
-
-        map.addLayer({
-            id: 'point',
-            type: 'circle',
-            source: 'point',
-            paint: {
-                'circle-radius': 4,
-                'circle-stroke-width': 2,
-                'circle-color': 'red',
-                'circle-stroke-color': 'white'
-            }
-        });
-
-        if (props.modelValue) {
-            map.fitBounds(bbox(props.modelValue), {
-                padding: {
-                    top: 100,
-                    bottom: 100,
-                    left: 100,
-                    right: 100,
-                },
-                maxZoom: 16
-            });
-        }
-
-        if (!props.disabled) {
-            map.on('click', (e) => {
-                const geometry = {
-                    type: 'Point',
-                    coordinates: [e.lngLat.lng, e.lngLat.lat]
-                };
-
-                map.getSource('point').setData({
-                    type: 'FeatureCollection',
-                    features: [{
-                        type: 'Feature',
-                        properties: {},
-                        geometry
-                    }]
-                });
-
-                emit('update:modelValue', geometry);
-            });
-        }
-
-        loaded.value = true;
-    });
-};
-
-onMounted(async () => {
-    nextTick(() => { mountMap(); });
-});
+function expand() {
+    camera.value = inline.value ? inline.value.getCamera() : null;
+    expanded.value = true;
+}
 </script>
+
+<style scoped>
+.location-inline-map {
+    height: 350px;
+}
+</style>

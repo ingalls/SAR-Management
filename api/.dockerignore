@@ -3,6 +3,7 @@ web/node_modules
 dist
 web/dist
 .env
+web/.env*
 *.dump
 *.log
 test

@@ -7,7 +7,10 @@ name: sar
 
 services:
   api:
-    build: ../api
+    build:
+      context: ../api
+      args:
+        VITE_MAPBOX_TOKEN: ${VITE_MAPBOX_TOKEN:?set VITE_MAPBOX_TOKEN in deploy.d/.env}
     restart: unless-stopped
     env_file: .env
     environment:

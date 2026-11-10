@@ -40,12 +40,13 @@
 <script setup>
 import { ref, nextTick, onMounted } from 'vue'
 import mapboxgl from 'mapbox-gl'
+import { mapboxToken } from '../../base/mapbox.ts';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const map = ref(false)
 
 const mountMap = () => {
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaW5nYWxscyIsImEiOiJsUDF2STRrIn0.S0c3ZNH4HmseIdPXY-CTlA';
+    mapboxToken();
     map.value = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
