@@ -1,7 +1,7 @@
 /**
  * Lifecycle of a membership application
  *
- * submitted => reviewing => interview => accepted => onboarded
+ * submitted => reviewing => interview => interviewed => accepted => onboarded
  *
  * with declined, withdrawn & closed available as terminal outcomes from any open status.
  * `closed` is an application that was shut without a recorded outcome (duplicates, spam
@@ -11,6 +11,7 @@ export enum ApplicationStatus {
     SUBMITTED = 'submitted',
     REVIEWING = 'reviewing',
     INTERVIEW = 'interview',
+    INTERVIEWED = 'interviewed',
     ACCEPTED = 'accepted',
     ONBOARDED = 'onboarded',
     DECLINED = 'declined',
@@ -22,6 +23,7 @@ export const ApplicationStatusOpen: string[] = [
     ApplicationStatus.SUBMITTED,
     ApplicationStatus.REVIEWING,
     ApplicationStatus.INTERVIEW,
+    ApplicationStatus.INTERVIEWED,
     ApplicationStatus.ACCEPTED
 ];
 

@@ -4,7 +4,7 @@
  */
 
 export type ApplicationStatus =
-    'submitted' | 'reviewing' | 'interview' | 'accepted' |
+    'submitted' | 'reviewing' | 'interview' | 'interviewed' | 'accepted' |
     'onboarded' | 'declined' | 'withdrawn' | 'closed';
 
 export interface StatusMeta {
@@ -37,6 +37,13 @@ export const Statuses: Record<ApplicationStatus, StatusMeta> = {
         label: 'Interview',
         description: 'Invited to meet the team',
         colour: 'purple',
+        active: true,
+        next: ['interviewed', 'accepted', 'declined', 'withdrawn']
+    },
+    interviewed: {
+        label: 'Interviewed',
+        description: 'Met the team, waiting on a decision',
+        colour: 'indigo',
         active: true,
         next: ['accepted', 'declined', 'withdrawn']
     },
@@ -94,6 +101,7 @@ export const StatusActions: Record<ApplicationStatus, string> = {
     submitted: 'Mark Submitted',
     reviewing: 'Start Review',
     interview: 'Invite to Interview',
+    interviewed: 'Mark Interviewed',
     accepted: 'Accept',
     onboarded: 'Mark Onboarded',
     declined: 'Decline',
